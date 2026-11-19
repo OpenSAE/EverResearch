@@ -1,0 +1,22 @@
+.workspace/
+.trash_bin/
+.venv*/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Local skill outputs and working copies
+/.agents/skills/*/results/
+/.agents/skills/github-publish/projects/
+/.agents/skills/HumanInterface/note/
+
+# Template runs and machine-local secrets
+/src/harness/projects/template/.agents/skills/
+/src/harness/projects/template/experiment/**/*
+!/src/harness/projects/template/experiment/**/
+!/src/harness/projects/template/experiment/**/recipe.toml
+.env
+.env.*
+!.env.example

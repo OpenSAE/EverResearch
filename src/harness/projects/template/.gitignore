@@ -1,0 +1,6 @@
+# 本地输入、运行产物及开发缓存。
+data/
+experiment/
+__pycache__/
+*.egg-info/
+.pytest_cache/

@@ -1,0 +1,23 @@
+# 目的和主要功能：定义参考分类项目的安装和命令入口。
+# 适用范围：独立安装模板与运行本地工程检查。
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rh-cub-template"
+version = "0.1.0"
+description = "ResearchHarness reference project for CUB-200 image classification"
+requires-python = ">=3.11"
+dependencies = ["torch>=2.2", "torchvision>=0.17", "Pillow>=10", "hydra-core>=1.3,<2"]
+
+[project.scripts]
+cub-template = "cub_template.cli:main"
+
+[tool.setuptools]
+packages = ["cub_template", "cub_template.runtime", "cub_template.datasets", "cub_template.datasets.cub200", "cub_template.models", "cub_template.models.resnet", "cub_template.models.resnet.resnet18", "cub_template.models.cnn", "cub_template.models.cnn.small_cnn", "cub_template.tasks", "cub_template.tasks.classification", "cub_template.tasks.precheck"]
+
+[tool.setuptools.package-dir]
+"cub_template.datasets" = "datasets"
+"cub_template.models" = "models"
+"cub_template.tasks" = "tasks"

@@ -1,0 +1,31 @@
+# 目的：以生成的 RGB 张量演练新增模型后同一分类流程。
+# 适用范围：离线 CPU 检查，产物明确标为 synthetic。
+[dataset]
+name = "synthetic"
+image_size = 32
+
+[model]
+name = "small_cnn"
+channels = 16
+
+[task]
+name = "classification"
+
+[training]
+epochs = 1
+batch_size = 2
+learning_rate = 0.001
+seed = 42
+
+[runtime]
+device = "cpu"
+workers = 0
+cpu_threads = 2
+
+[precheck]
+samples = 2
+
+[benchmark]
+samples = 4
+warmup = 1
+repeats = 3
