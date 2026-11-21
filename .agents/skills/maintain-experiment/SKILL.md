@@ -15,10 +15,6 @@ Start with the project. `AGENTS.md`,Project description or README The project ac
 
 [Experimental Programs](references/procedures.md)Describes configuration maintenance, product reading, restoration of judgement, failure positioning and performance comparison.
 
-## Central path check and project restoration
-
-ResearchHarness unified the maintenance of document paths, directory and naming. The assistant performing the research project uses read-only ResearchHarness and its verification portals to restore the public entry point, logic and results of the target project within the permitted range. When it is considered that the error or the rule is too strict, the inspection order, rules, path, reversible evidence and impact are included in the human-oriented report and continue to be independently completed.
-
 ## Use Configuration
 
 From the default configuration of the project and the formula selection parameters already available, the configuration is covered by the public entry point for a specific experiment. The effective configuration is written to `experiment/` with this operation. When checking for old results or rerun, locate the current configuration from the running list. The new, removed, semantic or default changes in the open parameter are `maintain-conf`. When comparing the parameters with the missing item in the experiment, use the "configuration maintenance" in the operating program.
@@ -29,13 +25,9 @@ From the default configuration of the project and the formula selection paramete
 2. Positioning Level One Directory From Project Roots `experiment/`.All new operations and their precheck, debugging, comparison and subsequent analysis products are placed in this directory.(`subname`),The list refers to the effective configuration and the subproduct. The cover must be clearly authorized. The top level task is performed at the user ' s request. The back desk uses the tools and log position of the project to save the start-up command, session, running directory, log and restoration.
 3. Verify the actual delivery from the official results portal. Read the features by task and their interpretation, generation, intervention, evaluation indicators or training reports and points. Link the current operational identity, input, actual scope and protocol.
 
-## Automatic precheck before formal run
+## Automatic precheck before a formal run
 
-The project must provide a precheck capability called `precheck` under `tasks/`. Each formal task, including the tasks in the batch, is automatically called before the formal computation is determined. Use the data set, model and task of this actual selection to check whether or not it is operational. The precheck is written with a small number of representative samples and step-by-step quick reading, construction, minimum calculation and result. Where the logical confirmation result should be generated from the official path, the sample is generated at the isolated location and the file name, format and necessary fields are checked through official reading access.
-
-When a precheck is completed, the precheck is formally calculated. When a precheck is found to be missing, skipping or failing, the public entry point or responsible module of the target project is located and repaired within the authorization. The precheck is then launched from the same entrance and re-executed by the entrance.
-
-The record format supports the verification of the evidence, the number of samples processed and the total time spent by a central order `rh projects precheck check <project-root> <successful-run> <rejected-run> --max-seconds <seconds> --max-samples <count>`.
+The normal entry point runs precheck before computation. Reuse evidence already obtained through that entry point. If the entry point, precheck, or its failure blocking needs verification, use the task skill's precheck procedure and share the successful and rejected run records. Experiment maintenance verifies the actual outputs through their normal reader.
 
 ## Commencing access and piloting.
 

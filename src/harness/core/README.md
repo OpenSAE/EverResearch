@@ -61,7 +61,7 @@ When there are more than 15 direct subdirectories, `project check` reports the p
 
 `experiment.py` Use the `rh projects experiment check <project-root>` independent review of the experimental list, effective configuration, operational identity and documentation corresponding to the official product. `runs` in JSON records the number of operations scanned. Completed operations need to be read back from the public entry point to confirm the actual results and their use.
 
-`precheck.py` passed `rh projects precheck check <project root directory> <Directory of successful execution> <Synchronising "%s"> --max-seconds <seconds> --max-samples <Number>` Check the precheck evidence generated at the normal entrance. `precheck_seconds` and precheck reports, in reports `samples_checked` Record the number of actual samples processed (received separately for multiple treatments of the same sample) and record them prior to the start of formal computations `formal_started`.Record when precheck failed `automatic_precheck` Commands to repeat the experimental path and product rules, and to read the existing records.
+`check.py` implements `rh projects precheck check <project-root> <successful-run> <rejected-run> --max-seconds <seconds> --max-samples <count>`. It reads existing run records to verify the elapsed time and number of samples processed by a successful precheck, and confirms that a rejected precheck prevented formal computation.
 
 `project check` Check it out. `doc/environment/README.md` the text and `doc/README.md` The environmental conditions and the accuracy of the light orders are reviewed along the project entrance.
 

@@ -1,6 +1,6 @@
-"""Synchronize shared skills and manage local project resources and structure maps.
+"""Synchronize the sharing of skills and the distribution of project resources and structural results.
 
-Implements the rh projects commands for a selected workspace and project.
+For defined selection of workspaces and projects rh projects Command.
 """
 
 from __future__ import annotations
@@ -18,13 +18,44 @@ import yaml
 from harness.central import ProjectError, identity, load_harness
 from harness.core.experiment import check_experiment
 from harness.core.layout import check_layout
-from harness.core.precheck import check_precheck
+from harness.core.check import check_precheck
 from harness.core.project import check_project
 from harness.core.workspace import save, save_bytes, update_lock
-from . import resources, structure
+from . import maintenance, resources, structure
 
 START = "<!-- researchharness:projects -->"
 END = "<!-- /researchharness:projects -->"
+MAINTENANCE_SKILLS = {
+    "maintain-project": "Onboarding and project-wide maintenance",
+    "maintain-base": "Entry points, configuration, dispatch, and runtime",
+    "maintain-dataset": "Datasets, sample loading, labels, splits, and caches",
+    "maintain-model": "Model variants, construction, and checkpoint loading",
+    "maintain-task": "Task computation, prechecks, metrics, and results",
+    "maintain-conf": "Public settings, defaults, presets, and overrides",
+    "maintain-experiment": "Configure, run, resume, or inspect an experiment",
+    "maintain-optional": "Standalone scripts, tests, docs, and external files",
+    "maintain-code": "Code review, duplication, and missing behavior",
+    "maintain-tmp": "Temporary engineering work and investigation",
+    "maintain-skill": "Evaluate and maintain skills",
+    "maintain-knowledge": "Maintain research notes",
+}
+
+PROJECT_ACTIONS = (
+    ("Read, investigate, or plan", "read", "Existing entry points, settings, and records"),
+    ("Maintain shared entry points", "base", "`base/` and existing root entry points"),
+    ("Change a dataset implementation", "datasets", "`datasets/`"),
+    ("Change a model", "models", "`models/`"),
+    ("Change a task or precheck", "tasks", "`tasks/`"),
+    ("Change public configuration", "conf", "`conf/`"),
+    ("Run or inspect an experiment", "experiment", "Public entry point and `experiment/`"),
+    ("Write a test or script", "tests-scripts", "`tests/`, `scripts/`, or the owning component"),
+    ("Create temporary files or code", "tmp", "`tmp/<purpose>/`"),
+    ("Update the runtime environment", "environment", "Bound environment and `doc/environment/`"),
+    ("Download and prepare data", "data", "`data/<dataset>/<version>/` or the bound data root"),
+    ("Keep reusable assets", "assets", "`assets/<type>/<resource>/` or the configured cache"),
+    ("Maintain third-party code", "third-party", "`third_party/<upstream>/`"),
+    ("Update documentation", "doc", "`doc/` and existing navigation"),
+)
 
 
 def settings(harness, project_id):
@@ -39,7 +70,38 @@ def settings(harness, project_id):
         or type(value.get("skills")) is not bool
     ):
         raise ProjectError("Project Sharing Settings skills use true/false")
-    return path, root, {"skills": value["skills"]}
+    lightweight_checks = value.get("lightweight_checks", False)
+    if type(lightweight_checks) is not bool:
+        raise ProjectError("Projects lightweight_checks Settings for use true/false")
+    return path, root, {"skills": value["skills"], "lightweight_checks": lightweight_checks}
+
+
+def updated_settings(path, project_id, changes):
+    """Preserve ordinary settings files and keep valid YAML mappings readable."""
+    if not path.exists():
+        return (
+            "# Purpose and main function: Preservation of project identifiers, shared skills and light validation options.\n"
+            "# Scope of application: rh projects Query and Sync Project Access.\n"
+            + yaml.safe_dump({"project_id": project_id, "skills": True, **changes}, sort_keys=False)
+        )
+    original = path.read_text()
+    expected = {**yaml.safe_load(original), **changes}
+    text = original
+    for key, enabled in changes.items():
+        setting = f"{key}: {str(enabled).lower()}"
+        text, count = re.subn(
+            rf"^{re.escape(key)}:[^\n#]*(#[^\n]*)?",
+            lambda match: f"{setting}  {match[1]}" if match[1] else setting,
+            text, flags=re.M,
+        )
+        if not count:
+            text = f"{text.rstrip()}\n{setting}\n"
+    try:
+        if yaml.safe_load(text) == expected:
+            return text
+    except yaml.YAMLError:
+        pass
+    return yaml.safe_dump(expected, sort_keys=False, allow_unicode=True)
 
 
 def catalogue(harness):
@@ -61,6 +123,76 @@ def skill_directory(root):
     return directory
 
 
+def maintenance_guidance(skill_path, operations_path, desired, lightweight_checks):
+    if not desired:
+        return ""
+    lines = [
+        "### Daily maintenance and lightweight checks",
+        "",
+        "**Classify each operation before acting.** Before an edit, move, install, download, "
+        "or command, choose a row below and follow its procedure. Split cross-component "
+        "requests into separate operations. Before the first action of each kind, read its guide "
+        "and the applicable `SKILL.md`. Resolve project paths from the project root and "
+        "shared resources from their actual bindings.",
+        "",
+        "**When asked to implement a feature:**",
+        "",
+        "1. Define the user-facing entry point, input, expected result, and a small acceptance case. "
+        "Trace the closest documented command to its configuration, implementation, and reader.",
+        "2. If an existing setting meets the request, use it. Extend the current component when it "
+        "owns the behavior. Add a named component under its existing top-level directory when it "
+        "has an independent input, behavior, or selection.",
+        "3. Change the owning implementation, then connect any needed registry entries, settings, "
+        "dispatch, and result readers. Keep supported output fields and reuse the existing recorder. "
+        "Put one-time probes under the existing `tmp/<purpose>/` and decide what to retain afterward.",
+        "4. Verify with a small input through the same entry point. Check the actual "
+        "output path and readback. Run authorized structure checks when paths change and update docs.",
+        "",
+        "For example, add per-class accuracy to the existing classification task by extending its "
+        "final evaluation and using its current report writer. Check fixed labels and predictions, "
+        "then read the report back through the normal interface. Add a setting only if users need "
+        "to choose whether to include the metric.",
+        "",
+        "| Operation guide | Destination |",
+        "| --- | --- |",
+        *(f"| [{action}](<{operations_path.as_posix()}#{section}>) | {destination} |"
+          for action, section, destination in PROJECT_ACTIONS),
+        "",
+        "**Use the existing top-level directories.** Daily tasks stay within existing compliant "
+        "locations. Keep top-level directory names and avoid temporary output at the root. "
+        "Confirm the command's working directory, output, and cache locations before running it. "
+        "Use read-only investigation until an unclear write has a defined category and destination. "
+        "Creating a standard top-level directory or restructuring requires explicit authorization.",
+        "",
+        "**Check paths after each batch.** Compare new, moved, and generated paths with the intended "
+        "destinations. Correct layout violations introduced by this work before continuing.",
+    ]
+    rows = [
+        f"| {purpose} | [`{name}`]({(skill_path / name / 'SKILL.md').as_posix()}) |"
+        for name, purpose in MAINTENANCE_SKILLS.items()
+        if name in desired
+    ]
+    if rows:
+        lines.extend(("", "| Maintenance area | Skill to read |", "| --- | --- |", *rows))
+    if lightweight_checks:
+        lines.extend((
+            "",
+            "**Lightweight follow-up checks are enabled.** Use the smallest applicable check through "
+            "the normal entry point. Use `rh projects layout check` when paths or output locations "
+            "change. For a project-wide check, use `rh projects project check` or the authorized "
+            "`rh projects maintenance` index. Use one structure check per tree state. "
+            "Use experiment or precheck evidence commands only when relevant. Reuse focused tests, "
+            "configuration previews, or prechecks with existing local resources and bounded inputs. "
+            "Downloads, installs, and full research runs follow the task's authorization.",
+            "",
+            "Report the actual entry point, coverage, results, and any behavior that still needs evidence.",
+        ))
+    else:
+        lines.extend(("", "**Lightweight follow-up checks require task authorization.** "
+                      "When authorized, reuse central checks and the project's existing checks."))
+    return "\n\n" + "\n".join(lines)
+
+
 def guidance(harness, project_id, value, directory, desired):
     root = harness.root
     project_root = directory.parent.parent
@@ -69,23 +201,25 @@ def guidance(harness, project_id, value, directory, desired):
     skills = "enabled" if value["skills"] else "disabled"
     project_notes = harness.project_record(project_id).relative_to(harness.root) / "README.md"
     skill_path = directory.relative_to(project_root)
-    skill_entry = f"See `{skill_path}/researchharness/SKILL.md` for project setup."
+    skill_entry = f"See `{skill_path}/researchharness/SKILL.md` for the connection guide."
     if directory.name == "researchharness-skills" and desired:
-        skill_entry += "\n Read the shared skill that matches the current task:\n\n"
-        skill_entry += "\n".join(f"- `{skill_path / name / 'SKILL.md'}`" for name in desired)
+        other_skills = sorted(desired.keys() - MAINTENANCE_SKILLS.keys())
+        if other_skills:
+            skill_entry += "\n\n Other available shared skills\n\n"
+            skill_entry += "\n".join(f"- `{skill_path / name / 'SKILL.md'}`" for name in other_skills)
+    operations_path = root / "src/harness/projects/operations.md"
+    workflow = maintenance_guidance(skill_path, operations_path, desired, value["lightweight_checks"])
     return f"""{START}
-## ResearchHarness workspace integration
+## ResearchHarness connection
 
-This project's README, requirements, and public commands describe how to install, configure, and run it independently.
-This workspace registers the project as `{project_id}` and uses ResearchHarness at `{root}`, with shared skills {skills}. Resolve relative paths from the project root. The central checkout may provide project notes in `{project_notes}`.
-Follow the project's actual entry points and callers when maintaining it.
-Follow the project's GitHub workflow and the current authorization for code reviews and plans.
-Researchers set goals and give feedback. Assistants make engineering decisions within the authorized scope.
-Use `maintain-knowledge` to preserve research notes when the skill is available.
-View the connection with `rh projects status {project_id}`. Change shared skill settings with `rh projects set`.
-View data and Python bindings with `rh projects resources {project_id}`.
+Use the project's README, dependency declarations, and normal entry points to install, configure, and run it.
+The registered project ID is `{project_id}`. The ResearchHarness root is `{root}` and shared skills are {skills.lower()}.
+Resolve relative paths from the project root. Project notes, when available, are at `{project_notes}` under the ResearchHarness root.
 
-{skill_entry}
+Follow project review and authorization rules and the current request.
+Use `rh projects status {project_id}` to inspect the connection, `rh projects set` to change shared skill settings, and `rh projects resources {project_id}` to see local data and Python bindings.
+
+{skill_entry}{workflow}
 {END}"""
 
 
@@ -118,7 +252,9 @@ def status(harness, project_id):
         "shared_skill_directory": str(links),
         "skill_entry": "project-skill-directory" if links.name == "skills" else "AGENTS.md",
         "resources": resources.read(harness, project_id),
-        "last_applied_settings": {"skills": applied["settings"]["skills"]} if applied else None,
+        "last_applied_settings": (
+            {"lightweight_checks": False, **applied["settings"]} if applied else None
+        ),
         "client_reload": "New session to read shared skills; already existing session reloads by actual loading status of client.",
     }
 
@@ -158,6 +294,7 @@ def apply_skills(harness, project_id, changes):
         agent.read_text() if agent.exists() else "",
         guidance(harness, project_id, value, directory, desired),
     )
+    settings_text = updated_settings(path, project_id, changes) if changes else None
     directory.mkdir(parents=True, exist_ok=True)
     for name in targets:
         link = directory / name
@@ -175,14 +312,8 @@ def apply_skills(harness, project_id, changes):
             link.symlink_to(destination, target_is_directory=True)
     save_bytes(agent, updated_agent.encode(), source=__file__)
     save_bytes(entry, Path(__file__).with_name("researchharness.skill.md.in").read_bytes(), source=__file__)
-    if changes:
-        if path.exists():
-            text = re.sub(r"^skills:.*$", f"skills: {str(value['skills']).lower()}",
-                          path.read_text(), flags=re.MULTILINE)
-        else:
-            text = ("# Project shared skills switches for rh projects Read.\n"
-                    f"project_id: {project_id}\nskills: {str(value['skills']).lower()}\n")
-        save_bytes(path, text.encode(), source=__file__)
+    if settings_text is not None:
+        save_bytes(path, settings_text.encode(), source=__file__)
     save(
         state,
         {
@@ -209,6 +340,11 @@ def main(argv=None):
         command.add_argument("project")
         if action == "set":
             command.add_argument("--skills", choices=["on", "off"], required=True)
+        elif action == "apply":
+            command.add_argument(
+                "--lightweight-checks", choices=["on", "off"],
+                help="Save permissions for this modified light-validation machine and omit the original settings",
+            )
         elif action == "register":
             command.add_argument("--path", required=True)
         elif action == "bind":
@@ -223,20 +359,25 @@ def main(argv=None):
         elif action == "run":
             command.add_argument("arguments", nargs=argparse.REMAINDER)
     commands.add_parser("list")
+    maintenance_check = commands.add_parser("maintenance", help="Increased acceptance and inspection items and updated central maintenance index")
+    maintenance_check.add_argument("path")
+    maintenance_check.add_argument("--fresh", action="store_true", help="Recheck all structural conditions")
+    maintenance_check.add_argument("--limit", type=int, default=20, help="Maximum number of bars per group in summary")
+    maintenance_check.add_argument("--record", metavar="JSON", help="Maintenance of access, problems and validation records")
     project_check = commands.add_parser("project", help="Check project responsibilities and document structure")
     project_check.add_subparsers(dest="project_operation", required=True).add_parser(
-        "check", help="Check required directories, component source, per-directory file counts, and paths",
+        "check", help="Check five essential catalogues, real components, component position, number of files and tree-wide path",
     ).add_argument("path")
-    layout = commands.add_parser("layout", help="Check project naming and layout")
+    layout = commands.add_parser("layout", help="Examination of the layout of scientific projects")
     layout_commands = layout.add_subparsers(dest="layout_operation", required=True)
     layout_commands.add_parser("check", help="Run a read-only tree-based check by project path").add_argument("path")
-    experiment = commands.add_parser("experiment", help="Check experiment records and declared outputs")
+    experiment = commands.add_parser("experiment", help="Check the lab execution records and the official product.")
     experiment.add_subparsers(dest="experiment_operation", required=True).add_parser(
         "check", help="Check the identity, effective configuration, file name and complete path for each execution",
     ).add_argument("path")
-    precheck = commands.add_parser("precheck", help="Check evidence that the public entry point ran precheck")
+    precheck = commands.add_parser("precheck", help="Check the evidence for automatic precheck at the public entry point.")
     precheck_check = precheck.add_subparsers(dest="precheck_operation", required=True).add_parser(
-        "check", help="Check a successful run and one blocked by precheck",
+        "check", help="Read a record of successful and failed precheck",
     )
     precheck_check.add_argument("path")
     precheck_check.add_argument("succeeded")
@@ -271,6 +412,12 @@ def main(argv=None):
             print(json.dumps(result, ensure_ascii=False, indent=2))
             return 0 if result["passed"] else 1
         harness = load_harness(args.harness_root)
+        if args.action == "maintenance":
+            result = maintenance.check(
+                harness, args.path, fresh=args.fresh, limit=args.limit, record=args.record,
+            )
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0 if result["project_check"]["passed"] else 1
         project = getattr(args, "project", None)
         if args.action == "list":
             result = [
@@ -282,7 +429,11 @@ def main(argv=None):
         elif args.action == "status":
             result = status(harness, project)
         elif args.action == "apply":
-            result = apply(harness, project)
+            changes = (
+                {"lightweight_checks": args.lightweight_checks == "on"}
+                if args.lightweight_checks is not None else None
+            )
+            result = apply(harness, project, changes)
         elif args.action == "set":
             result = apply(harness, project, {"skills": args.skills == "on"})
         elif args.action == "resources":

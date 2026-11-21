@@ -5,6 +5,7 @@ Validate the official command interface using the newly created project director
 
 import json
 from pathlib import Path
+import re
 import sys
 
 import pytest
@@ -66,13 +67,78 @@ def test_legacy_project_records_remain_readable(command, workspace):
     old.mkdir(parents=True)
     (old / "project.yaml").write_text("project_id: example\nskills: false\n")
     (old / "resources.json").write_text('{"data": {}, "python": null}')
-    assert command("status", "example")["settings"] == {"skills": False}
+    saved = {"skills": False, "lightweight_checks": False}
+    assert command("status", "example")["settings"] == saved
     assert command("resources", "example") == {"data": {}, "python": None}
     current = root / "src/project/maintained/example"
     current.parent.mkdir()
     old.rename(current)
-    assert command("status", "example")["settings"] == {"skills": False}
+    assert command("status", "example")["settings"] == saved
     assert command("resources", "example") == {"data": {}, "python": None}
+
+
+@pytest.mark.parametrize("custom_skill_directory", [False, True])
+def test_apply_routes_maintenance_and_persists_check_authorization(
+    command, workspace, custom_skill_directory,
+):
+    root, project, _ = workspace
+    operations = root / "src/harness/projects/operations.md"
+    operations.parent.mkdir(parents=True)
+    operations.write_bytes(Path(__file__).with_name("operations.md").read_bytes())
+    for name in ("maintain-dataset", "maintain-conf"):
+        skill = root / ".agents/skills" / name
+        skill.mkdir()
+        (skill / "SKILL.md").write_text(f"# {name}\n")
+    skill_directory = ".agents/skills"
+    if custom_skill_directory:
+        owned = project / "skills"
+        owned.mkdir()
+        (project / ".agents").mkdir()
+        (project / ".agents/skills").symlink_to(owned, target_is_directory=True)
+        skill_directory = ".agents/researchharness-skills"
+    settings = root / "src/project/maintained/example/project.yaml"
+    settings.parent.mkdir(parents=True)
+    settings.write_text("# Existing settings\nproject_id: example\nskills: true\n")
+    agents = project / "AGENTS.md"
+    agents.write_text("# Existing project instructions\n")
+
+    assert command("apply", "example")["settings"]["lightweight_checks"] is False
+    text = agents.read_text()
+    assert f"{skill_directory}/maintain-dataset/SKILL.md" in text
+    assert f"{skill_directory}/maintain-conf/SKILL.md" in text
+    assert "maintain-model" not in text
+    assert "Lightweight follow-up checks require task authorization" in text
+    assert "Classify each operation before acting" in text
+    assert "When asked to implement a feature" in text
+    assert "If an existing setting meets the request" in text
+    assert "add per-class accuracy to the existing classification task" in text
+    assert "Keep top-level directory names" in text
+    assert "working directory, output, and cache locations before running" in text
+    assert "Check paths after each batch" in text
+    sections = re.findall(r'\]\(<([^>]+/operations\.md)#([a-z-]+)>\)', text)
+    assert len(sections) == 14
+    for path, anchor in sections:
+        assert (project / path).resolve() == operations
+        assert f'<a id="{anchor}"></a>' in operations.read_text()
+
+    applied = command("apply", "example", "--lightweight-checks", "on")
+    assert applied["settings"] == applied["last_applied_settings"] == {
+        "skills": True, "lightweight_checks": True,
+    }
+    assert "Lightweight follow-up checks are enabled" in agents.read_text()
+    assert "rh projects layout check" in agents.read_text()
+    assert "Use one structure check per tree state" in agents.read_text()
+    assert settings.read_text().startswith("# Existing settings\n")
+    assert "lightweight_checks: true" in settings.read_text()
+    assert command("apply", "example")["last_applied_settings"]["lightweight_checks"] is True
+    command("set", "example", "--skills", "off")
+    assert "Daily maintenance and lightweight checks" not in agents.read_text()
+    command("set", "example", "--skills", "on")
+    assert "Lightweight follow-up checks are enabled" in agents.read_text()
+    command("apply", "example", "--lightweight-checks", "off")
+    assert "Lightweight follow-up checks require task authorization" in agents.read_text()
+    assert agents.read_text().startswith("# Existing project instructions\n")
+    assert agents.read_text().count("<!-- researchharness:projects -->") == 1
 
 
 def test_run_uses_bound_python_data_and_project(command, workspace, tmp_path):
@@ -123,4 +189,4 @@ def test_review_pins_export_and_keeps_other_versions_selectable(command, tmp_pat
     assert result["review"]["sha256"] == a["sha256"]
     assert [item["id"] for item in command("structure", "list", "example")] == [b["id"], a["id"]]
     Path(a["page"]).write_text("changed")
-    assert "inconsistent with registered version" in command("structure", "show", "example", a["id"], expected=1)
+    assert "Inconsistencies" in command("structure", "show", "example", a["id"], expected=1)

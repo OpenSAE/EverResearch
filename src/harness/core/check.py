@@ -68,7 +68,7 @@ def check_precheck(root, succeeded, rejected, *, max_seconds, max_samples):
             and isinstance(item.get("message"), str) and item["message"].strip()
             for item in diagnostics
         ):
-            fail(failed_path, "precheck_error", "Record the actual reasons for the failure of automatic precheck")
+            fail(failed_path, "precheck_error", "Record the actual reason for the failure of automatic precheck")
         if failed["status"] != "failed" or failed.get("formal_started") is not False:
             fail(failed_path, "precheck_blocking", "precheck failed and the official calculation has not yet started")
     return {"project": str(root), "passed": not violations, "violations": violations}

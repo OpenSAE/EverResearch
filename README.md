@@ -94,6 +94,14 @@ You don't need to manage every component separately. Start with [`maintain-proje
 
 As your research evolves, the same workflows help keep your code organized and your results traceable.
 
+### Keep maintenance consistent
+
+The managed section of each connected project's `AGENTS.md` links to [14 operation guides](src/harness/projects/operations.md). Each guide explains how to choose the right destination, carry out the change, and check the result. Run `rh projects apply <project-id>` again to refresh an existing connection.
+
+For repeat structure checks, use `rh projects maintenance <project-root>`. It records changes and previous checks in the local ResearchHarness workspace. Unchanged files reuse cached findings, so subsequent checks can focus on changes.
+
+Enable lightweight follow-up checks for a connected project with `rh projects apply <project-id> --lightweight-checks on`.
+
 ## Built for Everyday Research
 
 Whether you're starting a new experiment, adding a dataset, switching models, or returning to an old project, ResearchHarness gives you a consistent way to keep your research code under control.

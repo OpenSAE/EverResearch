@@ -21,10 +21,6 @@ Determines the configuration, registration and tectonic entry from items `AGENTS
 
 [Model scheme](references/procedures.md)Describes the layout of the series, the rereading of old power, the sequence of implementation of the three types of changes and the conditions for their completion.
 
-## Central path check and project restoration
-
-ResearchHarness unified the maintenance of document paths, directory and naming. The assistant performing the research project uses read-only ResearchHarness and its verification portals to restore the public entry point, logic and results of the target project within the permitted range. When it is considered that the error or the rule is too strict, the inspection order, rules, path, reversible evidence and impact are included in the human-oriented report and continue to be independently completed.
-
 ## Variable, weight or task output does not match the selected model
 
 Checks the model identification, physical construction parameters, version of weight, load results and output of task consumption along the official mission entry. The actual selection, construction or reading error is repaired. The Python that normally constructs the entry is used to load the name variant and the corresponding weight, to process a small input and check the output used by the task. Checks the cause of failure with clearly incompatible input. The model directory uses a central layout check. Report on the actual load, still available combination and the resulting impact.

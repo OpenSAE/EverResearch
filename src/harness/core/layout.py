@@ -65,6 +65,11 @@ def component(root, root_modules):
 
 RULES = {
     "base": code_tree("base", rf"base(?:/{NAME})+"),
+    "hydra_plugins": Rules(
+        (r"hydra_plugins", rf"hydra_plugins(?:/{NAME})+"),
+        (rf"hydra_plugins/(?:{NAME}\.py|README\.md)",
+         rf"hydra_plugins(?:/{NAME})+/(?:{CODE}|README\.md)"),
+    ),
     "datasets": component("datasets", "plugins"),
     "models": component("models", "plugins|build"),
     "tasks": component("tasks", "plugins"),
@@ -108,33 +113,43 @@ EXPECTED = {
     "datasets": "use datasets/<Data set or family>/<Optional members>/ Save Data Achieved",
     "doc": "Use a fixed description page, or code,knowledge,environment,experiment Organizational theme",
     "experiment": "use experiment/<Data Set>/<Optional Model>/<Tasks>/<Research use>/ Save Run",
+    "hydra_plugins": "Only by Hydra Auto-discovered plugin source, name root reserved as none __init__.py Table of contents",
     "models": "use models/<Family>/<Optional Series>/ Save model realization",
     "tasks": "use tasks/<Tasks>/<Optional subtasks>/ Save Research Calculator",
     "tests": "use tests/test_<Behaviour>.py or tests/ It’s... product,integration,fixtures Branch",
 }
 
 
-def experiment_rules(root):
+def catalog_names(path):
+    text = path.read_text(encoding="utf-8")
+    try:
+        config = tomllib.loads(text) if path.suffix == ".toml" else yaml.safe_load(text)
+    except (ValueError, yaml.YAMLError):
+        return {}
+    catalogs = config.get("catalogs") if isinstance(config, dict) else None
+    if not isinstance(catalogs, dict):
+        return {}
+    return {
+        role: [name for name in entries if isinstance(name, str)]
+        for role, entries in catalogs.items()
+        if role in COMPONENTS and isinstance(entries, dict)
+    }
+
+
+def experiment_rules(root, *, remember=None):
     catalogs = {}
     for suffix in ("yaml", "yml", "json", "toml"):
         main_config = root / f"conf/config.{suffix}"
         if main_config.is_file():
-            text = main_config.read_text(encoding="utf-8")
-            try:
-                config = tomllib.loads(text) if suffix == "toml" else yaml.safe_load(text)
-            except (ValueError, yaml.YAMLError):
-                break
-            if isinstance(config, dict) and isinstance(config.get("catalogs"), dict):
-                catalogs = config["catalogs"]
+            catalogs = (remember(main_config, catalog_names) if remember
+                        else catalog_names(main_config))
             break
 
     def choices(role, nested):
         directory = root / COMPONENTS[role]
         names = set()
         pattern = NAME if nested else PLAIN_NAME
-        entries = catalogs.get(role, {})
-        if isinstance(entries, dict):
-            names.update(name for name in entries if isinstance(name, str) and re.fullmatch(pattern, name))
+        names.update(name for name in catalogs.get(role, ()) if re.fullmatch(pattern, name))
         if directory.is_dir():
             for child in directory.iterdir():
                 if child.is_dir() and re.fullmatch(pattern, child.name):
@@ -201,7 +216,7 @@ def checkable_name(parts, is_directory):
     return True
 
 
-def check_layout(root):
+def check_layout(root, *, remember=None):
     """Return concrete path failures for an absolute or relative project root."""
     root = Path(root).resolve(strict=True)
     if not root.is_dir():
@@ -209,7 +224,7 @@ def check_layout(root):
     configuration_owners = {"base", "scripts", *COMPONENTS.values()}
     rules = dict(RULES)
     if (root / "experiment").is_dir():
-        rules["experiment"] = experiment_rules(root)
+        rules["experiment"] = experiment_rules(root, remember=remember)
     violations = []
     inspected = 0
 

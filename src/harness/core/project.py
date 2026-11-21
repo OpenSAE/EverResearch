@@ -76,20 +76,24 @@ def has_source(path):
                for line in source.splitlines())
 
 
-def implementations(directory):
-    return any(has_source(path) for subdir in directories(directory) for path in visible(subdir))
+def implementations(directory, remember):
+    return any(remember(path, has_source) for subdir in directories(directory) for path in visible(subdir))
 
 
-def has_configuration(directory):
+def populated_configuration(path):
+    try:
+        return bool(read_record(path))
+    except (ValueError, yaml.YAMLError):
+        return False
+
+
+def has_configuration(directory, remember):
     for path in visible(directory):
         if (path.is_symlink() or not path.is_file() or path.stem != "config"
                 or not re.fullmatch(CONFIG, path.name)):
             continue
-        try:
-            if read_record(path):
-                return True
-        except (ValueError, yaml.YAMLError):
-            continue
+        if remember(path, populated_configuration):
+            return True
     return False
 
 
@@ -99,9 +103,24 @@ def markdown_text(path):
     return re.sub(r"<!--.*?-->", "", path.read_text(encoding="utf-8"), flags=re.DOTALL)
 
 
-def check_project(root):
+def environment_documented(path):
+    return any(line.strip() and not line.lstrip().startswith("#")
+               for line in markdown_text(path).splitlines())
+
+
+def environment_linked(path):
+    return bool(re.search(
+        r"\]\(\s*<?(?:\./)?environment/README\.md(?:#[^\s)>]*)?>?(?:\s+[^)]*)?\)",
+        markdown_text(path),
+    ))
+
+
+def check_project(root, *, remember=None):
     """Return the detailed layout report plus mandatory project-wide constraints."""
-    result = check_layout(root)
+    result = check_layout(root, remember=remember)
+    if remember is None:
+        def remember(path, inspect):
+            return inspect(path)
     root = Path(result["project"])
     violations = result["violations"]
     components = {}
@@ -119,7 +138,7 @@ def check_project(root):
 
     base = root / "base"
     if real_directory(base):
-        if not implementations(base):
+        if not implementations(base, remember):
             fail("base", "base_implementation", "Includes official access, distribution or shared operations")
         for directory in directories(base):
             for path in visible(directory):
@@ -135,7 +154,7 @@ def check_project(root):
         members = [
             entry.name for entry in visible(directory)
             if real_directory(entry) and re.fullmatch(NAME, entry.name)
-            and (role != "task" or entry.name != "precheck") and implementations(entry)
+            and (role != "task" or entry.name != "precheck") and implementations(entry, remember)
         ]
         components[role] = members
         if not members:
@@ -145,25 +164,21 @@ def check_project(root):
             fail(name, "component_implementation", expected)
         if role == "task":
             precheck = directory / "precheck"
-            if not real_directory(precheck) or not implementations(precheck):
+            if not real_directory(precheck) or not implementations(precheck, remember):
                 fail("tasks/precheck", "precheck_implementation", "Provision of actual formal precheck")
 
     conf = root / "conf"
-    if real_directory(conf) and not has_configuration(conf):
+    if real_directory(conf) and not has_configuration(conf, remember):
         fail("conf", "configuration_entry", "Provides a list of names and profiles conf/config.<format> Unified Configuration Entry")
 
     environment = root / "doc/environment"
     environment_readme = environment / "README.md"
     if (not real_directory(root / "doc") or not real_directory(environment)
-            or not any(line.strip() and not line.lstrip().startswith("#")
-                       for line in markdown_text(environment_readme).splitlines())):
+            or not remember(environment_readme, environment_documented)):
         fail("doc/environment/README.md", "environment_documentation",
              "Provision of readable environmental statements, recording of installation, operational readiness, validation orders and physical environmental sources")
     index = root / "doc/README.md"
-    if not re.search(
-        r"\]\(\s*<?(?:\./)?environment/README\.md(?:#[^\s)>]*)?>?(?:\s+[^)]*)?\)",
-        markdown_text(index),
-    ):
+    if not remember(index, environment_linked):
         fail("doc/README.md", "environment_navigation", "Presented to environment/README.md Local Markdown Link")
 
     code_roots = [root / name for name in ("base", "tasks", "scripts", "tests")]

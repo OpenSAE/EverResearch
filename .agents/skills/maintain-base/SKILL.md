@@ -21,10 +21,6 @@ From Item `AGENTS.md`,README Follow the command to the source of the configurati
 
 [Base level operating options](references/procedures.md)Description of who calls, under what conditions, and the order of implementation and conditions of completion when new, modified and removed.
 
-## Central path check and project restoration
-
-ResearchHarness unified the maintenance of document paths, directory and naming. The assistant performing the research project uses read-only ResearchHarness and its verification portals to restore the public entry point, logic and results of the target project within the permitted range. When it is considered that the error or the rule is too strict, the inspection order, rules, path, reversible evidence and impact are included in the human-oriented report and continue to be independently completed.
-
 ## Source code and path duties for the base layer
 
 `base/` Indicates project-level responsibilities. `base/<Open Package Name>/` , in package `runtime/`,`api/` or a specific function name organizational code. Move the internal realization of a duplicate one-level job name to the actual responsible module, where the public import continues to be used through a packaged map or thin compatible portal.

@@ -18,7 +18,7 @@ When a common methodology is developed, you can identify the problems, the condi
 
 ### Overall and dedicated maintenance of the project
 
-**Access to an unknown project, inspection or maintenance of the entire scientific project, first using [maintain-project](.agents/skills/maintain-project/SKILL.md).** This skill follows the physical entrance to check the first-level catalogue and cross-component process, defaults on specific maintenance to the applicable parts, and then checks on the modified project as a whole.
+**Use `maintain-project` for onboarding, project-wide checks, and maintenance.** Onboarding checks the project's representative default workflow. Project-wide maintenance shares existing evidence and brings in specialist skills for concrete gaps. Use the project operation guide linked from the managed `AGENTS.md` section for day-to-day changes.
 
 **Direct use of tailor-made skills for individual maintenance.** Datasets, models and missions are used separately `maintain-dataset`,`maintain-model` and `maintain-task`.Cross-component movement and shared operational capability utilization `maintain-base`,Open Parameter Use `maintain-conf`,Single run configuration and experimental operation use `maintain-experiment`,Use of stand-alone scripts, tests, component documents and external files `maintain-optional`.Maintenance of the entire project by `maintain-project` Assignment of specific tasks according to these responsibilities.
 

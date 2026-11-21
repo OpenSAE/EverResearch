@@ -23,10 +23,6 @@ The actual commands, components and configurations are found from the `AGENTS.md
 
 The root of the data that the task actually reads. Pre-processed products and reusable subdivisions are stored in the corresponding data set directory, the locks and temporary storage at the preparation stage follow the root of the data, and atoms are written in the same file system. Original downloads and generic caches from Hugging Face are processed by `huggingface-maintain` download instructions.
 
-## Central path check and project restoration
-
-ResearchHarness unified the maintenance of document paths, directory and naming. The assistant performing the research project uses read-only ResearchHarness and its verification portals to restore the public entry point, logic and results of the target project within the permitted range. When it is considered that the error or the rule is too strict, the inspection order, rules, path, reversible evidence and impact are included in the human-oriented report and continue to be independently completed.
-
 ## Samples, labels, partitions or caches do not match configuration
 
 Take a small batch of samples actually taken by the official mission and return the source, version, label, division and cache key for registration by sample status. Fix the preparation or logic of deviations. Rebuild the affected and renewable cache as agreed by the project and preserve the original input.

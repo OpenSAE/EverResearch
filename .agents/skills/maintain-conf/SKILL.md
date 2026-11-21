@@ -13,10 +13,6 @@ Let the researchers pass through the project. `conf/config.<format>` A descripti
 
 The configuration can be derived from a file, command line, environment variable, or project public interface. `maintain-experiment`.Configure the realization of synthesis, cross-component distribution and operation support by `maintain-base` Collaborative processing. Data, models and the computational meaning of mission parameters are processed together with the corresponding component maintenance skills.
 
-## Central path check and project restoration
-
-ResearchHarness unified the maintenance of document paths, directory and naming. The assistant performing the research project uses read-only ResearchHarness and its verification portals to restore the public entry point, logic and results of the target project within the permitted range. When it is considered that the error or the rule is too strict, the inspection order, rules, path, reversible evidence and impact are included in the human-oriented report and continue to be independently completed.
-
 ## How does tracking parameters work?
 
 From Item README,`doc/` Checks for presets, commands and available formulations, and reads or recovers as needed. Records can omit the actual value, the source and the order of the value to be covered, and the application of the object, unit, range and connection conditions. When multiple access points read the same parameter, you find the position responsible for defining and explaining it.
@@ -57,11 +53,6 @@ When new, move or remove configurations, add simultaneous loads, call commands, 
 ## Parameters have been set but behaviour has not changed
 
 Compares the default, visible overlay and still supported old formulations from the public entry point. Rehabilitate the position of the first loss of the cover, misperception of the old key or deviation from the constant following the actual loading, synthesis and consumption step-by-step effective value. Confirms that the consumer has expected changes from the Python test or the public entry point to the project.
-
-## Validation criteria
-
-- Each affected open parameter follows from the real entry to the last covered and actual consumer. The expected behaviour is verified by omitting the parameter, the visible selection and the affected old formulation. The new option checks the conditions of validity and failure, changing the default value to clarify whether the old usage has changed, and removing the parameters to verify the fixed back and still supported historical usage.
-- The configuration file changes are referred to by reference to actual code attribution, checking paths, prefixes, and project document coverage. Synchronization and doorbars as required by this project are done using the existing configuration synchronisation and check entry items. Read-only access should indicate the order of the coverage observed and the behaviour to be verified.
 
 ## Validation of conduct and delivery
 

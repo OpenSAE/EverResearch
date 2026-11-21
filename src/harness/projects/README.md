@@ -63,6 +63,16 @@ The binding record is kept at `src/project/maintained/<project>/resources.json` 
 
 [Use Example](../../../README.md)Description of the specific calls for installation and commands, applicable to new project access and to the home-based operation of existing projects.
 
+### Daily maintenance and lightweight checks
+
+The managed section of each project's `AGENTS.md` links directly to the [operation guide](operations.md). The guide explains how to classify a request, choose existing paths, implement the change, and verify and finish the work. Use it before editing files or launching commands that generate output.
+
+Opt in to lightweight checks with `rh projects apply <project-id> --lightweight-checks on`. The choice persists locally and can be changed with `--lightweight-checks off`. Without the opt-in, checks follow the current task's authorization. Use `layout check` for local path changes, and choose `project check` or the maintenance index for a project-wide check. Reuse evidence for repeated checks against the same project state.
+
+For repeated maintenance with permission to write the central index, run `rh projects maintenance <project-root>`. It reports added, modified, and removed paths, prior findings, and whether the structure check was reused. It stores file metadata and derived check results in `.workspace/harness/projects/maintenance/`. Unchanged files can reuse their previous findings. A matching tree and checker reuse the whole report, subject to directory symlinks. Use `--fresh` to force a new check. The independent `rh projects project check <project-root>` remains a read-only option.
+
+Use `--record <JSON-file>` to replace the maintenance notes with `entrypoints`, `issues`, and `evidence` lists. `--limit` controls the number of items per summary section. Verify a prior run's command, effective settings, data, weights, and environment before treating it as evidence for current behavior.
+
 <a id="project-layout"></a>
 
 ## Layout and file responsibilities
@@ -231,17 +241,11 @@ The data sets and models in the experimental path are functional. When the proje
 
 The project's dependency list is placed in the official position, and the interpreter binds and installs the entrance ResearchHarness.Hugging Face Downloads and General Caches By Local Client or `huggingface-maintain` task directory processing. Data conversion results and reusable caches are attributed to the corresponding data root.
 
-### The rules are drawn from what project experience.
+### How the templates apply the directory rules
 
-| Project and actual basis | Approach used | Retain Item Selection |
-| --- | --- | --- |
-| For SAEBase `saebase/registry.py`, `runner.py`, `conf/config.yaml` | The components are configured with the same marking, distributed at the entrance, and the specific components achieve actual behaviour. | Multiple components need to be used in the registration form. A single classification template can be called directly to three components. |
-| SAEBase It's... CI,`tests/product/`,`tests/precheck/` and `tests/integration/` | Group by physical check of objects and operating conditions. There are existing CIs that use different groups to locate mission behaviour, precheck and central access checks. | The project is validated on a risk basis and on the basis of available callers, the test catalogue is available and dedicated clusters are established in line with the actual needs of the project. |
-| SAEBase `saebase/runtime/experiment_results.py` and Symselect `experiment/symselect/active_run.json` | A fixed result entry is given to the follow-up assistant. The former can read the single operation and product by list, while the latter locates the current trajectory, configuration and reporting. | The additional dimensions of the running directory, the current running index and historical sources are registered by the project. |
-| SpatialPheno `tasks/workflows.py`, `conf/workflow/breast_transformer.yaml` and `models/fusion/classifier.py` | The name command locates specific tasks and formulations. | The current workflow configuration can be used when an operation has multiple steps. The effective configuration of the operation is saved with the result. |
-| Visual Novel `skills/`, `examples/` and `scripts/validate_repo.py` | The division of responsibilities by actual delivery, the examination of examples of counterpart skills and works, and the protection of their existing discovery pathways. | Skills products can register their own main structure. |
+CUB selects data, models, and tasks through `conf/config.yaml`. Its runner connects those components to precheck, and its result reader opens saved records. SAM 2 keeps image segmentation and video tracking in separate named tasks with separate behavior tests.
 
-Each rule describes the person responsible, the conditions of access and the access to which it is read, and maintains a shared and long-term value check of multiple actual callers.
+[CUB engineering examples](templates/cub/doc/code/development/engineering.md) trace implementation and result readback through actual template files. Use them when applying the [operation guide](operations.md) to a feature request.
 
 <a id="project-execution"></a>
 

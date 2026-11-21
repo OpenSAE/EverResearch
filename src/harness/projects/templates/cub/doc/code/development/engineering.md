@@ -18,6 +18,13 @@ The common requirements of the agreement are presented to your superiors. projec
 | Modify Run Resource Settings | runtime/config.py with the selected running formula | Query for actual equipment, dependence and thread settings in the running list |
 | Adjust Results Formatting | runtime/records.py and the reading list entrance | Confirms the read conditions of the caller against the saved list and inspect output |
 
+## Example request: Add per-class accuracy to the classification report
+
+1. Trace `python -m cub_template run` through `conf/config.yaml` and `tasks/classification/task.py` to the evaluation in `operation.py`. The request extends the existing task and result, so it belongs with the classification implementation.
+2. In the final evaluation, collect correct predictions and example counts by label. Keep the overall accuracy and loss. Use the existing `run.report("evaluation", ...)` call so the run manifest continues to identify `reports/evaluation.json`.
+3. Check the computation with fixed labels and predictions. Two classes with counts of two and one, and one correct prediction each, should report one half and one respectively. Decide how to represent classes absent from the batch. Add a focused regression if the assertion has lasting value. When authorized, run the existing single-epoch synthetic recipe and use `inspect` to locate and read back the report.
+4. Update `doc/tasks.md` with the metric definition and `doc/experiment.md` with the readback instructions. This is an implementation example. The current template reports aggregate metrics.
+
 ## Maintenance skills matching hands-on operations
 
 When checking the template as a whole, you follow the configuration, component, precheck and results from the README official command. After access to ResearchHarness, the whole project is checked at `maintain-project`, the functional review of the assigned code is reviewed at `maintain-code`, the open parameter changes are used at `maintain-conf`, and the running and results review is reviewed at `maintain-experiment`. The following actions indicate where each starts from the template.

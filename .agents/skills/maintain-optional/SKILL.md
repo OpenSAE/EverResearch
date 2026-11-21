@@ -20,10 +20,6 @@ For adding, modifying or removing independent scripts, tests, documents, and ext
 
 [Asset-to-needs operating programme](references/procedures.md)Read the corresponding section based on this asset type.
 
-## Central path check and project restoration
-
-ResearchHarness unified the maintenance of document paths, directory and naming. The assistant performing the research project uses read-only ResearchHarness and its verification portals to restore the public entry point, logic and results of the target project within the permitted range. When it is considered that the error or the rule is too strict, the inspection order, rules, path, reversible evidence and impact are included in the human-oriented report and continue to be independently completed.
-
 ## Validation criteria
 
 - When new, moved or restructured long-term resources, `rh projects layout check <project-root>` is called to check the location of resource groups and files, then read-in and produce along user or dedicated scripts. Synchronize the source, version and update method when changing external files with a recurrence value.
