@@ -20,9 +20,11 @@ Use this skill when onboarding an unfamiliar repository, reviewing a whole proje
 3. Run `rh projects project check <project-root>` as the first structural check for an identified project. Record the actual paths, rules, and expected locations. Recheck the full tree after changes. Layout passes when the command returns zero with an empty `violations` list. Review any `directory_reviews` entries by checking their responsibilities and callers.
 4. Trace representative public entry points through effective configuration, dataset selection and reading, model construction, task dispatch, precheck, result writing, and readback. Trace active reports backward to their originating commands and inputs. Use [project organization](references/project-organization.md) to identify actual owners and plan migrations.
 
+<a id="shared-project-guidelines"></a>
+
 ## Lay out the code and configuration
 
-Follow the [project layout rules](../../../src/harness/projects/LAYOUT.md), the [engineering protocol](../../../src/harness/projects/PROTOCOL.md), and the [documentation guide](../../../src/harness/projects/DOCUMENTATION.md). The [CUB template](../../../src/harness/projects/template/README.md) demonstrates an entry point, components, prechecks, and run records. Apply the current rules where the template differs.
+Follow the [project layout rules](../../../src/harness/projects/README.md#project-layout), the [engineering protocol](../../../src/harness/projects/README.md#project-execution), and the [documentation guide](../../../src/harness/projects/README.md#project-documentation). The [CUB template](../../../src/harness/projects/template/README.md) demonstrates an entry point, components, prechecks, and run records. Apply the current rules where the template differs.
 
 - Give the project root a purpose-driven PascalCase name with two or three words and at least one complete English word. Name project-owned files and directories after their jobs with underscores between words where needed. Reserve version digits for real data or model identities and preserve names owned by frameworks and upstream packages.
 - Provide physical top-level `base/`, `datasets/`, `models/`, `tasks/`, and `conf/` directories. Put shared interfaces, dispatch, and runtime code in `base/`. Give each research component its own actual implementation in the corresponding directory. Put automatic startup diagnosis in `tasks/precheck/` and implement research computation in separately named tasks. Have public commands load `conf/config.<format>`.

@@ -37,7 +37,7 @@ def command(workspace, capsys):
 
 
 def test_shared_skills_preserve_project_content(command, workspace):
-    _, project, central_skill = workspace
+    root, project, central_skill = workspace
     own = project / ".agents/skills/local"
     own.mkdir(parents=True)
     agents = project / "AGENTS.md"
@@ -48,12 +48,31 @@ def test_shared_skills_preserve_project_content(command, workspace):
     linked = command("apply", "example")
     assert linked["skills"] == {"example": True}
     assert (own.parent / "example").resolve() == central_skill
+    assert (own.parent / "researchharness/SKILL.md").read_bytes() == (
+        Path(__file__).with_name("researchharness.skill.md.in").read_bytes()
+    )
     command("apply", "example")
     assert agents.read_text().count("<!-- researchharness:projects -->") == 1
     assert agents.read_text().startswith("# Project instructions\n")
     assert command("set", "example", "--skills", "off")["skills"] == {"example": False}
+    assert (root / "src/project/maintained/example/project.yaml").is_file()
     assert own.is_dir()
     assert client.read_text() == "# Existing client settings\n"
+
+
+def test_legacy_project_records_remain_readable(command, workspace):
+    root, _, _ = workspace
+    old = root / "src/project/example"
+    old.mkdir(parents=True)
+    (old / "project.yaml").write_text("project_id: example\nskills: false\n")
+    (old / "resources.json").write_text('{"data": {}, "python": null}')
+    assert command("status", "example")["settings"] == {"skills": False}
+    assert command("resources", "example") == {"data": {}, "python": None}
+    current = root / "src/project/maintained/example"
+    current.parent.mkdir()
+    old.rename(current)
+    assert command("status", "example")["settings"] == {"skills": False}
+    assert command("resources", "example") == {"data": {}, "python": None}
 
 
 def test_run_uses_bound_python_data_and_project(command, workspace, tmp_path):
@@ -95,6 +114,7 @@ def test_review_pins_export_and_keeps_other_versions_selectable(command, tmp_pat
     html.write_bytes(first)
     add = ("structure", "add", "example", str(html))
     a = command(*add, "--revision", "commit-a", "--scope", "project root")
+    assert Path(a["page"]).parts[-7:-3] == ("src", "project", "maintained", "example")
     html.write_text("<!doctype html><title>Second export</title>")
     b = command(*add, "--revision", "commit-b", "--scope", "src")
     assert Path(a["page"]).read_bytes() == first

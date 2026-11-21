@@ -396,7 +396,7 @@ def test_direct_module_transfer_completion_and_failure(tmp_path, folder):
     env = {**os.environ, "RCLONE_CONFIG": str(config)}
     remote = "localtest:" + str(tmp_path / "bucket" / folder / "sample.txt").lstrip("/")
     # The local backend resolves this relative remote path from filesystem root.
-    env["PYTHONPATH"] = str(Path(__file__).resolve().parents[2])
+    env["PYTHONPATH"] = str(Path(__file__).resolve().parents[3])
     base = [sys.executable, "-m", "harness.utils.transfer.b2"]
     receipt = tmp_path / "upload.json"
     def invoke(action, local, *extra):

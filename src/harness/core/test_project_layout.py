@@ -10,7 +10,7 @@ import shutil
 from harness.cli import main
 
 
-TEMPLATE = Path(__file__).resolve().parents[1] / "src/harness/projects/template"
+TEMPLATE = Path(__file__).resolve().parents[1] / "projects/template"
 
 
 def check(root, capsys, status):

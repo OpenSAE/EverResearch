@@ -1,6 +1,0 @@
-# Purpose and main function: Display in the skills interface GitHub Publish name and published use of.
-# Scope of application: list of skills to support the configuration; actual scope of implementation determined by the user ’ s posting assignment.
-interface:
-  display_name: "GitHub Publish"
-  short_description: "Copy the selected directory or file to Skill Inside, maintain the original directory, prepare for discrepancies and release to GitHub"
-  default_prompt: "Please. $github-publish Help me determine the scope and target of the release. Skill Prepares a copy and displays changes within, and the original directory remains unchanged."

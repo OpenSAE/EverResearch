@@ -17,7 +17,7 @@ def folder(harness, project_id):
     project_id = identity(project_id)
     if project_id not in harness.bindings():
         raise ProjectError(f"Projects not yet registered:{project_id}")
-    return f"src/project/{project_id}/structure"
+    return (harness.project_record(project_id) / "structure").relative_to(harness.root).as_posix()
 
 
 def register(harness, project_id, html, revision, scope):

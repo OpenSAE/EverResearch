@@ -18,7 +18,7 @@ DATA_REFERENCE = re.compile(r"\{data:([a-z0-9][a-z0-9_-]{0,79})\}")
 
 
 def binding_path(harness, project_id):
-    return harness.resolve(f"src/project/{identity(project_id)}/resources.json")
+    return harness.project_record(project_id, "resources.json")
 
 
 def stored_bindings(harness, project_id):

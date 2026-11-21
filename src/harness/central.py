@@ -61,6 +61,18 @@ class HarnessContext:
             raise ProjectError(f"Project has not bound the path of the machine:{project_id}")
         return self.source_directory(self.bound_path(raw))
 
+    def project_record(self, project_id: str, filename: str | None = None) -> Path:
+        """Locate the local record, including an existing record from the old layout."""
+        name = identity(project_id)
+        current = self.resolve(f"src/project/maintained/{name}")
+        if not current.exists() and name != "maintained":
+            legacy = self.resolve(f"src/project/{name}")
+            if legacy.is_dir():
+                current = legacy
+        if filename is None:
+            return current
+        return self.resolve((current / filename).relative_to(self.root).as_posix())
+
     def source_directory(self, value: str | Path) -> Path:
         path = Path(value).expanduser().resolve(strict=True)
         if not path.is_dir() or path == self.root:

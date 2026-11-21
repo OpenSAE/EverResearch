@@ -29,7 +29,7 @@ include = ["harness*"]
 namespaces = false
 
 [tool.setuptools.package-data]
-harness = ["projects/*.yaml", "projects/*.md", "core/*.md", "utils/*.md", "utils/transfer/*.md"]
+harness = ["projects/*.yaml", "projects/*.md", "projects/*.md.in", "core/*.md", "utils/*.md", "utils/transfer/*.md"]
 
 [tool.ruff]
 line-length = 100
@@ -39,5 +39,9 @@ target-version = "py311"
 select = ["E4", "E7", "E9", "F"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = [
+    "src/harness/core",
+    "src/harness/projects/test_project_operations.py",
+    "src/harness/utils",
+]
 pythonpath = ["src"]

@@ -42,8 +42,10 @@ Use the project's own precheck to verify a specific data, model, and task combin
 ## Learn by example
 
 - [CUB-200 classification template](src/harness/projects/template/README.md) shows how configuration, data loading, model construction, precheck, and experiment records fit together. Its offline example uses synthetic inputs. The CUB-200 recipe uses a locally supplied dataset.
-- [Project layout](src/harness/projects/LAYOUT.md) and [engineering protocol](src/harness/projects/PROTOCOL.md) describe the conventions used in project reviews.
+- [Project layout](src/harness/projects/README.md#project-layout) and [engineering protocol](src/harness/projects/README.md#project-execution) describe the conventions used in project reviews.
 - [Workspace operations](src/harness/projects/README.md) covers shared skills, local resources, and reviewable ExtractStructure maps.
+
+Project settings, resource bindings, and reviewed structure maps are stored locally under `src/project/maintained/`.
 
 ## License
 

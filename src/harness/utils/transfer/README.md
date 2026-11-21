@@ -211,7 +211,7 @@ All receipts use a new path and are kept in their original language.
 
 ## Optional tool check
 
-The tool check is selected as a needs-based operation, only `python -m pytest -q tests/test_transfer.py` if the user so requests. This test uses local synthetic files and temporary local directory connections, which are limited to local testing resources.
+The tool check is selected as a needs-based operation, only `python -m pytest -q src/harness/utils/transfer/test_transfer.py` if the user so requests. This test uses local synthetic files and temporary local directory connections, which are limited to local testing resources.
 
 
 ## Whole & Sub function

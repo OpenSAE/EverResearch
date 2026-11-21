@@ -30,7 +30,7 @@ END = "<!-- /researchharness:projects -->"
 def settings(harness, project_id):
     """Read the explicit user choice and check its existing project binding."""
     project_id = identity(project_id)
-    path = harness.resolve(f"src/project/{project_id}/project.yaml")
+    path = harness.project_record(project_id, "project.yaml")
     root = harness.project_root(project_id)
     value = yaml.safe_load(path.read_text()) if path.exists() else {"skills": True}
     if (
@@ -67,6 +67,7 @@ def guidance(harness, project_id, value, directory, desired):
     if project_root.is_relative_to(harness.workspace):
         root = Path(os.path.relpath(root, project_root))
     skills = "enabled" if value["skills"] else "disabled"
+    project_notes = harness.project_record(project_id).relative_to(harness.root) / "README.md"
     skill_path = directory.relative_to(project_root)
     skill_entry = f"See `{skill_path}/researchharness/SKILL.md` for project setup."
     if directory.name == "researchharness-skills" and desired:
@@ -76,7 +77,7 @@ def guidance(harness, project_id, value, directory, desired):
 ## ResearchHarness workspace integration
 
 This project's README, requirements, and public commands describe how to install, configure, and run it independently.
-This workspace registers the project as `{project_id}` and uses ResearchHarness at `{root}`, with shared skills {skills}. Resolve relative paths from the project root. The central checkout may provide project notes in `src/project/{project_id}/README.md`.
+This workspace registers the project as `{project_id}` and uses ResearchHarness at `{root}`, with shared skills {skills}. Resolve relative paths from the project root. The central checkout may provide project notes in `{project_notes}`.
 Follow the project's actual entry points and callers when maintaining it.
 Follow the project's GitHub workflow and the current authorization for code reviews and plans.
 Researchers set goals and give feedback. Assistants make engineering decisions within the authorized scope.
@@ -173,7 +174,7 @@ def apply_skills(harness, project_id, changes):
             link.unlink()
             link.symlink_to(destination, target_is_directory=True)
     save_bytes(agent, updated_agent.encode(), source=__file__)
-    save_bytes(entry, (Path(__file__).parent / "researchharness.skill.md").read_bytes(), source=__file__)
+    save_bytes(entry, Path(__file__).with_name("researchharness.skill.md.in").read_bytes(), source=__file__)
     if changes:
         if path.exists():
             text = re.sub(r"^skills:.*$", f"skills: {str(value['skills']).lower()}",

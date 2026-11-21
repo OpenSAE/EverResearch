@@ -1,0 +1,26 @@
+---
+name: researchharness
+description: Find this project's shared maintenance skills, local data and Python bindings, and saved structure maps.
+---
+
+# Maintain a project with ResearchHarness
+
+## Purpose
+
+Use the project's workspace connection to locate shared skills, local resources and reviewed structure maps. Record actual project experience where it can inform future maintenance.
+
+## Scope
+
+Use this skill in projects connected to ResearchHarness. The project itself provides its installation instructions, dependency declarations, configuration and public entry points.
+
+- Read the project's managed connection section for its ResearchHarness location and project ID. Resolve the location relative to the project root. Query it with `rh projects --harness-root <harness-root> status <project-id>`. Use `apply <project-id>` for requested synchronization and `set <project-id> --skills on` or `--skills off` for requested settings changes.
+- Use `rh projects resources <project-id>` and `rh projects bind <project-id>` to read or change local data and Python selections. New records are stored in ResearchHarness under `src/project/maintained/<project-id>/resources.json`. Dependency installation and project launch use the same binding.
+- Use `rh projects structure list <project-id>` and `rh projects structure show <project-id> <artifact-id>` to find saved structure maps and their review decisions. The same project record stores the page, provenance and review. Follow the project's GitHub process for code review, plans and collaboration decisions.
+- Record project experience using actual entry points, observed problems, outcomes and reusable practices. Use `maintain-knowledge` for durable research notes when available.
+
+## Choose a maintenance skill
+
+- Use `maintain-project` for a new project connection, whole-project review or cross-component maintenance. Start from the real commands and verify the workflow through the public entry point.
+- Use `maintain-dataset`, `maintain-model` or `maintain-task` for individual components. Use `maintain-base` for dispatch and shared runtime, `maintain-conf` for public parameter changes, and `maintain-experiment` for runs and their results. Use `maintain-optional` for scripts, tests, documentation and external assets.
+- Read the selected skill's `SKILL.md` from the actual project skill directory. The central checkout's `src/harness/projects/README.md` covers connection, layout, execution and documentation.
+- Use `maintain-tmp` for one-off engineering work. Use `rh projects install` for project dependencies, keep derived data and reusable caches with the dataset, and use the local Hugging Face client configuration for downloads.
