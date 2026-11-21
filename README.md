@@ -98,11 +98,11 @@ Whether you're starting a new experiment, adding a dataset, switching models, or
 
 **Your research keeps moving. Your codebase should keep up.**
 
-## Explore More
+## Future Development
 
-- **[Skills](.agents/skills/)** — Reusable workflows for research project maintenance
-- **[Example Project](src/harness/projects/template/README.md)** — A complete research project demonstrating the workflow
-- **[Documentation](src/harness/projects/README.md)** — Setup, organization, experiment records, and advanced usage
+- **Long-Horizon Research** — Set ambitious research goals and let AI agents autonomously plan, execute, and refine research workflows.
+- **Knowledge Interface** — Help AI agents understand scientific concepts, reason with domain knowledge, and actively contribute to research discussions and paper writing.
+- **Research RSI** — Enable AI agents to progressively improve their research capabilities through domain knowledge, experimental feedback, and human supervision.
 
 ## License
 
