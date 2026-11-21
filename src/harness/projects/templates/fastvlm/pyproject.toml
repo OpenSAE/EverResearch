@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llava"
+version = "1.2.2.post1"
+description = "Towards GPT-4 like large language and visual assistant."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+]
+dependencies = [
+    "torch==2.6.0", "torchvision==0.21.0",
+    "transformers==4.48.3", "tokenizers==0.21.0", "sentencepiece==0.1.99", "shortuuid",
+    "accelerate==1.6.0", "peft>=0.10.0,<0.14.0", "bitsandbytes",
+    "pydantic", "markdown2[all]", "numpy==1.26.4", "scikit-learn==1.2.2",
+    "gradio==5.11.0", "requests", "uvicorn", "fastapi",
+    "einops==0.6.1", "einops-exts==0.0.4", "timm==1.0.15",
+    "coremltools==8.2"
+]
+
+[project.optional-dependencies]
+train = ["deepspeed==0.13.1", "ninja", "wandb"]
+build = ["build", "twine"]
+
+[project.scripts]
+fastvlm = "fastvlm.commands:main"
+
+[tool.setuptools]
+packages = [
+    "fastvlm", "fastvlm.conf", "fastvlm.datasets", "fastvlm.datasets.user_image", "fastvlm.datasets.supervised",
+    "fastvlm.models", "fastvlm.models.fast_vision", "fastvlm.tasks",
+    "fastvlm.tasks.image_prompt", "fastvlm.tasks.precheck",
+    "llava", "llava.model", "llava.model.configuration", "llava.model.language_model",
+    "llava.model.multimodal_encoder", "llava.model.mobile_clip",
+    "llava.model.multimodal_projector", "llava.serve", "llava.serve.samples", "llava.serve.cli", "llava.train", "llava.train.train_qwen",
+    "model_export"
+]
+
+[tool.setuptools.package-dir]
+"fastvlm" = "base/fast_vlm"
+"fastvlm.conf" = "conf"
+"fastvlm.datasets" = "datasets"
+"fastvlm.models" = "models"
+"fastvlm.tasks" = "tasks"
+"llava" = "base/language_vision"
+"llava.model" = "models/model"
+"llava.model.configuration" = "conf/models/model"
+"llava.serve" = "tasks/serve"
+"llava.serve.samples" = "assets/examples/serving/files"
+"llava.train" = "tasks/train"
+"llava.train.train_qwen" = "tasks/train/qwen_model"
+"llava.serve.cli" = "tasks/serve/interactive"
+"model_export" = "tasks/image_prompt"
+
+[tool.setuptools.package-data]
+"fastvlm.conf" = ["config.json"]
+"llava.model.configuration" = ["config.json"]
+"llava.serve.samples" = ["*.jpg"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

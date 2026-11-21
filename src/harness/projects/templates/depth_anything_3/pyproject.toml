@@ -1,0 +1,178 @@
+[build-system]
+requires = ["hatchling>=1.25", "hatch-vcs>=0.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "depth-anything-3"
+version = "0.0.0"
+description = "Depth Anything 3"
+readme = "README.md"
+requires-python = ">=3.9, <=3.13"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Your Name" }]
+
+dependencies = [
+    "pre-commit",
+    "addict",
+    "trimesh",
+    "torch>=2",
+    "torchvision",
+    "einops",
+    "huggingface_hub",
+    "imageio",
+    "numpy<2",
+    "opencv-python",
+    "xformers",
+    "open3d",
+    "fastapi",
+    "uvicorn",
+    "requests",
+    "pillow",
+    "omegaconf",
+    "evo",
+    "e3nn",
+    "plyfile",
+    "pillow_heif",
+    "safetensors",
+    "matplotlib",
+    "pydantic>=2",
+    "scipy",
+    "scikit-learn",
+    "tqdm",
+    "moviepy==1.0.3",
+    "typer>=0.9.0",
+    "pycolmap",
+]
+
+[project.optional-dependencies]
+app = ["gradio>=5", "pillow>=9.0"] # requires that python3>=3.10
+gs = ["gsplat @ git+https://github.com/nerfstudio-project/gsplat.git@0b4dddf04cb687367602c01196913cde6a743d70"]
+all = ["depth-anything-3[app,gs]"]
+
+
+[project.scripts]
+da3 = "depth_anything_3.cli:app"
+da3-streaming = "depth_anything_3.streaming:main"
+
+[project.urls]
+Homepage = "https://github.com/ByteDance-Seed/Depth-Anything-3"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.wheel]
+only-include = ["base/depth_anything"]
+exclude = [
+  "/base/depth_anything/helpers",
+  "/base/depth_anything/interface_web",
+  "/base/depth_anything/interface.py",
+  "/base/depth_anything/config.py",
+  "/base/depth_anything/commands.py",
+  "/base/depth_anything/services/server.py",
+]
+sources = {"base/depth_anything" = "depth_anything_3"}
+dev-mode-dirs = [".package"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"models/model" = "depth_anything_3/model"
+"models/model/depth_network.py" = "depth_anything_3/model/da3.py"
+"models/backbone" = "depth_anything_3/model/dinov2"
+"models/backbone/encoder.py" = "depth_anything_3/model/dinov2/dinov2.py"
+"tasks/evaluation/bench" = "depth_anything_3/bench"
+"datasets/benchmark/dataset.py" = "depth_anything_3/bench/dataset.py"
+"datasets/benchmark/datasets" = "depth_anything_3/bench/datasets"
+"datasets/media/input_handlers.py" = "depth_anything_3/services/input_handlers.py"
+"datasets/media/processing" = "depth_anything_3/utils/io"
+"datasets/media/streaming_frames.py" = "depth_anything_3/streaming_frames.py"
+"tasks/inference/output_processor.py" = "depth_anything_3/utils/io/output_processor.py"
+"tasks/inference/export" = "depth_anything_3/utils/export"
+"tasks/inference/service.py" = "depth_anything_3/services/inference_service.py"
+"tasks/inference/operation.py" = "depth_anything_3/inference_task.py"
+"tasks/precheck/gate.py" = "depth_anything_3/precheck.py"
+"tasks/streaming" = "depth_anything_3/streaming_task"
+"conf" = "depth_anything_3/conf"
+
+"base/depth_anything/helpers/drawing/camera_trj_helpers.py" = "depth_anything_3/utils/camera_trj_helpers.py"
+
+"base/depth_anything/helpers/drawing/gsply_helpers.py" = "depth_anything_3/utils/gsply_helpers.py"
+
+"base/depth_anything/helpers/drawing/principal_components.py" = "depth_anything_3/utils/pca_utils.py"
+
+"base/depth_anything/helpers/drawing/sh_helpers.py" = "depth_anything_3/utils/sh_helpers.py"
+
+"base/depth_anything/helpers/drawing/visualize.py" = "depth_anything_3/utils/visualize.py"
+
+"base/depth_anything/helpers/geometry_helpers/alignment.py" = "depth_anything_3/utils/alignment.py"
+
+"base/depth_anything/helpers/geometry_helpers/geometry.py" = "depth_anything_3/utils/geometry.py"
+
+"base/depth_anything/helpers/geometry_helpers/pose_align.py" = "depth_anything_3/utils/pose_align.py"
+
+"base/depth_anything/helpers/geometry_helpers/ray_utils.py" = "depth_anything_3/utils/ray_utils.py"
+
+"base/depth_anything/interface.py" = "depth_anything_3/api.py"
+"base/depth_anything/config.py" = "depth_anything_3/cfg.py"
+"base/depth_anything/commands.py" = "depth_anything_3/cli.py"
+"base/depth_anything/services/server.py" = "depth_anything_3/services/backend.py"
+"base/depth_anything/interface_web/gradio_interface.py" = "depth_anything_3/app/gradio_app.py"
+"base/depth_anything/interface_web/modules/helpers.py" = "depth_anything_3/app/modules/utils.py"
+"base/depth_anything/interface_web" = "depth_anything_3/app"
+"base/depth_anything/helpers" = "depth_anything_3/utils"
+"datasets/benchmark/datasets/dtu_reader.py" = "depth_anything_3/bench/datasets/dtu.py"
+"datasets/benchmark/datasets/dtu_pose_reader.py" = "depth_anything_3/bench/datasets/dtu64.py"
+"datasets/benchmark/datasets/eth_reader.py" = "depth_anything_3/bench/datasets/eth3d.py"
+"datasets/benchmark/datasets/hiroom_reader.py" = "depth_anything_3/bench/datasets/hiroom.py"
+"datasets/benchmark/datasets/scannet_reader.py" = "depth_anything_3/bench/datasets/scannetpp.py"
+"datasets/benchmark/datasets/seven_scenes.py" = "depth_anything_3/bench/datasets/sevenscenes.py"
+"models/backbone/layers/dense_layer.py" = "depth_anything_3/model/dinov2/layers/mlp.py"
+"models/backbone/layers/gated_feedforward.py" = "depth_anything_3/model/dinov2/layers/swiglu_ffn.py"
+"models/model/prediction_head.py" = "depth_anything_3/model/dpt.py"
+"models/model/dual_prediction_head.py" = "depth_anything_3/model/dualdpt.py"
+"models/model/gaussian_prediction_head.py" = "depth_anything_3/model/gsdpt.py"
+"models/model/helpers" = "depth_anything_3/model/utils"
+"tasks/evaluation/bench/helpers.py" = "depth_anything_3/bench/utils.py"
+"tasks/inference/export/colmap_writer.py" = "depth_anything_3/utils/export/colmap.py"
+"tasks/inference/export/glb_writer.py" = "depth_anything_3/utils/export/glb.py"
+"tasks/inference/export/npz_writer.py" = "depth_anything_3/utils/export/npz.py"
+"tasks/inference/export/helpers.py" = "depth_anything_3/utils/export/utils.py"
+"tasks/streaming/solver" = "depth_anything_3/streaming_task/fastloop"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/README.md",
+  "/pyproject.toml",
+  "/base",
+  "/conf",
+  "/datasets",
+  "/models",
+  "/tasks",
+  "/.package",
+  "/requirements_streaming.txt",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.mypy]
+plugins = ["jaxtyping.mypy_plugin"]
+
+[tool.black]
+line-length = 99
+target-version = ['py37', 'py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
+exclude = '''
+/(
+  | \.git
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+known_third_party = ["bson","cruise","cv2","dataloader","diffusers","omegaconf","tensorflow","torch","torchvision","transformers","gsplat"]
+known_first_party = ["common", "data", "models", "projects"]
+sections = ["FUTURE","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
+skip_gitignore = true
+line_length = 99
+no_lines_before="THIRDPARTY"

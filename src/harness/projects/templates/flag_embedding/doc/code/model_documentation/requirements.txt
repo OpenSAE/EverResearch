@@ -1,0 +1,7 @@
+sphinx
+myst-nb
+myst_parser
+sphinx-design
+pydata-sphinx-theme
+sphinxcontrib-googleanalytics
+# furo

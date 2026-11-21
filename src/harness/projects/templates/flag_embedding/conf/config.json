@@ -1,0 +1,12 @@
+{
+  "evaluation": {
+    "splits": "test",
+    "output_dir": "./search_results",
+    "search_top_k": 1000,
+    "rerank_top_k": 100,
+    "k_values": [1, 3, 5, 10, 100, 1000],
+    "eval_output_method": "markdown",
+    "eval_output_path": "./eval_results.md",
+    "eval_metrics": ["ndcg_at_10", "recall_at_10"]
+  }
+}

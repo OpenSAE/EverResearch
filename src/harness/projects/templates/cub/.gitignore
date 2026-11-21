@@ -1,0 +1,6 @@
+# Local input, running product and development cache.
+data/
+experiment/
+__pycache__/
+*.egg-info/
+.pytest_cache/

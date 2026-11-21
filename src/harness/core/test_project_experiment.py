@@ -14,7 +14,7 @@ import yaml
 from harness.cli import main
 
 
-TEMPLATE = Path(__file__).resolve().parents[1] / "projects/template"
+TEMPLATE = Path(__file__).resolve().parents[1] / "projects/templates/cub"
 
 
 def prepare_saved_runs(root):

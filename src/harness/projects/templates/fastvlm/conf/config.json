@@ -1,0 +1,26 @@
+{
+  "model_path": "data/checkpoints/llava-fastvithd_0.5b_stage3",
+  "model_base": null,
+  "image_file": null,
+  "dataset": "user_image",
+  "prompt": "Describe the image.",
+  "conv_mode": "qwen_2",
+  "temperature": 0.2,
+  "top_p": null,
+  "num_beams": 1,
+  "max_new_tokens": 256,
+  "device": "auto",
+  "subname": "describe_image",
+  "catalogs": {
+    "dataset": {"coco_val": null},
+    "model": {
+      "fast_vision": null,
+      "fast_vision_small_stage2": null,
+      "fast_vision_small_stage3": null,
+      "fast_vision_medium_stage2": null,
+      "fast_vision_medium_stage3": null,
+      "fast_vision_large_stage2": null,
+      "fast_vision_large_stage3": null
+    }
+  }
+}

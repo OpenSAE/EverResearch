@@ -1,0 +1,22 @@
+"""Run the layerwise reranking example with the published preset."""
+
+if __package__:
+    from ..demos.ranking import show_layerwise
+else:
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from demos.ranking import show_layerwise
+
+
+def test_base_multi_devices():
+    show_layerwise(['cuda:3'], automatic=True)
+
+
+if __name__ == '__main__':
+    test_base_multi_devices()
+    
+    print("--------------------------------")
+    print("Expected Output:")
+    print("[1.939453125, -12.71875, -11.78125, 2.189453125]")

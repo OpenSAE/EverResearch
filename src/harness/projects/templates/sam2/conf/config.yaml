@@ -1,0 +1,20 @@
+image:
+  model: sam2.1-hiera-large
+  device: cuda
+  purpose: point_prompt
+recipes:
+  - models/segment_anything/config.yaml
+  - tasks/fine_tuning/config.yaml
+catalogs:
+  dataset:
+    mose: MOSE video object segmentation
+    synthetic_images: In-memory images used for software checks
+  model:
+    sam2_hiera_tiny: sam2 hiera_tiny
+    sam2_hiera_small: sam2 hiera_small
+    sam2_hiera_base_plus: sam2 hiera_base_plus
+    sam2_hiera_large: sam2 hiera_large
+    sam2_1_hiera_tiny: sam2_1 hiera_tiny
+    sam2_1_hiera_small: sam2_1 hiera_small
+    sam2_1_hiera_base_plus: sam2_1 hiera_base_plus
+    sam2_1_hiera_large: sam2_1 hiera_large

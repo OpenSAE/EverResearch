@@ -1,0 +1,199 @@
+# Named Lightning recipes and experiment component identities.
+catalogs:
+  dataset:
+    coco: {}
+    coco2017_subset: {}
+    coco_subset: {}
+    o365: {}
+    roboflow: {}
+    synthetic_shapes: {}
+    yolo: {}
+    webdataset: {}
+  model:
+    rfdetr_detection_base: {}
+    rfdetr_keypoint_preview: {}
+    rfdetr_detection_large: {}
+    rfdetr_detection_largedeprecated: {}
+    rfdetr_detection_medium: {}
+    rfdetr_detection_nano: {}
+    rfdetr_segmentation_2xlarge: {}
+    rfdetr_segmentation_large: {}
+    rfdetr_segmentation_medium: {}
+    rfdetr_segmentation_nano: {}
+    rfdetr_segmentation_preview: {}
+    rfdetr_segmentation_small: {}
+    rfdetr_segmentation_xlarge: {}
+    rfdetr_detection_small: {}
+  task:
+    train: {}
+
+recipes:
+  rfdetr_base:
+    model:
+      model_config:
+        class_path: rfdetr.config.RFDETRBaseConfig
+        init_args:
+          num_classes: 80 # set to your dataset class count
+      train_config:
+        class_path: rfdetr.config.TrainConfig
+        init_args:
+          dataset_dir: /data/coco # required: path to your COCO-format dataset
+          output_dir: output/rfdetr_base
+          epochs: 100
+          batch_size: 4
+          num_workers: 4
+          tensorboard: true
+  rfdetr_large:
+    model:
+      model_config:
+        class_path: rfdetr.config.RFDETRLargeConfig
+        init_args:
+          num_classes: 80 # set to your dataset class count
+      train_config:
+        class_path: rfdetr.config.TrainConfig
+        init_args:
+          dataset_dir: /data/coco # required: path to your COCO-format dataset
+          output_dir: output/rfdetr_large
+          epochs: 100
+          batch_size: 2
+          grad_accum_steps: 8 # effective batch size 16
+          num_workers: 4
+          tensorboard: true
+  rfdetr_medium:
+    model:
+      model_config:
+        class_path: rfdetr.config.RFDETRMediumConfig
+        init_args:
+          num_classes: 80 # set to your dataset class count
+      train_config:
+        class_path: rfdetr.config.TrainConfig
+        init_args:
+          dataset_dir: /data/coco # required: path to your COCO-format dataset
+          output_dir: output/rfdetr_medium
+          epochs: 100
+          batch_size: 4
+          num_workers: 4
+          tensorboard: true
+  rfdetr_nano:
+    model:
+      model_config:
+        class_path: rfdetr.config.RFDETRNanoConfig
+        init_args:
+          num_classes: 80 # set to your dataset class count
+      train_config:
+        class_path: rfdetr.config.TrainConfig
+        init_args:
+          dataset_dir: /data/coco # required: path to your COCO-format dataset
+          output_dir: output/rfdetr_nano
+          epochs: 100
+          batch_size: 8
+          num_workers: 4
+          tensorboard: true
+  rfdetr_seg_2xlarge:
+    model:
+      model_config:
+        class_path: rfdetr.config.RFDETRSeg2XLargeConfig
+        init_args:
+          num_classes: 80 # set to your dataset class count
+      train_config:
+        class_path: rfdetr.config.SegmentationTrainConfig
+        init_args:
+          dataset_dir: /data/coco # required: path to your COCO-format dataset
+          output_dir: output/rfdetr_seg_2xlarge
+          epochs: 100
+          batch_size: 1
+          grad_accum_steps: 16 # effective batch size 16
+          num_workers: 4
+          tensorboard: true
+  rfdetr_seg_large:
+    model:
+      model_config:
+        class_path: rfdetr.config.RFDETRSegLargeConfig
+        init_args:
+          num_classes: 80 # set to your dataset class count
+      train_config:
+        class_path: rfdetr.config.SegmentationTrainConfig
+        init_args:
+          dataset_dir: /data/coco # required: path to your COCO-format dataset
+          output_dir: output/rfdetr_seg_large
+          epochs: 100
+          batch_size: 2
+          grad_accum_steps: 8 # effective batch size 16
+          num_workers: 4
+          tensorboard: true
+  rfdetr_seg_medium:
+    model:
+      model_config:
+        class_path: rfdetr.config.RFDETRSegMediumConfig
+        init_args:
+          num_classes: 80 # set to your dataset class count
+      train_config:
+        class_path: rfdetr.config.SegmentationTrainConfig
+        init_args:
+          dataset_dir: /data/coco # required: path to your COCO-format dataset
+          output_dir: output/rfdetr_seg_medium
+          epochs: 100
+          batch_size: 3
+          num_workers: 4
+          tensorboard: true
+  rfdetr_seg_nano:
+    model:
+      model_config:
+        class_path: rfdetr.config.RFDETRSegNanoConfig
+        init_args:
+          num_classes: 80 # set to your dataset class count
+      train_config:
+        class_path: rfdetr.config.SegmentationTrainConfig
+        init_args:
+          dataset_dir: /data/coco # required: path to your COCO-format dataset
+          output_dir: output/rfdetr_seg_nano
+          epochs: 100
+          batch_size: 4
+          num_workers: 4
+          tensorboard: true
+  rfdetr_seg_small:
+    model:
+      model_config:
+        class_path: rfdetr.config.RFDETRSegSmallConfig
+        init_args:
+          num_classes: 80 # set to your dataset class count
+      train_config:
+        class_path: rfdetr.config.SegmentationTrainConfig
+        init_args:
+          dataset_dir: /data/coco # required: path to your COCO-format dataset
+          output_dir: output/rfdetr_seg_small
+          epochs: 100
+          batch_size: 4
+          num_workers: 4
+          tensorboard: true
+  rfdetr_seg_xlarge:
+    model:
+      model_config:
+        class_path: rfdetr.config.RFDETRSegXLargeConfig
+        init_args:
+          num_classes: 80 # set to your dataset class count
+      train_config:
+        class_path: rfdetr.config.SegmentationTrainConfig
+        init_args:
+          dataset_dir: /data/coco # required: path to your COCO-format dataset
+          output_dir: output/rfdetr_seg_xlarge
+          epochs: 100
+          batch_size: 2
+          grad_accum_steps: 8 # effective batch size 16
+          num_workers: 4
+          tensorboard: true
+  rfdetr_small:
+    model:
+      model_config:
+        class_path: rfdetr.config.RFDETRSmallConfig
+        init_args:
+          num_classes: 80 # set to your dataset class count
+      train_config:
+        class_path: rfdetr.config.TrainConfig
+        init_args:
+          dataset_dir: /data/coco # required: path to your COCO-format dataset
+          output_dir: output/rfdetr_small
+          epochs: 100
+          batch_size: 6
+          num_workers: 4
+          tensorboard: true

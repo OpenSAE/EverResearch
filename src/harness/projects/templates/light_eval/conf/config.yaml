@@ -1,0 +1,14 @@
+# Stable path names for documented evaluation datasets, models, and tasks.
+# The result tracker reads these names when it writes or reopens a study.
+catalogs:
+  dataset:
+    gpqa: Idavidrein/gpqa
+    grade_school_math: openai/gsm8k
+    truthful_qa: truthfulqa/truthful_qa
+  model:
+    llama_3_8b_instruct: meta-llama/Meta-Llama-3-8B-Instruct
+    gpt2_transformer: openai-community/gpt2
+  task:
+    diamond_questions: gpqa:diamond
+    math_word_problems: gsm8k
+    multiple_choice: truthfulqa:mc

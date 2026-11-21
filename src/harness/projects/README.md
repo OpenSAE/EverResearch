@@ -12,7 +12,7 @@ Use this guide to onboard, organize, maintain, or review a research project. Eac
 - [Layout and file responsibilities](#project-layout) covers names, directories, and file placement.
 - [Execution and acceptance](#project-execution) covers prechecks, run records, and researcher review.
 - [Project documentation](#project-documentation) describes what each page should contain.
-- The [CUB-200 reference project](template/README.md) shows how configuration, components, prechecks, and saved results work together.
+- The [CUB-200 reference project](templates/cub/README.md) shows how configuration, components, prechecks, and saved results work together.
 
 <a id="project-setup"></a>
 
@@ -219,7 +219,7 @@ The script directory is organized according to the user's operating organization
 | `.researchharness/project.yaml`、`.researchharness/central.json` | When using the respective access function | The project is subject to a central project order. |
 | `.agents/skills/<skill-name>/` | When there are projects or skills-sharing | Each skill provides `SKILL.md`. The project maintains its own skills, which are centrally shared and accessible by a project switch. |
 
-Component identification, catalog and Python files are used in lowcase English to describe their use, and multiple words are underlined. Formal interfaces and upstream original names are used in original form. Time and attempt numbers are used to run identity and archiving. Additional directories are used to specify their conditions of enablement, actual callers and corresponding accesses, and are synchronized with the protocol [the example of the layout of the reference item](template/doc/code/development/layout.md) to compare the changes to the project catalogue and additions.
+Component identification, catalog and Python files are used in lowcase English to describe their use, and multiple words are underlined. Formal interfaces and upstream original names are used in original form. Time and attempt numbers are used to run identity and archiving. Additional directories are used to specify their conditions of enablement, actual callers and corresponding accesses, and are synchronized with the protocol [the example of the layout of the reference item](templates/cub/doc/code/development/layout.md) to compare the changes to the project catalogue and additions.
 
 The project allows a stable match between the public component identifier and the disk spelling. Read the corresponding rules for writing the statement of the oral re-entry project, and run the list to save the actual component identifier. Select the same path from the same component for acceptance.
 
@@ -249,7 +249,7 @@ Each rule describes the person responsible, the conditions of access and the acc
 
 ### Synchronize protocols with reference items
 
-Each time this agreement is amended, the corresponding position in the [reference item](template/README.md)] is maintained at the same time. The project provides a functional CUB-200 classification and project maintenance sample, which applies to the learning layout, the purpose of the certification agreement and the reference establishment project.
+Each time this agreement is amended, the corresponding position in the [reference item](templates/cub/README.md)] is maintained at the same time. The project provides a functional CUB-200 classification and project maintenance sample, which applies to the learning layout, the purpose of the certification agreement and the reference establishment project.
 
 - Syncs the actual directories, entry points, references and layout tables in the templates when the directory or naming rules are updated.
 - Synchronizes the examples of the code, configuration or real product that is responsible for in the template when running, checking or updating the rules for data handover.
@@ -303,7 +303,7 @@ Precheck compares the current configuration with the candidate with the same inp
 
 The report provides the current configuration, candidate configuration, phase costs, benefits, decisions and reasons. The reasons for rejecting a candidate that has not been adopted are used for formal implementation. When recommended by a configuration or registered strategy, the running list records the actual use value. Checks the model, task, input size and environmental conditions that affect the return and correctness before adjusting the results.
 
-The full process is demonstrated by comparing the number of work processes with the reference items. The normal entry is used to pre-screen the performance, report the baseline bottlenecks, and then give a candidate for the formulation. [Example of Engineering Work](template/doc/code/development/engineering.md),For expansive precheck and review results.
+The full process is demonstrated by comparing the number of work processes with the reference items. The normal entry is used to pre-screen the performance, report the baseline bottlenecks, and then give a candidate for the formulation. [Example of Engineering Work](templates/cub/doc/code/development/engineering.md),For expansive precheck and review results.
 
 ### Environmental information
 

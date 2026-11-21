@@ -73,6 +73,8 @@ Then ask your coding agent:
 
 > Review and maintain this research project using ResearchHarness.
 
+The [project templates](src/harness/projects/templates/README.md) include the default CUB classification example and additional references for inference, retrieval, evaluation, and computer vision.
+
 ### One Skill to Coordinate Your Research
 
 **`maintain-project` is the central coordinator of ResearchHarness.**
@@ -97,6 +99,24 @@ As your research evolves, the same workflows help keep your code organized and y
 Whether you're starting a new experiment, adding a dataset, switching models, or returning to an old project, ResearchHarness gives you a consistent way to keep your research code under control.
 
 **Your research keeps moving. Your codebase should keep up.**
+
+## Achievements
+
+ResearchHarness organizes nine research projects into reusable templates with a common structure for configuration, datasets, models, and tasks.
+
+| Template | Files | Publication checks passed |
+| --- | ---: | ---: |
+| CUB-200 | 60 | 100% |
+| [Depth Anything 3](https://github.com/ByteDance-Seed/Depth-Anything-3) | 144 | 100% |
+| [FastVLM](https://github.com/apple-aiml-research/ml-fastvlm) | 111 | 100% |
+| [FlagEmbedding](https://github.com/FlagOpen/FlagEmbedding) | 896 | 100% |
+| [LightEval](https://github.com/huggingface/lighteval) | 465 | 100% |
+| [LLMLingua](https://github.com/microsoft/LLMLingua) | 108 | 100% |
+| [RF-DETR](https://github.com/roboflow/rf-detr) | 604 | 100% |
+| [SAM2](https://github.com/facebookresearch/sam2) | 382 | 100% |
+| [VGGT](https://github.com/facebookresearch/vggt) | 137 | 100% |
+
+Publication checks cover required directories, a README, file scope, Python syntax, and notebook outputs. File counts cover the published template contents.
 
 ## Future Development
 

@@ -1,0 +1,29 @@
+# Purpose: Declaration CUB-200-2011 It’s official. ResNet18 + MLP Categorized baseline.
+# Scope of application: formal training for locally prepared data and pre-operational inspections.
+[dataset]
+name = "cub200"
+root = "../../../../../data/CUB_200_2011"
+image_size = 224
+
+[model]
+name = "resnet18_mlp"
+hidden_dim = 256
+
+[training]
+epochs = 30
+batch_size = 32
+learning_rate = 0.001
+seed = 42
+
+[runtime]
+device = "auto"
+workers = 2
+cpu_threads = 4
+
+[precheck]
+samples = 2
+
+[benchmark]
+samples = 32
+warmup = 1
+repeats = 3

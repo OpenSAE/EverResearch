@@ -1,0 +1,21 @@
+# Defaults and named component paths used by the CLI and experiment recorder.
+inference:
+  model_dir: depth-anything/DA3NESTED-GIANT-LARGE-1.1
+  export_dir: workspace/gallery/scene
+  device: cuda
+  process_res: 504
+  process_res_method: upper_bound_resize
+  export_format: glb
+catalogs:
+  dataset:
+    soh: data/media/examples/SOH
+    media: datasets/media
+  model:
+    da3nested_giant_large_1_1: da3nested-giant-large
+    da3_giant: da3-giant
+    local_model: Local checkpoint
+    da3_large: da3-large
+    da3_small: da3-small
+    da3_base: da3-base
+    da3mono_large: da3mono-large
+    da3metric_large: da3metric-large
