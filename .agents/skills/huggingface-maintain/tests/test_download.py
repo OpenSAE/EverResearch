@@ -1,6 +1,6 @@
-"""目的和主要功能：通过本地仓库样本检查固定版本副本的恢复与编辑保留。
+"""Purpose and main function: Check for restoration and editing retention of fixed version copies through local warehouse samples.
 
-适用范围：用户按需执行下载回归检查；使用本地 SDK 替身，全部临时资料在技能内。
+Scope of application: Users perform download back check as required; use local SDK The double. All the temporarys are in the skills..
 """
 import importlib.util
 import json

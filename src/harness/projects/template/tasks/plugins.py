@@ -1,4 +1,4 @@
-"""任务标识和任务类，供项目登记入口读取。"""
+"""Job identification and task class for access to project registration portals."""
 
 from .classification.task import ClassificationTask
 from .precheck.task import PrecheckTask

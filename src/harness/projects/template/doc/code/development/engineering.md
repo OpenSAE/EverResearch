@@ -1,63 +1,65 @@
-# 工程工作示例
+# Example of Engineering Work
 
-## 目的和主要功能
+## Purpose
 
-用真实目录、程序和产物说明项目怎样增加功能、检查改动、比较性能和提交人类审阅。
+A true catalogue, procedures and products are used to explain how the project adds functionality, inspects changes, compares performance and presents humans for review.
 
-## 适用范围
+## Scope
 
-供维护本项目及参照此结构组织其他项目的助手阅读。协议中的共同要求见上级 projects/PROTOCOL.md，具体命令见项目 README.md。
+The common requirements of the agreement can be found at the top projects/PROTOCOL.md and the specific orders can be found at Project README.md.
 
-## 从工作需要定位文件
+## Position files from job needs
 
-| 工作 | 负责位置 | 改完后从哪里看效果 |
+| Work | I'm in charge. | Where do you see the effects when you're done? |
 | --- | --- | --- |
-| 支持另一种输入 | datasets 下新增负责模块，在配置与入口选择该输入 | 用预检查样本形状、标签和来源字段 |
-| 增加模型或分类头 | models 下新增实现，在正常入口选择该模型 | 用现有预检确认模型可完成前反向，再运行相关模型检查 |
-| 修改跨组件指标 | tasks/classification/operation.py 与报告读取者 | 比较同一批样本的原新损失、准确率和结果格式 |
-| 修改运行资源设置 | runtime/config.py 与所选运行配方 | 查询运行清单中的实际设备、依赖和线程设置 |
-| 调整结果格式 | runtime/records.py 与读取清单的入口 | 对照已保存的清单及 inspect 输出，确认已有调用者的读取条件 |
+| Support another input | Add a new responsible module under dabasets, select the input in the configuration and entry | precheck sample shapes, labels and source fields |
+| Add Model or Header | Adds a new realization under Moders, selects the model at the normal entrance | Confirm that the model can be completed in reverse and re-run the relevant model check using the existing precheck |
+| Modify cross-component indicator | tasks/classification/operation.py and report reader | Comparison of original new loss, accuracy rate and results format of the same sample |
+| Modify Run Resource Settings | runtime/config.py with the selected running formula | Query for actual equipment, dependence and thread settings in the running list |
+| Adjust Results Formatting | runtime/records.py and the reading list entrance | Confirms the read conditions of the caller against the saved list and inspect output |
 
-## 维护技能对应的实际操作
+## Maintenance skills matching hands-on operations
 
-| 操作 | 在模板中从哪里查起 | 怎样判断处理完成 |
+When checking the template as a whole, you follow the configuration, component, precheck and results from the README official command. After access to ResearchHarness, the whole project is checked at `maintain-project`, the functional review of the assigned code is reviewed at `maintain-code`, the open parameter changes are used at `maintain-conf`, and the running and results review is reviewed at `maintain-experiment`. The following actions indicate where each starts from the template.
+
+| Operation | Where to start in the template | How do you judge the process is complete? |
 | --- | --- | --- |
-| 增加一种数据来源 | `datasets/cub200/dataset.py`、同目录的离线样本以及 `conf/config.yaml` | 选定新来源后，正式预检能够使用代表性样本，并记录实际来源 |
-| 修改一个模型变体 | `models/resnet/resnet18/specs.py`、`conf/config.yaml` 和实际使用该预设的配方 | 从生效配置和预检输出核对修改，按需检查同系列保留变体 |
-| 修改分类任务的指标 | `tasks/classification/task.py` 与 `operation.py`，再追到结果写入和 `inspect` | 报告和清单能定位同一次运行的指标，并记录含义及历史可比性 |
-| 移除一个选项或组件 | 从对应登记查到默认配置、别名、配方和直接调用 | 更新保留调用后移除选定范围。移除整个组件时再处理专属实现、说明和检查 |
-| 诊断一次实验 | 从 `inspect` 读取运行清单，沿失败阶段定位输入、任务或公共运行层 | 从独立预检或小规模运行取得处理依据，再由清单定位实际产物 |
+| Add a source of data | `datasets/cub200/dataset.py`, offline samples from the same directory and `conf/config.yaml` | Once a new source has been selected, the official pre-test can use a representative sample and record the actual source |
+| Modify a model variant | `models/resnet/resnet18/specs.py`, `conf/config.yaml` and actual use of the preset formulation | Check changes from effective configuration and precheck output and check with the same series to keep as required |
+| Indicators for the revision of classification tasks | `tasks/classification/task.py` with `operation.py`,Then track the result to write and `inspect` | Reports and inventories locate indicators that run at the same time and record meaning and historical comparability |
+| Remove an option or component | Default configuration, aliases, formulae and direct call from the corresponding register | Updates the call and removes the selection. Discharges, descriptions and checks are processed when the entire component is removed |
+| A diagnostic experiment. | Read the runlist from `inspect` and locate input, task or public run layer following the failure phase | Obtaining a basis for treatment from an independent pre-test or small-scale operation, and then locating the actual product from the inventory |
 
-## 从 SAEBase 采用的扩展路径
+## Extension path from SAEBase
 
-| SAEBase 的正式入口 | 模板对应实现 | 扩展时的实际做法 |
+| SAEBase's public entry point | Templates Correlation | Practical approaches to expansion |
 | --- | --- | --- |
-| conf/config.yaml 的 Hydra defaults | conf/config.yaml 在同一文件选择并定义 dataset、model、task 组 | 增加模型配置后，用默认配置与覆盖项切换 model=resnet18_mlp_small |
-| models/plugins.py、tasks/plugins.py 与 saebase/registry.py | 三类组件自己的 plugins.py 和 cub_template/registry.py | 同系列变体补系列声明和配置预设，登记读取已有系列 |
-| tasks/capture/task.py 与 operation.py | tasks/classification/task.py 与 operation.py | task.py 承接验证和运行接口，operation.py 实现任务计算 |
-| tasks/precheck/task.py、gate.py 与 saebase/runner.py | tasks/precheck/task.py、gate.py 与 cub_template/runtime/runner.py | 可以单独选择预检，训练在同一路径留下自动预检回执 |
-| saebase/results.py 和 runtime/experiment_results.py | cub_template/contracts.py 与 runtime/records.py | 任务返回 EvaluationResult，运行层保存结果和清单 |
+| conf/config.yaml It's... Hydra defaults | conf/config.yaml Select and define the dataset, model, task group in the same file | Increase model configuration to switch with default configuration to overwhelm |
+| models/plugins.py,tasks/plugins.py with saebase/registry.py | Plugins.py and base/cub_template/registry.py for the three components themselves | A series of statements and configuration presets for the same variant to register and read the existing series |
+| tasks/capture/task.py with operation.py | tasks/classification/task.py with operation.py | task.py to perform validation and running interface, operation.py to perform task calculation |
+| tasks/precheck/task.py, gate.py and saebase/runner.py | tasks/precheck/task.py, gate.py and base/cub_template/runtime/runner.py | You can select a precheck on your own and train to leave an automatic precheck check back on the same path. |
+| saebase/results.py and runtime/experiment_results.py | base/cub_template/contracts.py with runtime/records.py | Task returns EvaluationResult, Run Layer Saves Results and Lists |
 
-同系列新增变体只补 models/resnet/resnet18/specs.py 和 conf/config.yaml。从默认配置选择 resnet18_mlp_small，运行预检和训练，读取清单中的选择及报告。两个变体共用 model.py、同一登记和分类任务。新增正式数据集时使用自己的目录，再更新数据集登记和配置预设。
+Adds new variables to the same series only models/resnet/resnet18/specs.py and conf/config.yaml. Select renet18_mlp_small from the default configuration, run prechecking and training, and read the options and reports in the list. The two variants share model.py, the same registration and classification tasks. Use your own directory when adding the official data set and update the preset for dataset registration and configuration.
 
-本模板的预检在同一进程用有界训练样本检查正式步骤，隔离随机状态后再开始训练。接入 CUDA、数据准备或独立进程检查时，以该项目的实际资源和预算决定实现。命令与配置见项目 README。
+The prechecking of this template is carried out in the same process, using a sample of training in the field, to check the formal steps, and to isolate the random state before starting the training.
 
-## 已实现的改动样例：用实测决定工作进程数
+## Samples of changes achieved: use of realistic measurements to determine the number of work processes
 
-分类任务提供固定的训练样本视图和实际前向。`tasks/precheck/timing.py` 在计时边界同步 CUDA，`tasks/precheck/performance.py` 比较配方当前的工作进程数与候选值。默认实际配方用 32 张图，预热一次，重复三次。
+The classification task provides a fixed training sample view and a physical forward. `tasks/precheck/timing.py` Synces CUDA, `tasks/precheck/performance.py` compares the current number of work processes and candidate values of the formulation. Default actual formulation uses 32 graphs, preheat once, repeat three times.
 
-每次分开记录加载器启动、等待数据、前向与数据传输、关闭、总耗时与 GPU 显存峰值，模型初始化在准备耗时中单列。预检按基线阶段中位数定位瓶颈，并报告样本、重复次数、候选耗时和一致性。输出 logits 在给定误差内、预测类一致、已有 CUDA 显存预算满足且候选更快时才推荐候选，否则沿用当前配置。通过 `--set runtime.workers=<值>` 选择推荐值可验证正式任务开销。局部前向的比较范围随报告保存。
+The precheck locates the bottlenecks by the median of the baseline stage and reports the samples, repetitions, candidate time and consistency. Output logits recommend candidates within the given error, predicting class alignment, having a CUDA presentation budget that meets the current configuration. The current configuration is maintained by `--set runtime.workers=<value>` selecting the recommended value to validate the official task cost. The local forward range follows the report.
 
-默认预检使用正式配置的工作进程数，对训练视图执行一个最多两图的参数更新，并在确定性训练视图上执行一次评估。正式配方会出现单图尾批时，预检额外实跑这一批，错误在正式训练开始前写入清单。正式训练重新初始化。需要限定整条预检命令的墙钟时间时，可用外部 `timeout --signal=INT --kill-after=10s 120s`，时间包含索引和模型准备。中断记录为 `partial`，强制终止后留下的 `running` 清单表示仍需核对这个运行。
+Default precheck uses formally configured workflows, updates a maximum of two graphs for the training view, and evaluates it on a definitive training view. When the formal formulation appears at the end of the single-graphed batch, prechecks the extra run, and errors are entered in the list before the formal training begins. Formal training is re-initiated. `timeout --signal=INT --kill-after=10s 120s`,Time includes indexing and model preparation. The break is recorded as `partial`,It's after the forced termination. `running` The inventory indicates that this operation still needs to be checked.
 
-候选在实际运行中失败时，性能报告保存已完成的基线、失败原因及保留当前配置的决定。运行清单记录包含系列默认值的实际模型设置，便于随后对照配方和结果。
+When the candidate fails in actual operation, the performance report saves the completed baseline, the reason for the failure and the decision to keep the current configuration. The running list records contain the actual model settings for the series of default values, which will allow subsequent comparison with the formula and the results.
 
-## 人类审阅样例：采用新的初始化方案
+## Human sample: introduction of new initialization
 
-当前基线使用随机初始化。若提出引入外部预训练权重，记录来源、训练数据范围、额外下载与训练成本，并说明它与原基线的可比性。Caltech 官方指出 CUB 图像与 ImageNet 存在重叠，这会影响采用 ImageNet 权重的结果解释。用同一数据划分、相同指标和明确的运行身份呈现代表结果，让人类决定采用范围。工程上等效的文件归位、失败信息修复与批量读取优化按现有授权推进。
+The use of random initialization of the current baseline is proposed to introduce external pre-training weights, to record sources, training data ranges, additional downloads and training costs, and to indicate their comparability with the original baseline. Caltech officially points to the overlap between CUB images and ImageNet, which affects the interpretation of results using ImageNet weights.
 
-## 项目与中央共同更新
+## Project update with central
 
-保留协议版本、实际实现位置和代表性运行证据。新项目可以复制完整目录，先以合成输入演练自己的正常入口，再替换负责的数据集、模型和任务部分。协议有歧义或多个项目出现相同问题时，记录真实案例、拟改条款或实现与受影响的调用者，回到中央维护。项目运行的清单遵循协议字段，现有 inspect 提供可读结果。
+Keeps the version of the agreement, the actual location and the evidence of representative operation. The new item can copy the complete directory, first by consolidating the normal entry for the input exercise, and then replaces the responsible data set, model, and task section. The agreement contains a disagreement or multiple items, and records the true case, the proposed change or the achievement of the affected caller, returning to the central maintenance. The list of the project operations follows the protocol field, and the existing inspect provides readable results.
 
-更新中央协议时，同一次维护改好模板中对应的实现、目录、配置或适用说明。目录规则的对照入口是本项目 README.md。项目默认配置见 conf/config.yaml，生效配置见 experiment 下的对应运行，正常入口回归和组件边界检查直接放在 tests。出现独立的集成测试或稳定的回归测试组时，再按协议分别归入 integration 或 product。移动文件后同步入口、配置引用及测试发现位置。
+When the central agreement is updated, the corresponding realization, directory, configuration, or application instructions in the template are maintained on the same occasion. The cross-reference to the directory rules is this item. README.md.See the default configuration of the project conf/config.yaml,For effective configuration see experiment It's a counterwork, normal access return and component border check directly. tests.When there is an independent integrated test or a stable regression test group, then they are classified as agreed separately. ] integration or product.Sync entry, configuration of references and location of detection after moving files.

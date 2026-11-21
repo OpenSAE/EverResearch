@@ -1,1 +1,1 @@
-"""预检任务包，提供正式运行前使用的有界检查。"""
+"""precheck of task packages to provide pre-operational level checks."""

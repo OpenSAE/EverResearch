@@ -1,6 +1,6 @@
-"""目的和主要功能：记录现场环境与工具的实际观察。
+"""Purpose and main function: Recording of physical observations of the environment and tools on the ground.
 
-适用范围：本机环境资料采集与选定快照的读取和比较；结果按具体入口保存。
+Scope of application: reading and comparison of in-house environmental information collection with selected snapshots; results stored by specific entry.
 
 Extracted from OpenSAE/SAEBase; Apache-2.0.
 """

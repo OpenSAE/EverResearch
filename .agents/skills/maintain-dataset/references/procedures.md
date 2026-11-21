@@ -1,46 +1,46 @@
-# 数据集操作方案
+# Data Set Operating Scheme
 
-## 目的和主要功能
+## Purpose
 
-明确数据集改动落在哪些文件，以及如何从配置选择对照到任务实际读取。
+Clarify which documents the changes to the data set fall and how they are actually read from configuration selection to task.
 
-## 适用范围
+## Scope
 
-用于已确定目标数据集的增加、修改和移除。项目接入说明记录目录与实际入口的对应方式。
+The project access description indicates how the log catalogue corresponds to the actual entry.
 
-## 文件归属
+## Attribution of files
 
-| 位置 | 负责内容 |
+| Location | Responsible content |
 | --- | --- |
-| `datasets/<数据集>/__init__.py` | 公开读取、准备或选择入口，声明支持的任务 |
-| `datasets/<数据集>/dataset.py`、`prepare.py`、`transforms.py` | 按实际职责保存读取、准备和变换。专用离线样本放在该数据集目录 |
-| `datasets/plugins.py`、公共读取与登记入口 | 将公开标识和别名对应到实现。实际项目也可按具名工作流分发 |
-| `conf/dataset/`、`conf/paths/`、选用它的配方 | 预设、输入根位置和覆盖值。真实输入归登记的数据根 |
-| `tasks/<任务>/`、预检、清单读取者 | 检查组合是否适用，消费样本，并记录实际输入身份 |
+| `datasets/<dataset>/__init__.py` | Open reading, preparation or selection of entry points to declare the tasks supported |
+| `datasets/<dataset>/dataset.py`、`prepare.py`、`transforms.py` | Saves the reading, preparation and transformation by actual duty. Special offline samples are placed in the DDS directory |
+| `datasets/plugins.py`, Public Access and Registration Entrance | Public identification and aliases are matched to realization. |
+| `conf/dataset/`,`conf/paths/`,Select its formula. | Preset, enter root position and overwrite value. Real input is registered data root |
+| `tasks/<task>/`, precheck, list reader | Check if the combination works, consumes a sample and records the actual input identity |
 
-每个文件按承担的职责启用。项目已有等价文件时沿用该入口。
+Each document is enabled in accordance with the duties assigned to it.
 
-## 增加
+## Increase
 
-1. 从目标任务确定最小样本契约。列出样本字段、形状、类型、单位、标签、划分及缺项的处理方式。
-2. 在所属数据集实现读取和准备。已有输入格式只需要另一处来源时，增加配置预设。同一数据集的合成样本和正式样本共用交接格式，并分别保留来源标识。
-3. 接入登记和配置，核对选择预设后实际调用哪个读取函数。任务检查组合是否相容，数据集检查自己拥有的参数。
-4. 在获准范围内从正式选择入口走到目标任务的一批样本，并核对来源和划分确实进入运行记录。共享保障优先由已有检查承担。
+1. The minimum sample contract is determined from the target task. The sample field, shape, type, unit, label, division and treatment of missing items are listed.
+2. When you have an input format that requires only another source, add a configuration preset. The synthetic and official samples of the same data set are shared in the interface format and the source identifier is maintained separately.
+3. Access registration and configuration to check which read function is actually called after selection of the preset. Task check the compatibility of the group and the data set check the parameters that you own.
+4. The priority for shared security is given to existing inspections.
 
-## 修改
+## Modify
 
-1. 查清当前样本的下游消费者和历史数据。记录原有字段、划分规则、缓存命名、现场配置和所选任务。
-2. 按改动责任定位。调整源数据解析改读取模块，调整样本变换改变换模块，调整默认来源改预设。涉及标签含义或数据划分时，说明历史结果可比性和重算范围，依据用户决定处理。
-3. 修订样本格式时同步读取者。影响缓存内容时让读取者能识别新旧身份，并按项目已有规则复用、重建或报告缺项。
-4. 用获准的代表样本核对原有受支持配方与新行为。更新数据来源、划分和兼容说明。
+1. Identify downstream consumers and historical data of the current sample. Record the original field, partition rules, cache naming, site configuration and selected tasks.
+2. Positions according to the responsibilities of the change. Adjusts the source data resolution to read the module, adjusts the sample transformation and change module, and adjusts the default source preset. When it comes to label meaning or data disaggregation, the historical results are compared and recalculated, and processed on the basis of the user ' s decision.
+3. Synchronizes the reader when the sample format is revised. Enables the reader to identify new and old identities when impacting the cache content and to re-use, rebuild or report missing items in accordance with the established rules of the project.
+4. Updates the data source, disaggregation and compatibility statements.
 
-## 移除
+## Remove
 
-1. 确定范围为某个来源、预设、别名、任务支持，或整个数据集。从正式登记查到具体配方，再查直接导入、默认值、测试、下游产物与结果说明。
-2. 列出必须保留的任务及其输入选择。保留任务依赖该数据集提供唯一输入时，说明它会失去什么能力。替代数据需要改变科研口径时由人类决定。
-3. 先处理保留调用，再移除所选配置、登记及专属实现。移除整个数据集时同步处理命令、活动说明、相关测试及专属状态。共享函数按剩余调用者归位。原始数据、共享缓存和结果按具体授权处理。
-4. 按约定检查已移除的选择入口和保留组合。历史结果继续按实际生成时的输入身份解读。
+1. Determines the range as a source, preset, aliases, mission support, or the entire data set.
+2. Lists the tasks that must be retained and their input selections. Retention missions depend on the data set for the only input, indicating what capacity it will lose. Alternative data need to be determined by humans when they change the scientific calibre.
+3. Process the reservation call and then remove the selected configuration, registration and exclusive realization. Synchronize commands, activity descriptions, associated tests and exclusive status when the entire data set is removed. Shared functions are assigned to the remaining caller. Original data, shared caches and results are processed as specified.
+4. Checks the removed selection entry and retention combinations as agreed. The historical results continue to be interpreted according to the input identity at the time of actual generation.
 
-## 参考项目中的落点
+## Points for reference items
 
-CUB 模板的 `datasets/cub200/dataset.py` 读取正式输入，`offline_samples.py` 在同一数据集下生成离线演练样本。`datasets/plugins.py` 登记两种输入，`conf/config.yaml` 定义选择。用 `--set dataset=synthetic` 选择离线输入，获准时从正式预检确认样本进入分类步骤。移除其中一个预设时，先找到引用它的配方并处理这些调用。
+`datasets/cub200/dataset.py` for the CUB template to read the official input, `offline_samples.py` to generate a sample of the offline exercise under the same data set. `datasets/plugins.py` to register the two types of input, `conf/config.yaml` definition selection. Use `--set dataset=synthetic` to select offline input and confirm the sample from the official precheck to the classification step when permission is granted. When one of the presets is removed, the formulation that refers to it is found and the calls are processed.

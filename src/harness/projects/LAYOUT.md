@@ -1,140 +1,187 @@
-# 科研项目目录与文件职责
+# Catalogue of research projects and documentation functions
 
-## 目的和主要功能
+## Purpose
 
-说明科研项目的一级布局、各二级目录的启用条件、文件归属、命名规则和调用关系。项目接入与维护可据此定位具体入口和产物。
+The first-level layout of the scientific project, the conditions for the operation of the second-tier directories, the attribution of documents, the naming rules and the call relationship.
 
-## 适用范围
+## Scope
 
-用于采用项目工程协议的科研软件。SAEBase 是根目录组件布局的主要参考，CUB 分类模板采用同一布局。已有项目在中央同名项目说明中登记现行路径与规则的对应关系，相关改动沿实际调用关系处理。
+The CUB classification template provides examples of layouts with operational accesses, components and results.
 
-## 1. 整体布局与必备程度
+## 1. Overall layout and necessity
 
-| 位置 | 必备程度 | 负责什么 |
+When accessing a strange project, a whole combo catalogue or reconnecting multiple components, use [maintain-project](../../../.agents/skills/maintain-project/SKILL.md) to identify responsibilities from the real entrance, organize specialized maintenance and check the modified use links.
+
+The following table shows the functions of the root list of the project. Each scientific project has an entity-level catalogue `base/`, `datasets/`, `models/`, `tasks/`, `conf/`. The total acceptance is `rh projects project check <project-root>`, which contains a detailed tree-wide path check. `rh projects layout check <project-root>` is referred back to the physical tree and reports the path and non-compliance terms. The whole project acceptance is based on the withdrawal status `0`. The specific path and documentation rules are implemented by `src/harness/core/layout.py`.
+
+| Location | Required level of preparedness | For what? |
 | --- | --- | --- |
-| 根目录的 `README.md`、`AGENTS.md` | 必备 | 前者说明工程用途、正常运行入口和结果位置，后者说明项目内维护规则并定位共同协议。 |
-| `<包名>/` 或 `src/<包名>/` | 必备 | 正式软件、公共运行逻辑和命令入口。Python 安装与依赖声明使用根目录的 `pyproject.toml`。 |
-| `conf/` | 有可运行任务时必备 | 供正常入口读取的运行配方和可独立选择的配置。 |
-| `datasets/`、`models/`、`tasks/` | **必备** | 三个目录统一放在项目根目录，分别保存数据集、模型和任务实现。每个目录有至少一个实际使用的组件。 |
-| 数据根 | 有相应输入时必备 | 默认称 `data/`，可登记实际位置或在运行时指定。 |
-| `experiment/` | 必备 | 项目根目录下固定的实验产物目录。运行入口从项目根定位，首次写入时可自动创建。 |
-| `base/` 或已有的项目运行包 | 有项目级协调时 | 统一接通入口、配置、数据、模型和任务，负责共用运行资源和路径解析。新整理的项目优先采用 `base/`。 |
-| `doc/` | 强烈推荐 | 至少在 README 导航到 `doc/datasets.md`、`doc/models.md`、`doc/tasks.md` 或已有的等价页面。记录共有参数及各组件的功能、入口和关键参数。 |
-| `tests/`、`scripts/`、`third_party/` | 可选 | 自动回归、人工运行工具和第三方源码各按实际用途建立。 |
-| `.researchharness/`、`.agents/skills/` | 有相应接入或技能时建立 | 前者可保存项目声明，后者用于技能发现。 |
+| root directory `README.md`, `AGENTS.md` | Yes, sir. | The former describes the purpose of the project, the entry point for normal operations and the location of the results, while the latter describes the maintenance of the rules within the project and locates the common agreement. |
+| `conf/` | Yes, sir. | Provides `conf/config.<format>` for official access and effective formulations. |
+| `datasets/` | Yes, sir. | At least one actual data set and its reading, preparation or disaggregation is achieved. |
+| `models/` | Yes, sir. | At least one actual model and its construction, loading or call realization. |
+| `tasks/` | Yes, sir. | There is at least one actual scientific mission, with an additional `precheck/` to provide an automatic precheck for a formal mission. |
+| Data Roots | If you have the appropriate input, you must have it. | Default `data/`, can register the actual location or specify when running. |
+| `experiment/` | When there's a scientific operation. | A fixed list of experimental products under the root directory. The running entrance is located from the root of the project and automatically created when you write it first. |
+| `base/` | Yes, sir. | Saves real open access, configuration synthesis, component selection, task distribution and common running support. |
+| `doc/` | Yes, sir. | From README navigation to document index, a description of the actual level I directories is provided and connects components, parameters, experiments, knowledge, implementation environment and source structure. |
+| `tests/`、`scripts/`、`third_party/` | Optional | Automatic regression, manual running tools and third-party source code are established on a practical basis. |
+| `assets/` | When resources are retained for a long period | By type of resource and by specific resource group, retain resources, a description of sources and their dedicated scripts. |
+| `tmp/` | When there's a one-time project | A list of names is used for each job and ends as intended. |
+| `.researchharness/`、`.agents/skills/` | Created when access or skills are available | The former preserves project statements, while the latter are used for skills detection. |
 
-根目录主要用于导航、安装和入口；组件逻辑、配置、文档和运行文件各有固定归属。二级目录只有在对应职责实际出现时建立。少量文件可以平放，职责明确后再拆成同名子目录。项目结构说明记录实际命令、目录映射和已有公开路径，帮助助手按现有入口接手。
+The root directory is used primarily for navigation, installation and access; the component logic, configuration, documentation and running files are each assigned to them. The secondary directory is created only when the corresponding duties actually appear. A small number of files can be flat, the duties specified and then decoded into a generic directory. The project structure describes the actual command, the catalogue map and the open path available to help the assistant to take over by pressing the existing entrance.
 
-## 2. 主包与科研组件
+The project root name uses two or three words, PascalCase, such as `ContextMemory`, which contains at least one full English word. The self-defined directory and file name contains at least one full English word, giving preference to a word named sub-task, with multiple words separated by underlined. Real models, data sets and their versions can be distinguished by numbers. The directory of these components in the configuration mirrors follows the same place. The file, the external resource content and the executing identity in the running records specified in the framework follow the same format. The tree-wide examination reports on the project root name, numbers and vocabulary problems.
 
-| 二级目录或文件 | 启用条件 | 文件职责与调用规则 |
+The code checks to overwrite the visible project content. The hidden path and Python byte-code caches are left to their respective tools. The checker reads the experimental identity from the actual project component directory and the component directory map of the main configuration `conf/config.<format>` and checks the configuration from the actual source directory. The function is whether the project is actually enabled, the path corresponding code is actually called, and whether the same functionality can be combined and validated along the normal entry.
+
+## 2. Base layer and scientific components
+
+Command access, open interface, movement control, and general operating codes to enter `base/`, sample and classification to enter `datasets/`, model structure and reasoning to enter `models/`, training, assessment, laboratory computing, and mission-specific indicators to enter `tasks/`. Installations can still be left through packaged maps or thin entrances, and original public import can point to after-dismantling.
+
+The central inspection requires five entity directories, `base/` entrances or operational realizations, `conf/` configuration portals, and real source codes for data sets, models, official missions. Empty directories, slots, registrations and pre-screens alone cannot function as components. Check `base/` embedded component source trees and limit direct documentation to 15 per layer at `base/`, `tasks/`, `scripts/`, `tests/` and identifiable old source root. `datasets/` and `models/` sub-tree waivers remain to be checked.
+
+When there are more than 15 direct subdirectories, `project check` reports the path, number of files and number of subdirectories by `directory_reviews` for functional inspection and repair. The independent functions in the existing directory are based on actual calls. The number of documents remains at the mandatory limit of 15.
+
+The central structure checks the disk and the actual call evidence that the components have been correctly connected.
+
+| Level 2 directories or files | Enable Conditions | Documentation duties and access rules |
 | --- | --- | --- |
-| 主包下 `cli.py`、`__main__.py` 或等价入口 | 有命令时 | 解析参数、选择动作、显示结果或故障。命令行和其他调用者复用负责模块。 |
-| `base/` 或主包下已有的 `runtime/` | 有项目级运行支持时 | 运行器调用数据、模型和任务。按实际职责用 `paths.py`、`config.py`、`runtime.py`、`records.py` 等定位路径、合成配置、建立运行环境和保存运行记录。CUB 模板使用主包下的 `runtime/`。 |
-| 主包下 `api/` | 有稳定外部调用时 | 按调用者需要的能力分模块，例如模型或数据访问。入口注明输入、返回值、失败条件和兼容范围。 |
-| 各组件目录下的 `plugins.py` 与主包的 `registry.py` | 多个组件需要按配置标识独立组合时 | 各类组件目录维护标识到实现入口的登记。主包统一查询，供正常执行和预检共用。 |
+| `commands.py`, `__main__.py` or equivalent entry in `base/` | When ordered | Parsing parameters, selecting actions, showing results or malfunctions. Command lines and other callers revert to the responsible module. |
+| `base/` Medium `runtime/` | When supported by project-level running | Runrs call for data, models and tasks. Path resolution, configuration synthesis, operating environment and records are organized according to their actual duties. `paths.py`, `config.py`, `runtime.py` and `records.py` are the filenames that can be used to assume the corresponding duties. The CUB template is `base/cub_template/runtime/`. |
+| `base/` Medium `interfaces/` | When there's a steady external call | The entry indicates input, return value, failure condition and compatibility range. |
+| `plugins.py` and `registry.py` for the base level under each component directory | When multiple components need to be individually configured | The various components directories maintain a login to the entry point. |
 
-### 三类组件的标准目录
+### Standard catalogue for three types of components
 
 ```text
 datasets/
 ├── plugins.py
-└── <dataset>/
-    ├── __init__.py              公开入口和所支持的任务
-    ├── dataset.py               有独立的正式读取实现时建立
-    ├── prepare.py               有独立数据准备步骤时建立
-    └── transforms.py            有独立数据变换时建立
+└── <dataset-or-family>/
+    ├── __init__.py              Open access and supported tasks
+    ├── dataset.py               Create when there is an independent official reading
+    ├── prepare.py               Create when independent data preparation steps are available
+    ├── transforms.py            Create when independent data is changed
+    └── <member>/                Same-source queue or data subset is created when a separate file is required
 models/
 ├── plugins.py
-├── build.py                     模型共用的构建与声明接口
+├── build.py                     Model shared build-and-declaration interface
 └── <family>/
     └── <series>/
-        ├── specs.py             一个系列内的可选变体与资源声明
-        └── model.py             有该系列专用实现时建立
+        ├── specs.py             An optional variable and resource statement in a series
+        └── model.py             Created when the series is dedicated
 tasks/
 ├── plugins.py
 ├── <task>/
-│   ├── task.py                   任务接口与验证
-│   ├── operation.py              任务计算
-│   └── evaluation.py             有独立评估步骤时建立
+│   ├── task.py                   Task interface and validation
+│   ├── operation.py              Job Count
+│   └── evaluation.py             Established when steps for independent evaluation are in place
 └── precheck/
-    ├── task.py                   独立预检任务
-    ├── gate.py                   正式任务的预检调用
-    ├── timing.py                 实测阶段耗时
-    └── performance.py            瓶颈分析、候选比较及决定
+    ├── task.py                   Independent precheck mission
+    ├── gate.py                   precheck call for a formal task
+    ├── timing.py                 Time-consuming phase of measurements
+    └── performance.py            Bottleneck analysis, comparison of candidates and decisions
 ```
 
-正式数据集拥有稳定的目录。为特定数据集模拟样本、标签或划分的辅助实现放在该数据集目录内。多组调用确实共用的实现才放到公共层。模型系列声明可包含多个公开标识，同系列新增变体沿用既有构建与加载路径。新增家族或系列时才建立对应目录。配置预设、公开标识和实现位置通过登记对应，已有调用入口继续使用。跨多个组件的共用逻辑在实际复用处维护。
+The official data set has a stable catalogue. Accomplishments for the simulation of samples, labels or classifications for a given data set are placed in the DDS. Multigroups call for actual common realizations to be placed on the public level. Model series statements can contain multiple public identifiers, which follow the built-and-loaded path of the new series of variants. Only when new families or series are added. Configure presets, open identification and location are maintained by registration, and a callable entry is in place. The common logic across multiple components is maintained in terms of actual reuse.
 
-| 组件 | 输入和交付 | 规则 |
+The data family shares the source and prepares or reads the contract, the model family shares the structure and weights agreed, and the task family shares the purpose of the study and the output. The independent queue, model variants and sub-tasks still have optional identifications. The father's directory saves only the common code, rules or entry that its members actually use.
+
+Subtasks determine boundaries by means of self-described research steps and their inputs and products. The name module of the mission for which the calculation or evaluation of the subtask shared by the same task is assigned, cross-task data reading, model behaviour, training status and document reading and writing is provided by the data, models or operating layers for which the actual responsibility exists.
+
+| Component | Input and Delivery | Rule |
 | --- | --- | --- |
-| 数据集 | 接收数据配置和实际路径或来源，交付样本、划分和输入身份 | 划分和标签含义由数据集实现确定。正式输入、合成输入分别有标识。数据准备作为可识别的操作执行，数据文件归数据根。 |
-| 模型 | 接收模型配置及所需权重，交付可调用的模型和明确的输入输出 | 架构、前向和模型专用权重加载归模型实现。训练目标与评估指标由使用它的任务定义。 |
-| 任务 | 接收配置和已选组件，完成训练、评估或分析并交付指标与结果 | 任务组合数据和模型并解释指标。预检复用同一组件与任务步骤，公共运行模块记录配置、环境、状态及产物位置。 |
+| Data Set | Receive data configuration and actual path or source, deliver samples, divide and enter identity | The classification and labeling meanings are defined by the data set. The official input and the synthetic input are identified. The data are prepared as identifiable operations, and the data files are in the data. |
+| Model | Receive model configuration and required weights, deliver callable model and clear input output | Training objectives and evaluation indicators are defined by the mandate in which they are used. |
+| Tasks | Receive configuration and selected components, complete training, assess or analyse and deliver indicators and results | The precheck uses the same component and mission step, and the public operating module records configuration, environment, state and product location. |
 
-配置选中的组件经项目唯一的登记入口解析。已有项目可使用现行登记或选择入口。新增可独立选择的组件时，增加组件实现、登记与配方，通用命令、预检和运行记录沿现有接口继续使用。查找未知标识时给出可用选项，已公开标识和配方保留原义。
+Configures the selected components by using the only entry for the project. The existing items can be used for registration or selection. When separate components are added, the component realization, registration and formulation are added, and the general command, precheck and running records continue to be used along the existing interfaces. Available options are given when searching for the unknown identifier, and the original identification and formulation are publicly available.
 
-组件各自检查所拥有的参数，任务检查所选数据与模型能否共同执行，公共运行模块在实际加载资源前调用这些检查。任务专用的指标、测量和报告语义随任务维护。两项功能确实需要同一实现时，再将共同部分提取到实际负责位置。
+The components examine the parameters they have, the tasks check whether the selected data and models can be implemented together, and the public operating modules call for them before actually loading the resources. Task-specific indicators, measurements and report syntax are maintained. A mission can be trained, analysed or evaluated under the same objective of the sub-mission. Sub-mission declarations are entered, exported and called, and the public inspection and results are coordinated by the task to which they belong. The common operation of the individual and long-term caller is placed in a position of actual responsibility and is called by multiple tasks.
 
-模板的 `cub200` 和 `synthetic` 使用同一份分类数据交接，`resnet18_mlp` 和 `small_cnn` 都可由 `classification` 选择。主配置使用 Hydra 配置组独立选择组件。 `tasks/precheck/` 与分类任务分别登记，正式训练调用预检并记录回执。计时、基线瓶颈和候选比较归 `tasks/precheck/`，分类任务交付实际前向与固定样本视图。运行模块提供公共设备同步和保存入口。
+Template `cub200` and `synthetic` Intersection using the same disaggregated data,`resnet18_mlp` and `small_cnn` It's all possible. `classification` Select. The master configuration uses Hydra Configure Group Independent Selection Component. `tasks/precheck/` The time, baseline bottlenecks, and candidates are compared. `tasks/precheck/`,The operational module provides the public equipment to synchronize and save access to the fixed sample view.
 
-## 3. 配置与相对路径
+## 3. Configure and relative paths
 
-`conf/` 组织一套项目默认配置。参考模板统一使用 `conf/config.yaml`，默认参数与可选组件定义集中在该文件。具体实验的配置随运行保存在 `experiment/`，README 给出正式入口和覆盖方式。
+When a layering is used, the parameter prefix represents the actual owner. Each subtape under the task has its own prefix, and the shared setting is maintained by the task or cross-tape in a uniform operating layer. Output values, such as output identity and path, are generated from the operating layer and the specific study combination is saved by the experimental formulation.
 
-| 二级目录 | 何时用 | 保存内容 |
+`conf/` organises a default set of project configurations. The reference template is used `conf/config.yaml` in a single format, and the default parameters and optional component definitions are centralized in this file. The configuration of the specific experiment is kept as it runs at `experiment/`, README gives the official access and coverage.
+
+| Configure Paths | When will it be used? | Save Contents |
 | --- | --- | --- |
-| `conf/config.yaml` | 有可运行任务时 | 默认组合及默认参数。项目有共用默认值分组时，由这一入口组合成一套。 |
-| `conf/dataset/`、`conf/model/`、`conf/task/` | 数据、模型或任务可独立选择或在多配方中复用时 | 数据和模型的共享默认值与具名预设可统一放在对应的 `catalog.yaml`，登记关联预设和实现。任务配置包含任务参数和其检查预算。 |
-| `conf/runtime/` | 环境或资源配置可独立选择时 | 按环境、设备或运行场景定义解释器、设备、工作进程与资源选项。 |
-| `conf/train/`、`conf/logger/`、`conf/evaluation/` | 训练策略、日志或评估方案能独立选择时 | 按所选策略命名，由主配置组合，供多个任务使用。 |
-| `conf/paths/` | 路径有独立配置入口时 | 说明如何解析数据、输入权重等输入路径。实验产物根固定由项目根决定。 |
+| `conf/config.yaml` | When the project adopts the unified configuration portal | Default component combinations and shared defaults, loaded by the normal entry. |
+| `conf/<relative-source-directory>/` | When data, models, tasks or running components are actually readable configurations | The relative directory where the responsible source code is located is taken from the root of the item and the two-stage path is maintained under `conf/`. For example `tasks/capture/` corresponds to `conf/tasks/capture/`. |
+| Responsible for running the configuration directories of the modules | When the environment, device or path needs to be configured independently | The interpreter, device or the configuration of the input path is placed in the directory that actually loads and validates their operating module. |
 
-已有 SAEBase 的 `sae/`、`benchmark/` 等分组服务实际配置入口，属于项目映射。新增分组时在项目说明写明谁读取它和它提供什么。环境中实际观测到的版本与设备保存到运行结果。
+Up to two-tier directories under `conf/`. Each configuration branch has one file. Deeper duties are combined into a named section of the corresponding file. For example, `conf/tasks/capture/task.yaml` also saves default values, batches and filters for capture tasks, with each entry reading the respective section.
 
-项目入口确定项目根，基础层按已约定的起点解析默认配置、项目内数据和 `experiment/`。组件接收实际路径。新配方的项目内路径默认相对项目根。已有配方可以沿用明确的配置文件相对规则，例如 CUB 数据路径相对于配方所在目录。README 写明命令行路径和配方路径分别从哪里起算。跨项目共享数据、外部权重和本机 Python 通过具名绑定、参数或环境变量交给项目。可迁移的运行记录引用运行目录内的相对产物路径。
+The configuration of new, modified, moved, removed and deployed must check the source code and configuration path and verify that it is loaded. Check the submission, continuous integration and release of access items. The configuration changes are automatically synchronized to `doc/conf.md`, indicating that the semantics in the description are maintained with the code.
 
-[项目接入与本机资源](../core/PROJECT.md)说明多个项目与共享数据如何在父工作区并列放置，适用于初始化工作区、登记项目和绑定资源。
+When adding, removing or modifying the open parameters, cross-checking the configuration file attribution and document synchronization with [maintain-conf](../../../.agents/skills/maintain-conf/SKILL.md) for actual consumer processing parameters syntax, default values, overlaying and compatibility.
 
-## 4. 测试、说明、人工工具与第三方资料
+The project entrance determines the root of the project, and the base layer analyzes the default configuration, the project data and the agreed starting point `experiment/`.The component receives the actual path. The path within the new formulation defaults against the project root. A formulation already exists that follows clear relative rules of the configuration file, for example CUB Data path relative to the formula directory. README Defines where the command line path and the formula path start, respectively. Python Give it to the project by means of a named binding, parameter or environment variable.
 
-| 二级目录或文件 | 何时用 | 保存内容与边界 |
+[Project access and in-house resources](../core/PROJECT.md)Description of how multiple projects are placed in parallel with shared data in the parent area, applicable to arrange parent directories, register items and bind resources.
+
+## 4. Testing, description, manual tools and third-party information
+
+The source station that needs to be built by the document tool is located `doc/code/<Name Document Station>/`.Site directory to save build entrances Makefile,make.bat and requirements.txt,Build input in `source/`,Keeps the internal file name, cross-reference and static resource address used in the document tool. Syncs the open build or deployment portal. Generates pages to save for their delivery or cache uses.
+
+[Scientific project documentation and maintenance reporting](DOCUMENTATION.md)Sets the document index, the format of the pages and the basis for their use, which applies to the creation of the project document, synchronized realization, review and experimental reports.
+
+| Level 2 directories or files | When will it be used? | Save content and boundary |
 | --- | --- | --- |
-| `tests/test_<行为>.py`、`tests/product/` | 有需要持续复查的功能行为时 | 少量回归在根层，形成一组持续维护的产品检查后归 `product/`。文件名定位实际行为或入口。 |
-| `tests/integration/` | 有独立的跨组件、真实服务或环境链路检查时 | 保存链路测试，并说明运行条件、实际资源与覆盖范围。 |
-| `tests/fixtures/` | 多组测试使用同一小样本时 | 保存小型固定输入、预期结果和需要的来源说明。单组测试资料靠近使用者。 |
-| `doc/code/` | 有需要长期阅读的工程说明时 | 架构、接口、组件交接归此处，维护或扩展示例归 `doc/code/development/`。 |
-| `doc/knowledge/` | 有长期项目知识时 | 保存科研问题、术语、依据与决定，引用具体实验记录或来源。 |
-| `doc/environment/` | 有持续使用的环境准备或选择说明时 | 保存依赖、解释器、设备要求和运行准备方法。运行实测事实从对应运行记录读取。 |
-| `scripts/examples/`、`scripts/release/` | 有独立的演示或发布操作时 | 演示和发布入口各自按用途命名，薄脚本调用正式实现。 |
-| `scripts/<用途>/` | 另一组操作已有明确使用者时 | 按用途保存操作说明、入口和必要配置。已经被正式任务复用的计算迁入负责模块。 |
-| `third_party/<上游名>/` | 有实际保留的第三方源码时 | 附上游来源、版本、许可和本地修改说明，项目自己的适配归实际调用模块。 |
+| `tests/test_<behavior>.py`、`tests/product/` | When functional behaviour requires continuous review | A small number returns to the root layer, forming a group of continuously maintained products and then returning. `product/`.Filename locates actual behaviour or entry. |
+| `tests/integration/` | When there is an independent cross-component, real service or environmental link check | (b) Maintain chain testing, with an indication of operating conditions, actual resources and coverage. |
+| `tests/fixtures/` | When multiple groups test the same small sample | Keep a description of the small fixed input, the expected results and the source of the need. |
+| `doc/code/` | Project document portal | Navigate to `extract-structure`, the project structure results and their source version. Examples of architecture, interfaces, transfer of components and projects are here. |
+| `doc/knowledge/` | Project document portal | (d) Preservation of scientific concepts, terminology, interpretation, basis of agreement with the project, citing actual sources. |
+| `doc/environment/README.md` | Required by `doc/README.md` link | Saves relying, interpreter, equipment requirements, operational readiness and light authentication methods. The physical environment is read from the corresponding run records. |
+| `scripts/examples/`、`scripts/release/` | When there is an independent presentation or release operation | The demonstration and distribution portals are named for each purpose and the thin scripts are formally called. |
+| `scripts/<purpose>/` | When another group of operations has a clear user | Saves the instructions, access and necessary configurations by use. The calculation has been re-used for the official task and is moved to the responsible module. |
+| `assets/<asset-type>/<asset-name>/` | When resources are retained for a long period | Recording uses, sources and updates with `README.md`, preserving resources with `files/`, and preserving resources with `scripts/`. |
+| `third_party/<upstream-name>/` | When a third party source is actually retained | The location of the upstream project management package, where the upstream physical path and file name are maintained. |
 
-`tests/` 可选，实际改动检查按 [工程协议的维护检查规则](PROTOCOL.md#文件功能与维护检查) 选择。项目有专门的预检、审计或客户端测试时，登记其真实入口和现有分组。说明和工具可先使用一个文件，等出现一组独立职责再建二级目录。
+`tests/` is optional, and the actual change check is selected by [the maintenance inspection rules of the project agreement](PROTOCOL.md#file-function-and-maintenance-check). When the project has a specific precheck, audit or client test, register its real entry and existing grouping.
 
-## 5. 数据、运行与接入资料
+The script directory is organized according to the user's operating organization. Multiple entry points perform the same job and maintain the same entry when differences can be expressed by name parameters. Project documents describe the official components to be called at each entry, the type of input to be entered and the way to view the results.
 
-| 位置 | 启用条件 | 文件职责 |
+## 5. Data, operation and access information
+
+| Location | Enable Conditions | Documentation responsibilities |
 | --- | --- | --- |
-| `data/<数据集名>/<版本>` 或登记的外部位置 | 有真实输入时 | 定位数据、标注与版本。沿用上游目录名，项目配置指向实际根目录，当前运行记录保存所用输入身份。 |
-| `experiment/<数据集>/<模型>/<任务>/<subname>/<运行标识>/` | 有生成结果时 | `subname` 用一至三个有实际含义的词描述实验或探索对象。一套实验可有多次独立运行，每次保存实际配置、日志和产物。 |
-| 单次运行的 `config.yaml` 或项目所用的配置格式 | 配置成功解析后 | 保存当次生效配置，包括默认值、选中的组件和覆盖值。运行清单指向该文件。 |
-| 单次运行的 `metadata/` | 有须交接的运行结果时 | `manifest.json` 为默认读取入口，可登记等价路径。配置、预检回执、环境记录放此处或从清单引用。 |
-| 单次运行的 `reports/`、`logs/`、`artifacts/`、`tmp/` | 有相应输出时 | 可读报告、过程日志、可使用产物、临时材料分别归属。权重、报告和状态通过清单定位。 |
-| `.researchharness/project.yaml`、`.researchharness/central.json` | 使用各自接入功能时 | 可用于保存该项目已有的科研声明和中央入口记录。本机项目与资源绑定由中央项目命令管理。 |
-| `.agents/skills/<技能名>/` | 有项目自有或共享技能时 | 每个技能提供 `SKILL.md`。项目维护自有技能，中央共享技能按项目开关接入。 |
+| `data/<dataset-name>/<version>` or registered outside location | When there's a real input | Positioning data, labels, versions and corresponding pre-processing caches. The temporary storage and locking of data preparation follows the data root and the atoms write to the same file system. Project configuration points to the actual root directory and runs the input identity used for record-keeping. |
+| Project level `tmp/` | One-time engineering work that cannot be carried out by the existing public entry point or directory | The code, configuration, and document of the other level I directory point to the official document. `maintain-tmp` Review for conversion or clean-up. |
+| `experiment/<dataset>/<model>/<task>/<subname>/<optional-role>/` | When the result is generated | `subname` Describes the experiment or the object of exploration in one or three lowercase English terms, under a single underlined word. The subtasks or the name of the experiment under the mission are named according to the actual function, the purpose of the exploration or the key parameters that make up the conditions of the study, and can be grouped as required. Each level provides information that has not been expressed by the superior. The executive layer is only enabled when there is an independent use or control role. Serial numbers, dates, seeds and other parameters are written in the configuration or execution record. Repeated execution of the same use and role is distinguished by the list. |
+| `experiment/<dataset>/<task>/<experiment-name>/<optional-role>/` | When studying the calculation directly to the data | This type of operation saves the model layer. |
+| One run `config.yaml` or the configuration format used for the item | Configure successfully after parsing | Saves the configuration with the default, selected components and overwhelms. The running list points to the file. |
+| One run `metadata/` | When a run result to be handed over | The `manifest.json` is the default reading portal, which can register the equivalent path. Configure, precheck back, place the environment record here or quote from the list. |
+| One run `reports/`, `logs/`, `artifacts/`, `tmp/` | When corresponding output is available | Readable reports, process logs, usable products, and temporary materials are assigned separately. |
+| `assets/history_experiment/<named-result>/` | Keep existing experiments or demonstrations | The operation that you leave at `experiment/` must be checked for identity, effective configuration and product. |
+| `.researchharness/project.yaml`、`.researchharness/central.json` | When using the respective access function | The project is subject to a central project order. |
+| `.agents/skills/<skill-name>/` | When there are projects or skills-sharing | Each skill provides `SKILL.md`. The project maintains its own skills, which are centrally shared and accessible by a project switch. |
 
-组件标识、目录名和 Python 文件用说明用途的小写英文，多词用下划线。正式接口与上游原名沿用原写法。时间与尝试编号用于运行身份及归档。新增目录时说明其启用条件、实际调用者和对应入口，并按协议同步 [参考项目的布局示例](template/doc/code/development/layout.md)，供修改工程目录和添加功能时对照。
+Component identification, catalog and Python files are used in lowcase English to describe their use, and multiple words are underlined. Formal interfaces and upstream original names are used in original form. Time and attempt numbers are used to run identity and archive. The new directory indicates the conditions under which they are enabled, the actual caller and the corresponding entry, and is synchronized with the protocol [the example of the layout of the reference item](template/doc/code/development/layout.md) to compare the changes to the project catalogue and additions.
 
-## 6. 规则从哪些项目经验得来
+The project allows a stable match between the public component identifier and the disk spelling. Read the corresponding rules for writing the statement of the oral re-entry project, and run the list to save the actual component identifier. Select the same path from the same component for acceptance.
 
-| 项目与实际依据 | 采用的做法 | 保留的项目选择 |
+The data sets and models in the experimental path are functional positions. When the project has a real family and has multiple independent members, you can express the family and members in two segments at that location, such as `<dataset-family>/<cohort>`.
+
+`experiment/` The results of the joint analysis are assigned to the public entry point to the analysis, the path is determined by the actual master data or registered joint input, and the members and sources are kept on the list. `maintain-experiment`.Source data using a registration number can be identified by Queue Name, the list retains the original number and normally writes the same correspondence to read.
+
+`rh projects experiment check <project-root>` Checks the list, configuration, routing and matching of documents to the list in `artifacts/` and `reports/` for formal experiments. The whole project is maintained simultaneously at `rh projects project check <project-root>`. The results include the number of implementations and specific non-compliance paths. The official reading back of the project continues to verify the actual results.
+
+The project's dependency list is placed in the official position, and the interpreter binds and installs the entrance ResearchHarness.Hugging Face Downloads and General Caches By Local Client or `huggingface-maintain` task directory processing. Data conversion results and reusable caches are attributed to the corresponding data root.
+
+## 6. From which project experience are the rules derived
+
+| Project and actual basis | Approach used | Retain Item Selection |
 | --- | --- | --- |
-| SAEBase 的 `saebase/registry.py`、`runner.py`、`conf/config.yaml` | 配置用同一标识选组件，入口分发，具体组件实现实际行为。 | 多组件需要登记表时采用。单一分类模板可直接调用三个组件。 |
-| SAEBase 的 CI、`tests/product/`、`tests/precheck/` 和 `tests/integration/` | 按实际检查对象和运行条件分组。已有 CI 使用不同组定位任务行为、预检与中央接入检查。 | 项目按风险和现有调用者选择验证，测试目录可选，专用分组随项目实际需求建立。 |
-| SAEBase 的 `saebase/runtime/experiment_results.py` 与 Symselect 的 `experiment/symselect/active_run.json` | 给后续助手一个固定结果入口。前者可按清单读出单次运行及产物，后者定位当前轨迹、配置和报告。 | 运行目录额外维度、当前运行索引及历史来源由项目登记。 |
-| SpatialPheno 的 `tasks/workflows.py`、`conf/workflow/breast_transformer.yaml` 与 `models/fusion/classifier.py` | 具名命令能定位具体任务和配方。同一分类器被两条研究路线调用，保留公共实现。 | 一条操作跨多步骤时可采用现有工作流配置。该次运行的生效配置随结果保存。 |
-| SAGA 的 `tasks/workflows.py`、`conf/recipe/` 与 `datasets/psycad/` | 主入口集中呈现准备、分析和评估。数据准备的重复逻辑归实际共同使用的数据模块。 | 已有配方分组可登记为等价入口，分析实现归实际负责的任务。 |
-| VisualNovel 的 `skills/`、`examples/` 与 `scripts/validate_repo.py` | 按实际交付物划分职责，检查对应技能和作品示例，保护其现有发现路径。 | 技能产品可登记自己的主结构。 |
+| For SAEBase `saebase/registry.py`, `runner.py`, `conf/config.yaml` | The components are configured with the same marking, distributed at the entrance, and the specific components achieve actual behaviour. | Multiple components need to be used in the registration form. A single classification template can be called directly to three components. |
+| SAEBase It's... CI,`tests/product/`,`tests/precheck/` and `tests/integration/` | Group by physical check of objects and operating conditions. There are existing CIs that use different groups to locate mission behaviour, precheck and central access checks. | The project is validated on a risk basis and on the basis of available callers, the test catalogue is available and dedicated clusters are established in line with the actual needs of the project. |
+| SAEBase `saebase/runtime/experiment_results.py` and Symselect `experiment/symselect/active_run.json` | A fixed result entry is given to the follow-up assistant. The former can read the single operation and product by list, while the latter locates the current trajectory, configuration and reporting. | The additional dimensions of the running directory, the current running index and historical sources are registered by the project. |
+| SpatialPheno `tasks/workflows.py`, `conf/workflow/breast_transformer.yaml` and `models/fusion/classifier.py` | The name command locates specific tasks and formulations. | The current workflow configuration can be used when an operation has multiple steps. The effective configuration of the operation is saved with the result. |
+| Visual Novel `skills/`, `examples/` and `scripts/validate_repo.py` | The division of responsibilities by actual delivery, the examination of examples of counterpart skills and works, and the protection of their existing discovery pathways. | Skills products can register their own main structure. |
 
-这些做法服务于目前已有的使用场景。每条规则描述负责对象、启用条件及读取入口，保留有多个实际调用者的共用实现和有长期价值的检查。现有项目通过实际入口证明路径映射是否可用，后续新增约定由一线问题及其处理结果支撑，并同步落实到参考项目。
+Each rule describes the person responsible, the conditions of access and the access to which it is read, and maintains a shared and long-term value check of multiple actual callers.

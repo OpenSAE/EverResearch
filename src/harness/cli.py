@@ -1,6 +1,6 @@
-"""提供项目接入、本机资源绑定、结构成果审阅和独立工具的命令行入口。
+"""Command entry for project access, binding of in-house resources, review of structural results and independent tools.
 
-用于显式选择项目及工作区的本机操作。
+Local operation for visible selection of items and workspaces.
 """
 
 import sys
@@ -17,7 +17,7 @@ def main(argv=None):
 
         return utils_main(arguments[1:])
     stream = sys.stdout if not arguments or arguments == ["--help"] else sys.stderr
-    print("用法：rh projects --help | rh utils --help", file=stream)
+    print("Usage: rh projects --help | rh utils --help", file=stream)
     return 0 if stream is sys.stdout else 2
 
 

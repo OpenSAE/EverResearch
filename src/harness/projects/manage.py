@@ -1,6 +1,6 @@
-"""同步共享技能并分发本机项目资源与结构成果操作。
+"""Synchronize shared skills and manage local project resources and structure maps.
 
-用于已明确选择工作区和项目的 rh projects 命令。
+Implements the rh projects commands for a selected workspace and project.
 """
 
 from __future__ import annotations
@@ -15,7 +15,11 @@ import sys
 
 import yaml
 
-from harness.central import ProjectError, find_harness, identity, load_harness
+from harness.central import ProjectError, identity, load_harness
+from harness.core.experiment import check_experiment
+from harness.core.layout import check_layout
+from harness.core.precheck import check_precheck
+from harness.core.project import check_project
 from harness.core.workspace import save, save_bytes, update_lock
 from . import resources, structure
 
@@ -34,7 +38,7 @@ def settings(harness, project_id):
         or value.get("project_id", project_id) != project_id
         or type(value.get("skills")) is not bool
     ):
-        raise ProjectError("项目共享设置的 skills 使用 true/false")
+        raise ProjectError("Project Sharing Settings skills use true/false")
     return path, root, {"skills": value["skills"]}
 
 
@@ -53,32 +57,32 @@ def skill_directory(root):
     default = root / ".agents/skills"
     directory = root / ".agents/researchharness-skills" if default.is_symlink() else default
     if directory.is_symlink() or not directory.resolve().is_relative_to(root):
-        raise ProjectError(f"共享技能目录需要位于项目工作区内：{directory}")
+        raise ProjectError(f"Shared skills directories need to be located in the project area:{directory}")
     return directory
 
 
 def guidance(harness, project_id, value, directory, desired):
     root = harness.root
     project_root = directory.parent.parent
-    workspace = harness.workspace
-    if workspace is not None and project_root.is_relative_to(workspace):
+    if project_root.is_relative_to(harness.workspace):
         root = Path(os.path.relpath(root, project_root))
-    skills = "已开启" if value["skills"] else "已关闭"
+    skills = "enabled" if value["skills"] else "disabled"
     skill_path = directory.relative_to(project_root)
-    skill_entry = f"项目接入说明位于 `{skill_path}/researchharness/SKILL.md`。"
+    skill_entry = f"See `{skill_path}/researchharness/SKILL.md` for project setup."
     if directory.name == "researchharness-skills" and desired:
-        skill_entry += "\n按当前任务读取以下共享技能的 `SKILL.md`：\n\n"
+        skill_entry += "\n Read the shared skill that matches the current task:\n\n"
         skill_entry += "\n".join(f"- `{skill_path / name / 'SKILL.md'}`" for name in desired)
     return f"""{START}
-## ResearchHarness 共同维护
+## ResearchHarness workspace integration
 
-本项目标识为 `{project_id}`。从项目根目录访问中央入口 `{root}`，共享技能{skills}。
-工程维护沿本项目的实际入口和调用关系。若中央有 `src/project/{project_id}/README.md`，可查阅项目经验和工程入口。
-项目代码审阅、计划和授权沿用本项目的 GitHub 流程与当前会话授权。
-人类提供研究目的、体验反馈与投入偏好，助手承担授权内的工程判断和持续处理。
-值得长期保存的人类思想按 HumanInterface 整理，展示完整草稿并取得认可后保存。
-项目接入由 `rh projects status {project_id}` 查询，用户开关指令由 `rh projects set` 应用。
-本机数据与 Python 选择通过 `rh projects resources {project_id}` 查询。
+This project's README, requirements, and public commands describe how to install, configure, and run it independently.
+This workspace registers the project as `{project_id}` and uses ResearchHarness at `{root}`, with shared skills {skills}. Resolve relative paths from the project root. The central checkout may provide project notes in `src/project/{project_id}/README.md`.
+Follow the project's actual entry points and callers when maintaining it.
+Follow the project's GitHub workflow and the current authorization for code reviews and plans.
+Researchers set goals and give feedback. Assistants make engineering decisions within the authorized scope.
+Use `maintain-knowledge` to preserve research notes when the skill is available.
+View the connection with `rh projects status {project_id}`. Change shared skill settings with `rh projects set`.
+View data and Python bindings with `rh projects resources {project_id}`.
 
 {skill_entry}
 {END}"""
@@ -87,7 +91,7 @@ def guidance(harness, project_id, value, directory, desired):
 def agent_text(text, block):
     """Update only the owned section, preserving the project's other instructions."""
     if text.count(START) != text.count(END) or text.count(START) > 1:
-        raise ProjectError("AGENTS.md 中的项目接入段落标记不完整")
+        raise ProjectError("AGENTS.md Incomplete project access paragraph tags")
     if START in text:
         before, rest = text.split(START, 1)
         _, after = rest.split(END, 1)
@@ -114,7 +118,7 @@ def status(harness, project_id):
         "skill_entry": "project-skill-directory" if links.name == "skills" else "AGENTS.md",
         "resources": resources.read(harness, project_id),
         "last_applied_settings": {"skills": applied["settings"]["skills"]} if applied else None,
-        "client_reload": "新会话读取接入技能与权限；已有会话按客户端实际加载状态重新加载。",
+        "client_reload": "New session to read shared skills; already existing session reloads by actual loading status of client.",
     }
 
 
@@ -135,7 +139,7 @@ def apply_skills(harness, project_id, changes):
     targets = {**previous, **known}
     directory = skill_directory(root)
     if installed and root / old.get("directory", ".agents/skills") != directory:
-        raise ProjectError("现有共享技能位置已变化，请核对上次应用记录和项目技能目录")
+        raise ProjectError("Existing shared skills positions have changed, and please check last application log and project skills directory")
     desired = known if value["skills"] else {}
     for name, target in targets.items():
         if name not in desired and name not in previous:
@@ -143,12 +147,12 @@ def apply_skills(harness, project_id, changes):
         link = directory / name
         if link.exists() or link.is_symlink():
             if not link.is_symlink() or link.resolve() not in {target, previous.get(name)}:
-                raise ProjectError(f"保留项目自有技能 {link}；请明确同名技能的接入方式")
+                raise ProjectError(f"Retention of project-owned skills {link};Please specify how the same-named skill is accessed.")
     agent = root / "AGENTS.md"
     entry = directory / "researchharness/SKILL.md"
     for file in (agent, entry):
         if file.is_symlink() or not file.resolve().is_relative_to(root):
-            raise ProjectError(f"接入说明需要项目自身的普通文件：{file}")
+            raise ProjectError(f"Access requires normal files of the project itself:{file}")
     updated_agent = agent_text(
         agent.read_text() if agent.exists() else "",
         guidance(harness, project_id, value, directory, desired),
@@ -158,11 +162,10 @@ def apply_skills(harness, project_id, changes):
         link = directory / name
         if name not in desired and link.is_symlink() and link.resolve() in {targets[name], previous.get(name)}:
             link.unlink()
-    workspace = harness.workspace
     for name, target in desired.items():
         link = directory / name
         destination = target
-        if workspace is not None and root.is_relative_to(workspace):
+        if root.is_relative_to(harness.workspace):
             destination = Path(os.path.relpath(target, directory))
         if not link.is_symlink():
             link.symlink_to(destination, target_is_directory=True)
@@ -176,14 +179,14 @@ def apply_skills(harness, project_id, changes):
             text = re.sub(r"^skills:.*$", f"skills: {str(value['skills']).lower()}",
                           path.read_text(), flags=re.MULTILINE)
         else:
-            text = ("# 项目共享技能开关，供 rh projects 读取。\n"
+            text = ("# Project shared skills switches for rh projects Read.\n"
                     f"project_id: {project_id}\nskills: {str(value['skills']).lower()}\n")
         save_bytes(path, text.encode(), source=__file__)
     save(
         state,
         {
-            "purpose": "记录已应用的项目技能、权限选择和接入文件。",
-            "scope": "本项目的共享技能链接、协作说明与开发模式。",
+            "purpose": "Record applied project skills and access documents.",
+            "scope": "Project shared skills links and collaboration notes.",
             "settings": value,
             "directory": directory.relative_to(root).as_posix(),
             "links": {name: target.relative_to(harness.root).as_posix() for name, target in desired.items()},
@@ -198,7 +201,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--harness-root")
     commands = parser.add_subparsers(dest="action", required=True)
-    for action in ("status", "apply", "set", "register", "resources", "bind", "run"):
+    for action in ("status", "apply", "set", "register", "resources", "bind", "install", "run"):
         command = commands.add_parser(action)
         if action == "run":
             command.add_argument("--env", action="append", default=[], metavar="NAME=VALUE")
@@ -213,10 +216,32 @@ def main(argv=None):
             interpreter = command.add_mutually_exclusive_group()
             interpreter.add_argument("--python")
             interpreter.add_argument("--clear-python", action="store_true")
+        elif action == "install":
+            command.add_argument("--requirements", required=True, metavar="FILE")
+            command.add_argument("--preserve-package", action="append", default=[], metavar="NAME")
         elif action == "run":
             command.add_argument("arguments", nargs=argparse.REMAINDER)
-    commands.add_parser("init-workspace", help="在 ResearchHarness 的上一级初始化工作区和 data/")
     commands.add_parser("list")
+    project_check = commands.add_parser("project", help="Check project responsibilities and document structure")
+    project_check.add_subparsers(dest="project_operation", required=True).add_parser(
+        "check", help="Check required directories, component source, per-directory file counts, and paths",
+    ).add_argument("path")
+    layout = commands.add_parser("layout", help="Check project naming and layout")
+    layout_commands = layout.add_subparsers(dest="layout_operation", required=True)
+    layout_commands.add_parser("check", help="Run a read-only tree-based check by project path").add_argument("path")
+    experiment = commands.add_parser("experiment", help="Check experiment records and declared outputs")
+    experiment.add_subparsers(dest="experiment_operation", required=True).add_parser(
+        "check", help="Check the identity, effective configuration, file name and complete path for each execution",
+    ).add_argument("path")
+    precheck = commands.add_parser("precheck", help="Check evidence that the public entry point ran precheck")
+    precheck_check = precheck.add_subparsers(dest="precheck_operation", required=True).add_parser(
+        "check", help="Check a successful run and one blocked by precheck",
+    )
+    precheck_check.add_argument("path")
+    precheck_check.add_argument("succeeded")
+    precheck_check.add_argument("rejected")
+    precheck_check.add_argument("--max-seconds", required=True, type=float)
+    precheck_check.add_argument("--max-samples", required=True, type=int)
     reviews = commands.add_parser("structure").add_subparsers(dest="operation", required=True)
     for operation in ("add", "list", "show", "review"):
         command = reviews.add_parser(operation)
@@ -232,13 +257,21 @@ def main(argv=None):
             command.add_argument("--note", default="")
     args = parser.parse_args(argv)
     try:
-        harness = load_harness(args.harness_root or find_harness())
+        checks = {"project": check_project, "layout": check_layout, "experiment": check_experiment}
+        if args.action in checks:
+            result = checks[args.action](args.path)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0 if result["passed"] else 1
+        if args.action == "precheck":
+            result = check_precheck(
+                args.path, args.succeeded, args.rejected,
+                max_seconds=args.max_seconds, max_samples=args.max_samples,
+            )
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0 if result["passed"] else 1
+        harness = load_harness(args.harness_root)
         project = getattr(args, "project", None)
-        if args.action == "init-workspace":
-            workspace = harness.init_workspace()
-            result = {"workspace": str(workspace), "harness": str(harness.root),
-                      "data": str(workspace / "data")}
-        elif args.action == "list":
+        if args.action == "list":
             result = [
                 {"project": name, "path": str(harness.bound_path(path)), **resources.read(harness, name)}
                 for name, path in sorted(harness.bindings().items())
@@ -257,6 +290,9 @@ def main(argv=None):
         elif args.action == "bind":
             result = resources.update(harness, project, data=args.data, remove_data=args.remove_data,
                                       python=args.python, clear_python=args.clear_python)
+        elif args.action == "install":
+            return resources.install(harness, project, args.requirements,
+                                     preserve_packages=args.preserve_package)
         elif args.action == "run":
             arguments = args.arguments
             if arguments[:1] == ["--"]:

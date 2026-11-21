@@ -1,6 +1,6 @@
-"""目的和主要功能：通过包元数据读取安装版本。
+"""Purpose and main function: Read the installation version through package metadata.
 
-适用范围：本机环境资料采集与选定快照的读取和比较；结果按具体入口保存。
+Scope of application: reading and comparison of in-house environmental information collection with selected snapshots; results stored by specific entry.
 """
 
 from __future__ import annotations

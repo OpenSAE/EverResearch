@@ -1,78 +1,84 @@
-# CUB-200 分类参考项目
+# CUB-200 Classification Reference Project
 
-## 目的和主要功能
+## Purpose
 
-训练 ResNet18 加 MLP 分类头，在 CUB-200-2011 上做 200 类整图分类。作为 ResearchHarness 的参考项目，同时展示组件组织、实际运行、性能检查、结果交付与功能变更的维护方式。
+Train a ResNet-18 with a multilayer classifier head for 200-class image classification on CUB-200-2011. The template demonstrates component selection, prechecks, performance comparisons, and experiment records.
 
-## 适用范围
+## Scope
 
-从 ResearchHarness 源码目录使用，或将整个 template 目录复制到独立工作区作为新项目起点。项目使用本地 Python 和 PyTorch，从项目根目录运行。安装使用 `python -m pip install -e .`，已有依赖时也可直接运行 `python -m cub_template`。打包时将根目录的三个组件收入 `cub_template` 命名空间，避免与环境中同名的 Python 包冲突。
+Run the template in its source directory or copy it to a standalone workspace. Use Python and PyTorch, and run the examples from the project root. Install with `python -m pip install -e .`, or set `PYTHONPATH=base` if the dependencies are already installed. The package exposes its components under the `cub_template` namespace.
 
-## 完整布局
+Use ResearchHarness to link shared skills, bind a local Python interpreter and data directory, and store structure maps when you attach this project to a workspace.
+
+## Full Layout
 
 ```text
 template/
-├── README.md、AGENTS.md、pyproject.toml
+├── README.md,AGENTS.md,pyproject.toml
 ├── datasets/
 │   ├── plugins.py
 │   └── cub200/
-│       ├── __init__.py                   正式入口和支持的任务
-│       ├── dataset.py                    标注、图像和官方划分
-│       └── offline_samples.py            CUB 分类的离线检查输入
+│       ├── __init__.py                   public entry point and support tasks
+│       ├── dataset.py                    Description, image and official division
+│       └── offline_samples.py            CUB Offline check input for classification
 ├── models/
-│   ├── plugins.py、build.py               从系列登记、共用构建
+│   ├── plugins.py,build.py               Registered from series, shared build
 │   ├── resnet/resnet18/
-│   │   ├── specs.py                      两个 ResNet18 + MLP 变体
-│   │   └── model.py                      两个变体共用的实现
+│   │   ├── specs.py                      Two. ResNet18 + MLP Variables
+│   │   └── model.py                      Achieving a common set of two variants
 │   └── cnn/small_cnn/
 │       ├── specs.py
 │       └── model.py
 ├── tasks/
 │   ├── plugins.py
 │   ├── classification/
-│   │   ├── task.py                        任务接口、供预检使用的实际步骤
-│   │   └── operation.py                   训练、评估和指标
+│   │   ├── task.py                        Mission interface, practical steps for precheck
+│   │   └── operation.py                   Training, assessment and indicators
 │   └── precheck/
-│       ├── task.py                        独立预检与性能入口
-│       ├── gate.py                        正式任务调用预检
-│       ├── timing.py                      阶段计时
-│       └── performance.py                 基线瓶颈和候选比较
-├── cub_template/
-│   ├── cli.py、__main__.py                 命令入口
-│   ├── registry.py、contracts.py           登记查询、数据与任务结果接口
-│   └── runtime/
-│       ├── config.py、environment.py       配置组合、运行环境
-│       ├── runner.py                      选组件、验证、预检及分发
-│       └── records.py                     运行身份、状态及结果清单
+│       ├── task.py                        Independent precheck and performance portal
+│       ├── gate.py                        Formal Task Call Precheck
+│       ├── timing.py                      Phase time
+│       └── performance.py                 Baseline bottlenecks and candidate comparison
+├── base/                                 Base Layer
+│   └── cub_template/                      Command entrance and common running codes
+│       ├── cli.py,__main__.py             Command entrance
+│       ├── registry.py,contracts.py       Registration of queries, data and task results interface
+│       └── runtime/
+│           ├── config.py,environment.py   Configure Grouping, Operating Environment
+│           ├── runner.py                  Selection of components, validation, precheck and distribution
+│           └── records.py                 Run a list of identities, status and results
 ├── conf/
-│   └── config.yaml                       唯一的默认配置
-├── experiment/                           固定的实验根
-│   └── <数据集>/<模型>/<任务>/<subname>/<运行标识>/
-│       ├── config.yaml                    单次运行的生效配置
-│       ├── metadata/manifest.json         状态和产物索引
+│   └── config.yaml                       Only Default Configuration
+├── experiment/                           Fixed root of the experiment
+│   └── <Data Set>/<Model>/<Tasks>/<subname>/<Run Identification>/
+│       ├── config.yaml                    Entry into force configuration for single run
+│       ├── metadata/manifest.json         State and product index
 │       ├── reports/
 │       └── artifacts/
 ├── tests/
-│   ├── test_workflow.py                   正常入口和结果回归
-│   └── test_boundaries.py                 配置隔离、数据划分与候选失败
-└── doc/code/development/
-    ├── layout.md
-    └── engineering.md
+│   ├── test_workflow.py                   Normal access and return of results
+│   └── test_boundaries.py                 Configure quarantine, data disaggregation and candidate failure
+└── doc/                            Project document index and table of contents at all levels
+    ├── datasets.md,models.md,tasks.md,conf.md
+    ├── experiment.md
+    └── knowledge/,environment/,code/
 ```
 
-`datasets/`、`models/`、`tasks/` 是必备目录，各自维护组件登记。和 SAEBase 一样，正常入口组合配置，运行层根据配置选任务，任务定义计算并返回结构化结果。预检可以独立选择，也在正式训练前由运行层调用。运行清单记录预检回执、任务结果和产物路径。
+`datasets/`,`models/`,`tasks/` It is a mandatory catalogue, each maintaining the registration of components. and SAEBase Similarly, the normal entry configuration, the operating layer calculates and returns the structured results based on the configuration selected tasks, the tasks defined and the results. Prechecks can be selected independently and are called from the operational level before formal training. Runlist records the prechecking check, the results of the task and the path of the product.
 
-数据根由配方或 `--data-root` 指定。运行根固定为项目一级目录 `experiment/`，由程序从项目根定位。正常运行按 `<数据集>/<模型>/<任务>/<subname>/<运行标识>/` 保存。用 `--subname` 给实验取一至三个描述用途的词，例如 `scratch_baseline` 或 `imagenet_finetune`。重复运行同一实验时沿用名称，由程序创建独立的运行目录。配置或组件选择失败的清单归 `unresolved/<subname>/`。正式结果通过 `metadata/manifest.json` 定位。
+The data root is specified by the formula or `--data-root`. Run the root is fixed to the project level 1 directory `experiment/` and is positioned from the root of the project. Normal running is saved by `<dataset>/<model>/<task>/<subname>/<run-id>/`. Use `--subname` to use one or three words for the experiment to describe the purpose, such as `scratch_baseline` or `imagenet_finetune`. Use the same name when running the same experiment again, and the program creates a separate running directory. The list of configuration or component selection failures is `unresolved/<subname>/`. The official result is located by `metadata/manifest.json`.
 
-[模板布局示例](doc/code/development/layout.md)说明各目录负责什么、何时扩展，供复制模板、增加组件和调整项目布局时使用。
+[Examples of template layouts](doc/code/development/layout.md)Description of what the directories are responsible for and when they are extended to be used in replicating templates, adding components and adjusting project layouts.
 
-## 项目维护的技能入口
+[Item documents](doc/README.md)Provide level I catalogue descriptions, use of parameters, experimental reports, scientific knowledge, implementation of environmental and source structure.
 
-共享维护技能位于 ResearchHarness 主仓库的 `.agents/skills/`。本模板提供组件登记、独立预检、性能比较和结果检查的可运行示例。作为独立项目使用时，登记项目并通过 `rh projects apply <项目标识>` 生成项目侧的技能链接。
+## Skills portal maintained by the project
 
-## 离线演练
+Open working session from the template directory, press `AGENTS.md` Selection `.agents/skills/` This template provides examples of operational components registration, independent precheck, performance comparisons, and results checks. Skills links that skip the template when copying to an independent workspace, are registered and the shared skills are opened and linked through the project access portal.
 
-在项目目录执行。运行从 `conf/config.yaml` 读取默认值，`--set` 选择组件或覆盖参数。
+## Offline Exercise
+
+Executes in the project directory. Runs to read the default value from `conf/config.yaml`, `--set` to select components or overwhelm parameters.
 
 ```bash
 offline=(
@@ -87,27 +93,27 @@ python -m cub_template run "${offline[@]}"
 python -m cub_template benchmark "${offline[@]}" --candidate-workers 1
 ```
 
-用 `--config <运行目录>/config.yaml` 读取先前保存的配置。运行仍需给出 `--subname`，并生成新的运行目录。复跑历史实验时，配置结合清单中的源码版本使用。已归档的 ImageNet 微调对应其试跑副本。
+Read the previously saved configuration with `--config <run-directory>/config.yaml`. Run still needs to give `--subname` and generate a new running directory. Configure the source version of the list when reruning history experiments. Archived ImageNet fine tunes to its running copy.
 
-性能预检报告比较当前工作进程数和候选值，显示基线耗时最长的阶段、结果一致性及推荐值。需要正式验证时，用同一配方的 `--set runtime.workers=<推荐值>` 运行，再核对实际工作量与总耗时。每条命令打印运行目录。用 `python -m cub_template inspect <运行目录>` 读取运行状态和产物路径。离线配方的输入标为 `synthetic`，用于验证工作过程。
+The performance precheck report compares the number of current work processes and candidate values, showing the longest time-consuming phase of the baseline, consistency of results and recommended values. `--set runtime.workers=<Recommended value>` Runs, rechecks the actual workload with the total time. Each command prints a running directory. `python -m cub_template inspect <Run Directory>` Reads the active state and product path. The input for the offline formulation is marked `synthetic`,For validation of work process.
 
-## 正式 CUB-200 基线
+## Official CUB-200 baseline
 
-准备 [Caltech-UCSD Birds-200-2011 官方数据](https://www.vision.caltech.edu/datasets/cub_200_2011/)，将 `--data-root` 指向包含 `images/`、`images.txt`、`image_class_labels.txt`、`train_test_split.txt` 的解压目录。运行配置只读取本地数据，模型从随机权重开始。官方划分用于固定 5,994 张训练图和 5,794 张测试图。
+Prepare [Caltech-UCSD Birds-200-2011 official data](https://www.vision.caltech.edu/datasets/cub_200_2011/) to point `--data-root` to a decompression catalogue containing `images/`, `images.txt`, `image_class_labels.txt`, `train_test_split.txt`. Run configuration only to read local data, with the model starting with a random weight. The official division is used to fix 5,994 training charts and 5,794 test charts.
 
 ```bash
 python -m cub_template precheck --subname scratch_baseline --data-root "$cub_data"
 python -m cub_template run --subname scratch_baseline --data-root "$cub_data"
 ```
 
-先将 `cub_data` 设置为本机数据目录。训练用随机裁剪和翻转，正式测试用确定性缩放和中心裁剪。按配置训练固定轮数，最终权重在官方测试集评估一次，报告平均交叉熵和 Top-1。预检和性能比较使用训练集的小样本，保留官方测试集用于最终评估。
+The `cub_data` is first set as a directory of in-house data. The training is randomly calibrated and flipped. Formally tested for definitive scaling and central cutting.
 
-## 结果与后续工作
+## Results and follow-up
 
-- `config.yaml` 保存实际生效的配置。
-- `metadata/manifest.json` 保存配置引用、数据来源、软件源文件哈希、实测环境、状态和相对产物路径。
-- `reports/` 保存阶段指标、预检、性能比较或最终测试。训练每轮保存已有指标。
-- `artifacts/model.pt` 保存本次训练的最终模型权重。
-- 数据缺失时，清单以 `blocked` 记录具体缺项和恢复方式。运行报错记录阶段和原因。
+- `config.yaml` Saves a configuration that actually works.
+- `metadata/manifest.json` Saves configuration references, data sources, software source documents, Hashi, measured environment, state and relative product paths.
+- `reports/` Save-stage indicators, prechecks, performance comparisons or final tests.
+- `artifacts/model.pt` Saves the final model weight for this training.
+- When data is missing, the list records specific missing items and restores them by `blocked`.
 
-项目维护方法见 [工程工作示例](doc/code/development/engineering.md)。项目助手先依据真实文件和运行结果处理常规工程问题，可以把共性发现反馈给中央。
+The project maintenance method is [examples of engineering work](doc/code/development/engineering.md). The project assistant first deals with conventional engineering issues on the basis of real documents and the results of the operation.

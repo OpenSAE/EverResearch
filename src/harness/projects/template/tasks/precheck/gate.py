@@ -1,6 +1,6 @@
-"""目的：在正式训练前运行并保存与正式任务一致的有界预检。
+"""Purpose: Operation and preservation of precheck in line with official tasks prior to formal training.
 
-适用范围：训练分发。隔离预检耗用的随机状态。
+Scope of application: Training distribution..
 """
 
 from dataclasses import replace

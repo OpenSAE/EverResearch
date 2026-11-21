@@ -1,5 +1,5 @@
-# 目的和主要功能：在一份配置中维护项目默认值和可选组件。
-# 适用范围：新实验从此开始，单次运行的生效配置保存到 experiment/。
+# Purpose and main function: maintain the project default and optional components in a configuration.
+# Scope of application: Starting with new experiments, the effective configuration of a single run is saved to experiment/.
 defaults:
   - dataset: cub200
   - model: resnet18_mlp

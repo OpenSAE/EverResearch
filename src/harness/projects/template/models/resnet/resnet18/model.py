@@ -1,6 +1,6 @@
-"""目的：用 ResNet18 提取图像特征，以 MLP 输出 200 类 logits。
+"""Purpose: Use ResNet18 Extract image characteristics as MLP Outputs 200 Category logits.
 
-适用范围：正式训练、预检和性能比较，使用本地随机初始化。
+Scope of application: formal training, precheck and performance comparisons, using local random initialization.
 """
 
 from torch import nn
@@ -13,9 +13,9 @@ CLASSES = 200
 def validate_config(config):
     hidden_dim = config["hidden_dim"]
     if type(hidden_dim) is not int or hidden_dim < 1:
-        raise ValueError("model.hidden_dim 必须为正整数")
+        raise ValueError("model.hidden_dim Must be positive integer")
     if config.get("initialization", "random") != "random":
-        raise ValueError("此模型实现使用随机初始化。复跑预训练实验时，请使用清单记录的对应源码")
+        raise ValueError("This model is used for random initialization. When reruning pre-training experiments, use the corresponding source code of the inventory record.")
     return hidden_dim
 
 

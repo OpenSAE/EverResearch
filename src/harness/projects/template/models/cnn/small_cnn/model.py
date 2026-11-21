@@ -1,6 +1,6 @@
-"""目的：提供可与 ResNet18 配方互换的轻量图像分类模型。
+"""Purpose: To provide access to ResNet18 Light image classification model for formula swaps.
 
-适用范围：200 类 RGB 图像分类及离线的组件扩展示例。
+Scope: 200 Category RGB Example of image classification and offline component extensions.
 """
 
 from torch import nn
@@ -11,7 +11,7 @@ CLASSES = 200
 def validate_config(config):
     channels = config.get("channels", 16)
     if type(channels) is not int or channels < 1:
-        raise ValueError("model.channels 必须为正整数")
+        raise ValueError("model.channels Must be positive integer")
     return channels
 
 

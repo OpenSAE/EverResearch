@@ -1,45 +1,48 @@
-# 任务操作方案
+# Task Operating Scheme
 
-## 目的和主要功能
+## Purpose
 
-说明任务从配置和分发进入计算，再交给结果使用者的过程，以及各类变更负责的文件。
+Description of the process by which tasks go from configuration and distribution to computation and then to results users, as well as the documents responsible for the various types of changes.
 
-## 适用范围
+## Scope
 
-用于科研任务、工作流和任务输出的增加、修改或移除。已有项目可按项目说明定位等价入口。
+Adds, modifies or removes items for research tasks, workflows and task outputs.
 
-## 文件归属
+## Attribution of files
 
-| 位置 | 负责内容 |
+| Location | Responsible content |
 | --- | --- |
-| `tasks/<任务>/task.py` | 公开入口、参数及数据模型组合检查，返回任务结果 |
-| `tasks/<任务>/operation.py`、`evaluation.py` | 方法计算、训练和任务专用评价。需要独立评估时启用评估文件 |
-| `tasks/plugins.py` 或 `tasks/workflows.py` | 任务或工作流公开标识和分发。主命令解析参数后调用正式实现 |
-| `conf/config.yaml` 与对应实验目录 | 任务参数、工作量、所选数据模型及运行条件 |
-| `tasks/precheck/` | 独立预检的选择、正式任务预检调用、计时和性能比较 |
-| 项目公共运行层与结果读取者 | 记录运行状态、环境及产物位置。消费者用清单定位并解释结果 |
+| `tasks/<task>/task.py` | Open access, parameters and data model combination check, return mission results |
+| `tasks/<task>/operation.py`、`evaluation.py` | Methodological calculations, training and mission-specific evaluations. Assessment documents are available when independent assessments are required |
+| `tasks/<task>/<subtask>/` | Steps or methods that can be independently called under the same research objective. The scientific logic of shared sub-missions is maintained by the named module of the mission. |
+| `tasks/plugins.py` or `tasks/workflows.py` | The task or workflow public identification and distribution. The main command resolves the parameters and calls the official realization. |
+| `conf/config.yaml` and corresponding experiments catalogue | Mission parameters, workload, selected data models and operating conditions |
+| `tasks/precheck/` | Selection of independent precheck, precheck of official assignments, timing and performance comparisons |
+| Project Public Operating Layer and Results Reader | Registers the status of operations, the environment and the location of the product. Consumers use the list to locate and explain the results. |
 
-## 增加
+When determining the attribution of the common code, look at whether it handles a sample, model, scientific mission or running process. The label is read with data, model construction and weighting with models, and the general check point status and file reading and writing with the operational layer. The results table with task-specific fields follows the task.
 
-1. 从下游读取场景确定输入、任务步骤、指标、交付产物和部分完成的含义。说明一个结果如何被报告、比较或继续使用。
-2. 在负责目录实现公开接口和计算，复用实际已有的训练、评估与记录支持。高成本步骤按项目现有方式接入有界预检，预检复用正常计算。
-3. 增加任务登记或具名工作流以及对应配置。同步正式命令、项目说明和需要的结果读取者。
-4. 获准时从正常入口用代表性输入运行并读取结果，确认下游能拿到预定产物。部分完成时，确认清单能说明具体缺项与下一步。
+## Increase
 
-## 修改
+1. Read the scene from downstream to determine the meaning of input, mission steps, indicators, deliverables and partial completion.
+2. Reuse actual training, evaluation and record-keeping support when the catalogue is responsible for public interfaces and calculations. `tasks/` Down `precheck`,Allows the public entry point to run a precheck automatically in the current combination before each count. Using a very small sample, the formal computation, product path, writing format and reading, the precheck is followed by a formal calculation.
+3. Synchronize public commands, project descriptions and required result readers.
+4. If you are allowed to do so, enter a representative input and read the results from the normal entrance, confirming that the intended product can be obtained downstream.
 
-1. 查清真实调用、参数默认值、预检、产物格式和历史结果读取。明确改变的是任务计算、数据模型组合、运行编排还是结果读取。
-2. 把改动放到负责文件。算法改动进入计算模块，接口检查进入任务入口，共用运行记录改公共运行层，解释结果的报告读取者与输出同步调整。
-3. 涉及指标、任务语义、公开命令或结果格式时，列出受影响的使用者和历史材料的读取办法。科研含义或投入发生变化时，提供有代表性的影响交给人类决定。
-4. 获准时选择同一批代表性输入检查新旧行为，核对正常、受阻或部分完成情形能被实际结果读者理解。
+## Modify
 
-## 移除
+1. Checks for real calls, parameter defaults, prechecks, product formats, and historical results. Clear changes are made for task calculations, data model combinations, run-formulations, or result readings.
+2. Move the changes to the responsible file. Algorithm changes enter the calculation module, interface check access to the task portal, common running records change to the public operating layer, and report readers who interpret the results synchronize with the output.
+3. When it comes to indicators, mission semantics, public commands, or results formats, list the means of reading the affected users and historical materials.
+4. The selection of the same representative input to check for old and new behaviour when granted, and the verification of normal, blocked or partial completion is understood by the actual result reader.
 
-1. 确定范围是单个模式、参数、产物，或整个任务。查找正式登记、预设、默认值、日志和报告读取、定时启动及专属测试。
-2. 为保留流程处理所需的输入和产物。共用的加载、评估或报告逻辑按剩余实际使用归位。
-3. 取消所选模式或输出。完整卸载时同步移除公开命令、实现、配置、专属检查和活动说明。既有运行和素材按具体授权处理。
-4. 核对移除后的选择入口和保留工作流。现存报告仍按当时的任务语义解释。
+## Remove
 
-## 参考项目中的落点
+1. Determines the range of subtasks, modes, parameters, products, or the whole task. Finds the official registration, preset, default values, logs and reports for reading, periodic start-up and exclusive testing.
+2. The common load, assessment or reporting logic is subordinated to the remaining actual use.
+3. Cancels the selected mode or output. Synchronizes the removal of public commands, realization, configuration, exclusive inspection and activity descriptions on unmounting. Existing operations and materials are processed according to specific authorization.
+4. Checks the removal of the selected entry and the retention of the workflow.
 
-CUB 模板的 `tasks/classification/task.py` 接受并校验正式组合，`tasks/classification/operation.py` 实现分类步骤。`tasks/plugins.py` 登记分类和预检，`conf/config.yaml` 设置任务默认参数。修改分类指标时，同时追到报告与清单中的结果字段，再从 `inspect` 定位到对应输出。
+## Points for reference items
+
+The CUB template `tasks/classification/task.py` accepts and validates the official combination, `tasks/classification/operation.py` to achieve the classification step. `tasks/plugins.py` Register classification and precheck, `conf/config.yaml` sets the default parameters for the task. When you change the classification indicator, you track the results field in the report and the list and position it from `inspect` to the corresponding output.

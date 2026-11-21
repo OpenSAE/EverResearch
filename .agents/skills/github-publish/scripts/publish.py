@@ -1,7 +1,7 @@
-"""目的和主要功能：复制选定文件，检查发布语言，在 Skill 内准备 Git 差异、提交、版本包及 GitHub 发布。
+"""Purpose and main function: Copy the selected file, check the published language, Skill Get ready inside. Git Differences, submissions, version packages and GitHub Release.
 
-适用范围：github-publish Skill 的明确发布任务；原发布目录只读，所有本地写入位于 Skill 内。
-运行使用 Python 标准库、Git 与 GitHub CLI，读取已有登录；默认仅准备，远程写入使用独立命令。
+Scope: github-publish Skill ;the original release directory is read-only, all local writings are located on Skill Internal.
+Run Usage Python Standard library, Git with GitHub CLI,Reads login already in; defaults only to prepare, remotely write with a stand-alone command.
 """
 from __future__ import annotations
 
@@ -37,20 +37,20 @@ def relative(value, *, root=False):
     if root and value == '.':
         return ''
     if not value or '\\' in value or '\x00' in value:
-        raise ValueError('路径应为相对路径，根位置使用 .')
+        raise ValueError('Path should be relative, root position used .')
     parts = value.split('/')
     if PurePosixPath(value).is_absolute() or any(p in {'', '.', '..'} for p in parts):
-        raise ValueError('路径应位于所选目录内：' + value)
+        raise ValueError('Path should be in the selected directory:' + value)
     if any(p.lower() == '.git' for p in parts):
-        raise ValueError('Git 元数据由内部仓库自行管理')
+        raise ValueError('Git The metadata are managed by the internal warehouse itself')
     return value
 
 
 def repository(value):
     if not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', value):
-        raise ValueError('仓库使用 owner/name 格式')
+        raise ValueError('Repository usage owner/name format')
     if any(p in {'.', '..'} for p in value.split('/')):
-        raise ValueError('仓库名称无效')
+        raise ValueError('Repository name invalid')
     return value
 
 
@@ -76,12 +76,12 @@ class Run:
     def __init__(self, name, *, create=False):
         global ACTIVE_RUN
         if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,99}', name):
-            raise ValueError('任务标识只能包含字母、数字、连字符和下划线')
+            raise ValueError('Job identification can only include letters, numbers, hyphens and underlineds')
         self.path = internal(RESULTS / name)
         if create:
             self.path.mkdir(parents=True, exist_ok=False)
         elif not self.path.is_dir():
-            raise ValueError('任务不存在：' + name)
+            raise ValueError('Mission does not exist:' + name)
         self.name = name
         self.checkout = self.path / 'checkout'
         self.token = None
@@ -97,7 +97,7 @@ class Run:
     def record(self, **values):
         self.receipt.update(values)
         save(self.path / 'result.json', self.receipt)
-        self.log('result.json', '更新实际发布状态')
+        self.log('result.json', 'Update actual release status')
 
     def log(self, name, content):
         path = internal(self.path / name)
@@ -134,7 +134,7 @@ class Run:
                     result = subprocess.run(['gh', 'auth', 'token', '--hostname', 'github.com'],
                         cwd=self.path, env=original, capture_output=True, text=True)
                     if result.returncode:
-                        raise ValueError('需要已有的 GitHub 登录，或通过环境提供 GH_TOKEN')
+                        raise ValueError('We need what we have. GitHub Login or provision through the environment GH_TOKEN')
                     self.token = result.stdout.strip()
             env['GH_TOKEN'] = self.token
         return env
@@ -147,7 +147,7 @@ class Run:
             reason = result.stderr.strip() or result.stdout.strip()
             if self.token:
                 reason = reason.replace(self.token, '[credential]')
-            raise ValueError(args[0] + ' 操作未完成：' + reason[:3000])
+            raise ValueError(args[0] + ' Operation not completed:' + reason[:3000])
         return result
 
     def git(self, *args, auth=False, cwd=None, allow_failure=False):
@@ -158,7 +158,7 @@ class Run:
 
     def branch(self, value):
         if value.startswith('-'):
-            raise ValueError('分支名称无效')
+            raise ValueError('Branch Name Invalid')
         self.git('check-ref-format', 'refs/heads/' + value, cwd=self.path)
         return value
 
@@ -173,7 +173,7 @@ def collect(root, maps, excludes, run):
     omitted = []
     for mapping in maps:
         if '=' not in mapping:
-            raise ValueError('--map 使用 来源相对路径=目标相对路径')
+            raise ValueError('--map Use Source Relative Path=Target relative path')
         source_name, destination = mapping.split('=', 1)
         source_name = relative(source_name, root=True)
         destination = relative(destination, root=True)
@@ -183,13 +183,13 @@ def collect(root, maps, excludes, run):
             if part == root.parent:
                 break
             if part.is_symlink():
-                raise ValueError('选择实际文件或目录，当前路径包含符号链接：' + str(source))
+                raise ValueError('Select the actual file or directory, the current path contains a symbol link:' + str(source))
         source = source.resolve(strict=True)
         source.relative_to(root)
         if source.is_relative_to(run.path):
-            raise ValueError('本次任务的产物不作为自身输入')
+            raise ValueError('The product of this task is not entered as such')
         if not (source.is_dir() or source.is_file()):
-            raise ValueError('仅接收普通文件或目录：' + str(source))
+            raise ValueError('Only general files or directories received:' + str(source))
         explicit_results = source.is_relative_to(RESULTS)
 
         def excluded(path):
@@ -205,14 +205,14 @@ def collect(root, maps, excludes, run):
 
         def add(path):
             if path.is_symlink() or not path.is_file():
-                raise ValueError('仅复制普通文件；请单独处理链接或特殊文件：' + str(path))
+                raise ValueError('Copy only normal files; please handle separate links or special files:' + str(path))
             suffix = path.relative_to(source).as_posix() if source.is_dir() else ''
             target = '/'.join(p for p in [destination, suffix] if p)
             if not target:
                 target = source.name
             target = relative(target)
             if target in chosen:
-                raise ValueError('多个来源对应同一目标：' + target)
+                raise ValueError('Multiple sources correspond to the same target:' + target)
             chosen[target] = path
 
         if excluded(source):
@@ -228,7 +228,7 @@ def collect(root, maps, excludes, run):
                     if excluded(path):
                         continue
                     if path.is_symlink():
-                        raise ValueError('目录包含符号链接：' + str(path))
+                        raise ValueError('Directory contains symbolic links:' + str(path))
                     kept.append(name)
                 dirs[:] = kept
                 for name in sorted(files):
@@ -236,11 +236,11 @@ def collect(root, maps, excludes, run):
                     if not excluded(path):
                         add(path)
     if not chosen:
-        raise ValueError('选定范围内没有要发布的普通文件')
+        raise ValueError('No normal files to be published in the selected range')
     for name in chosen:
         for parent in PurePosixPath(name).parents:
             if parent.as_posix() in chosen:
-                raise ValueError('目标文件和目录发生冲突：' + name)
+                raise ValueError('Conflict of target files and directories:' + name)
     return chosen, sorted(set(omitted))
 
 
@@ -249,11 +249,11 @@ def check_snapshot(run, plan):
     actual = {p.relative_to(run.path / 'source').as_posix()
               for p in (run.path / 'source').rglob('*') if p.is_file() or p.is_symlink()}
     if actual != set(expected):
-        raise ValueError('内部副本的文件集合已变化；请重新准备并查看变化')
+        raise ValueError('Internal copy file collection has changed; please repreparate and see changes')
     for name, item in expected.items():
         path = run.path / 'source' / name
         if path.is_symlink() or digest(path) != item['sha256'] or bool(path.stat().st_mode & 0o111) != item['executable']:
-            raise ValueError('内部副本已变化；请重新准备并查看变化：' + name)
+            raise ValueError('internal copy changed; please repreparate and see changes:' + name)
 
 
 def bilingual_match(target, rule):
@@ -262,7 +262,7 @@ def bilingual_match(target, rule):
 
 def chinese_lines(text):
     return [number for number, line in enumerate(text.splitlines(), start=1)
-            if any(char == '〇' or unicodedata.name(char, '').startswith(
+            if any(char == '0' or unicodedata.name(char, '').startswith(
                 ('CJK UNIFIED IDEOGRAPH-', 'CJK COMPATIBILITY IDEOGRAPH-'))
                 for char in line if not char.isascii())]
 
@@ -306,33 +306,33 @@ def check_publication_language(run, files, bilingual):
         'findings': findings,
         'unread_as_text': unread,
     })
-    run.log('language-check.json', '记录发布语言检查结果和双语范围')
+    run.log('language-check.json', 'Recording of the results of language tests and bilingual coverage')
     if findings:
-        locations = [item['path'] + (':' + str(item['lines'][0]) if 'lines' in item else '（路径名称）')
+        locations = [item['path'] + (':' + str(item['lines'][0]) if 'lines' in item else '(Path Name)')
                      for item in findings[:8]]
-        raise ValueError('发布内容包含中文，请在内部副本中翻译后重新准备。'
-                         '完整位置见 language-check.json。\n' + '\n'.join(locations))
+        raise ValueError('Published in Chinese, please re-preparate after translation in internal copy.'
+                         'I’ll see you in full position. language-check.json.\n' + '\n'.join(locations))
 
 
 def check_metadata_language(**fields):
     for name, value in fields.items():
         if value and chinese_lines(value):
-            raise ValueError('GitHub 发布说明应使用英文：' + name)
+            raise ValueError('GitHub The publication of the notes should be in English:' + name)
 
 
 def prepare(args):
     root = args.root.expanduser().resolve(strict=True)
     if not root.is_dir():
-        raise ValueError('--root 应为来源根目录')
+        raise ValueError('--root It should be the root source directory')
     repo = repository(args.repo) if args.repo else None
     if args.new and (not repo or not args.visibility):
-        raise ValueError('准备新仓库时明确提供 --repo 和 --visibility')
+        raise ValueError('Make it clear when preparing the new warehouse. --repo and --visibility')
     if args.visibility and not args.new:
-        raise ValueError('--visibility 仅用于新仓库')
+        raise ValueError('--visibility For the new warehouse only')
     if args.delete and (not repo or args.new):
-        raise ValueError('删除目标文件需要指定已有仓库')
+        raise ValueError('Remove the target file to specify an existing repository')
     if args.bilingual_path and not repo:
-        raise ValueError('双语路径用于指定 GitHub 目标的发布准备')
+        raise ValueError('Bilingual path to specify GitHub Preparation for the release of targets')
     run = Run(datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8], create=True)
     run.record(state='preparing')
     chosen, omitted = collect(root, args.map, args.exclude, run)
@@ -340,7 +340,7 @@ def prepare(args):
                         for path in args.bilingual_path})
     for rule in bilingual:
         if not any(bilingual_match(target, rule) for target in chosen):
-            raise ValueError('双语路径未匹配任何本次发布文件：' + rule)
+            raise ValueError('Bilingual path does not match any of the current release documents:' + rule)
     run.branch(args.base)
     branch = run.branch(args.branch or args.base)
     rows = []
@@ -350,19 +350,19 @@ def prepare(args):
         output.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, output)
         if before != digest(source) or before != digest(output):
-            raise ValueError('复制期间来源发生变化，请重新准备：' + str(source))
+            raise ValueError('Source changed during copying. Reprepared.:' + str(source))
         rows.append({'source': source.relative_to(root).as_posix(), 'target': target,
                      'sha256': before, 'executable': bool(output.stat().st_mode & 0o111)})
-    run.log('source', '保存用户选定内容的独立副本')
+    run.log('source', 'Save a stand-alone copy of the user selected content')
     if repo:
         check_publication_language(run, rows, bilingual)
     deletes = [relative(p) for p in args.delete]
     if set(deletes).intersection(chosen):
-        raise ValueError('同一文件不能既发布又删除')
+        raise ValueError('The same document cannot be published and deleted')
     base_commit = None
     if repo and not args.new:
         if branch != args.base and run.remote_head(repo, branch):
-            raise ValueError('目标分支已存在；直接更新时将它同时指定为 --base 与 --branch，或选择新分支')
+            raise ValueError('Target branch already exists; it is also designated as a direct update --base with --branch,Or choose a new branch')
         run.git('clone', '--no-checkout', '--single-branch', '--branch', args.base,
                 '--no-recurse-submodules', 'https://github.com/' + repo + '.git',
                 str(run.checkout), cwd=run.path, auth=True)
@@ -383,9 +383,9 @@ def prepare(args):
             if part == run.checkout.parent:
                 break
             if part.is_symlink():
-                raise ValueError('目标路径包含符号链接：' + item['target'])
+                raise ValueError('Target path contains symbolic links:' + item['target'])
         if target.is_dir():
-            raise ValueError('目标已有同名目录：' + item['target'])
+            raise ValueError('Target has a directory with the same name.:' + item['target'])
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(run.path / 'source' / item['target'], target)
     paths = [r['target'] for r in rows]
@@ -402,9 +402,9 @@ def prepare(args):
         'base_commit': base_commit, 'tree': tree, 'files': rows, 'delete': deletes,
         'omitted': omitted, 'bilingual_paths': bilingual, 'summary': summary, 'has_changes': bool(diff)}
     save(run.path / 'plan.json', plan)
-    run.log('checkout', '准备目标仓库及明确选定的变化')
-    run.log('plan.json', '保存来源、目标路径、文件摘要和发布范围')
-    run.log('changes.diff', '保存待发布的实际差异')
+    run.log('checkout', 'Prepare target warehouse and identify selected changes')
+    run.log('plan.json', 'Save source, target path, file summary and scope of release')
+    run.log('changes.diff', 'Save actual discrepancies to be published')
     run.record(state='prepared', last_attempt='succeeded', last_error=None)
     print(json.dumps({'run': run.name, 'files': len(rows), 'repo': repo, 'branch': branch,
         'source': str(run.path / 'source'), 'diff': str(run.path / 'changes.diff'),
@@ -418,17 +418,17 @@ def publish(args):
     check_snapshot(run, plan)
     check_publication_language(run, plan['files'], plan.get('bilingual_paths', []))
     if run.git('write-tree').stdout.strip() != plan['tree']:
-        raise ValueError('待提交内容已变化；请重新准备并查看差异')
+        raise ValueError('The content to be submitted has changed; please repreparate and view the differences')
     if run.git('diff', '--name-only', '--no-ext-diff').stdout.strip():
-        raise ValueError('内部仓库还有未准备的修改；请重新准备')
+        raise ValueError('There are still unprepared changes in the internal warehouse; please re-preparate')
     if run.git('ls-files', '--others', '--exclude-standard').stdout.strip():
-        raise ValueError('内部仓库出现额外文件；请重新准备')
+        raise ValueError('Additional documents appear at the internal warehouse; please repreparate')
     if args.pr and (plan['new'] or plan['branch'] == plan['base'] or not args.title or not args.body_file):
-        raise ValueError('PR 需要已有仓库、新分支以及 --title、--body-file')
+        raise ValueError('PR Need to have a warehouse, a new branch, and --title,--body-file')
     if args.pr and not plan['has_changes']:
-        raise ValueError('没有待发布差异，本次无需创建 PR')
+        raise ValueError('No difference to be published, no need to create this PR')
     if args.draft and not args.pr:
-        raise ValueError('--draft 在此命令中用于草稿 PR，请同时提供 --pr')
+        raise ValueError('--draft Use this command for drafts PR,Please provide at the same time. --pr')
     body = internal(args.body_file).read_text(encoding='utf-8') if args.body_file else None
     check_metadata_language(commit_message=args.message, pull_request_title=args.title,
                             pull_request_body=body)
@@ -437,7 +437,7 @@ def publish(args):
         if plan['has_changes']:
             author = []
             if bool(args.author_name) != bool(args.author_email):
-                raise ValueError('同时提供 --author-name 和 --author-email')
+                raise ValueError('It’s also available. --author-name and --author-email')
             if args.author_name:
                 author = ['-c', 'user.name=' + args.author_name, '-c', 'user.email=' + args.author_email]
             run.git(*author, 'commit', '-m', args.message)
@@ -445,10 +445,10 @@ def publish(args):
         elif plan['base_commit']:
             commit = plan['base_commit']
         else:
-            raise ValueError('没有可提交内容')
+            raise ValueError('No content to submit')
         run.record(commit=commit, state='committed')
     if run.git('rev-parse', 'HEAD').stdout.strip() != commit:
-        raise ValueError('本地提交已变化，停止发布')
+        raise ValueError('Local submission changed, release stopped')
     if plan['has_changes']:
         message = run.git('show', '-s', '--format=%B', commit).stdout
         check_metadata_language(commit_message=message)
@@ -459,9 +459,9 @@ def publish(args):
     if remote != commit:
         expected = plan['base_commit'] if plan['branch'] == plan['base'] else None
         if remote != expected:
-            raise ValueError('目标分支已变化；保留本次副本，请查看远程状态后重新准备')
+            raise ValueError('Target branch changed; this copy is retained, re-prepared after viewing remote status')
         if not plan['new'] and run.remote_head(repo, plan['base']) != plan['base_commit']:
-            raise ValueError('目标基础分支已变化，请重新准备差异')
+            raise ValueError('Target base branch has changed, please repreparate the difference.')
         run.git('push', 'https://github.com/' + repo + '.git',
                 commit + ':refs/heads/' + plan['branch'], auth=True)
     url = 'https://github.com/' + repo + '/commit/' + commit
@@ -475,7 +475,7 @@ def publish(args):
         else:
             body_path = run.path / 'pull_request_body.md'
             body_path.write_text(body, encoding='utf-8')
-            run.log('pull_request_body.md', '保存本次 PR 说明')
+            run.log('pull_request_body.md', 'Save this one PR Annotations')
             command = ['gh', 'pr', 'create', '--repo', repo, '--base', plan['base'],
                 '--head', plan['branch'], '--title', args.title, '--body-file', str(body_path)]
             if args.draft:
@@ -497,7 +497,7 @@ def pack(run):
     with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
         for item in plan['files']:
             archive.write(run.path / 'source' / item['target'], item['target'])
-    run.log(output.relative_to(run.path), '保存选定文件的 ZIP 版本包')
+    run.log(output.relative_to(run.path), 'Save selected file ZIP Version Package')
     run.record(package=output.relative_to(run.path).as_posix(), package_sha256=digest(output),
                last_attempt='succeeded', last_error=None)
     return output
@@ -509,9 +509,9 @@ def release(args):
     repo = repository(plan['repo'] or '')
     commit = run.receipt.get('commit')
     if not commit or not run.receipt.get('commit_url'):
-        raise ValueError('先发布已准备内容，再为该提交创建 Release')
+        raise ValueError('Release prepared content and create for this submission Release')
     if not args.tag or args.tag.startswith('-'):
-        raise ValueError('提供明确的版本标签')
+        raise ValueError('Provide a clear version of the label')
     notes = internal(args.notes_file).read_text(encoding='utf-8')
     check_metadata_language(release_tag=args.tag, release_title=args.title, release_notes=notes)
     run.git('check-ref-format', 'refs/tags/' + args.tag)
@@ -521,11 +521,11 @@ def release(args):
     tags = {line.split()[1]: line.split()[0] for line in existing.stdout.splitlines() if line.strip()}
     tagged_commit = tags.get(ref + '^{}', tags.get(ref))
     if tagged_commit and tagged_commit != commit:
-        raise ValueError('已有版本标签指向其他提交，请明确选择其他版本或处理已有标签')
+        raise ValueError('Existing version labels point to other submissions, please clearly select another version or handle existing labels')
     output = pack(run)
     notes_path = run.path / 'release_notes.md'
     notes_path.write_text(notes, encoding='utf-8')
-    run.log('release_notes.md', '保存版本说明')
+    run.log('release_notes.md', 'Save Version Description')
     command = ['gh', 'release', 'create', args.tag, str(output), '--repo', repo,
         '--target', commit, '--title', args.title, '--notes-file', str(notes_path)]
     if args.draft:
@@ -539,7 +539,7 @@ def release(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
-    command = commands.add_parser('prepare', help='只复制和准备差异，不修改 GitHub')
+    command = commands.add_parser('prepare', help='Duplicate and prepare differences only, not modified GitHub')
     command.add_argument('--root', type=Path, required=True)
     command.add_argument('--map', action='append', required=True)
     command.add_argument('--exclude', action='append', default=[])
@@ -550,8 +550,8 @@ def main():
     command.add_argument('--visibility', choices=['private', 'public'])
     command.add_argument('--delete', action='append', default=[])
     command.add_argument('--bilingual-path', action='append', default=[],
-                         help='保留明确支持双语的目标文件或以 / 结尾的目标目录')
-    command = commands.add_parser('publish', help='按任务授权提交并推送已准备内容')
+                         help='Retain or maintain target documents that explicitly support bilingualism / End of destination directory')
+    command = commands.add_parser('publish', help='Submission and forwarding of prepared content in accordance with mandates')
     command.add_argument('--run', required=True)
     command.add_argument('--message', required=True)
     command.add_argument('--author-name')
@@ -560,9 +560,9 @@ def main():
     command.add_argument('--title')
     command.add_argument('--body-file', type=Path)
     command.add_argument('--draft', action='store_true')
-    command = commands.add_parser('pack', help='在 Skill 内生成选定副本的 ZIP')
+    command = commands.add_parser('pack', help='Yes. Skill _Other Organiser ZIP')
     command.add_argument('--run', required=True)
-    command = commands.add_parser('release', help='为已发布提交创建 GitHub Release')
+    command = commands.add_parser('release', help='Create for published submission GitHub Release')
     command.add_argument('--run', required=True)
     command.add_argument('--tag', required=True)
     command.add_argument('--title', required=True)
@@ -587,7 +587,7 @@ def main():
                 ACTIVE_RUN.record(last_attempt='failed', last_error=message)
             except OSError:
                 pass
-            message += '\n任务资料：' + str(ACTIVE_RUN.path)
+            message += '\n Mission information:' + str(ACTIVE_RUN.path)
         parser.exit(2, 'GitHub Publish: ' + message + '\n')
 
 

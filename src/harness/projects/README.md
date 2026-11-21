@@ -1,52 +1,61 @@
-# 项目共享技能与本机操作
+# Project shared skills and in-house operations
 
-## 目的和主要功能
+## Purpose
 
-列出项目整理与维护的技能入口，向科研项目同步共享技能，维护本机数据和 Python 选择，保存可复查的结构成果。
+Lists the skills portals for project collation and maintenance, sharing skills in a synchronized manner with scientific projects, maintaining in-house data and Python selections, and preserving reversible structural results.
 
-## 适用范围
+## Scope
 
-用于选择项目整理或维护技能，以及对选定项目执行接入、技能开关、本机资源绑定或结构成果审阅。陌生项目可先从实际入口摸底，按需要登记。
+You can start with the actual entry point and register as needed.
 
-## 陌生项目整理与日常维护
+## Overall and dedicated maintenance of the project
 
-**[`build-project`](../../../.agents/skills/build-project/SKILL.md) 是陌生科研项目挂载、梳理和结构整理的主要入口。** 从实际运行入口和已有产物识别职责，整理项目布局、基础层和组件说明，再将实际入口和待整理事项交给后续维护。
+**[`maintain-project`](../../../.agents/skills/maintain-project/SKILL.md) is the main entry point for the overall maintenance of scientific projects. ** applies to access to strange projects, to combo directories, to check the existing project as a whole and to process cross-component changes. It defaults on access to the applicable know-how, and then consolidates the changes and acceptance evidence from the actual entry point and product inspection level.
 
-维护已有项目时，按具体工作选择专项技能。整理陌生项目时，也可调用同一组技能处理对应环节。
+The following specific skills are used directly when handling a single job. `maintain-project` Entry of specific skills to be applied on a case-by-case basis.
 
-| 技能 | 适用工作与职责 |
+| Skills | Application of work and duties |
 | --- | --- |
-| [`maintain-base`](../../../.agents/skills/maintain-base/SKILL.md) | 接通命令、配置、数据、模型与任务，维护分发、共用运行资源和结果读写。 |
-| [`maintain-dataset`](../../../.agents/skills/maintain-dataset/SKILL.md) | 增改移除数据集与预设，维护样本准备、划分、登记和任务读取。 |
-| [`maintain-model`](../../../.agents/skills/maintain-model/SKILL.md) | 增改移除模型或变体，维护构造、权重加载及任务兼容。 |
-| [`maintain-task`](../../../.agents/skills/maintain-task/SKILL.md) | 增改移除科研任务、模式或结果接口，维护计算、指标和结果交接。 |
-| [`maintain-experiment`](../../../.agents/skills/maintain-experiment/SKILL.md) | 调整默认实验配置或单次参数，执行、跟踪、恢复、读取或排查实验。 |
-| [`maintain-optional`](../../../.agents/skills/maintain-optional/SKILL.md) | 维护独立脚本、测试、组件文档和随项目保存的外部文件。 |
+| [`maintain-base`](../../../.agents/skills/maintain-base/SKILL.md) | Connect commands, configurations, data, models and missions, maintain distribution, share operational resources and read and write results. |
+| [`maintain-dataset`](../../../.agents/skills/maintain-dataset/SKILL.md) | Add and remove data sets and presets, and maintain sample preparation, division, registration and task reading. |
+| [`maintain-model`](../../../.agents/skills/maintain-model/SKILL.md) | Adds and removes models or variants to maintain the construction, weight load and task compatibility. |
+| [`maintain-task`](../../../.agents/skills/maintain-task/SKILL.md) | Adding or removing research tasks, models or results interfaces, and maintaining the interface of calculations, indicators and results. |
+| [`maintain-conf`](../../../.agents/skills/maintain-conf/SKILL.md) | Add, remove or modify public parameters to check meanings, default values, coverage and historical compatibility with actual consumers. |
+| [`maintain-experiment`](../../../.agents/skills/maintain-experiment/SKILL.md) | The report is maintained using the experimental formulation and the single parameter to perform, track, restore, read or screen experiments. |
+| [`maintain-optional`](../../../.agents/skills/maintain-optional/SKILL.md) | Maintenance of independent scripts, tests, component documents and external documents kept with the project. |
+| [`maintain-tmp`](../../../.agents/skills/maintain-tmp/SKILL.md) | The catalogue, use and closure of the one-time project work is managed and applies to short-term scripts and documents that cannot be carried out at the existing entrance or official location. |
+| [`maintain-code`](../../../.agents/skills/maintain-code/SKILL.md) | Review and maintenance of designated codes and their upstream and downstreams, and cleaning of temporary documents once the core results are reproduced through the public entry point. |
+| [`maintain-skill`](../../../.agents/skills/maintain-skill/SKILL.md) | The specified skills are assessed in real-use scenarios, the results of which are biased and are repaired and repeated. |
+| [`maintain-knowledge`](../../../.agents/skills/maintain-knowledge/SKILL.md) | The organization and preservation of knowledge worthy of long-term use applies to the recording of ideas, reading of existing knowledge and additional comments. |
 
-## 项目接入
+## Project access
 
-[项目接入与本机资源](../core/PROJECT.md)规定 ResearchHarness、共享数据和各科研仓库的一级位置，以及项目和资源路径的解析方式。初始化工作区或搬迁项目时查阅。以下命令从父工作区执行，示例项目仓库位于 `example/`。
+The project README first describes how to install dependent, configured data and the environment independently and run from the project’s public entry point. Access to ResearchHarness allows you to share skills, bind the machine resources and register the results of the structure.
+
+[Project access and in-house resources](../core/PROJECT.md)Provisions ResearchHarness,The following commands are executed from the parent's work area, with examples of which the project warehouse is located: `example/`.
 
 ```bash
-rh projects --harness-root ./ResearchHarness init-workspace
-rh projects register example --path ./example
-rh projects status example
-rh projects apply example
-rh projects set example --skills off
+rh projects --harness-root ./ResearchHarness register example --path ./example
+rh projects --harness-root ./ResearchHarness status example
+rh projects --harness-root ./ResearchHarness apply example
+rh projects --harness-root ./ResearchHarness set example --skills off
 ```
 
-`manage.py` 读取中央 `.agents/skills/` 下有 `SKILL.md` 的技能目录，同步项目中的中央链接及接入说明。若项目已用 `.agents/skills/` 作为自己的目录别名，中央技能放在 `.agents/researchharness-skills/`。同名自有技能保留，接入时报告冲突。现有项目的中央身份、共享设置和工程经验位于 `src/project/<项目>/`。项目自己的代码审阅、计划与协作授权使用项目的 GitHub 流程。
+`manage.py` Read Centre `.agents/skills/` Here we go. `SKILL.md` If the project is used. `.agents/skills/` As an alias for your own directory, the central skills are placed in `.agents/researchharness-skills/`.The central identity, shared set-up and engineering experience of existing projects are located at the central location of the project. `src/project/<Item>/`.Project own code review, plan and collaborate to authorize project use GitHub Process.
 
-## 项目工程说明
+## Project scope description
 
-- [科研项目目录与文件职责](LAYOUT.md)说明布局、文件归属和调用关系，适用于接入、整理和扩展采用该布局的项目。
-- [项目工程协议](PROTOCOL.md)说明项目检查、预检、性能、环境、结果与人工判断，适用于采用共同工程约定的项目。
-- [CUB-200 分类参考项目](template/README.md)演示组件、预检和结果的配合，适用于对照可运行的工程样例。
+- [Catalogue of research projects and documentation functions](LAYOUT.md)Description of layout, document attribution and call relationship for access, organization and extension of projects using the layout.
+- [Project engineering agreement](PROTOCOL.md)Description of project inspection, precheck, performance, environment, results and manual judgement applicable to projects subject to common engineering agreement.
+- [Scientific project documentation and maintenance reporting](DOCUMENTATION.md)Provide for directory, fixed entries, environmental and experimental records and the use of evidence for the creation of project documentation, maintenance or review functions.
+- [CUB-200 Classification reference items](template/README.md)Accompanying demonstration components, prechecks and results, applicable to the comparison of runable project samples.
 
-## 本机数据、Python 和结构成果
+## Inner data, Python and structural results
 
-`rh projects bind`、`resources` 和 `run` 管理本机路径并用所选 Python 调用项目原有入口。使用 `{data:名称}` 把已登记的数据目录交给项目的参数或环境变量。
+`rh projects bind`, `resources` and `run` manage their own path and use the selected Python to call the original entry to the project. Use `{data:name}` to send the registered data catalogue to the project's parameter or environmental variable. `rh projects install` Use the same Python installation statement to rely on.
 
-`rh projects structure add` 接收由 ExtractStructure 导出的可信独立 HTML，以及来源版本和分析范围。使用 `list` 或 `show` 查找页面，使用 `review` 记录对该版本的决定。查看页面直接打开命令返回的本机路径。
+The binding record is kept at `src/project/<project>/resources.json` for ResearchHarness. Structure results and review records are kept at `structure/` under the same item directory.
 
-[使用示例](../../../README.md)介绍安装和各命令的具体调用，适用于新项目接入和既有项目的本机操作。
+`rh projects structure add` Receives a credible independent HTML exported by ExtractStructure, as well as source versions and analytical ranges. Use `list` or `show` to find a page and use `review` to record the decision on that version. View the page directly to open the path to the machine to which the command returns.
+
+[Use Example](../../../README.md)Description of the specific calls for installation and commands, applicable to new project access and to the home-based operation of existing projects.

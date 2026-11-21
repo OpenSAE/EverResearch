@@ -1,6 +1,6 @@
-"""保存 ExtractStructure 导出的独立页面及其来源，记录对具体版本的审阅决定。
+"""Save ExtractStructure Export of separate pages and their source to record review decisions for specific versions.
 
-用于已登记项目的本地结构成果。调用方提供可信的独立 HTML、源码版本和分析范围。
+Use local structural results for registered projects. Callers provide credible independence HTML,Source version and analysis range.
 """
 
 from datetime import datetime, timezone
@@ -16,18 +16,18 @@ from ..core.workspace import save, save_bytes
 def folder(harness, project_id):
     project_id = identity(project_id)
     if project_id not in harness.bindings():
-        raise ProjectError(f"项目尚未登记：{project_id}")
-    return f".workspace/harness/projects/structure/reviews_{project_id}"
+        raise ProjectError(f"Projects not yet registered:{project_id}")
+    return f"src/project/{project_id}/structure"
 
 
 def register(harness, project_id, html, revision, scope):
     base = folder(harness, project_id)
     source = Path(html).expanduser().resolve(strict=True)
     if source.suffix.lower() != ".html" or not revision.strip() or not scope.strip():
-        raise ProjectError("请提供独立 HTML、源码版本或快照标识以及分析范围")
+        raise ProjectError("Please be independent. HTML,Source version or snapshot identifier and analytical scope")
     content = source.read_bytes()
     if not content.strip():
-        raise ProjectError("结构页面为空")
+        raise ProjectError("Structure page is empty")
     key = uuid4().hex
     page = harness.resolve(f"{base}/{key}/index.html")
     save_bytes(page, content, source=str(source))
@@ -50,11 +50,11 @@ def show(harness, project_id, key, *, verify=True):
     record = json.loads(path.read_text())
     page = harness.resolve(f"{base}/index.html", exists=True)
     if verify and hashlib.sha256(page.read_bytes()).hexdigest() != record["sha256"]:
-        raise ProjectError(f"结构页面与登记的版本不一致：{page}")
+        raise ProjectError(f"Structure page inconsistent with registered version:{page}")
     decision = harness.resolve(f"{base}/decision.json")
     review = json.loads(decision.read_text()) if decision.exists() else None
     if review and review["sha256"] != record["sha256"]:
-        raise ProjectError(f"审阅记录引用不同的结构页面版本：{page}")
+        raise ProjectError(f"Review the records to refer to different structured pages:{page}")
     return {**record, "page": str(page), "review": review}
 
 

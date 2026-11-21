@@ -1,5 +1,5 @@
-/* 目的和主要功能：计算展开功能的范围、标题与边界。
- * 适用范围：目录图和文件图在同一画布中逐项展开时使用。
+/* Purpose and main function: Calculating the scope, title and boundary of the extended function.
+ * Scope of application: use of table of contents and file diagrams in the same canvas to expand item by item.
  */
 'use strict';
 function computeConceptRanges(expanded,model,positions){

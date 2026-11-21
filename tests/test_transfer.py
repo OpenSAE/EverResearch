@@ -1,6 +1,6 @@
-"""目的和主要功能：检查传输与解压的实际文件结果、完成状态和可选文件摘要。
+"""Purpose and main function: Check the actual file results, completion status and summary of optional documents for transfer and decompression.
 
-适用范围：使用合成压缩包与本地 rclone 连接，覆盖直接调用和已有项目调用。
+Scope of application: Use of synthetic compression packages and local rclone Connect, overwrite direct calls and already existing items.
 """
 
 import hashlib
@@ -387,7 +387,7 @@ def json_records(text):
 
 
 @pytest.mark.skipif(shutil.which("rclone") is None, reason="optional local rclone integration")
-@pytest.mark.parametrize("folder", ["My Dataset", "科研 数据"])
+@pytest.mark.parametrize("folder", ["My Dataset", "Scientific data"])
 def test_direct_module_transfer_completion_and_failure(tmp_path, folder):
     source = tmp_path / "input.txt"
     source.write_bytes(b"synthetic original")

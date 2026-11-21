@@ -1,7 +1,7 @@
-"""目的和主要功能：采集进程亲和性、所属资源组及可见上级的共享额度和身份事实。
+"""Purpose and main function: homogeneity of the collection process, level of sharing and identity of resource groups and visible superiors.
 
-适用范围：Linux 本机环境采集；默认从进程归属及挂载信息定位 cgroup 第二版，
-显式目录用于隔离样本。结果记录可见约束、读取状态和原因，供快照比较与展示。
+Scope: Linux Inner environment capture; default location from process attribution and mounted information cgroup 2nd edition,
+Visible directories are used to isolate samples. The results are recorded as binding, reading state and cause for comparison and presentation of snapshots..
 """
 
 from __future__ import annotations

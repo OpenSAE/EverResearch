@@ -1,6 +1,6 @@
-"""分发本机文件处理和环境采集工具。
+"""Distribution of machine document processing and environmental collection tool.
 
-用于显式指定压缩包、传输路径或环境快照的工具调用。
+Tool to call for visible specification of compression packages, transfer paths or environment snapshots.
 """
 
 import sys
@@ -8,7 +8,7 @@ import sys
 
 def main(argv):
     if not argv or argv == ["--help"]:
-        print("用法：rh utils {archive,transfer,probe,compare} --help")
+        print("Usage: rh utils {archive,transfer,probe,compare} --help")
         return 0
     command, *args = argv
     if command == "archive":
@@ -26,7 +26,7 @@ def main(argv):
     elif command == "compare":
         from .compare import Engine
     else:
-        print(f"找不到工具：{command}", file=sys.stderr)
+        print(f"No tool found:{command}", file=sys.stderr)
         return 2
     try:
         return Engine().main(argv=args)

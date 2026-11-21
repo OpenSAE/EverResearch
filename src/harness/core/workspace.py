@@ -1,6 +1,6 @@
-"""目的和主要功能：提供中央 JSON 原子写入及工作区产物日志。
+"""Purpose and main function: provision of central JSON Atom Writing and Workspace Production Log.
 
-适用范围：由已明确目标路径的中央写入入口和独立工具调用。
+Scope of application: Called by a central write-in entry and independent tool with a defined target path.
 """
 
 from __future__ import annotations

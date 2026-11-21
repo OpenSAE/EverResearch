@@ -172,6 +172,8 @@ Deliver the selected folder or file's own path with all expandable nodes collaps
 
 Drawing components handle compact layout, expansion, connection labels, highlighting, and languages. Store projects separately under this skill's `results/<project-id>/`. Deliver graph data and page links by default. Choose the local service or independent HTML export according to user access and the host environment. Follow explicit requests for static images or other formats.
 
+For an enrolled ResearchHarness project whose exported page needs a persistent review record, register the independent HTML with `rh projects structure add`, supplying the source revision and analysis scope. ResearchHarness stores the registered page and review record under its own `src/project/<project-id>/structure/`.
+
 New and reused graph data share these page defaults:
 
 - **Fixed within groups, compact between groups.** Keep concrete file/process positions within groups; allow whole-group movement on expansion. A collapsed overview occupies one card; expanding everything restores the full lower-level layout.

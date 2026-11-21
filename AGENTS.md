@@ -1,158 +1,162 @@
-# ResearchHarness — 智能助手工作说明
+# ResearchHarness — job description for smart assistant
 
-## 目的和主要功能
+## Purpose
 
-本文件介绍 ResearchHarness 的整体目录、何时需要由智能助手维护 ResearchHarness，以及维护文件必须遵循的七项管理原则，并按具体任务引导读取相应的专项操作文档。
+This document describes the entire catalogue of ResearchHarness, when smart assistants are required to maintain ResearchHarness, and the seven management principles that must be followed in maintaining the document, and to guide the corresponding operations document to specific tasks.
 
-## 适用范围
+## Scope
 
-适用于进入 ResearchHarness 仓库进行阅读、设计、修改、精简或维护的智能助手。科研项目的任务涉及维护 ResearchHarness 本身时，使用下述维护流程。
+Use the maintenance process described below when the scientific project is involved in the maintenance of ResearchHarness itself.
 
-## ResearchHarness 面向的科研项目
+## ResearchHarness for a scientific project
 
-ResearchHarness 及其维护技能面向任意科研项目，包括首次接触和尚未接入的项目。项目可以采用各自的组织形式、数据、模型和运行环境。实际操作按本次任务和当前授权执行。登记、绑定和共享技能开关用于定位项目、启用中央能力和落实已有权限。
+Read and write in accordance with this mandate and operational identity. Registers are used to locate projects, binds to the selection of in-house resources, and shares skill switches for synchronized skills.
 
-已知项目提供可以观察和复查的工程经验。形成通用方法时，从实际使用者、操作入口、输入、产物和后续使用出发，查清做法解决了什么问题、在哪些条件下成立，以及采用不同组织形式时怎样取得同类事实。技能写清适用情形、应查的依据、判断方法和完成条件。项目特有的目录、命令和约定保存在对应项目的说明中。进入陌生项目时，先识别承担实际职责的文件和入口，再应用通用方法。
+Each project should be capable of being installed, configured and operated independently. The installation steps, dependence, data selection and public commands are provided by the project.
 
-### 陌生项目整理与日常维护
+When a common methodology is developed, you can identify the problems, the conditions under which it is established and how the same facts are obtained in different organizational forms. Skills are written in terms of the applicable circumstances, the basis to be checked, the method of judgement and the conditions for its completion. A unique catalogue of the project, the order and the agreement are kept in the description of the corresponding project.
 
-**挂载、梳理或按 ResearchHarness 布局整理陌生科研项目，先使用 [build-project](.agents/skills/build-project/SKILL.md)。** 从项目真实入口追踪职责，按布局整理数据集、模型、任务、配置和产物，接通基础层，补齐组件说明，再把实际入口和待整理事项交给后续维护。
+### Overall and dedicated maintenance of the project
 
-**日常维护按工作选择专项技能。** 数据集、模型和任务分别使用 `maintain-dataset`、`maintain-model` 和 `maintain-task`。跨组件调度和共用运行能力使用 `maintain-base`，运行配置和实验操作使用 `maintain-experiment`，独立脚本、测试、组件文档和外部文件使用 `maintain-optional`。整理陌生项目时也可用这些技能处理对应部分。
+**Access to an unknown project, inspection or maintenance of the entire scientific project, first using [maintain-project](.agents/skills/maintain-project/SKILL.md).** This skill follows the physical entrance to check the first-level catalogue and cross-component process, defaults on specific maintenance to the applicable parts, and then checks on the modified project as a whole.
 
-## 1. ResearchHarness 的主要目录
+**Direct use of tailor-made skills for individual maintenance.** Datasets, models and missions are used separately `maintain-dataset`,`maintain-model` and `maintain-task`.Cross-component movement and shared operational capability utilization `maintain-base`,Open Parameter Use `maintain-conf`,Single run configuration and experimental operation use `maintain-experiment`,Use of stand-alone scripts, tests, component documents and external files `maintain-optional`.Maintenance of the entire project by `maintain-project` Assignment of specific tasks according to these responsibilities.
 
-- `src/agent/` 保存维护 ResearchHarness 自身的工作说明。
-- `.agents/skills/` 保存面向任意科研项目的技能。
-- `src/harness/` 提供共享技能接入、本机资源绑定、结构成果审阅和独立工具。
-- `src/project/` 保存已知科研项目的中央身份、共享设置和工程经验。科研源码和运行产物归项目。
-- `.workspace/` 保存本机项目绑定、运行状态和结构成果。
-- `tests/` 保存中央命令与工具的按需回归测试。
-- `pyproject.toml` 配置软件包与开发工具。
+A single-time project is available at `maintain-tmp`. The access project can be dependent on the ResearchHarness to bind the interpreter and install the project statement. Hugging Face download location is maintained at `huggingface-maintain` and data preprocessing and reusable caches are attributed to the corresponding data.
 
-## 2. 什么时候可以修改 ResearchHarness
+## 1. Main Directory of ResearchHarness
 
-一般科研任务在对应项目内完成。用户只要求阅读、解释或讨论时，操作范围限于阅读和起草。
+- `src/agent/` Saves maintenance of ResearchHarness's own job description.
+- `.agents/skills/` Preservation of skills for any scientific project.
+- `src/harness/` provides access to shared skills, tied in-house resources, review of structural results and independent tools.
+- `src/project/` Saves the central identity by project, shares the set-up, works experience, binds the in-house resources and structural results.
+- `.workspace/` Keeps central project registration, operational status and development products.
+- `tests/` Saves a needs-based regression test for a central command and tool.
+- `pyproject.toml` Configure packages and development tools.
 
-**目前处于开发阶段。修改 ResearchHarness 自有源码、配置、规范或目录结构之前，必须得到用户对本次修改范围的明确批准。** 中央 Harness 重构按用户明确批准的范围实施。
+## 2. When can we modify ResearchHarness?
 
-科研项目的代码审阅、计划与协作授权沿用项目的 GitHub 流程。ResearchHarness 的本机操作采用用户当前授权和实际运行身份。
+The general scientific mission is carried out within the corresponding project.
 
-用户要求新增 Harness 功能时，先说明：当前能力与需求的差距、具体操作会怎样使用新功能、预计要增改哪些文件；功能意义或效果需要澄清时，先请用户明确目标。
+**It is currently in the development phase. ResearchHarness Users must clearly approve the scope of the change before the source, configuration, specifications or directory structure is available.** Central Harness Reconstruct the implementation to the extent explicitly approved by the user.
 
-用户要求缩减 Harness 时，先弄清准备删除的文件或机制的使用场景、实际调用者和删除影响，再向用户给出保留、合并或删除的具体方案。保留与合并应以实际用途为依据，删除方案以直接移除获准机制为目标。
+The scientific project code reviews, plans and collaborates with the project’s GitHub process. ResearchHarness uses current user-authorized and operational identities for its own operation.
 
-## 3. 七项维护原则
+When the user requests the addition of a Harness feature, the user is asked to specify the following: the gap between current capabilities and needs, how the new functionality will be used in the operation, and which documents are expected to be added or modified; and if the functional meaning or effect needs to be clarified, the user is asked to specify the objectives.
 
-### 1. 目的驱动原则
+When the user requests that Harness be scaled down, the context of the use of the document or mechanism to be deleted, the actual caller and the removal effect are identified, and the specific option to be reserved, merged or deleted is given to the user. The reservation and consolidation should be based on the actual use, and the deletion is aimed at removing the approved mechanism directly.
 
-每项功能、规则和文件都必须服务于明确的实际需求。这个需求的描述应该是具体的、明确的，能够说明需要解决的问题及其实际意义。
+## 3. Seven upholding principles
 
-### 2. 人类可理解原则
+### Purpose-driven principles
 
-所有设计必须能让人类清楚理解其含义、作用和使用场景。术语应有明确解释、上下文和实际意义，表述以人类可理解性为优先。
+Each function, rule and document must serve a clear and realistic need. The description of this need should be specific and clear, providing an indication of the issues to be addressed and their practical implications.
 
-### 3. 行为确定性原则
+### 2. Principles of human understanding
 
-智能助手的操作要求必须明确触发条件、执行对象、具体行为和预期结果，使各智能助手能够依据同一规则执行一致的操作。
+All designs must give humans a clear understanding of what they mean, what they play and what they use. The term should be clearly explained, contextd and practical, with human understanding given priority.
 
-### 4. 局部约束原则
+### 3. Principle of certainty of conduct
 
-规则应当放在实际需要它的模块和操作环节中。全局约束仅用于真正适用于整个系统的规则；每条具体约束都必须精确描述其适用的任务、对象和操作。
+The operation of the smart assistant requires that the trigger be clearly defined, the person to be executed, the specific act and the expected outcome, so that the smart assistant can perform consistent operations according to the same rule.
 
-### 5. 可选验证原则
+### 4. Principle of partial binding
 
-需要关注智能助手能否真实执行预期行为，验证机制作为按需选择的能力。目前 ResearchHarness 处于开发阶段，**验证操作保持停用，具体检查由用户明确要求后按指定范围执行**；验证机制与流程按用户需要逐步开发。
+The rules should be placed in the modules and operational links where they are actually needed. The global constraint should be applied only to those rules that are truly applicable to the system as a whole; each specific constraint must accurately describe the tasks, objects and operations to which it applies.
 
-### 6. 精简原则
+### 5. Optional principles of certification
 
-功能和约束的保留以明确、有效的实际作用为依据。用户决定精简，或用途审查表明应予移除时，提出相应的精简或删除方案。
+There is a need to look at whether the smart assistant can actually implement the expected behaviour, and the certification mechanism as a capacity to choose on demand. The ResearchHarness is currently in the development stage, with the **validation operation being disabled, with a specific check being performed at the specified range** at the user’s express request; the certification mechanism and process is being developed according to the user’s needs.
 
-### 7. 书写、解释与对话原则
+### 6. Streamlining principles
 
-本原则适用于书写文件、向人类解释问题和与人类沟通，目的是确保人类能够理解所写、所说的内容。
+Functional and binding reservations are based on a clear and effective practical role.
 
-1. **用名称说明实际含义。** 写标题、命名或引用章节、功能、规则、方案及其他对象时，直接使用能说明对象或用途的名称，让读者看到名称就知道它指什么。禁止用字母加数字的编号指代任何内容，也禁止用生造的技术词汇包装可以直接说明的概念。这类编号和词汇本身不传达含义，读者需要另找说明才能理解。使用通行的专业术语时，在首次出现处按需要说明它在当前语境中的含义。准确引用已有正式名称、文件路径或机器接口时，使用原名。
-2. **使用完整的自然语言。** 缩写和代码表达统一改为完整词语与人类可以直接理解的说明。
-3. **用肯定句说明概念与关联。** 直接说明每个概念的含义、作用、相互关系及适用情形，概念区分与边界说明一律采用肯定句式。
-4. **按人类需要提供细节。** 日常书写和交流以理解实际问题、用途和结果为主；技术细节与执行边界在人类明确要求时再展开。默认将执行边界的模糊之处和技术细节的描述缺失视为对任务影响轻微的情况，按现有信息继续处理。
+### 7. Principles of writing, interpretation and dialogue
 
-#### 交流信息的选择
+This principle applies to writing documents, explaining problems to and communicating with humanity, with a view to ensuring that human beings can understand what is written and said.
 
-助手在当前授权内负责取得事实、完成工程判断并持续处理任务，人类主要提供目的、实际使用反馈和投入偏好。当选择需要人类提供新的意图或取舍判断时，助手说明具体情形、可行选择、实际影响和建议；具有重大影响的技术问题同时说明发生条件与后果。已有决定由后续工作承接，人类反馈用于调整工作方向和结果的呈现方式。
+1. **Use a name to describe actual meaning.** When writing titles, naming or quoting chapters, functions, rules, schemes and other objects, use a name that explains the object or purpose, and lets the reader see the name to know what it means. It is prohibited to refer to anything with a numbered letter or number, and to package with a technical term that can be described directly. Such numbers and words do not themselves convey meaning, and the reader needs to find a different description to understand them. When using a common professional term, for the first time, it is used to indicate what it means in the current context, as required. When a proper reference is made to an official name, file path or machine interface, the original name is used.
+2. **Use the full natural language.** Consistency of abbreviations and code expression is replaced by a full description that humans can understand directly.
+3. **describes the concept and connection in a positive sentence.** describes directly the meaning, role, interrelationship and application of each concept, with the concept distinction and boundary statement in a positive sentence.
+4. **Provides details on the basis of human needs.** Daily writing and communication is based on understanding of practical problems, uses and results; technical details and implementation boundaries are then developed when humans clearly request them.
 
-**围绕任务结果选择交流内容。** 对话帮助人类理解实际变化、处理问题和作出决定。正常执行、必要检查和常规收尾属于完成任务的过程，完成时直接说明得到的结果及其实际用途。遇到影响任务完成的问题时，持续定位和解决；需要人类参与时，说明具体情形、实际影响、已查明的原因和可行选择。检查过程及其证据保存在相应工作资料中；人类询问，或检查结果影响当前结论时，按功能说明检查了什么、观察到什么及其影响。进展说明围绕新的发现、重要决定和实际阻碍展开。未完成事项以本次请求尚未实现的具体结果为依据。提交、推送、发布等操作的状态，在当前任务涉及这些操作时说明。
+#### Options for sharing information
 
-**供下载和外部审查的文件采用直接交付。** 人类需要下载文件并在外部审查或分析时，直接提供可下载的结果，默认包含完成该用途所需的主要信息和必要说明。单个文件可直接交付，需要一起移交的多个文件可用压缩包；人类指定格式或内容范围时按其要求交付。额外整理、转换、报告和附录按本次明确要求提供。
+Within the current mandate, the assistant is responsible for obtaining the facts, completing the engineering judgement and continuing the task, and humans provide, inter alia, the purpose, actual use of feedback and input preferences. When a choice requires new human intent or a trade-off judgement, the assistant describes the circumstances, viable options, practical implications and recommendations; and technical issues with significant implications explain the conditions and consequences.
 
-## 4. 所有 Harness 文件的开头说明
+**Select the content to be shared around the results of the mission.** Dialogue helps humans understand actual changes, address issues and make decisions. Regular implementation, necessary inspections and routine tailings are part of the process of completing the task, with a direct indication of the results obtained and their practical use.
 
-每份由 ResearchHarness 维护的活动 Markdown、Python、配置或其他文件，都应该在开头说明：
+**Direct delivery of documents for download and external review.** Humans need to download documents and provide directly the results that can be downloaded during external review or analysis, by default containing the main information and necessary instructions to complete the use. Individual documents can be delivered directly and multiple documents that need to be handed over together can be compressed packages; humans will be required to deliver in their specified format or content range.
 
-- **目的和主要功能**：该文件为什么存在、提供什么具体功能或保存什么数据。
-- **适用范围**：哪些任务、模块或操作会读取或修改它，以及对应的任务对象、触发条件和操作边界。
+## 4. Opening statements for all Harness documents
 
-用于约束 Harness 的 Markdown 文档统一采用肯定句式，尤其在“目的和主要功能”与“适用范围”部分，应精准描述作用、功能、适用条件和事实情况。
+Each activity maintained by ResearchHarness Markdown, Python, configuration or other document should begin with a statement that:
 
-Markdown 使用这两个同名小节；Python 可用文件顶部模块文档字符串；支持注释的格式可用文件头注释。JSON 等机器文件保持合法语法与现行数据格式，文件说明采用兼容读取方式的方案，并由用户决定具体形式。
+- **Purpose and main function**: Why the document exists, what specific functions it provides, or what data it keeps.
+- **Scope of application **: which tasks, modules or operations will read or modify it, as well as the subject subject, trigger conditions and operational boundary.
 
-当一个约束 Markdown 使用 Markdown 链接引用另一份 Harness 约束文档时，应在引用处同时说明被引用文档的“目的和主要功能”与“适用范围”，并与目标文档开头的表述保持一致。每个链接应服务于完成当前任务的实际阅读需要。
+Markdown documents used to bind Harness have a uniform positive sentence and, in particular, in the section “Purpose and main function” and “Scope of application”, should be precise in describing roles, functions, conditions of application and factual circumstances.
 
-阅读和维护围绕当前任务推进。涉及当前授权文件的说明问题，在相应维护中一并修正；影响理解、执行或任务决定的问题，结合具体影响集中提出。需要扩大修改范围或选择处理方式时，向人类提供具体改动与选择。机器格式的说明方案保持现有读取行为。本条按当前实际阅读或维护的文件局部执行；全仓审查、验证程序开发和历史资料整理依据用户明确要求开展。
+Markdown uses these two same-name subsections; Python can use the top-module document string; the format supporting the note can use the file header annotated. Machine files such as JSON maintain a legitimate syntax with the current data format, describe a programme that is readable in a compatible manner and allow the user to decide on the specific form.
 
-## 5. 按当前任务选择专项文档
+When a restricted Markdown uses the Markdown link to quote another Harness binding document, the reference should be accompanied by a statement of the " Purpose and main function " of the referenced document and the " Scope of application " , consistent with the statement at the beginning of the target document. Each link should serve the actual reading needs of the current task.
 
-- [项目共享技能与本机操作](src/harness/projects/README.md)说明如何同步技能、选择数据与 Python 和管理结构成果，适用于选定项目的本机接入。
-- [科研项目目录与文件职责](src/harness/projects/LAYOUT.md)规定目录归属、启用条件和调用关系，适用于建立、整理或扩展采用该布局的项目。
-- [智能助手日常工作](src/agent/AGENT_FLOW.md)说明如何依据真实用途维护本仓库的程序、技能和说明，适用于 ResearchHarness 自身的开发。
-- [中央工作区公共功能](src/harness/core/README.md)说明本机目录定位、原子写入与产物记录，适用于维护中央共享实现。
-- [项目接入与本机资源](src/harness/core/PROJECT.md)说明父工作区的一级布局以及项目、数据、Python 和结构成果的定位，适用于初始化工作区、本机登记、资源配置与成果读取。
-- [传输与解压](src/harness/utils/transfer/README.md)说明下载、上传、校验和选择性解压的参数及结果，适用于明确要求处理文件或维护工具的任务。
+Read and maintain a description of the current mandate. This relates to the description of the current mandate document, which is amended in conjunction with the corresponding maintenance; questions affecting the understanding, execution or mandate decision are presented in the context of the specific impact.
 
-## 6. 当前开发阶段的工作边界
+## 5. Select the special document according to the current task
 
-实际功能以专项程序和项目入口为依据。验证、模型下载、科研运行和真实数据传输按用户明确要求及授权范围执行。项目的源码、默认科研配置、预检、运行记录和实验产物归项目。中央绑定保存本机资源选择，结构成果审阅记录人对具体 ExtractStructure 页面版本的决定。
+- [Project shared skills and in-house operations](src/harness/projects/README.md)Description of how to synchronize skills, choose data and Python and manage the results of the structure, applicable to the in-house access of the selected project.
+- [Catalogue of research projects and documentation functions](src/harness/projects/LAYOUT.md)Provides for catalog attribution, enabler conditions and call relationships, applicable to projects that establish, organize or expand the layout.
+- [Smart assistant day job.](src/agent/AGENT_FLOW.md)Description of the procedures, skills and instructions for maintaining the warehouse on the basis of its true use, applicable ResearchHarness Self-development.
+- [Public function in central workspaces](src/harness/core/README.md)Description of the location of the machine ' s catalogue, atom writing and product records, applicable to the maintenance of central shared realization.
+- [Project access and in-house resources](src/harness/core/PROJECT.md)Description of the first-level layout of the parent area and the project, data, Python and the positioning of structural results, applicable to arrange parent directories, in-house registration, resource allocation and results reading.
+- [Transfer & Relief](src/harness/utils/transfer/README.md)Description of the parameters and results for downloading, uploading, checking and selective decompression, applicable to tasks that clearly require the processing of documents or maintenance tools.
 
-## 7. 本机工作区与产物归属
+## 6. Work boundary at the current stage of development
 
-`.workspace/` 位于 ResearchHarness 仓库内，用于保存本机配置、运行状态和开发产物。父工作区用于并列放置 ResearchHarness、共享数据和各科研项目，具体布局见项目接入说明。
+The actual function is based on a specific program and project entry. Validation, model downloads, scientific operation and real data transfer are performed in accordance with the user's specified requirements and delegated range. The project's source code, default scientific configuration, precheck, running records and experimental products are returned to the project. Centrally binds the preservation machine resource selection, and structural results reviewer's decision on a specific ExtraScructure page version.
 
-本节的模块产物归属适用于 `src/` 中的中央管理程序。科研项目（包括参考模板）的实验运行产物统一归各自项目根目录的 `experiment/`。项目技能的配套文件与本地产物按第 8 节保存于各自技能目录内。
+The documentation path, directory, naming and experimental product path rules for research projects are governed by the central inspection of ResearchHarness. The overall acceptance is checked `rh projects project check` through `base/`, `datasets/`, `models/`, `tasks/`, `conf/`, physical components and tree-wide paths, and the main function is validated by the public entry point. The assistant performing the specific scientific project task visits ResearchHarness in a read-only manner, using a central read-only inspection, to repair the target project within the mandate.
 
-目录按 `src/` 的三个主体 `agent/`、`harness/`、`project/` 组织，并镜像实际二级目录。产物进入对应三级目录；三级目录可采用源文件名（去掉 `.py`）或源码更深一层目录名。例如：
+## 7. Workspace of the machine and attribution of the product
+
+`.workspace/` is located in the ResearchHarness warehouse, which is used to preserve the configuration, operation and development of the machine.
+
+The modular product attribution in this section applies to the operation and development products generated by the central management program `.workspace/`. The resource binding and structural results of a single project are kept at `src/project/<project>/resources.json` and `src/project/<project>/structure/`. The experimental operating products of a scientific project (including reference templates) are integrated into the respective project contents `experiment/`. Project skills companion files and local products are stored in their respective skill directories under section 8.
+
+Contents Press `src/` Three main subjects `agent/`,`harness/`,`project/` Organisation, mirroring the actual Level 2 directory. The product enters the corresponding Level 3 directory; the Level 3 directory uses the source file name (deleted) `.py`)or a more deep source code directory name.:
 
 ```text
-src/harness/projects/resources.py → .workspace/harness/projects/resources/
-src/harness/projects/structure.py → .workspace/harness/projects/structure/
 src/harness/utils/probe.py         → .workspace/harness/utils/probe/
 ```
 
-`central.py` 的本机项目路径归 `.workspace/harness/core/central/`。`cli.py` 分发命令，产物归实际执行模块。
+The project path of `central.py` is `.workspace/harness/core/central/`. The installation-dependent process file is `.workspace/harness/projects/install/`, which is recovered when the installation is withdrawn. `cli.py` Distribution commands are distributed and the product is placed in the actual execution module.
 
-每个独立文件或完整产物包的名称使用 `<内容或用途>_<项目、时间或其他标识>`，例如 `project_roots.json`、`environment_saebase-20261103T075412Z.json`、`site_saebase/`。产物统一保存在归属模块的三级目录中。完整网页、虚拟环境、历史快照等作为一个具名产物包；包内保持原有文件名与内容。复合产物包归组织该包的模块，内部调用源码在日志中按已知实际来源说明。
+Use the name of each separate file or complete package `<Content or use>_<Project, time or other identifier>`,For example: `project_roots.json`,`environment_saebase-20261103T075412Z.json`,`site_saebase/`.The product is centrally stored in the three-tier catalogue of the attribution module. The complete web page, virtual environment, historical snapshots, etc., is a famous product package; the original file name and content are maintained in the package. The compound package is the module of the organization's package, and the internal call source is described in the log according to the actual sources known to you.
 
-每个使用中的三级目录有一个简短的 `log_updates.jsonl`。每次新增、接收或更新产物，追加时间（带时区）、相对路径、简要内容和源码来源；程序写入由相应入口记录，智能助手手工操作由智能助手记录。复合包可逐成员记录一次接收；日志记录对象限于产物文件与产物包。来源按实际依据填写，待确认的来源写“未知”。
+Each of the three-tier directories in use has a short `log_updates.jsonl`. Every time a product is added, received or updated, additional time (time zone), relative path, brief content and source source; the program is recorded by the appropriate entry, the smart assistant manually by the smart assistant. The package can be recorded once by the members; the log entry object is limited to the product file and package. The source is filled in on a practical basis and the source to be confirmed is written “unknown”.
 
-归属待确认的旧资料放到 `.workspace/tmp/<用途>_<标识>/`，在该包内保存同样的日志与原路径说明。迁移保留原文件内容、权限和历史身份；原记录里的旧路径保留为历史事实。结构成果保存具体页面、来源版本、分析范围和审阅决定。
+The old information belonging to the confirmation is placed at `.workspace/tmp/<purpose>_<id>/`, where the same log and the original path description is kept. The migration retains the content, permissions and historical identity of the original document; the old path in the original record is kept as a historical fact. The structure results are kept on a specific page, source version, analytical scope and review decision.
 
-## 8. 项目技能的独立性与产物
+## 8. Independence and products of project skills
 
-新增或修改 `.agents/skills/<技能名>/` 中的项目技能时，以该文件夹作为完整交付单位：
+When adding or modifying project skills in `.agents/skills/<skill-name>/`, use the folder as the complete delivery unit:
 
-- **配套文件保存在技能内。** 使用说明、脚本、参考资料、模板、样式和其他运行资源均保存在本技能目录内；内部引用采用可随整个文件夹移动的相对位置。
-- **运行所需的自定义实现保存在技能内。** 必要的工作流程说明、程序实现、模板和绘图资源均来自本技能目录内的文件。需要复用其他技能或仓库其他位置的自定义实现时，按实际用途将所需内容纳入本技能后独立维护。
-- **操作对象与运行条件明确。** 技能在自身说明中列明用户指定的输入、操作对象、目标服务和必要的运行环境工具。读取目标项目、调用 Git 等标准工具或访问 GitHub 等目标服务，按具体任务授权处理；这些操作与引用目录外的技能或自定义实现分别说明。
-- **本地产物留在内部。** 执行产生的结果、发布准备副本、临时文件、缓存和日志统一保存在本技能目录内的具名子目录中。配套程序指定这些位置。用户明确要求写入外部目标的操作，例如发布到 GitHub，按已授权的目标和范围执行，本地准备资料仍保存于技能内。
-- **发布以内部副本为对象。** 发布型技能将用户选定的目录或文件实际复制到自身目录内，再以该副本准备提交、版本包和上传内容。原发布对象保持只读，文件内容与文件集合保持原样；Git 初始化、构建、打包及所需辅助文件的写入均在技能内进行。发布副本通过独立文件保存，发布命令的工作目录和写入位置指向技能内部；副本初始内容与用户选定范围一致，发布内容的调整按用户明确授权处理。
-- **整体移动后可继续使用。** 程序根据技能自身位置定位配套文件与产物，项目路径和发布目标由本次任务明确指定。新增文件以独立使用的实际需要为依据。
+- The **companion file is kept in the skills.** Use instructions, scripts, references, templates, styles and other running resources are kept in this skills directory; internal references are used in relative locations that can be moved with the entire folder.
+- **Specialization of skills required for operation to be kept within skills.** Skills-specific workflow descriptions, process realization, templates and mapping resources are derived from documents in this skills directory. ResearchHarness The public inspection is on duty. `src/harness/core/` Centralize maintenance. Skills can be used to call their public read-only commands.
+- **Operators and operating conditions are clear.** Skills include user-specified input, operator, target service and necessary running environment tools in their own statements. Read target items, standard tools such as calling Git, or access to target services such as GitHub, which are handled according to specific mandate; these operations are described separately from skills outside the citation directory or customize achievement.
+- **Local products remain in the interior.** Implementation results, release preparation copies, interim documents, caches, and logs are stored in a generic subdirectories in this skill directory.
+- The **release is aimed at internal copies.** distribution skills actually copy a user-selected directory or file into their own directory, and then prepare the copy for submission, package and upload. The original release object is read-only and the document content remains the same as the file collection; Git initialization, construction, packing and writing of the required supporting documents are done within the skills. The release copy is saved by a separate file, the catalogue of work and the writing location point to the skills; the initial content of the copy is consistent with the user-selected range, and the adjustments to the release content are processed with the user ' s express authorization.
+- **You can continue after moving the whole thing..** The program locates the matching file and product according to the skill ' s own location, and the project path and release target is clearly assigned to the task.
 
 
-## 公共入口与支持功能
+## Public access and support functions
 
-| 文件或目录 | 当前职责 |
+| File or directory | Current responsibilities |
 | --- | --- |
-| `src/harness/cli.py` | 分发项目与独立工具命令。 |
-| `src/harness/central.py`、`src/harness/core/workspace.py` | 定位本机项目，原子写入中央记录并登记产物。 |
-| `src/harness/projects/` | 同步共享技能，管理本机数据、Python 与结构成果。 |
-| `src/harness/utils/` | 处理传输、解压、进程环境观测和快照比较。 |
-| `tests/` | 按需检查实际命令行为，与保留功能一起维护。 |
+| `src/harness/cli.py` | Distribution of project and stand-alone tool orders. |
+| `src/harness/central.py`、`src/harness/core/workspace.py` | Positioning the machine project, atoms are recorded in the central record and the product is registered. |
+| `src/harness/projects/` | Synchronize shared skills to manage in-house data, Python and structural results. |
+| `src/harness/utils/` | Process transfer, depression, process environment observation and snapshot comparison. |
+| `tests/` | Check the actual order as required and maintain it with the reservation function. |

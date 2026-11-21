@@ -1,6 +1,6 @@
-"""目的：按阶段测量真实执行耗时。
+"""Purpose: Real implementation time-consuming by stage.
 
-适用范围：预检、瓶颈分析和性能候选比较。CUDA 阶段在计时边界同步。
+Scope of application: precheck, bottleneck analysis and performance comparison. CUDA Phase synchronizing the time boundary.
 """
 
 from contextlib import contextmanager

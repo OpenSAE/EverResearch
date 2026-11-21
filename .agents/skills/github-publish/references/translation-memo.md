@@ -1,24 +1,24 @@
-# GitHub 发布翻译备忘录
+# GitHub issues translation memos
 
-## 目的和主要功能
+## Purpose
 
-按 GitHub 仓库记录可复用的英文译法、双语内容和重要翻译决定。
+The reusable English translation, bilingual content and important translation decisions are recorded by GitHub warehouse.
 
-## 适用范围
+## Scope
 
-准备或复查 GitHub 发布翻译时，查阅对应仓库小节，把本次确认且下次仍有用的信息补在同一处。
+When GitHub publishes the translation, the corresponding warehouse section is consulted and the information confirmed this time and still available next time is added to the same.
 
 ## OpenSAE/OpenSAE.github.io
 
-- **惯用译法**：OpenSAE 官网用 **OpenSAE website**，公开快照用 **public snapshot**，工作区用 **workspace**。
-- **双语内容**：`README.md` 和 `README.zh-CN.md` 使用中英文切换标签。SAEBase Atlas 及其预览提供中英切换，按本次实际上传的双语界面文件和语言资源声明路径。
+- **Usual translation**:OpenSAE For official use. **OpenSAE website**,Open Snapshot **public snapshot**,Workspace use **workspace**.
+- **Bilingual content**: `README.md` and `README.zh-CN.md` use the Chinese-English switch label. SAEBase Atlas and its previews provide a Chinese-English switch, using the bilingual interface document and language resource statement path that is actually available this time.
 
 ## OpenSAE/SAE-Behavioral-Compositionality
 
-- **惯用译法**：SAE 可加性残差沿用 **SAE Additivity Residuals (SAR)**。
-- **双语内容**：`README.md` 和 `README_cn.md` 提供英文和中文说明及切换链接。
+- ** Usual translation**: SAE adhesive disability is followed **SAE Additival Studies (SAR)**.
+- **Bilingual content**:`README.md` and `README_cn.md` Provision of English and Chinese notes and switching links.
 
 ## OpenSAE/Redistribution-Sensitivity-Score
 
-- **惯用译法**：重分布敏感度分数沿用 **Redistribution Sensitivity Score (RSS)**。
-- **双语内容**：`README.md` 和 `README_cn.md` 提供英文和中文说明及切换链接。
+- **A customary translation **: heavy distribution sensitivity fractions will be followed **Redistribution Security Score (RSS)**.
+- **Bilingual content**:`README.md` and `README_cn.md` Provision of English and Chinese notes and switching links.

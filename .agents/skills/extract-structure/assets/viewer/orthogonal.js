@@ -1,5 +1,5 @@
-/* 目的和主要功能：为 ExtractStructure 连线安排转折、共用线段和文字位置。
- * 适用范围：目录图和文件图中当前可见节点的连线绘制。
+/* Purpose and main function: ExtractStructure Connect to turn, share and text position.
+ * Scope of application: Wireless drawing of current visible nodes in table of contents and file charts.
  */
 'use strict';
 function planOrthogonalGraph(edges, positions, labelSizes, extraObstacles=[]) {

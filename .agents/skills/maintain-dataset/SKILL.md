@@ -1,22 +1,49 @@
 ---
 name: maintain-dataset
-description: 增加、修改或移除科研项目的数据集、配置预设和数据选项，沿样本准备、登记和任务读取处理实际依赖。
+description: Add, modify or remove data sets, configuration presets and data options for scientific projects, and read and process actual dependency along sample preparation, registration and tasks.
 ---
 
-# 数据集维护
+# Data set maintenance
 
-## 目的和主要功能
+## Purpose
 
-让正式任务读到所需样本，保持来源、标签、划分、预设和缓存身份一致。
+Allows the official mission to read the required sample through the physical data set in the root directory `datasets/` and to keep the source, label, division, preset and cache identity consistent. The whole project accepts and accepts at least one actual data set.
 
-## 适用范围
+## Scope
 
-用于当前科研项目增加、修改或移除数据集及其选项。输入为目标数据集、实际使用的任务和改动范围。
+Enter the target data set, the tasks used and the range of changes.
 
-从项目 `AGENTS.md`、README 或接入说明找到实际命令、组件和配置。先追到任务拿到的一批样本，再沿调用往回找到读取、准备和划分责任。以项目登记的等价文件为准。
+The actual commands, components and configurations are found from the `AGENTS.md`, README, or access instructions. First, a sample of the tasks is traced back to the call back to read, prepare and divide responsibilities.
 
-- **增加。** 让正常入口可以选择一个新的数据集、来源或预设。
-- **修改。** 改变已有数据集的读取、准备、划分或样本接口，标明影响哪些调用和历史结果。
-- **移除。** 移除指定预设、读取方式或任务支持。范围是整个数据集时执行完整卸载，先确认保留任务仍有可用输入。原始数据、共享缓存和历史结果按具体授权处理。
+- Add **. ** allows normal access to select a new data set, source or preset.
+- **Changes.** changes the reading, preparation, division or sample interface of existing data sets, indicating which calls and historical results affect.
+- Removes **. ** removes the specified preset, read-out, or task support. The range is the complete unmounting of the entire data set, confirming that the retention is still available for input. Original data, shared caches and historical results are processed as specified.
 
-[数据集操作方案](references/procedures.md)列出文件归属、三类改动的实施顺序和完成条件。维护数据集时按选定操作查阅。
+[Data Set Operating Scheme](references/procedures.md)Lists the document attributions, the sequence of implementation of the three types of changes and the conditions for their completion.
+
+The root of the data that the task actually reads. Pre-processed products and reusable subdivisions are stored in the corresponding data set directory, the locks and temporary storage at the preparation stage follow the root of the data, and atoms are written in the same file system. Original downloads and generic caches from Hugging Face are processed by `huggingface-maintain` download instructions.
+
+## Central path check and project restoration
+
+ResearchHarness unified the maintenance of document paths, directory and naming. The assistant performing the research project uses read-only ResearchHarness and its verification portals to restore the public entry point, logic and results of the target project within the permitted range. When it is considered that the error or the rule is too strict, the inspection order, rules, path, reversible evidence and impact are included in the human-oriented report and continue to be independently completed.
+
+## Samples, labels, partitions or caches do not match configuration
+
+Take a small batch of samples actually taken by the official mission and return the source, version, label, division and cache key for registration by sample status. Fix the preparation or logic of deviations. Rebuild the affected and renewable cache as agreed by the project and preserve the original input.
+
+## Validation criteria
+
+- Checks whether the sample identity, number, label meaning, sequence or shape, and whether the same data contract is followed in the case of a cache.
+- If you are in a position to do so, you will be able to use the project’s comparative unit to verify the segregation, such as the object-level task of the study, by the identity of the object, rather than by line only.
+
+## Document Sync & Delivery
+
+Synchronize data set entries, affected configurations and mission statements, and record how the source, sample, division or reading has changed. Deliver to humans the normal selection, actual sample evidence and impact on the comparability of established tasks and experiments. `maintain-conf` Collaboration.
+
+The changes are recorded in the project-by-project project file.
+
+## Item-by-line
+
+The data set is organized in terms of data sources and sample meanings. The named subset of the project definition is placed under the corresponding data set, indicating the selection, inclusion, labeling or division of differences and selection methods. The compatible preset for the same subset is written in the same entry. The text describes the source, sample unit, field and label, division and sample or preprocessing, selected tasks, output and limits. The different presets maintain the actual differences. The background is explained in the original paper or official description to determine the local behaviour by reading and formulating the project.
+
+The text of the data set page presents the input, label, division and selection conditions, and a summary of how it supports the current selection is given in the data description. For example, indicate which queue the description of the supply classification applies.

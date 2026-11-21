@@ -1,6 +1,6 @@
-"""目的：生成符合 CUB 分类输入接口的离线检查样本。
+"""Purpose: Generate matches CUB Samples of offline check for classification input interfaces.
 
-适用范围：CUB-200 分类的离线预检、性能演练和功能回归，配方通过 synthetic 选择。
+Scope: CUB-200 Offline precheck, performance exercise and functional regression of categories, formulae passed synthetic Selection.
 """
 
 import torch
@@ -16,7 +16,7 @@ REQUIRES_ROOT = False
 
 
 def load(config, seed):
-    """返回训练、测试、确定性训练视图和合成输入身份。"""
+    """Return training, testing, definitive training view and synthesis of identity input."""
     size = config["image_size"]
     generator = torch.Generator().manual_seed(seed)
     images = torch.randn(12, 3, size, size, generator=generator)

@@ -1,6 +1,6 @@
-"""目的：按系列声明检查参数和构建模型。
+"""Purpose: To check parameters and build models by series of statements.
 
-适用范围：当前模板的具名模型变体，共用登记和构建入口。
+Scope of application: Name model variant of the current template, common registration and build access.
 """
 
 from dataclasses import dataclass, field

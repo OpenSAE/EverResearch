@@ -1,23 +1,23 @@
-# 分类参考项目工作说明
+# Description of work on the classification of reference items
 
-## 目的和主要功能
+## Purpose
 
-帮助助手按实际入口维护 CUB-200 分类项目，使代码、检查和结果共同示范 ResearchHarness 项目协议。
+Helping assistants maintain CUB-200 classification items by actual entry point to enable code, inspection and results to demonstrate ResearchHarness project protocols together.
 
-## 适用范围
+## Scope
 
-适用于本模板的开发和使用，从 README.md 查找入口，按 doc/code/development/engineering.md 选择检查与审阅方式。在 ResearchHarness 源码内维护时，采用上级 projects/PROTOCOL.md 规定的工程协议。
+For the development and use of this template, search the portal from README.md and select the inspection and review mode by doc/code/development/engineering.md. When maintaining within the ResearchHarness source code, use the project protocol specified by the superior projects/PROTOCOL.md.
 
-## 工作方式
+## Working methods
 
-数据读取、模型、分类任务和运行支持分别归对应模块。新增功能同步处理配置、正常入口、受影响的测试和结果读取。沿用固定官方划分、指标和项目预算，在改动相关范围内主动完成检查与修复。
+The data reading, modelling, classification tasks and operation support are grouped into corresponding modules. The new functionality is synchronized with the configuration, normal access, affected testing and reading of the results. The location of the corresponding directory, parameters, experiments, knowledge, environment and source structure is checked from doc/README.md. The code change updates the affected entries at the same time.
 
-影响数据划分、指标、数值语义、公共入口或算力投入的方案，以实际样例和前后结果说明取舍。维护经验写入 doc/code/development/engineering.md 或具体负责模块，其他项目也需要时，提出中央协议或共享能力的相应改进。
+A programme to influence the disaggregation of data, indicators, numerical semantics, public access or calculator inputs, with practical examples and back and forth results. doc/code/development/engineering.md or specific responsibility modules, and where other projects are required, propose a central agreement or corresponding improvement of shared capacity.
 
-## 共享技能
+## Shared skills
 
-在 ResearchHarness 工作区内，沿中央 `.agents/skills/` 查阅对应技能。独立接入后的模板项目从接入时生成的项目侧技能目录读取。`maintain-dataset`、`maintain-model` 和 `maintain-task` 用于增加、修改和移除组件，`maintain-experiment` 用于执行、跟踪、恢复和调试实验。`maintain-optional` 用于独立维护脚本、测试、文档和纳入项目的外部文件。`maintain-base` 用于维护组件之间的基础协调。
+From this project. `.agents/skills/` Access to corresponding skills.`maintain-dataset`,`maintain-model` and `maintain-task` For adding, modifying and removing components,`maintain-conf` To add, delete or change parameters or meanings and default values,`maintain-experiment` For the selection of single parameters and for the execution, tracking, recovery, debugging and recording of experiments.`maintain-optional` External documents for independent maintenance of scripts, testing, documentation and inclusion of items.`maintain-base` Used to maintain basic coordination between components.`maintain-code` Used to review, repair and repeat codes by real scene.`maintain-skill` To assess the practical effects of the skills used in measuring and maintaining.`maintain-knowledge` For organizing and preserving knowledge.`extract-structure` Source structure for project extraction.
 
-数据集、模型和任务的选择从各自的 `plugins.py` 与 `conf/config.yaml` 查找。为每次实验提供一至三个词的 `subname`，描述实验用途或探索对象，生效配置随单次运行保存。训练、预检和性能比较都写入项目根的 `experiment/`。实验按 README 中的离线配方使用 `python -m cub_template run`，用 `benchmark` 做性能比较，用 `inspect` 读取既有运行清单和产物。当前训练导出最终模型权重。后续补跑从运行记录确定缺少哪一步，继续训练前查证该任务是否支持恢复完整状态。
+The choice of data sets, models and tasks from each other `plugins.py` with `conf/config.yaml` Find. Provides one or three words for each experiment. `subname`,Describes the experimental use or object of the experiment, the effective configuration is saved with a single operation. `experiment/`.Experiment press README Use of offline formulation in middle `python -m cub_template run`,Use it. `benchmark` It's a comparison. Use it. `inspect` Read the current operating list and product. The current training produces the final model weight. Follow-up runs determine the missing step from the operation log and verify whether the task supports restoration of integrity before continuing training.
 
-把模板复制到独立工作区后，按普通项目登记并用 `rh projects apply <项目标识>` 生成项目侧技能链接。
+_Other Organiser ResearchHarness When a source tree is used, the shared skills link is located directly in the centre. Skips when copying to an independent workspace `.agents/skills/`,Registered as a general item `rh projects apply <project ID>` Generate skills links in the workspace.

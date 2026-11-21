@@ -1,4 +1,9 @@
+# Purpose and main function: to exclude the in-house configuration, product and tool cache.
+# Scope: ResearchHarness in working copy Git Track Range.
 .workspace/
+/src/project/*/resources.json
+/src/project/*/structure/
+/src/project/*/log_updates.jsonl
 .trash_bin/
 .venv*/
 __pycache__/
@@ -6,17 +11,3 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .ruff_cache/
-
-# Local skill outputs and working copies
-/.agents/skills/*/results/
-/.agents/skills/github-publish/projects/
-/.agents/skills/HumanInterface/note/
-
-# Template runs and machine-local secrets
-/src/harness/projects/template/.agents/skills/
-/src/harness/projects/template/experiment/**/*
-!/src/harness/projects/template/experiment/**/
-!/src/harness/projects/template/experiment/**/recipe.toml
-.env
-.env.*
-!.env.example

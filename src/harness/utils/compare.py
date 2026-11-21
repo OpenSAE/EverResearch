@@ -1,6 +1,6 @@
-"""目的和主要功能：比较选定环境快照的资源、依赖、身份和限制观测状态。
+"""Purpose and main function: Comparison of resources, dependency, identity and limited observation status for selected environmental snapshots.
 
-适用范围：本机环境资料采集与选定快照的读取和比较；结果按具体入口保存。
+Scope of application: reading and comparison of in-house environmental information collection with selected snapshots; results stored by specific entry.
 
 Extracted from OpenSAE/SAEBase; Apache-2.0.
 """

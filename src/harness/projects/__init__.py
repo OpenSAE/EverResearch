@@ -1,4 +1,4 @@
-"""目的和主要功能：管理项目共享技能、权限选择和一线维护反馈。
+"""Purpose and main function: managing project shared skills, competency selection and first-line maintenance feedback.
 
-适用范围：按 projects/<项目>.yaml 读取用户选择，接入现有科研项目。
+Scope of application: by projects/<Item>.yaml Read user selection and access to existing scientific projects.
 """

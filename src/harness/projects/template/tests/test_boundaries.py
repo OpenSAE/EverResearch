@@ -1,6 +1,6 @@
-"""目的：验证配置隔离、数据划分独立性和性能候选拒绝后仍能读取基线。
+"""Purpose: Validation of configuration isolation, data disaggregation independence and ability to read the baseline after rejection.
 
-适用范围：本地目录和生成的小样本，无需网络或 GPU。
+Scope of application: Local directories and small samples generated without the need for a network or GPU.
 """
 
 import tempfile
@@ -26,7 +26,7 @@ class SerialDataset(Dataset):
 
     def __getitem__(self, index):
         if get_worker_info() is not None:
-            raise RuntimeError("样本读取无法在子进程运行")
+            raise RuntimeError("Sample reading cannot run in subprocess")
         return torch.tensor([index, index + 1], dtype=torch.float32)
 
 
@@ -53,7 +53,7 @@ class BoundariesTest(unittest.TestCase):
             (root / "images.txt").write_text("1 train.jpg\n2 test.jpg\n")
             (root / "image_class_labels.txt").write_text("1 1\n2 1\n")
             (root / "train_test_split.txt").write_text("1 1\n2 0\n")
-            with self.assertRaisesRegex(ValueError, "引用了同一文件"):
+            with self.assertRaisesRegex(ValueError, "Quote the same document"):
                 load_cub({"root": str(root), "image_size": 32}, 42)
 
     def test_a_failing_candidate_preserves_the_measured_baseline(self):
@@ -73,6 +73,6 @@ class BoundariesTest(unittest.TestCase):
         )
         report = compare(request)
         self.assertEqual(report["decision"], "candidate_failed")
-        self.assertIn("无法在子进程运行", report["candidate"]["error"]["message"])
+        self.assertIn("Could not run in subprocess", report["candidate"]["error"]["message"])
         self.assertEqual(len(report["baseline"]["runs"]), 2)
         self.assertEqual(report["recommended_workers"], 0)

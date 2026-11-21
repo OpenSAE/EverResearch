@@ -1,6 +1,6 @@
-"""目的：分析基线耗时，并比较结果一致的加速候选。
+"""Purpose: Time-consuming baseline analysis and comparison of accelerated candidates with consistent results.
 
-适用范围：通过正式任务提供的固定输入和前向步骤评估数据加载工作进程。
+Scope of application: Fixed input and forward steps provided through a formal mission to assess the data loading process.
 """
 
 from statistics import median
@@ -50,7 +50,7 @@ def compare(request):
     workers = request.candidate_workers
     workers = (2 if baseline_workers == 0 else 0) if workers is None else workers
     if workers < 0 or workers == baseline_workers:
-        raise ValueError("候选工作进程数必须为非负整数且不同于当前配置")
+        raise ValueError("The number of job candidates must be non-negative and different from the current configuration")
 
     setup = {}
     with timed(setup, "workload_setup", request.device):
@@ -65,7 +65,7 @@ def compare(request):
             for repeat in range(budget["warmup"] + budget["repeats"]):
                 output, run = _measure(request, workload, count_workers)
                 if not torch.isfinite(output).all().item():
-                    raise ValueError(f"{name} 出现非有限 logits")
+                    raise ValueError(f"{name} Unlimited occurrence logits")
                 if reference is None:
                     reference = output
                 error = max(error, (output - reference).abs().max().item())

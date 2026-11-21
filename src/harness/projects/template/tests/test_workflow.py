@@ -1,9 +1,10 @@
-"""目的：检查预检、训练和结果读取入口对下游提供的保证。
+"""Purpose: Examination of precheck, training and result reading access assurance for downstream.
 
-适用范围：本机离线工程检查，测试数据保存在临时目录。
+Scope of application: Offline engineering inspection, test data kept in the temporary directory.
 """
 
 import json
+import os
 import shutil
 from pathlib import Path
 import subprocess
@@ -35,8 +36,9 @@ class WorkflowTest(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.checkout = Path(temporary.name) / "project"
         self.checkout.mkdir()
+        self.environment = {**os.environ, "PYTHONPATH": str(self.checkout / "base")}
         shutil.copy2(ROOT / "pyproject.toml", self.checkout)
-        for name in ("conf", "cub_template", "datasets", "models", "tasks"):
+        for name in ("conf", "base", "datasets", "models", "tasks"):
             shutil.copytree(
                 ROOT / name, self.checkout / name, ignore=shutil.ignore_patterns("__pycache__")
             )
@@ -54,7 +56,7 @@ class WorkflowTest(unittest.TestCase):
             *extra,
         ]
         result = subprocess.run(
-            command, cwd=self.checkout, capture_output=True, text=True, timeout=60
+            command, cwd=self.checkout, env=self.environment, capture_output=True, text=True, timeout=60
         )
         self.assertTrue(result.stdout.strip(), result.stderr)
         path = Path(result.stdout.splitlines()[0])
@@ -73,7 +75,7 @@ class WorkflowTest(unittest.TestCase):
                 sys.executable, "-m", "cub_template", "precheck",
                 "--subname", "offline_check", "--output", str(outside),
             ],
-            cwd=self.checkout,
+            cwd=self.checkout, env=self.environment,
             capture_output=True,
             text=True,
             timeout=30,
@@ -86,10 +88,10 @@ class WorkflowTest(unittest.TestCase):
         for name in ("four separate descriptive words", "../outside"):
             result = subprocess.run(
                 [sys.executable, "-m", "cub_template", "run", "--subname", name],
-                cwd=self.checkout, capture_output=True, text=True, timeout=30,
+                cwd=self.checkout, env=self.environment, capture_output=True, text=True, timeout=30,
             )
             self.assertEqual(result.returncode, 2)
-            self.assertIn("一至三个", result.stderr)
+            self.assertIn("One to three.", result.stderr)
         self.assertFalse((self.checkout / "experiment").exists())
 
     def test_training_produces_readable_report_and_weights(self):
@@ -98,7 +100,11 @@ class WorkflowTest(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(manifest["status"], "succeeded")
+        self.assertTrue(manifest["formal_started"])
+        self.assertGreater(manifest["precheck_seconds"], 0)
         self.assertIn("precheck", manifest["outputs"])
+        precheck = json.loads((path / manifest["outputs"]["precheck"]).read_text())
+        self.assertEqual(precheck["samples_checked"], 4)
         self.assertEqual(manifest["inputs"]["dataset"], "synthetic")
         evaluation = json.loads((path / manifest["outputs"]["evaluation"]).read_text())
         self.assertEqual(evaluation["samples"], 4)
@@ -106,7 +112,7 @@ class WorkflowTest(unittest.TestCase):
         self.assertTrue((path / manifest["outputs"]["model"]).is_file())
         inspected = subprocess.check_output(
             [sys.executable, "-m", "cub_template", "inspect", str(path)],
-            cwd=self.checkout,
+            cwd=self.checkout, env=self.environment,
             text=True,
             timeout=30,
         )
@@ -162,7 +168,8 @@ class WorkflowTest(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 1)
         self.assertEqual(manifest["diagnostics"][0]["stage"], "automatic_precheck")
-        self.assertIn("最后一批只有一张图", manifest["diagnostics"][0]["message"])
+        self.assertFalse(manifest["formal_started"])
+        self.assertIn("There’s only one picture in the last batch.", manifest["diagnostics"][0]["message"])
         self.assertNotIn("training", manifest["outputs"])
 
     def test_missing_cub_inputs_leave_a_blocked_manifest(self):

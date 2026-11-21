@@ -1,6 +1,6 @@
-"""目的：声明独立的轻量 CNN 模型。
+"""Purpose: Lightness of declaration of independence CNN Model.
 
-适用范围：通过模型登记选择当前 CNN 系列。
+Scope of application: Selection of current status through model registration CNN Series.
 """
 
 from ...build import ModelSpec

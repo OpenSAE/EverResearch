@@ -1,46 +1,46 @@
-# 模型操作方案
+# Model scheme
 
-## 目的和主要功能
+## Purpose
 
-明确模型家族、系列、构建、配置、兼容性及资源声明的改动位置。
+Identify changes in model family, series, build, configuration, compatibility and resource statement.
 
-## 适用范围
+## Scope
 
-用于科研项目模型或其变体的增加、修改和移除。目录与实际入口按项目说明对应。
+The directory corresponds to the actual entry by project description.
 
-## 文件归属
+## Attribution of files
 
-| 位置 | 负责内容 |
+| Location | Responsible content |
 | --- | --- |
-| `models/<家族>/<系列>/specs.py` | 系列的公开标识、变体、默认参数和需要的资源 |
-| `models/<家族>/<系列>/model.py` | 系列专用模型结构和前向。已有系列可复用公共构造 |
-| `models/build.py`、`models/plugins.py`、公共登记 | 选择、构造及公开标识解析。兼容检查按项目实际接口进入 |
-| `conf/model/`、所选配方 | 模型预设和明确覆盖值。权重与 SAE 等附属资源沿实际加载接口定位 |
-| 任务、预检、评测和分析入口 | 使用具体输出、检查数据与模型能否组合、加载已记录权重 |
+| `models/<family>/<series>/specs.py` | Series of public identification, variants, default parameters and required resources |
+| `models/<family>/<series>/model.py` | Series of specialized model structures and forwards. A series of reusable public structures already exists |
+| `models/build.py`, `models/plugins.py`, public register | Select, construct, and publicly identify the resolution. Compatibility check access by physical interface of the project |
+| `conf/model/`, the selected formulation | Model presets and clearly overwhelms. Weights and ancillary resources such as SAE are positioned along the actual loading interface |
+| Mission, precheck, evaluation and analysis portal | Use specific output, check whether data and models can be combined, load recorded weights |
 
-直接调用模型的具名工作流由运行命令追到实际构造。模型定义输出及加载条件，训练目标和科研指标归任务实现。
+The known workflow of a direct call to the model follows the actual construction from the operational command. The model defines the output and loading conditions, and the training objectives and scientific indicators are assigned to the mission.
 
-## 增加
+## Increase
 
-1. 从目标任务列出实际输入形状、输出字段、设备、数值类型、权重来源和必要附属资源。
-2. 同系列变体优先在已有规格补公开标识和参数。新系列或家族有不同实现职责时建立目录。把跨系列实际复用的构建功能放到共同构造入口。
-3. 同步配置预设与公开登记。核对选择预设后加载的具体权重，模型报告自己的输入输出及资源限制，任务检查选定组合。
-4. 获准时用代表性输入走正式构造和任务预检。按任务需要检查输出、前向及反向，真实权重或大型计算采用对应授权。
+1. The actual input shape, output field, equipment, numerical type, weight source and necessary ancillary resources are listed from the target task.
+2. Set a directory when the new series or family has different responsibilities. Put the cross-series actual reused build function at the common construction portal.
+3. Synchronizes the preset with the public registration. Checks the specific weights that are loaded after the preset is selected, the model reports its own input output and resource limitations, and the task checks the selected combination.
+4. When granted, you are allowed to enter a representative input to walk through the formal structure and precheck the task.
 
-## 修改
+## Modify
 
-1. 列出受影响的预设、调用者和旧检查点。判断改动落在规格、默认配置、前向、模型专用加载还是任务兼容规则。
-2. 保持公开标识和模型身份可理解。改变参数形状、默认权重、数值策略或输出含义时，准备兼容办法及历史结果的重算影响。人类决定科研口径和代价。
-3. 修改模型专用实现后同步真实调用者。修改模型和附属资源绑定时记录资源来源、层位或激活位置等任务依赖的属性。
-4. 获准时比较相同输入下的代表性输出，并验证所需的旧权重和新权重读取。写明数值判据、测量范围和预期差异。
+1. Lists the presets affected, callers and old check points. The judgement falls on specifications, default configurations, forwards, model loads or task compatibility rules.
+2. Maintaining a public identifier and model identity is understandable. When changing the shape of parameters, default weights, numerical strategies or output meanings, prepare for compatibility and the recalculation of historical results. Humans determine the calibration and cost of scientific research.
+3. Modifys the properties on which the task depends, such as the source, layer or activation position of the resource, when the model and the associated resource are tied to a fixed time.
+4. When allowed, compare the representative output under the same input and verify the old weight and new weight reading required.
 
-## 移除
+## Remove
 
-1. 查找公开标识、别名、预设、默认权重、任务准入、直接导入和下游的检查点加载。
-2. 先处理保留任务的实际选择。若它只支持待移除模型，说明受影响的入口和替代模型会改变哪些输出或指标。
-3. 变体移除后保留同系列仍在使用的规格与构造。完整卸载时移除专属目录、登记、配置和测试。被其他模型实际导入的数学函数先归到共同位置。共享权重和历史资料按授权处理。
-4. 核对保留模型的正常选择和任务消费。更新预设和权重兼容说明。
+1. Find public identification, aliases, presets, default weights, mission access, direct import and downstream loading.
+2. Deal first with the actual option of retaining the task. If it supports only the model to be removed, it indicates which outputs or indicators will be changed by the affected entry and alternative model.
+3. The mathematical functions that are actually imported by other models are returned to a common location. Share weights and historical information are processed as authorized.
+4. Checks the normal selection and task consumption of the retention model. Updates the preset and weight compatibility statements.
 
-## 参考项目中的落点
+## Points for reference items
 
-CUB 模板在 `models/resnet/resnet18/specs.py` 与 `conf/config.yaml` 声明两种 ResNet18 + MLP 变体，共用该系列的 `model.py`。用同一配方的 `--set model=resnet18_mlp_small` 可走正式选择。修改单个变体的默认参数时从规格和实际生效配置核对，同时检查共用实现的另一变体。
+CUB templates declare two ResNet18 + MLP variants in `models/resnet/resnet18/specs.py` and `conf/config.yaml`, sharing `model.py` in the series. Use `--set model=resnet18_mlp_small` of the same formulation to walk for formal selection. When changing the default parameters for a single variant, check with the specifications and the configuration that is actually in effect, while checking the other variant that is achieved in the common.

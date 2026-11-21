@@ -1,6 +1,6 @@
-"""保护共享技能、资源启动和结构成果的完整本机操作。
+"""Protect the full-fledged in-house operation of shared skills, resource start-up and structural results.
 
-使用新建的项目目录、解释器环境和示例页面，验证正式命令接口。
+Validate the official command interface using the newly created project directory, interpreter environment and example page.
 """
 
 import json
@@ -103,4 +103,4 @@ def test_review_pins_export_and_keeps_other_versions_selectable(command, tmp_pat
     assert result["review"]["sha256"] == a["sha256"]
     assert [item["id"] for item in command("structure", "list", "example")] == [b["id"], a["id"]]
     Path(a["page"]).write_text("changed")
-    assert "不一致" in command("structure", "show", "example", a["id"], expected=1)
+    assert "inconsistent with registered version" in command("structure", "show", "example", a["id"], expected=1)

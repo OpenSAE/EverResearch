@@ -1,6 +1,6 @@
-"""提供 ResearchHarness 的工作区入口及项目错误类型。
+"""Provision ResearchHarness Workspace entrance and type of project error.
 
-用于中央项目接入与工具调用。
+For central project access and tool call.
 """
 
 from .central import HarnessContext, ProjectError, load_harness

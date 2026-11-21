@@ -1,21 +1,21 @@
-# ResearchHarness 自身的维护方式
+# Research Harness, how to maintain itself.
 
-## 目的和主要功能
+## Purpose
 
-帮助助手从真实使用场景定位 ResearchHarness 的职责和调用者，完成获准的程序、说明与共享技能维护。
+Helping assistants to locate the responsibilities and callers of ResearchHarness from real-life scenarios to complete approved procedures, descriptions and shared skills maintenance.
 
-## 适用范围
+## Scope
 
-用于维护本仓库的接入、资源绑定、结构成果、工具、工程约定和共享技能。科研项目的日常维护按任务使用相应项目技能。
+The day-to-day maintenance of a research project uses the skills of the project in accordance with its mandate.
 
-## 从使用入口确定改动
+## Identification of changes from the user portal
 
-1. 先找到使用者、现有命令或技能、输入和实际要取得的结果。跟到项目源码、数据路径、所选 Python、结构页面或工具回执被继续使用的位置。
-2. 按职责选择负责位置。中央接入负责共享技能和本机绑定。项目自身的运行入口负责科研计算、预检、记录和结果。ExtractStructure 负责生成和展示结构解释。中央结构登记负责把可信导出及审阅决定关联到可复查的版本。项目协作审阅走项目的 GitHub 流程。
-3. 在用户授权内修改负责模块和直接调用者。同步实际使用的说明、样例和检查。获准验证时，从公开命令检查改变的行为，实测结果写入相应任务记录。
+1. Finds the user, the existing command or skill, the input, and the actual result. Follow the project source code, the data path, the selected Python, the structure page or the tool to confirm where the use continues.
+2. Central access is responsible for the sharing of skills and the binding of the machine. The project’s own operational portal is responsible for scientific calculations, precheck, recording and results. ExtractStructure generates and displays structural explanations. Central structure registers link credible export and review decisions to reviewable versions. The project collaboratively reviews the GitHub process.
+3. Modifys the responsible module and direct caller within the user's authorization. Synchronizes the instructions, sample and check the actual use.
 
-## 维护共享技能和回归测试
+## Maintenance of shared skills and regression tests
 
-新增或更新技能时，从已知项目的真实例子提炼触发条件、应查的事实、决定依据和完成条件。通用技能面向陌生科研项目，项目特有的入口与证据放在该项目的说明中。技能作为独立目录保存，项目按需要同步共享技能。
+When new or updated skills are created, the triggers, the facts to be investigated, the basis for the decision and the conditions for their completion are extracted from the true example of the known project.
 
-中央程序的测试在仓库根的 `tests/`。它们保护项目接入、实际资源选择、结构成果审阅和独立工具。研究项目及参考模板的用例随项目维护。新增用例应保护具体的用户行为，验证以人类授权的范围执行。
+Central program tests are at the warehouse root. `tests/`.They protect project access, actual resource selection, review of structural results and independent tools. The use of research projects and reference templates follows the project.

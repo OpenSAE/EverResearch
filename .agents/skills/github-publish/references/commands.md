@@ -1,53 +1,53 @@
-# 准备、发布与保存
+# Preparation, publication and preservation
 
-## 目的和主要功能
+## Purpose
 
-说明发布程序的命令、文件范围、内部副本、差异和结果保存方式。
+Describe the order, scope of the document, internal copy, differences and method of saving the results of the release procedure.
 
-同时说明如何在技能内部准备本地与 GitHub 的比较副本，覆盖两边文件集合并记录差异。
+Information is also provided on how local and GitHub comparisons are prepared within the skills, covering the collection of documents on both sides and recording discrepancies.
 
-## 适用范围
+## Scope
 
-执行目录或文件复制、仓库发布、合并请求（PR）、版本包或版本发布（Release）操作时使用。此文档供智能助手调用内部程序，对用户的交流沿用 SKILL.md 中的功能语言。
+This document is used to execute a copy of a directory or file, to publish a warehouse, to merge a request (PR), to release a package or version (Release). This document is used by a smart assistant to call an internal program and communicates with a user in a functional language in SKILL.md.
 
-对照 GitHub 项目与本地技能、准备比较副本和查看差异时，同样使用本文件。
+This document is also used when comparing GitHub projects with local skills, preparing for comparison of copies and viewing differences.
 
-## 内部实现与运行条件
+## Internal realization and operating conditions
 
-`../scripts/publish.py` 是发布准备、推送与版本操作的程序入口，只使用 Python 3.11 及以上版本的标准库，调用已安装的 Git 和 GitHub 命令行入口。独立文件夹中的说明、脚本即可完成流程；程序按自身位置定位 `results/`，整体移动后仍可运行。长期项目的首次下载使用标准 Git，在技能内部 `projects/<项目名>/repo/` 建立当前分支的浅克隆，配套说明保存在同一项目目录；后续发布由该副本作为 `prepare` 的读取来源。
+`../scripts/publish.py` is the entry point for the program to release the preparation, delivery and version operation, using only the standard library of Python 3.11 and above, to call the installed Git and GitHub command lines. The description and scripts in the stand-alone folder complete the process; the program is located at its own location `results/` and is still operational when it moves as a whole. The first download of a long-term project uses standard Git, creating a shallow cloning of the current branch within the skills `projects/<project-name>/repo/`, accompanied by a description to be kept in the same project directory; a copy is subsequently published as a reading source for `prepare`.
 
-仓库操作使用 GitHub.com 的 `owner/name`。已有登录从当前机器读取，也可使用环境中的 `GH_TOKEN` 或 `GITHUB_TOKEN`。程序将凭据保留在内存和子进程环境中，GitHub 命令行入口的配置位置与工具临时、缓存位置指向任务内部。登录或安装软件另按用户授权处理。
+The repository operation is `owner/name` for GitHub.com. The login is read from the current machine and can also be used in the environment `GH_TOKEN` or `GITHUB_TOKEN`. The program points to the task with the configuration of the GitHub command line entry and the temporary and cache position of the tool.
 
-命令中的 `<Skill目录>` 替换为当前 `SKILL.md` 所在目录的完整绝对路径。下文是结构示例，来源、仓库、分支和作者按真实任务填写。
+Replace `<Skilldirectory>` with the complete absolute path of the current directory `SKILL.md` in the command. Below is a structural example of which the source, repository, branch and author are filled out by the real task.
 
-## 对照检查的操作方式
+## Check how it works
 
-先按 `SKILL.md` 确定每个项目的本地绝对路径、文件范围、GitHub 仓库、版本、仓库子目录与路径对应关系。使用当前任务新建的 `results/<任务标识>/`，在内部保存：
+Press first. `SKILL.md` Determine local absolute path, file range for each item, GitHub Repository, version, repository subdirectories and paths. Use the current task to create new ones `results/<run ID>/`,Save Internal:
 
-- `local/`：选定本地文件的独立副本。
-- `remote-checkout/`：指定 GitHub 仓库的读取副本。
-- `remote/`：按同一比较范围与路径对应关系整理的 GitHub 文件副本。
-- `comparison.json`：本地来源、范围、路径对应关系、远程分支与实际提交，以及两边文件清单和比较结果。
-- `comparison.diff`：文本与文件差异。
+- `local/`: Select a separate copy of the local document.
+- `remote-checkout/`: Specifies a read copy of the GitHub repository.
+- `remote/`: Copies of GitHub files organized in the same range and path.
+- `comparison.json`: Local sources, scope, path matching, remote branching and actual submission, as well as list of documents and comparison results on both sides.
+- `comparison.diff`: Difference between text and document.
 
-将本地路径的文件按确定范围复制到 `local/`。通过 Git 读取指定仓库和版本，在 `remote-checkout/` 中取得实际提交，再从对应目录按相同取舍复制到 `remote/`。所有工具的工作目录、临时文件和缓存使用本任务内部位置；调用 Git 时沿用发布程序中隔离来源仓库与内部操作的方式，认证读取已有登录。已有任务资料保留原样，本次结果写入新的任务目录。
+Copy local path files to a defined range `local/`.passed Git Read specified repository and version in `remote-checkout/` from which the actual submission is obtained and copied from the corresponding directory by the same trade-off to `remote/`.Work directories, temporary files and caches of all tools to use the internal location of the task; call Git This is how you use the release process to isolate the source warehouse from the internal operation and authenticate the login. The task information is kept as it is and the result is written in the new task directory.
 
-比较两份副本的完整文件清单和实际内容，并保留需要交付的可执行属性。先按路径识别两边独有文件，再比较共有文件；空目录按实际目录结构记录。文本差异可在任务目录内使用以下标准 Git 命令保存：
+Compares the full list of documents and actual contents of two copies and maintains the enforceable attributes that need to be delivered. First, you identify unique files on both sides by path, then compare shared files; empty directories are recorded in the actual directory structure. Text differences can be saved in the task directory using the following standard Git command:
 
 ```bash
 git diff --no-index --binary --no-ext-diff --no-textconv -- local remote > comparison.diff
 ```
 
-此命令退出码为 0 时表示一致，为 1 时表示存在差异；其他退出码说明操作出错，需要查明原因后报告实际完成范围。`comparison.json` 和 `comparison.diff` 通过本任务的 `log_updates.jsonl` 记录时间、技能内相对路径、内容和实际来源。读取失败或文件在复制期间变化时，说明具体对象，并在重新取得对应内容后继续比较。
+This command exits with the same number as 0, and indicates a difference for 1; other exit codes indicate an error in the operation and need to report the actual extent of completion once the cause has been identified. `comparison.json` and `comparison.diff` records the time, relative path, content and actual source within the mission through `log_updates.jsonl`. Read failure or file changes during copying, specify the specific object, and continue to compare after retrieving the corresponding content.
 
-对用户解释实际文件差异及用途，最后请用户决定是否对齐和对齐方向。用户选择更新 GitHub 后，再调用下文 `prepare` 准备相应发布；GitHub 独有文件的删除按用户批准的具体路径填写 `--delete`。用户选择调整本地时，先在内部副本准备选定改动并展示差异，原目录的实际修改按目标项目维护流程处理。
+In the end, the user is asked to decide whether or not to align and align the actual file differences and uses. After the user has chosen to update GitHub, the user calls `prepare` below to prepare the corresponding release; GitHub's unique file is deleted to fill `--delete` according to the specific path approved by the user. When the user chooses to adjust the local location, the internal copy is prepared to select the changes and display the differences, and the actual changes in the original directory are processed according to the target item maintenance process.
 
-## 准备文件范围
+## Scope of preparation documents
 
-`prepare` 只读取来源和远程仓库，在技能内复制、准备差异，实际创建仓库、推送、PR 和 Release 均在后续独立命令中执行。
+`prepare` Reads only sources and remote warehouses, copying, preparing differences within skills, and actually creating warehouses, push-off, PR and Release are implemented in subsequent independent orders.
 
 ```bash
-python <Skill目录>/scripts/publish.py prepare \
+python <Skill Contents>/scripts/publish.py prepare \
   --root /path/to/workspace/ResearchHarness \
   --map .agents/skills/extract-structure=. \
   --exclude .agents/skills/extract-structure/results \
@@ -55,129 +55,129 @@ python <Skill目录>/scripts/publish.py prepare \
   --new --visibility private
 ```
 
-`--map 来源=目标` 可以重复。来源相对于 `--root`，目标相对于目标仓库根目录：
+`--map source=destination` Repeatable. Source relative to `--root`, target relative to destination repository root directory:
 
-- 目录映射到 `.`：把该目录的内容放到仓库根目录。
-- 目录映射到 `tools/environment`：保留目录内部结构，放到该位置。
-- 文件映射到 `tools/probe.py`：将该文件放到这个具体路径。单个文件映射到 `.` 时使用原文件名。
-- 多个映射发生同名或文件与目录冲突时停止，保留来源文件。
+- Catalogue map to `.`: Place the contents of this directory in the repository root directory.
+- Directory map to `tools/environment`: Keeps the internal structure of the directory and places it at that location.
+- The file is map to `tools/probe.py`: Place the file on this specific path. Use the original filename when a single file is map to `.`.
+- Multiple maps stop when the same name or file conflicts with the directory, and the source file is kept.
 
-`--exclude` 可重复，使用相对于来源根目录的路径或通配符。路径匹配会连同其子目录排除。文件选择按照映射和排除项执行，运行产物、本机配置和暂存目录是否纳入，由用户确定，并落实到映射和排除参数中；`.gitignore` 用于 Git 的文件忽略设置。
+`--exclude` Repetitively, use a path or wildcard relative to the root source directory. Path matching is excluded with its subdirectories. The file selects whether the product, the in-house configuration and the temporary catalogue are included in the map and exclusion, as determined by the user, and implemented in the map and exclusion parameters; `.gitignore` File Ignore Settings for Git.
 
-调用 `prepare` 前，先按 SKILL.md 的“建立仓库前：扫描、说明和选择范围”执行只读扫描，展示主要目录的用途、文件数、大小及历史资料、结果、缓存等内容，取得本轮扫描之后的范围选择。只准备临时本地仓库或版本包时同样执行；用户笼统要求整个目录时，也先展示扫描结果并询问一次。扫描与选择完成后，才复制文件和建立 Git 仓库。该顺序由技能工作流程执行，`prepare` 命令本身沿用现有参数接口。把用户决定写成 `--map` 和 `--exclude`；命令示例中的排除项仅用于演示，以当前用户的决定为准。程序本身按给定范围复制，文件类别及其用途由智能助手阅读后判断。
+Call `prepare` First, press first. SKILL.md "Pre-Scanning, Description and Selection" to perform a read-only scan showing the use of the main directory, the number of files, the size and historical information, the results, the cache, etc., and obtain a range selection after the current round of scans. Only the same is done when a temporary local warehouse or version package is prepared; the user requests the entire directory in general terms to show the scan results and ask once. Git Repository. The sequence is executed by the skill workflow.,`prepare` The command itself follows the existing parameter interface. The user 's decision is written in `--map` and `--exclude`;The exclusions in the list of commands are used only for demonstration, which is the decision of the current user. The program itself is copied to a given range, and the file category and its use is judged by the smart assistant reading it.
 
-当前任务中，ZIP 附件范围与 `source/` 中的选定内容一致。若用户希望仓库与附件采用不同范围，为附件范围单独执行一次 `prepare` 和 `pack`，所有文件仍保存在本技能内；使用 GitHub 命令行入口上传该包时明确指定原发布仓库、版本标签和内部包路径。已有仓库中的资料默认保留，用户要求从仓库移除时，将具体目标文件列入获准的 `--delete` 范围。GitHub 自带源码包的范围随标签对应的整个仓库确定。
+In the current task, the scope of the ZIP attachment is consistent with the selection in `source/`. If the user wishes the repository to use a different range from the attachment, separate `prepare` and `pack` for the attachment scope, all files remain within this skill; the scope of the GitHub home-based source package is clearly specified when the package is uploaded at the entry point of the GitHub command line. The information in the warehouse is defaulted to remain and the target file is included in the approved range `--delete` when removed from the warehouse. The scope of the GitHub home-bound source package is determined by the entire warehouse with the label.
 
-程序始终略过 Git 元数据。选择包含本技能的父目录时略过本技能的 `results/`；明确选择某份已有产物作为来源时可以纳入。符号链接与特殊文件会报告其位置并停止，用户可以改为选择实际文件；独立副本采用普通文件复制。Git 和 ZIP 版本包以实际文件为单位交付，目录结构由其中的文件保留。
+The program always omits Git metadata. The parent directory containing this skill is omitted from `results/`; it can be included when a given product is clearly selected as a source. Symbolic links and special files report their location and stop, and the user can switch to the actual file; independent copies are copied with a normal file. Git and ZIP versions of the package are delivered in units of the actual document, with the directory structure maintained by the file.
 
-`--new` 表示用户明确要求新建仓库，搭配 `--visibility private` 或 `public`。默认分支为 `main`；实际使用其他分支时提供 `--base`。此步骤在本地准备；远程仓库在后续发布步骤中创建。
+`--new` indicates that the user explicitly requests a new warehouse with a combination of `--visibility private` or `public`. The default branch is `main`; when other branches are actually used, `--base`. This step is prepared locally; a remote repository is created in subsequent release steps.
 
-已有仓库示例：
+There are examples of warehouses:
 
 ```bash
-python <Skill目录>/scripts/publish.py prepare \
+python <Skill Contents>/scripts/publish.py prepare \
   --root /path/to/workspace/ResearchHarness \
   --map src/harness/utils/probe.py=tools/probe.py \
   --repo OWNER/research-tools \
   --base main --branch publish-environment
 ```
 
-`--base` 是读取的远程基础分支。`--branch` 省略时直接准备更新基础分支；使用新分支时可在发布时建立 PR。目标新分支已存在时停止；要直接更新这个已有分支，使用相同的 `--base` 和 `--branch`，或者选择另一个新分支。
+`--base` is the readable remote base branch. `--branch` omits directly to update the base branch; when new branches are used, a PR can be created at the time of publication. The target new branch stops when it already exists; this already existing branch is to be updated directly, using the same `--base` and `--branch` or choose another new branch.
 
-`--delete 目标文件路径` 只在用户明确要求删除目标文件时使用，可重复。默认保留目标仓库中其余文件。删除对象为具体已跟踪文件；目录清理先列出具体文件，再按批准范围传入。
+`--delete target-file-path` is only used when the user expressly requests to delete the target file and can repeat it. Default to keep the rest of the file in the target repository. Deleting objects is specific to the tracking file; directory clean-up lists specific files and then uploads them to the approval range.
 
-仅制作本地副本与版本包时，可以省略 `--repo`，后续使用 `pack`。它仍使用内部 Git 仓库保存可查看的差异。
+Only local copies and version packages can be made by omitting `--repo` and then using `pack`. It still uses the in-house Git repository to save the differences that can be viewed.
 
-## 检查发布语言
+## Check the published language
 
-带 `--repo` 的 `prepare` 扫描本次选定的目标路径和文本。检查可直接读取的 UTF-8 文本，以及带字节顺序标记的 UTF-16 和 UTF-32 文本。报告 `language-check.json` 记录汉字所在路径和行号、声明的双语路径，以及需要结合格式或预览确认的文件。图片、压缩包内的成员、转义后的文字和其他语言由发布准备助手结合格式检查。
+The tape. `--repo` It's... `prepare` Scans the current selected target path and text. Check for direct readable UTF-8 Text, and bytes marked UTF-16 and UTF-32 text. Report `language-check.json` Record the path and line numbers of the Han characters, the bilingual path of the declaration, and the documents that need to be combined with the format or preview. Pictures, members of the compressed package, transliterated English and English are checked by the release preparation assistant in combination with the format.
 
-双语项目按本次范围重复传入 `--bilingual-path`。使用目标仓库中的相对文件路径，或以 `/` 结尾的目标目录路径。例如，双语说明可传入 `--bilingual-path README.md --bilingual-path README.zh-CN.md`，仅当英文说明也含中文切换标签时声明该英文文件。程序要求每条路径匹配本次选定文件，发布与打包沿用准备结果中保存的路径。
+Bilingual projects repeat `--bilingual-path` in this range. Use the relative file path in the target repository, or the target directory path at `/`. For example, a bilingual description can be `--bilingual-path README.md --bilingual-path README.zh-CN.md`, stating the English document only when the English description also contains a Chinese toggle label. The program requires that each path match this selected file and that the path saved in the preparation result be published and packaged.
 
-检查发现问题时，程序保留内部 `source/` 和报告，并在准备 Git 差异前停止。根据报告翻译内部副本，再以该副本为来源重新执行 `prepare`。提交信息、合并请求标题和正文、版本标签及发布说明在发送前另行检查。
+When a problem is detected, the program retains the internal `source/` and the report, and stops before preparing the Git discrepancy. Translator an internal copy of the report and re-executes the `prepare` from that copy.
 
-## 查看准备结果
+## View Preparation Results
 
-命令返回任务标识、文件数、忽略项、内部副本位置和 `changes.diff` 路径。按实际结果向用户说明待发布变化；内部文件组织如下：
+Commands to return the task identifier, number of files, ignore items, internal copy location and `changes.diff` path. The user is informed of the changes to be published as a result; the internal file is organized as follows:
 
 ```text
-results/<任务标识>/
-├── source/              # 用户选定内容的独立副本，按目标路径排列
-├── checkout/            # 目标仓库及其 Git 元数据
-├── plan.json            # 映射后的文件、摘要、仓库和分支
-├── changes.diff         # 已准备的实际 Git 差异
-├── result.json          # 实际操作结果，执行后生成
-├── release/             # 版本包，按需生成
-├── tmp/                 # 工具临时资料
-├── cache/               # 工具缓存
-├── config/gh/           # 工具运行配置位置
-├── hooks/               # 本任务使用的空 Git hooks 位置
+results/<run ID>/
+├── source/              # Independent copy of the selected content of the user, by target path
+├── checkout/            # destination repository and its Git Metadata
+├── plan.json            # Map files, abstracts, warehouses and branches
+├── changes.diff         # Actual prepared Git Variance
+├── result.json          # Actual results, generated after execution
+├── release/             # Version package, generated as required
+├── tmp/                 # Interim information on tools
+├── cache/               # Tool Cache
+├── config/gh/           # Tool Run Configuration Position
+├── hooks/               # Space used for this task Git hooks Location
 └── log_updates.jsonl
 ```
 
-读取准备结果时，使用 `plan.json` 确认来源与目标路径，用 `changes.diff` 理解实际变化；发布后结合 `result.json` 和远端实际状态确定完成位置。失败时保留这些资料，在已有授权内定位原因并继续；需要人类参与时说明影响与可执行的选择。
+When you read the preparatory results, you use `plan.json` to identify the source and the target path and understand the actual change with `changes.diff`; you determine the location of the completion after the release in the context of `result.json` and the remote physical state. If you fail, you keep this information and locate the reasons within the mandate and continue; if human participation is needed, describe the influence and the implementable options.
 
-这些目录按使用需要建立。`plan.json` 与 `result.json` 用 `purpose`、`scope` 说明资料用途与范围；日志记录带时区的时间、技能内相对路径、内容和程序来源。来源目录及其暂存区、分支和 Git 元数据保持原样，准备工作使用任务内部的副本与 Git 仓库。
+The directories are created as required. `plan.json` and `result.json` describe the use and scope of the information with `purpose`, `scope`; log logs record time, relative path within skills, content and program sources. The source directory, its temporary storage area, branch and Git metadata remain as they are.
 
-需要调整发布内容时，只编辑内部副本。为更新后的副本新建一轮准备：将 `--root` 指向该轮的 `source/`，使用 `--map .=.`，重复目标仓库和分支等参数。新增说明、版本号等按用户具体授权添加，新的差异重新展示后再发布。
+Only internal copies will be edited when you need to adjust the release. Prepare a new round for updated copies: point `--root` to the round `source/`, use `--map .=.` to repeat parameters such as destination repositorys and branches. Add new instructions, version numbers, etc. to the user's specific authorization, and re-enact new discrepancies.
 
-## 提交和推送
+## Submission and delivery
 
-在用户对具体范围已授权后调用：
+Call after the user has authorized a specific range:
 
 ```bash
-python <Skill目录>/scripts/publish.py publish \
-  --run <任务标识> \
+python <Skill Contents>/scripts/publish.py publish \
+  --run <run ID> \
   --message "Publish selected environment tools"
 ```
 
-程序使用现有 Git 作者身份；确有需要时在命令中同时提供 `--author-name` 与 `--author-email`。身份配置用于内部提交，用户全局配置和来源仓库保持原样。
+The program uses the current Git author identity; `--author-name` and `--author-email` are provided in the command when required. The identity configuration is used for internal submission, and the user ' s global configuration and source repository is maintained.
 
-程序检查内部副本、待提交内容及远程分支是否仍与准备结果对应，远程写入失败或出现冲突时停止。它采用普通推送，并保存本地提交和实际远程操作结果。再次执行前查看 `result.json` 和远程状态；已记录或已推送的同一提交继续沿用。
+The program checks whether the internal copy, content to be submitted and the remote branch are still corresponding to the preparatory results, or stops when a remote writing fails or conflicts occur. It uses a normal push and saves local submission and actual remote operation results. See `result.json` and remote status before re-execution; the same submission is recorded or sent continues.
 
-新建仓库在此步骤使用明确的公开或私有设置创建；来源内容提前提交到内部仓库。创建成功但推送失败时，记录已经创建的事实。网络响应有待确认时，先查清仓库或分支的实际状态，再决定沿用已有结果或继续创建。
+At this stage, the new warehouse is created using a clear public or private setting; the source content is submitted to the internal warehouse in advance. When the creation is successful but the transmission fails, the created facts are recorded.
 
-## 通过 PR 交付
+## Through PR Delivery
 
-已有仓库、新分支的准备结果可使用：
+There are warehouses and new branch preparation results available:
 
 ```bash
-python <Skill目录>/scripts/publish.py publish \
-  --run <任务标识> \
+python <Skill Contents>/scripts/publish.py publish \
+  --run <run ID> \
   --message "Publish selected environment tools" \
   --pr --title "Add environment tools" \
-  --body-file <Skill目录>/results/<任务标识>/pr_description.md
+  --body-file <Skill Contents>/results/<run ID>/pr_description.md
 ```
 
-先将准确的说明写到技能内部，`--body-file` 使用完整路径。需要草稿 PR 时增加 `--draft`。程序先推送，再查找该来源分支到目标基础分支的开放 PR；已有时返回其链接，缺少时创建。新仓库首次发布以及直接更新基础分支的任务使用提交链接。
+First, you write an accurate description inside your skills, `--body-file`, and use the full path. Add `--draft` when you need a draft PR. The program is sent and then you search for the source branch to the open branch of the target base PR; you return the link when you are available and you create it when you are missing. The task of the new repository is to submit a link for the first time and to update the base branch directly.
 
-创建或接续当前任务的 PR 后，宿主提供附件工具时调用它附上真实 PR 链接。宿主提供普通链接交付方式时，直接返回链接；发布程序使用本技能自带的实现。
+When creating or renewing the current task, the host uses the attachment tool to attach a real PR link. When the host provides the normal link delivery method, the link returns directly; the release application uses this skill to bring it on its own.
 
-## 版本包与 Release
+## Version Packages and Release
 
-仅制作本地 ZIP：
+Create local ZIP only:
 
 ```bash
-python <Skill目录>/scripts/publish.py pack --run <任务标识>
+python <Skill Contents>/scripts/publish.py pack --run <run ID>
 ```
 
-ZIP 的内容为选定内部副本中的文件，路径采用映射后的目标路径。目标仓库中的其他文件和本任务记录分别保存在原有位置。文件保存在内部 `release/`，文件名带任务标识。
+ZIP contains the selected internal copy of the file, the path using the mapd target path. Other files in the target repository and this task record are stored in their original location. The file is stored in the interior `release/` and the file name is marked with the task.
 
-用户要求 GitHub Release 时，先发布内容取得真实提交，再准备内部版本说明：
+When the user asks GitHub Release to release the content for real submission, then prepare an internal version of the statement:
 
 ```bash
-python <Skill目录>/scripts/publish.py release \
-  --run <任务标识> \
+python <Skill Contents>/scripts/publish.py release \
+  --run <run ID> \
   --tag v0.1.0 --title "ExtractStructure 0.1.0" \
-  --notes-file <Skill目录>/results/<任务标识>/version_notes.md
+  --notes-file <Skill Contents>/results/<run ID>/version_notes.md
 ```
 
-需要草稿 Release 时增加 `--draft`。程序为本次真实发布的提交创建 Release 并上传选定文件的 ZIP；已有版本标签须指向同一提交。已有 Release 或附件冲突会停止，先查看实际状态再决定是否继续。
+Add `--draft` when a draft is required. The program creates a Release and uploads the ZIP for this real-time submission; already available versions of the label must point to the same submission. Existing Release or attachment conflicts will stop and see the actual status before deciding whether to continue.
 
-GitHub 自带的源码下载对应标签处的整个仓库；本技能上传的 ZIP 附件对应本次选定内容。这两种下载内容各自按实际范围向用户说明。
+GitHub downloads its own source code to the entire repository of the label; the ZIP attachments that are uploaded to this skill correspond to this selection. Each of the two downloads is described to the user according to the actual range.
 
-## 失败后的处理与其他发布需求
+## Post-failure processing and other distribution requirements
 
-一次外部操作失败后保留所有副本与状态，说明已创建仓库、已推送提交、已创建 PR 或 Release 中哪些真实完成。根据 `result.json` 与远程实际状态决定继续方式。新增或删除远程资源、修改公开范围、强制覆盖分支以及运行来源项目的构建命令，分别按用户明确授权处理。
+Keeps all copies and states after an external operation fails, indicating which of the warehouses that have been created, sent, created, PR or Release are actually completed. Determines how to continue on the basis of `result.json` and remote physical status. Add or delete remote resources, modify the open scope, and enforce branch coverage, as well as build commands for running source projects, as explicitly authorized by the user.
 
-运行入口提供普通文件复制、仓库发布、PR、ZIP 和 Release。保留提交历史、子模块、Git LFS、自动化持续同步和网站部署等需求，先说明与本入口的差别再确定实际操作；完整流程的所有本地写入仍位于技能内。
+The running entrance provides generic file reproduction, warehouse release, PR, ZIP and Release. Retain the submission history, submodules, Git LFS, automated continuous synchronization and website deployment requirements, explaining the differences from this portal before determining the actual operation; all local writings of the complete process are still in the skills.

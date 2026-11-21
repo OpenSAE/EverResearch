@@ -1,6 +1,6 @@
-# 目的和主要功能：在技能界面显示 GitHub Publish 的名称和发布用途。
-# 适用范围：支持该配置的技能列表；实际执行范围由用户的发布任务确定。
+# Purpose and main function: Display in the skills interface GitHub Publish name and published use of.
+# Scope of application: list of skills to support the configuration; actual scope of implementation determined by the user ’ s posting assignment.
 interface:
   display_name: "GitHub Publish"
-  short_description: "将选定目录或文件复制到 Skill 内，保持原目录不变，准备差异并发布到 GitHub"
-  default_prompt: "请使用 $github-publish 帮我确定发布范围和目标，在 Skill 内准备副本并展示变化，原目录保持不变。"
+  short_description: "Copy the selected directory or file to Skill Inside, maintain the original directory, prepare for discrepancies and release to GitHub"
+  default_prompt: "Please. $github-publish Help me determine the scope and target of the release. Skill Prepares a copy and displays changes within, and the original directory remains unchanged."

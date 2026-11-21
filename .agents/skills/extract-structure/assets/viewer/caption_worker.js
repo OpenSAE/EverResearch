@@ -1,5 +1,5 @@
-/* 目的和主要功能：在后台计算连线说明的位置，保持画布与操作控件可响应。
- * 适用范围：ExtractStructure 当前可见图的文字布局；画布切换时由调用方取消旧任务。
+/* Purpose and main function: to calculate the location of the connection in the back and to keep the canvas and the operating controls responsive.
+ * Scope: ExtractStructure Current text layouts that can be shown in figure; old jobs cancelled by the caller when the canvassing switch.
  */
 'use strict';
 self.window=self;

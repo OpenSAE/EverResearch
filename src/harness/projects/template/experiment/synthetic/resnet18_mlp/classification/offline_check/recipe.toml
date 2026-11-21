@@ -1,5 +1,5 @@
-# 目的：以生成的 RGB 张量演练同一分类流程。
-# 适用范围：离线 CPU 检查，产物明确标为 synthetic。
+# Purpose: By generated RGB The round exercise is the same sorting process.
+# Scope of application: Offline CPU Check. The product is clearly marked. synthetic.
 [dataset]
 name = "synthetic"
 image_size = 32

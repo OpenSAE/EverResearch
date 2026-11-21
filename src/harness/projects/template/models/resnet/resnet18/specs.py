@@ -1,6 +1,6 @@
-"""目的：在同一 ResNet18 系列声明可独立选择的分类头变体。
+"""Purpose: Same ResNet18 Series of declarations for header variants that can be selected independently.
 
-适用范围：模型登记和配方选择，两个变体共用同一构建与验证实现。
+Scope of application: model registration and formulation selection, with two variants sharing the same construction and validation.
 """
 
 from ...build import ModelSpec

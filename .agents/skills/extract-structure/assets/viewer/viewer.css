@@ -1,5 +1,5 @@
-/* 目的和主要功能：将 Mineral Atlas 色彩角色应用于节点、分组、关系与交互状态。
- * 适用范围：本 Skill 的目录图和文件图画布；主题切换沿用相同布局及语义。
+/* Purpose and main function: will Mineral Atlas Colour role for nodes, grouping, relationships and interactions.
+ * Scope of application: this article Skill ;themes switch to the same layout and semantics.
  */
 .status-legend{position:absolute;z-index:3;display:flex;align-items:center;pointer-events:none;border:1px solid var(--atlas-group-border);border-radius:9px;bottom:18px;right:20px;padding:11px 14px;gap:18px;background:var(--atlas-chrome)}
 .legend-item{display:flex;align-items:center;gap:8px;white-space:nowrap;color:var(--atlas-text-secondary);font-size:12px}
@@ -82,7 +82,7 @@
 .graph-empty-message{margin:60px auto;padding:24px;max-width:560px;color:var(--atlas-text-secondary);font:14px/1.8 var(--atlas-font-sans);text-align:center}
 @media(max-width:730px){.language-switch,.theme-switch{gap:3px}.graph-pathbar{padding:0}.status-legend{right:10px;bottom:12px;padding:8px 10px;gap:12px}.legend-item{font-size:11px}.legend-swatch{height:16px;width:16px}}
 
-/* 节点名称与解释在悬停或键盘聚焦时完整显示。 */
+/* Node name and explanation fully displayed when suspended or keyboard focus. */
 .node-explanation{position:fixed;z-index:1000;max-width:min(420px,calc(100vw - 16px));max-height:calc(100vh - 16px);overflow:auto;padding:12px 16px;border:1px solid var(--atlas-edge);border-radius:8px;background:var(--atlas-canvas,#fff);color:var(--atlas-text);font:13px/1.6 var(--atlas-font-sans);white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 4px 20px #0002;}
 .node-explanation[hidden]{display:none}.node-explanation strong{display:block;margin-bottom:4px;}
 

@@ -1,7 +1,7 @@
-"""目的和主要功能：预览或执行文件的 B2 上传、下载及按需核验。
+"""Purpose and main function: Preview or execution of documents B2 Upload, download and on-demand verification.
 
-适用范围：按明确来源、目标与范围传输文件；verify 和独立 SHA256 核验
-仅在人类明确要求或审核批准后进行，普通上传下载以传输结果记录完成状态。
+Scope of application: Transmission of documents by clear source, target and range; verify and independence SHA256 Verify
+Only after a specific human request or approval has been made, general upload download to record the completion of the transmission results.
 Extracted from OpenSAE/SAEBase; Apache-2.0.
 """
 
@@ -186,7 +186,7 @@ class Engine:
         parser = argparse.ArgumentParser(description=__doc__)
         parser.add_argument(
             "action", choices=("push", "pull", "verify"),
-            help="push/pull 传输文件；verify 仅在人类明确要求或审核批准后执行",
+            help="push/pull Transfer File; verify Only after a specific human request or approval has been made",
         )
         parser.add_argument("--local", required=True)
         parser.add_argument("--remote", required=True)
@@ -283,16 +283,16 @@ class Engine:
         if code:
             if detail == "rclone is not installed":
                 category = "MISSING_TOOL"
-                analysis = "传输程序尚未启动，本次文件传输无法执行。"
-                next_steps = ["安装 rclone 或修正 PATH，使当前环境能找到该命令，再使用原参数重试。"]
+                analysis = "The transfer program has not been started and this file transfer cannot be executed."
+                next_steps = ["Install rclone or amendment PATH,Enables the current environment to find the command and retry using original parameters."]
             elif "Source and destination differ; existing target preserved" in detail:
                 category = "TARGET_CONFLICT"
-                analysis = "来源与已有目标内容不同，本次复制已停止，目标文件保持原样。"
-                next_steps = ["确认应保留的内容，为本次传输选择新的目标文件名或目录后重试。"]
+                analysis = "The source is different from the existing target content, this copy has been stopped and the target document remains as it is."
+                next_steps = ["Confirm what should be retained and try again after selecting a new target filename or directory for this transfer."]
             else:
                 category = "TRANSFER_ERROR"
-                analysis = "传输进程未成功结束，本次请求尚未完整完成。"
-                next_steps = ["依据错误输出检查来源、目标、连接配置或访问条件，修正后用原参数重试。"]
+                analysis = "The transmission process was not successfully completed and this request is not yet complete."
+                next_steps = ["Check for source, target, connection configuration or access conditions based on error output, and try again with original parameters."]
             record["diagnostics"] = [{
                 "code": category,
                 "reason": detail.strip() or f"rclone exited with code {code}",

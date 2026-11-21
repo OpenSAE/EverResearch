@@ -1,7 +1,7 @@
-"""目的和主要功能：查看本地 tar 内容，并按选定路径提取普通文件与目录。
+"""Purpose and main function: View Local tar Content, and extract normal files and directories by the selected path.
 
-适用范围：直接处理指定压缩包，或由项目运行入口调用；支持 tar.zst 等压缩格式，
-文件 SHA256 摘要按明确要求通过 --sha256 启用。
+Scope of application: Direct handling of specified compression packages or call by the project running portal; support tar.zst Waiting for compression format,
+File SHA256 Summary adopted as explicitly requested --sha256 Enable.
 """
 
 from __future__ import annotations
@@ -331,8 +331,8 @@ class Engine:
                 "diagnostics": [{
                     "code": type(error).__name__,
                     "reason": str(error),
-                    "impact": "本次压缩包处理未完成，原压缩包保持可供重新读取。",
-                    "next_steps": ["依据具体错误修正压缩包、筛选参数或目标位置，再重新执行。"],
+                    "impact": "This compression package is not finished and the original compression package is maintained for readback.",
+                    "next_steps": ["Modify the compression package, filter parameters or target position based on specific errors, and re-execut."],
                 }],
             }
         if args.receipt is not None:

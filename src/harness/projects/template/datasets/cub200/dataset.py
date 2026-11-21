@@ -1,6 +1,6 @@
-"""目的：读取 CUB-200-2011 官方图像、标签和训练测试划分。
+"""Purpose: Reading CUB-200-2011 Classification of official images, labels and training tests.
 
-适用范围：本地已完整解压的 CUB-200-2011 数据。
+Scope of application: Locally fully depressed CUB-200-2011 Data.
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ def read_rows(path: Path):
         key, value = line.split(maxsplit=1)
         key = int(key)
         if key in rows:
-            raise ValueError(f"{path}:{number}: 图像编号重复 {key}")
+            raise ValueError(f"{path}:{number}: Image Number Repeated {key}")
         rows[key] = value
     return rows
 
@@ -62,7 +62,7 @@ def load(config, _seed):
     ]
     images, labels, splits = map(read_rows, files)
     if not images.keys() == labels.keys() == splits.keys():
-        raise ValueError("官方图像、标签和划分文件的编号集合必须一致")
+        raise ValueError("The numbering of official images, labels and division documents must be consistent")
     image_root = (root / "images").resolve()
     rows = {0: [], 1: []}
     seen_images = {}
@@ -70,21 +70,21 @@ def load(config, _seed):
         path = (image_root / images[key]).resolve()
         label, split = int(labels[key]), int(splits[key])
         if not path.is_relative_to(image_root):
-            raise ValueError(f"编号 {key} 的图像路径超出 images 目录：{path}")
+            raise ValueError(f"Numbering {key} Image path exceeding images Contents:{path}")
         if not path.is_file():
-            raise FileNotFoundError(f"编号 {key} 的图像缺失：{path}")
+            raise FileNotFoundError(f"Numbering {key} Missing image:{path}")
         info = path.stat()
         identity = (info.st_dev, info.st_ino)
         if identity in seen_images:
-            raise ValueError(f"图像记录 {seen_images[identity]} 与 {key} 引用了同一文件：{path}")
+            raise ValueError(f"Image Recording {seen_images[identity]} with {key} Quote the same document:{path}")
         seen_images[identity] = key
         if not 1 <= label <= 200 or split not in rows:
-            raise ValueError(f"编号 {key} 的标签或划分无效")
+            raise ValueError(f"Numbering {key} Invalid label or division")
         rows[split].append((path, label - 1))
     if {flag: len(items) for flag, items in rows.items()} != COUNTS:
-        raise ValueError("CUB-200-2011 官方划分应包含 5994 张训练图和 5794 张测试图")
+        raise ValueError("CUB-200-2011 Official division should include 5994 Training charts and 5794 Test Chart")
     if any({label for _, label in items} != set(range(200)) for items in rows.values()):
-        raise ValueError("训练集和测试集均应覆盖 200 类")
+        raise ValueError("Training and testing packages should be covered. 200 Category")
     return ClassificationInputs(
         CubImages(rows[1], size, training=True),
         CubImages(rows[0], size, training=False),

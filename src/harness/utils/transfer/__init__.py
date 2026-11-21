@@ -1,6 +1,6 @@
-"""为独立传输与解压工具提供可选的本机项目标识。
+"""An optional local machine identifier for independent transfer and decompression tools.
 
-用于直接处理显式路径，或在操作回执中附带已登记项目。
+For direct processing of visible paths or for attaching registered items to the operation reply.
 """
 
 import argparse

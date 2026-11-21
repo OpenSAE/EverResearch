@@ -1,44 +1,132 @@
 ---
 name: maintain-experiment
-description: 维护科研项目的默认实验配置、单次参数、运行、结果读取、恢复与调试。用于调整 conf 或实验参数、查看生效配置、执行和监控实验、判断能否续跑及定位指标或性能问题。
+description: Use of existing parameters, operation, monitoring, recovery and debugging experiments for scientific projects to read valid configurations and results and to maintain laboratory reports based on actual evidence.
 ---
 
-# 实验维护
+# Experimental maintenance
 
-## 目的和主要功能
+## Purpose
 
-维护项目默认配置与单次实验参数，用运行记录、产物和检查点衔接实验的启动、监控、恢复、排查与结果读取。
+Select and record the operational parameters of a single experiment, which are readable with the start, monitoring, restoration, sorting and results of the operation record, product and inspection points.
 
-## 适用范围
+## Scope
 
-用于当前科研项目的配置维护、正式实验、获准的小规模检查、现有结果读取和故障处理。先从项目 `AGENTS.md`、项目说明或 README 查到真实入口、运行目录、配置来源、结果读取方法和恢复条件。项目接入说明和工程协议可补足共同要求。执行与资源投入采用用户对当前任务的授权。
+Start with the project. `AGENTS.md`,Project description or README The project access description and the project protocol will complement the common requirements. Implementation and resource input will use user authorization for the current task.
 
-[实验操作方案](references/procedures.md)说明配置维护、产物读取、恢复判断、故障定位和性能比较。按本次场景查看对应步骤。
+[Experimental Programs](references/procedures.md)Describes configuration maintenance, product reading, restoration of judgement, failure positioning and performance comparison.
 
-## 维护配置
+## Central path check and project restoration
 
-`conf/` 维护一套项目默认配置。只有项目默认行为需要改变时才修改该配置。特定实验通过正式入口选择参数，生效配置随本次运行写入 `experiment/`。查旧结果或复跑时，从对应运行清单定位当时的配置。修改默认值、比较实验参数或处理缺失配置时，使用操作方案中的「配置维护」。
+ResearchHarness unified the maintenance of document paths, directory and naming. The assistant performing the research project uses read-only ResearchHarness and its verification portals to restore the public entry point, logic and results of the target project within the permitted range. When it is considered that the error or the rule is too strict, the inspection order, rules, path, reversible evidence and impact are included in the human-oriented report and continue to be independently completed.
 
-## 开始实验或读取结果
+## Use Configuration
 
-1. 确定用户选定的配置、数据、模型、工作范围和要使用的结果。复用已有配方和环境，通过项目支持的只读方式查看生效配置。使用正式入口已有的数据准备、兼容性和路径检查，并按实际预算选择预检。
-2. 从项目根定位一级目录 `experiment/`。所有新运行及其预检、调试、比较和后续分析产物归此目录。用一至三个具体词为实验命名（`subname`），描述实验本身或探索对象。用可识别的独立运行目录保存实际命令、生效配置、环境、日志和产物，清单引用生效配置。覆盖已有结果须有明确授权。按用户要求在前台或后台执行。后台采用项目已有的工具和日志位置，保存启动命令、会话、运行目录、日志和恢复位置。
-3. 从正式结果入口验证实际交付物。按任务读取特征及其解释、生成内容、干预结果、评估指标或训练报告和检查点。关联本次运行身份、输入、实际范围和协议。结果已可用时，继续完成用户要求的后续用途；部分完成或受阻时，读取已知原因并在授权内处理。
+From the default configuration of the project and the formula selection parameters already available, the configuration is covered by the public entry point for a specific experiment. The effective configuration is written to `experiment/` with this operation. When checking for old results or rerun, locate the current configuration from the running list. The new, removed, semantic or default changes in the open parameter are `maintain-conf`. When comparing the parameters with the missing item in the experiment, use the "configuration maintenance" in the operating program.
 
-## 跟踪和恢复
+## Start experiments or read results
 
-1. 用原始启动命令、生效配置、实际解释器、设备与进程、会话日志、结果清单和检查点核对运行身份。支持保存组合配置的项目读回当时的版本。根据实际记录判断运行中、成功、中断、失败或用户停止。
-2. 健康运行时跟踪既有作业，读取日志和指标，按工具能力等待，与其运行身份保持一致。已有作业和输出应得到保护，重复或接续执行以真实状态为依据。用户已要求停止的轨迹继续遵循该决定。
-3. 先确定哪些成果可复用、哪些步骤缺失、哪个前置条件需要修复。续跑前确认当前任务支持恢复，并区分完整训练状态与只供推理的权重。核对检查点对应的配置、输入、环境和历史状态。缺少恢复能力或必要证据时，指出具体缺项，给出补跑或重新运行的路径。需要维护恢复功能时，把缺项补到实际负责的结果接口。
-4. 汇报真实状态、已完成成果和后续动作。当前会话内按用户要求持续跟踪；跨会话持续执行依托实际可用且获准的调度机制。
+1. Determines the user's selected configuration, data, model, scope of work and results to be used. Re-use the existing formulation and environment to see the effective configuration through read-only project support. Select to automatically call the task portal `precheck` before the formal computation.
+2. Positioning Level One Directory From Project Roots `experiment/`.All new operations and their precheck, debugging, comparison and subsequent analysis products are placed in this directory.(`subname`),The list refers to the effective configuration and the subproduct. The cover must be clearly authorized. The top level task is performed at the user ' s request. The back desk uses the tools and log position of the project to save the start-up command, session, running directory, log and restoration.
+3. Verify the actual delivery from the official results portal. Read the features by task and their interpretation, generation, intervention, evaluation indicators or training reports and points. Link the current operational identity, input, actual scope and protocol.
 
-## 调试和性能
+## Automatic precheck before formal run
 
-1. 从实际错误、启动命令、生效配置和解释器出发，沿数据、模型、任务和运行层找到负责模块及受影响调用。区分已经观察到的现象、已经确认的原因与尚待验证的解释。
-2. 选用足以定位问题的最小输入和检查。合成输入、小批预检或短运行足够时优先使用。诊断文件放到项目规定的运行资料位置，保留原有实验结果。使用项目已有的后台服务开关来控制测试过程。
-3. 性能问题从实际调用链分段计时，记录数据、设备、工作量及数值条件。按相同输入和判据比较候选；局部测量对应局部结论。改变结果语义、资源预算或历史可比性时交给人类作取舍。
-4. 在实际负责模块修复已查明的问题，让所有调用者复用处理。报错记录应说明原因、影响与可执行的处理或定位办法。工程脚本按项目惯例调用正式实现，长期检查归项目测试，临时检查完成后清理。通过获准的正常入口确认修复，把依据和适用范围写入任务资料。
+The project must provide a precheck capability called `precheck` under `tasks/`. Each formal task, including the tasks in the batch, is automatically called before the formal computation is determined. Use the data set, model and task of this actual selection to check whether or not it is operational. The precheck is written with a small number of representative samples and step-by-step quick reading, construction, minimum calculation and result. Where the logical confirmation result should be generated from the official path, the sample is generated at the isolated location and the file name, format and necessary fields are checked through official reading access.
 
-## 向人类说明
+When a precheck is completed, the precheck is formally calculated. When a precheck is found to be missing, skipping or failing, the public entry point or responsible module of the target project is located and repaired within the authorization. The precheck is then launched from the same entrance and re-executed by the entrance.
 
-先交付用户要用的结果、原因、影响或选择。只有会影响理解或决定的框架、环境变量、算子、参数和测量限制放正文，其余留在可查阅的记录。用具体实验例子说明再引入必要术语；用户反馈难懂时换一个更具体的例子并减少同时介绍的概念。原因待查时说明已有事实和缺少的证据。同类案例和临时回退可以支持下一步调查。性能报告同样说明测了什么、结果适用于哪里，以及据此能作什么决定。
+The record format supports the verification of the evidence, the number of samples processed and the total time spent by a central order `rh projects precheck check <project-root> <successful-run> <rejected-run> --max-seconds <seconds> --max-samples <count>`.
+
+## Commencing access and piloting.
+
+A single operation uses `experiment/<dataset>/<model>/<task>/<experiment-name>/<optional-role>/`. Datasets, models and tasks are removed from actual calls, configurations and registrations. Data catalogue users can identify the actual dataset, queues or baseline names from the project document. Only the directory with the source registration number is checked for the actual queue and the recognized name, checking conflicts with the same name, and keeping the original registration number in the running record open to the stable corresponding access to the directory, keeping the original registration number in the operating record.
+
+### First, to determine the responsibility for each type of document.
+
+If you have a family and there are several members to choose, the family name is written once, and the members only use their own names. The data set position is `<dataset-family>/<cohort-or-subset>`, the model position is `<model-family>/<variant>`, and the role of the data set and model is maintained separately. Based on the family organization already in place of the project, the component with a true independent identity follows its own name. The common term itself can only be used to find clues, and the actual component relationship decides whether or not to group.
+
+A stable map obtains its complete relative path from an open component identity. Existing running, subsequent writing, batch members reading and document navigation uses the same map; public configuration identifiers and historical lists continue to retain their true component identity. For group directory, at least two different members of the same family are selected to check that they actually write and read their own separate, readable results, and confirm that the public entry point will not create the old flat directory.
+
+The public identification contains the name of the organization, separator, remote address, framework syntax or running parameter. The directory selects the identifiable data, model and task name, which are mapped by project registration. The complete machine identifier and the normal operational parameter are recorded in the record. The reader's published directory is marked by a name that can be read directly, and the character is transliterated internally by a reading and writing protocol. In short-name conflicts, the identification information is supplemented by real sources, tasks or variations, and the map is verified to be stable.
+
+When you have an existing catalogue, you take the evidence of a group of documents that can be read independently. First, you look at the person that is valid to configure, generate commands or achieve and read downstream, then you check the content of the product and confirm the input, tasks and actual uses. An old directory may be mixed with multiple types of files, and it should be determined separately.
+
+- **Independent experiment.** Each group enters the standard path by its own data set, model, mission and experimental purpose when the same command starts independent operation. The sample, indicator, point of inspection, operational configuration and diagnosis are kept with its own operation. The scheduler uses its official running record to keep progress and membership status; it locates the members according to the same path rules and does not use the dispatch container as a layer of the result path.
+- **Joint analysis.** identifies from the analytical program which inputs are actually involved in the same calculation, confirming whether they are read for comparison of the existing results, or using multiple data sets or models as a physical input for this operation. The report and machine-readable results are attached to the analysis's own public entry point. When an analysis has a clear master data, archive the actual master data, reference the entry into the list. The same type of entry is entered as an optional, rerunable joint input, a joint entry that follows the actual registration of the project; where there is a lack of registration, the public entry point of identity, a member, an identifiable name and a readable agreement, and then a corresponding directory is created. The list of objects mentioned in the report cannot be used as a register, nor can the spell-in-entry name substitute for this step.
+- The **running evidence and engineering maintenance.** Recapturing the environment, precheck and performance evidence necessary for an experiment, explanation of indicators or for the continuation of a study follows the actual operation. The record of the validation code adjustment or collation process follows the entry and use of the project. The sustainable return examination goes into the project file, with the long-term explanation being applied, and the temporary engineering material ending `maintain-tmp`.
+
+After confirming the path, adjust the generator, normal reader, configuration and document, and then move the group results and read them back from the new location. The purpose is unknown, the object is still in operation or there is an existing old entry, giving evidence and processing boundary by case. After rereading and checking the group contents, clear the empty old container. See the new and old path differences of the actual root of the project before delivery, confirm that the mixed information has not been moved to another generic container, and also check whether the only catalogue of registration numbers found at the beginning has been renamed through a stabilization map.
+
+When checking the directory generated by the frame configuration, the actual path is analysed separately from the operation of multiple combinations. Read out the valid laboratory name, data, model and task identity, confirming that the automatically created directory and subsequent project reading and writing in the same rule-cover framework. The random torrent, time and internal execution number are recorded in a single execution record. Retain the contents of the document and the source identity of the completed product, with multiple implementations for the same purpose, read back. Independent review checks the movement of the original physical container from the tree to the file group, while testing the valid use and invalid name through a formal order.
+
+Reread the project layouts by front-office single, multi-assembly and downstream. The control directories that the batch frames require to be created for start-up are part of the dispatch process, using the temporary workspace over its life cycle; the movement information that needs to be maintained to reproduce results is kept with the actual member's execution records. Starting with the physical tree left behind by the frame, each searchable directory under the root of the experiment is directed to the actual input. The temporary or hidden directory written by the operational tool is also checked for its use and end-actions. Model weights that exist before the operation is a model resource, and the specific operational weights generated are retained with the experiment. The transferable path segment is calculated by the actual path generator, and the current configuration, log and downstream reading are reviewed after migration and still using the same operational identity.
+
+When you return to the old experiment, identify the experimental uses that can be operated independently or formally read from the configuration, command or product. Once the data sets, models and tasks are put in place, you continue to check the use and research roles that are directly displayed below them. The old rotations, seeds and pure numbers can be stored in the internal path to the corresponding execution records and to the freezing of the snapshots. The absolute location of the historical configuration is determined by the caller to resolve the configuration value, the product of the same execution or the external resource. The normal consumer within the project maintains the historical configuration in the original language and validates its reading.
+
+When processing a history configuration, find out from the official read-back portal the actual realization of reading the old address, giving priority to locating the product according to the selected execution location, and sharing the input according to the named data or model resource. When matching an old field, allow the reading end to provide the required explanation. The check is performed when the old physical address does not exist and the historical configuration is maintained in the original language, and check to read the same data or weights. After the research-use directory is renamed, an example of a command that can be run by checking the link to the report and copying. The path to the command in the work directory is determined by the read-only entry or configuration preview that its objective remains and is valid.
+
+You can register to run directly under the task directory if the name of the experiment is fully located.
+
+Sub-missions or experimental names under the mandate give priority to the actual main method, for example. `capture/non_whiten/answer_stability` Medium,`capture` _Other Organiser,`non_whiten` Show method,`answer_stability` Shows that this time you check the stability of the answer with it. When the upper level has expressed the method, the lower level will write the specific purpose of the study or the specific role to be assumed. Each level will express only the new information that has been added to the level. Parameters will be used to describe their meaning in complete terms, for example, when the condition of the study or the comparison is made. `candidate_limit` is the upper limit for the study. The value is written into the valid configuration and list, and the real data set and model identity can be kept as the version number.
+
+The name of the executive layer describes the actual use of the operation, the control role, or the meaningful difference. The directory name consists of the words used to describe the use. Dates, seeds, general operating parameters, and implementation numbers are kept in the operating record as required. If the research used and the role of the execution is identical on several occasions, the same name is used to locate the configuration, product and running location by using the execution record. The program can store the information on each time within the experimental location according to the performance identifier and manage the storage location by the list. Reader selects the application for the experimental use and role navigation, by formally reading the entry. When organizing the project, which used the operational identifier as the first level of the experimental path, the new entries are validated in accordance with the same rule and confirmed that the existing implementation is still accessible.
+
+The project is named through the public entry point. Automatic names are taken from the actual main method or the stated research use of the mission. In case of error in the visible name, the entry is reported before the creation of the active directory and an example is given.
+
+Accept and accept the name while checking the meaning and format. Test the same public entry point for a name that describes the purpose, a place name that is in the correct format, but only a common running name (e.g. `run`), and a name with a date, serial number or path separator. The purpose name should be passed, and other input is reported wrong before the construction directory. When naming requires a key parameter, use phrases that indicate the meaning of the parameter. The old input identifier, if it remains to be supported, can be shown to a fixed name position, and the result path uses the normative name.
+
+## Fixed Naming & Results Read
+
+The directory and product of the same function uses the fixed level and file name agreed upon in the project. Paths are extrapolated from the actual data set, model, task, test name and meaningful method or role. Schedule records keep the identity, condition, status and count of members. Maintain the sample identity and necessary research evidence when the sample is re-used. Regular reading is based on the member ' s identity to construct the agreed path, and when the path is missing, the actual missing item is noted. Removes the path fields of the movement record or writes the wrong address at the time of acceptance, checking that the normal entry still locates the true result from the same naming rules.
+
+The default root results are located from the workspace of the project or project statement. Checks the default output of the same entry at the start of the project root and other work directories, using a configuration preview or segregation input. Visible relative input and output parameters are still deconstructed according to the project's public agreement. Installing packages can also be executed outside the source tree, indicating how the workspace is specified or located.
+
+## Tracking and recovery
+
+1. Checks the running identity with the original start-up command, effective configuration, actual interpreter, device and process, session logs, outcome lists and check points. Supports the group configuration to read back the current version.
+2. If you want to keep track of your work, read your logs and indicators, and wait on the tool's ability, so that you can keep up with your status.
+3. Determines which results can be reused, which steps are missing and which preconditions need to be repaired. Prior to running, confirm that the current task supports recovery and differentiates between the full training status and the weights to be used for reasoning only. Checks the configuration, input, environment and historical status of the check points. If there is no resilience or necessary evidence, identify the specific missing items and give the path to running or restarting. When restoration is needed, fill the missing items with the actually responsible outcome interface.
+4. Report on the real status, completed results and follow-up actions.
+
+## Debugment and Performance
+
+1. Distinguishing between observed phenomena, identified causes and explanations yet to be validated.
+2. Select the minimum input and inspection that is sufficient to locate the problem. Use the synthesis input, small precheck, or short running when sufficient. The diagnostic file is placed at the project's specified operational information and the results of the original experiment are maintained. Use the existing back-office service switch of the project to control the testing process.
+3. Performance questions are counted from the actual transfer chain to record data, equipment, workload and numerical conditions. Candidates are compared with the same input and test; local measurements correspond to local conclusions. Humans make trade-offs when results are changed in semantic, resource budget or historical comparability.
+4. The project scripts are formally implemented in accordance with project practice, are subject to long-term inspection and are cleaned up after a temporary check has been completed. The restoration is confirmed by the approved regular access and the basis and scope of application are included in the mission information.
+
+## Validation criteria
+
+### Independent experimental inspection
+
+- After full operation, and when repairing the result producer or receiving and inspection project, run `rh projects experiment check <project root directory>`.This command is independent of the tree-wide path check and exits on the basis of the configuration, directory identity, running list, product name, complete path and disk file for each execution check. `0` The number of checks is zero, which means that the current tree is not formally executed and delivered as it is.
+- The public entry point is written down. `metadata/manifest.json` or `manifest.json`.Records `run_id`,`subname`,Optional studies `role`,`status`,`effective_config` and `outputs`.effective configuration Data Sets, Optional Models and Tasks `name` or a string expresses the current selection. Open identification is different from the path or configuration structure, by `component_paths` Save datasets, optional models and task paths derived from actual selections.`outputs` The key fixes the main name of the file and the value starts with the root. `artifacts/` or `reports/` Internal complete path. The home name of the product contains a full word in English and the executive number is kept in the operating record. All actual official products are registered with this list.
+- Old Experiment and Presentation Default In `assets/history_experiment/`.Save To `experiment/` The old operation must be based on the original configuration and execution record to verify the entire operating identity and product, and be independently tested and reread; usually new products are obtained after rerun at the existing public entry point.
+
+- Project-wide maintenance coverage `experiment/` All existing experiments and additional experiments. First, the actual running and results group from the disk, including independent running, analysis and engineering information hidden in the product's subtree. Check the data, models, tasks, uses and performance attributions of each experiment with the original order, the validity configuration and the execution record; generate and access the type, fixed file name and complete relative path of the results for which the check is made, and read the actual document to verify the relationship. Independently run checks separately, the same product agrees that a mass check is available. `experiment/`.The reconciliation of the remaining experiments and results groups continues to be completed after full-tree inspection and individual reading back.
+- When you organize an existing product, take a separate inventory of the experiment, method or role level and within each package. The current path to browse is regulated by identifying the research according to the configuration, command and results in effect. The folding, torrent, time and attempt number are stored in the execution record or in the package. You can keep the original archive and internal format and register the original identity. The current entry to verify the old results locates the same result and reads key files.
+- The path is revised to review old addresses, unknown components, temporary directories and duplicate products without users from the physical tree by group; the exception is to clear the source, depend on and access the entry.
+- Checks path identification using actually readable data and exemplified models. Writes folds, numbers and duplicates into the record or product. Reads independently from the public entry point of the parent and the role when there is an independent control role. Use a controlable input to check whether the reruner parent keeps the other roles, whether the log is still in this operation, and whether the summary is read out of the corresponding discounts and indicators.
+- Checks the real file from each available path, checking the location of the independent operation to write to the corresponding data, model and task, and the joint results are read along the physical analysis entry, and the movement status and project evidence are positioned by the actual user. The actual check of the entire level 1 directory of the root of the experiment and the input of evidence for each mark. After moving the historical results, verify that the normal entry is read back against the key elements before the change, and check that the new operation will also be written into the same structure.
+
+- Matches data, models, tasks, status, indicators, necessary documents and executing identities with current valid configuration and project access. For runbacks or restorations, check which result is selected, whether the conditions will be covered or mixed, and the specific tips when missing.
+- Compare the pre-operational check to delineate the participant role, model selection, calibration of indicators and coverage. Save the original conditions for historical results.
+
+### The path or product of this operation is not checked
+
+1. Proceeding from the path and expected results indicated in the inspection report, and in conjunction with this official order, effective configuration and disk file, locate the target project to actually determine the path or write the code of the product. Based on ResearchHarness's original checker and rules. When repairing this failure, all code and configuration changes are limited to the target item that was authorized to be maintained.
+2. **Path generation error.** Amends the routing logic of the public entry point to the data, models, tasks and experimental uses actually used for this time and synchronizes the affected reading portal. Confirms that the existing products are in the current operation and moves them to the right position to preserve the reusable results.
+3. **Error at product under path.** When a file is found to be ungenerated, the missing position is calculated or steps are written, and priority is given to the restoration of the item or to the completion of the entry. Only if the missing result has to be recalculated will the result be recalculated and the corresponding calculation made within the authorization.
+4. **Accepts the current result and the production code, respectively.** Rechecks the results with the original checker and opens the user's product by formally reading the entry to the project. Then executes a minimum rerun from the same public entry point to cover the original error, confirming that automatic prechecking and actual writing can produce compliance, readable results. There are still deviations to continue repairing the new evidence. Only if the existing conditions do block subsequent processing will the specific results of the failure to deliver, the methods tried, the reasons identified and the conditions required for continuation be reported.
+
+## Synchronization of the experimental report and description to humans
+
+When the experiment is carried out, the state or outcome impact study judgement, the `doc/experiment.md` or the equivalent project page is updated simultaneously. The article-by-line project document specifications: object and judgement, operation and conditions, status and product, conclusions and uses, limits and follow-up, link to the configuration, implementation environment and operation list in effect.
+
+The results, causes, effects, or choices to be used by the user first. Only the framework, environmental variables, algorithms, parameters, and measurement limits that affect understanding or decision are placed in the body of the document, while the rest remain on the available record. The necessary terminology is then introduced with specific experimental examples; user feedback is difficult to understand and reduces the concept presented at the same time. The reasons for this are to be found in the context of existing facts and missing evidence. Similar cases and temporary retreats support the next investigation. The performance report also indicates what is measured, where the results are applicable and what can be decided on the basis.
+
+## Item-by-line
+
+Repeating, seeding and digestion can be attributed to the same experiment, with a list of identities and meaningful differences. precheck, acceptance and formal results are presented in their respective statements.
+
+The body of the experimental report presents key values, conditions for comparison and limitations.

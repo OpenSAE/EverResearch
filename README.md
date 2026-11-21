@@ -1,67 +1,50 @@
 # ResearchHarness
 
-## Purpose
+ResearchHarness helps you maintain research projects and check the path from local data to saved results. It provides shared maintenance skills for coding assistants, a command-line interface for local data and Python bindings, and read-only checks for project layout and experiment records.
 
-ResearchHarness shares maintenance workflows across research projects, connects each project to local data and Python, and records reviewable ExtractStructure maps. It also provides independent utilities for environment inspection, transfers, and archive extraction.
+Each project keeps its own dependencies, data loaders, models, tasks, and run commands. ResearchHarness connects those pieces to a shared workspace and gives you a consistent way to check them.
 
-## Scope
+## Quick start
 
-Research projects can keep their own source layout, configuration, run commands, and GitHub review workflows. Use ResearchHarness to attach the local resources and shared skills a project needs.
+Use Python 3.11 or 3.12. Keep the ResearchHarness checkout, your project, and any shared data directory under the same workspace when practical.
 
-## Install and connect a project
-
-Install from this checkout with `python -m pip install -e .`. The equivalent source command is `PYTHONPATH=src python -m harness.cli`. Keep `ResearchHarness/`, a shared `data/` directory, and your research repositories as siblings in a workspace.
-
-From the parent workspace, with a project repository at `example/`, run:
+From the parent workspace, with a checkout at `ResearchHarness/` and an existing project at `ExampleProject/`:
 
 ```bash
-rh projects --harness-root ./ResearchHarness init-workspace
-rh projects register example --path ./example
-rh projects status example
-rh projects apply example
+python -m pip install -e ./ResearchHarness
+rh projects --harness-root ./ResearchHarness register example --path ./ExampleProject
+rh projects --harness-root ./ResearchHarness apply example
+rh projects --harness-root ./ResearchHarness status example
 ```
 
-`init-workspace` initializes the parent of the ResearchHarness checkout. Once initialized, commands can find the workspace by walking up from the current directory. Use `--harness-root` to select the checkout explicitly. `apply` synchronizes shared skills and the managed section of the project's instructions. The project owns its local skills and other instructions.
+`apply` links the shared skills into the project and adds a managed section to its assistant instructions. Start with [maintain-project](.agents/skills/maintain-project/SKILL.md) for a whole-project review.
 
-## Bind local data and Python
+To bind a local dataset and interpreter, then launch your project's own Python entry point:
 
 ```bash
 rh projects bind example --data main=/path/to/data --python /path/to/venv/bin/python
-rh projects list
-rh projects resources example
 rh projects run example -- main.py --data-root '{data:main}'
-rh projects run --env 'PROJECT_DATA_ROOT={data:main}' example -- main.py
 ```
 
-Replace the example Python arguments and environment variable with the project's actual interface. Each data directory has a name. Relative binding inputs are interpreted from the project root. The selected Python runs from that root, and the project handles its own configuration, preflight checks, environment records, and results. Use `--remove-data NAME` or `--clear-python` to clear a binding.
+Replace `main.py` and `--data-root` with your project's interface. The launcher uses the selected interpreter and starts in the project's root.
 
-## Store and review structure maps
+## Check a project
 
-Export a trusted standalone HTML map from ExtractStructure, then run:
+| Command | What it checks |
+| --- | --- |
+| `rh projects project check ./ExampleProject` | Required directories, component source, configuration, environment documentation, and path conventions. |
+| `rh projects layout check ./ExampleProject` | Naming, file placement, and directory structure. |
+| `rh projects experiment check ./ExampleProject` | Saved run manifests, effective configuration, and declared output files. |
+| `rh projects precheck check --help` | How to check saved evidence from a successful run and a run blocked by precheck. |
 
-```bash
-rh projects structure add example /path/to/index.html --revision COMMIT_OR_SNAPSHOT --scope src
-rh projects structure list example
-rh projects structure show example ARTIFACT_ID
-rh projects structure review example ARTIFACT_ID --decision approved --note 'Reviewed the structure for this scope'
-```
+Use the project's own precheck to verify a specific data, model, and task combination. A representative run can show that the selected samples can be read, the model can be built or loaded, and the task can complete a small computation on the selected device. ResearchHarness reads the resulting evidence.
 
-Open the local path in the `page` field. Reviews may also record `changes-requested`. The source revision, scope, and content digest identify the exact page under review. Project code, plans, and merges follow the project's GitHub workflow.
+## Learn by example
 
-## Run standalone utilities
+- [CUB-200 classification template](src/harness/projects/template/README.md) shows how configuration, data loading, model construction, precheck, and experiment records fit together. Its offline example uses synthetic inputs. The CUB-200 recipe uses a locally supplied dataset.
+- [Project layout](src/harness/projects/LAYOUT.md) and [engineering protocol](src/harness/projects/PROTOCOL.md) describe the conventions used in project reviews.
+- [Workspace operations](src/harness/projects/README.md) covers shared skills, local resources, and reviewable ExtractStructure maps.
 
-```bash
-rh utils archive --help
-rh utils transfer --help
-rh utils probe --output /path/to/environment.json
-rh utils compare /path/to/before.json /path/to/after.json
-```
+## License
 
-See the [transfer and archive guide](src/harness/utils/transfer/README.md) for command arguments, filtering, receipts, and recovery procedures.
-
-## Project layout and maintenance
-
-- [Shared skills and local workspace operations](src/harness/projects/README.md) covers setup, project organization, and ongoing maintenance.
-- [build-project](.agents/skills/build-project/SKILL.md) guides the initial organization of an unfamiliar research project. The shared maintenance skills cover the base runtime, datasets, models, tasks, experiments, and optional assets.
-- [The CUB classification template](src/harness/projects/template/README.md) demonstrates a runnable research workflow with preflight checks, model and dataset components, and experiment records.
-- [Development instructions](src/agent/AGENT_FLOW.md) and [command tests](tests/) support maintenance of ResearchHarness itself.
+[Apache License 2.0](LICENSE)

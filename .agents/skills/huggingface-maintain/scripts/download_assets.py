@@ -1,6 +1,6 @@
-"""目的和主要功能：下载指定 Hugging Face 仓库，建立来源副本、工作副本和版本记录。
+"""Purpose and main function: Download Assigned Hugging Face Repository, create source copy, working copy and version record.
 
-适用范围：用户指定的模型、数据集与 Space 仓库；全部下载与缓存保存在本技能内，远端保持原样。
+Scope of application: user-designated models, data sets and Space warehouse;all downloads and caches are stored within this skill and stay as they are at a remote end.
 """
 from __future__ import annotations
 import argparse
@@ -75,9 +75,13 @@ def download(task_name, repositories, *, resume=False):
     task.relative_to((SKILL / 'results').resolve())
     task.mkdir(parents=True, exist_ok=resume)
     cache = task / 'cache' / 'hub'
+    scratch = task / 'tmp'
+    scratch.mkdir(exist_ok=True)
     # Keep authentication at its existing location and isolate downloaded content.
     os.environ['HF_HUB_CACHE'] = str(cache)
     os.environ['HF_XET_CACHE'] = str(task / 'cache' / 'xet')
+    for variable in ('TMPDIR', 'TMP', 'TEMP'):
+        os.environ[variable] = str(scratch)
     from huggingface_hub import HfApi, snapshot_download
     api = HfApi()
     plan_path = task / 'inventory.json'
@@ -87,8 +91,8 @@ def download(task_name, repositories, *, resume=False):
         if requested != {(r['repo_type'], r['repo_id']) for r in plan['repositories']}:
             raise ValueError('Resume with the original repository selection')
     else:
-        plan = {'purpose': '记录选定仓库的下载版本、本地位置与完成状态。',
-                'scope': '本次下载的来源副本与工作副本。',
+        plan = {'purpose': 'Record downloads, local location and completion status of selected repository.',
+                'scope': 'A copy of this download source and a copy of the job.',
                 'created_at': datetime.now(timezone.utc).isoformat(), 'repositories': []}
         for kind, name in repositories:
             relative(name)
@@ -139,8 +143,8 @@ def download(task_name, repositories, *, resume=False):
                           known_bytes=sum(item['size'] or 0 for item in record['files']))
             record.pop('error_type', None)
             record.pop('error_code', None)
-            save(task, base / 'repository.json', {'purpose': '记录本地仓库副本的远端来源及固定提交。',
-                'scope': '同目录 source 与 checkout 的来源和文件清单。', **record}, 'Record downloaded repository identity')
+            save(task, base / 'repository.json', {'purpose': 'Record the remote source and regular submission of local repository copies.',
+                'scope': 'Table of contents source with checkout Sources and list of documents.', **record}, 'Record downloaded repository identity')
             checkpoint('complete')
             print(json.dumps({'repo_id': name, 'status': 'complete', 'files': record['file_count'],
                               'checkout': str(checkout)}, ensure_ascii=False), flush=True)

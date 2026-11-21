@@ -1,39 +1,55 @@
-# 数据传输、校验与压缩包解压
+# Data transfer, validation and compression package decompression
 
-## 目的和主要功能
+## Purpose
 
-本文件说明如何调用 ResearchHarness 已有的 B2/rclone 数据下载、上传和校验工具，以及 tar 压缩包内容查看和选择性解压工具。它提供可读的参数解释、命令示例和实际文件处理行为说明。
+This document describes how to access the B2/rclone download, upload and verify tool for ResearchHarness, and the viewing and depressure tool for tar compression packages. It specifies the default clean-up method for downloading and package uploading, and provides examples of operations.
 
-## 适用范围
+## Scope
 
-当用户明确要求使用 ResearchHarness 传输、校验、查看或解压文件，或者任务涉及 `utils/transfer/` 中传输与解压程序的修改时阅读。
+Read when the user specifically requests the use of ResearchHarness to transmit, verify, view or depress the file, or the task involves the modification of the transfer and depressure program in `utils/transfer/`.
 
-## 两个工具
+## Two tools
 
-| 入口 | 实际用途 |
+| Access. | Actual use |
 | --- | --- |
-| `python -m harness.utils.transfer.b2` | 通过 rclone 中已配置的远程连接下载、上传或核对文件 |
-| `python -m harness.utils.transfer.archive` | 查看本地 tar 内容并按路径筛选提取文件 |
+| `python -m harness.utils.transfer.b2` | Download, upload or check files via the configured remote connection in rclone |
+| `python -m harness.utils.transfer.archive` | View local tar content and filter the extract file by path |
 
-以上命令默认只预览；添加 `--execute` 才尝试实际操作。两个模块均可直接处理指定文件。命令示例用于解释参数，实际传输或解压按用户明确授权执行。
+The above commands are only previewed; `--execute` is added to try to be practical. Both modules can directly handle the specified file. Examples of commands are used to explain parameters, and actual transfers or decompressions are performed with the express authorization of the user.
 
-B2 普通上传和下载使用 rclone 自带的传输检查，以实际传输结果记录完成状态。
-额外的 `verify` 校验和独立 SHA256 文件摘要清单，仅在人类明确要求或审核批准后进行。
-助手依据当前人类指令安排这些额外核验，常规传输无需附带核验步骤；收据如实记录是否执行。
+B2 Ordinary uploads and downloads are performed using rcline's own transmission check to record the completion of the actual transmission results.
+Additional `verify` validation and independent SHA256 summary list only after explicit human request or approval.
+The assistant arranges for these additional verifications on the basis of current human instructions, and the routine transmissions do not require a check-in procedure; the receipt is properly recorded and executed.
 
-## 维护传输与解压功能
+## Default decompression after downloading tar package and cleaning
 
-制定功能改动时，先选定使用者如何取得并使用文件，以及失败后如何继续，再安排命令、结果和收据。记录关联明确的来源、目标与选定范围；失败或受阻时保留实际错误、目标处理情况和适用的下一步建议。采用本地文件场景，通过正式入口处理后读取文件与收据，确认结果能用于原定操作、重试或冲突处理。
+When the user requests to download a single tar compression package, the assistant defaults to deliver the complete decompression and clean the package that is being downloaded as the same. The user specifies that only downloads, retains the compressor package or select decompression will be handled within the specified range.
 
-## 前置条件和可选项目记录
+1. After the download is successful, the full decompression is judged from the space available in the file system where the extended size of the package member and the target are located. The default value of the extraction tool is set at 2 GiB, and the specified value is used when the user assigns other residuals. When space is sufficient, the full decompression is used in the new directory and waits for the tool to report success. Priority is given to the user-defined decompression directory, while the rest uses the new directory next to the compressed package and corresponding to the package name, keeping the inside structure clear.
+2. When a complete decompression is successful and the official result is set, delete the local compression package that is being downloaded and report on the decompression directory. Use the already existing package to decide whether to clean it according to the user's instructions to the file.
+3. If the space is insufficient, the target exists or the full decompression fails, keep the local compression package, indicating the actual reason and the document currently available. Selective decompression retains the package.
 
-- Python 3.11 / 3.12，已安装 ResearchHarness。
-- 上传、下载与额外核验需安装 `rclone`，并在调用者私有配置中预先建立使用 B2 原生接口的远程连接。
-- `.tar.zst` / `.tar.zstd` 解压需 `zstd` 命令；普通 `.tar`、`.tar.gz`、`.tar.bz2`、`.tar.xz` 使用 Python 标准库。
-- 直接调用使用已安装的工具和当前操作系统身份，收据中的 `project_id` 为 `null`。
-- 需要关联已登记项目时，同时传入 `--harness-root` 和 `--project`，读取中央本机项目登记；收据记录该项目标识。
+## Pack directory upload to B2 and clear tar by default
 
-例如，直接预览单文件上传：
+When the user requests that a local directory be packaged for upload, the assistant defaults to remove the temporary tar package generated after the upload has been successful and to keep the local source directory. Before processing, the user is asked whether to keep the source directory or to remove it after upload has been successfully to release the space. The user has clearly chosen to follow this decision. When a response has not been received, the package and upload can be completed as authorized, and the source directory is maintained by default.
+
+1. Creates a tar package for this upload outside the source directory and uploads the complete package as a single file to the specified B2 path.
+2. Clears the temporary tar package after uploading successfully. The source directory is deleted only if the user expressly chooses to delete the source directory and confirms that the directory still corresponds to the upload contents. When the directory is packed, the directory is maintained and the actual changes are reported.
+3. Retains the source directory and the already fully generated local package when packing or uploading failed, so that you can try again. Report on the status of remote upload, and the actual removal of the local package and source directory.
+
+## Maintenance of transmission and decompression function
+
+When a functional change is made, the user is selected how to obtain and use the document, and how to continue after failure, then the order, result and receipt are arranged. Recording the relevant source, target and range; and, if failure or obstruction occurs, retain the actual error, target processing and the next recommendation that applies. Using the local document scene, read the document and receipt through the public entry point, confirm that the result can be used for the original operation, retesting or conflict management.
+
+## Preconditions and optional item records
+
+- Python 3.11/3.12, Research Harness installed.
+- Uploading, downloading and additional verifications require the installation of `rclone` and pre-established remote connections using the B2 native interface in the caller's private configuration.
+- `.tar.zst` / `.tar.zstd` decompression requires `zstd` command; normal `.tar`, `.tar.gz`, `.tar.bz2`, `.tar.xz` uses the Python Standard Library.
+- Directly calls the installed tool and current operating system identity, `project_id` in the receipt `null`.
+- If a registered project is required to be connected, it is also `--harness-root` and `--project` to read the central owner project registration; receipts record the project identifier.
+
+For example, direct preview list files are uploaded:
 
 ```bash
 python -m harness.utils.transfer.b2 push --file \
@@ -41,16 +57,16 @@ python -m harness.utils.transfer.b2 push --file \
   --remote 'b2:example-bucket/ResearchHarness.tar.zst'
 ```
 
-远程路径支持空格、中文及普通文件名字符，包含空格的参数使用引号。目标采用
-`连接名:存储桶/具体路径`，保留对存储桶内明确文件或目录的选择。
+Remote path supports spaces, Chinese and normal filename characters, using quotation marks for parameters that contain spaces.
+`connection:bucket/path`, retain the option of specifying the file or directory in the drum.
 
-后文 Bash 示例使用可选的上下文数组。直接处理文件时：
+Later on, for example, Bash uses the optional context array. When directly processing a file:
 
 ```bash
 rh_transfer_context=()
 ```
 
-关联项目时，将数组设置为中央目录和实际所属项目：
+When linking items, set the array to a central directory and the actual item to which the item belongs:
 
 ```bash
 rh_transfer_context=(
@@ -59,16 +75,16 @@ rh_transfer_context=(
 )
 ```
 
-Python 调用可以直接使用 `b2.Engine()` 或 `archive.Engine()`。需要在回执上关联项目时可传入 `project_id`。
+Python calls can be used directly at `b2.Engine()` or `archive.Engine()`. You need to upload `project_id` to the associated item on your reply.
 
-本机 rclone 位于 `/usr/bin/rclone`；私有连接配置通常为
-`/path/to/user/.config/rclone/rclone.conf`。本机 `b2:` 是现有 B2 远程连接的别名。
-其他机器请使用自己的配置。密钥由 rclone 私有连接配置管理，管理代码及收据使用连接别名和操作结果。
+The rcline is located at `/usr/bin/rclone`; the private connection configuration is usually
+`/path/to/user/.config/rclone/rclone.conf`. This machine `b2:` is an alias of the existing B2 remote connection.
+Other machines use their own configuration. The key is managed by the rclone private connection configuration, the code and the receipt are used to connect aliases and results.
 
-## 按指定范围下载目录
+## Download directory by specified range
 
-`pull` 保留源目录内的相对结构，使用 `rclone copy --immutable`。
-匹配的已有文件会跳过；已有文件内容冲突时会报错并保留原文件，目标中的额外文件也予以保留。
+`pull` Retains the relative structure in the source directory, using `rclone copy --immutable`.
+Matches an existing file that skips; errors are reported and the original document is kept when the content of the existing document is conflicting, and the additional document in the target is retained.
 
 ```bash
 python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
@@ -78,8 +94,8 @@ python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
   --exclude '/old_project/**'
 ```
 
-确认预览后追加 `--execute`。可以重复传入 `--include` 和 `--exclude`；规则使用
-rclone 的筛选规则，以 `/` 开头表示相对于传输根目录。例如：
+Confirms the preview by adding `--execute`. You can repeat `--include` and `--exclude`; the rules are used
+rclone's filter rules begin with `/` as opposed to the transfer root directory. For example:
 
 ```bash
 python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
@@ -88,16 +104,16 @@ python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
   --execute --receipt /path/to/workspace/receipts/experiment-copy-001.json
 ```
 
-`push` 交换本地与远程方向。远程地址必须定位到存储桶内的具体目录或文件。
-执行时先打印开始记录，结束后打印包含状态、退出码、耗时和结束时间的完整结果；
-指定 `--receipt` 时，相同最终结果同时写入收据。
-失败或受阻时，`diagnostics` 保存实际错误原因、对本次任务的影响和下一步建议。
-例如缺少 rclone 时，收据说明传输程序尚未启动，并提示安装工具或修正 PATH 后重试；
-文件冲突时，收据说明目标保持原样，并提示选择新的目标位置。程序错误输出的末尾随记录保存。
+`push` Exchanges local and remote directions. Remote addresses must be located in a specific directory or file in a storage drum.
+Prints the beginning of the record at the time of execution, after which the complete results of the state, exit code, time-consuming and end time are printed;
+When `--receipt` is specified, the same final result is included in the receipt.
+In case of failure or obstruction, `diagnostics` saves the cause of the actual error, the impact on the mandate and the recommendations for the next step.
+For example, when rclone is missing, the receipt indicates that the transfer program has not been started and suggests that a tool be installed or that PATH be modified to try again;
+When a document is in conflict, the receipt indicates that the target remains as it is and suggests that a new target position is selected. The end of the error is saved with the record.
 
-## 单独下载一个文件
+## Download a file alone
 
-加 `--file` 选择一个文件，`--local` 必须是完整目标文件名：
+Add `--file` to select a file, `--local` must be the full target file name:
 
 ```bash
 python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
@@ -106,22 +122,22 @@ python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
   --execute --receipt /path/to/workspace/receipts/data-copy-001.json
 ```
 
-单文件执行先使用 rclone 的传输预览判断已有目标是否冲突；冲突时返回失败并保留目标。
-实际复制采用 `copyto --ignore-existing` 保留已有文件。这个步骤补足本机 rclone
-单文件 `copyto --immutable` 未阻止冲突覆盖的行为，使用传输自身的比较方式，
-额外 `verify` 和独立 SHA256 核验继续按人类要求执行。
-重新执行会跳过已经匹配的文件。传输中断的大文件可能从头重新下载，续传行为取决于实际传输结果。
+Single file executes a transmission preview first using rclone to determine whether an existing target is in conflict; returns in conflict and retains the target.
+The actual copy uses `copyto --ignore-existing` to keep the existing document. This step is to fill the rcline
+The single file `copyto --immutable` does not prevent conflict-covered behavior, using a way to transmit its own comparison,
+Additional `verify` and independent SHA256 verifications continue to be carried out in accordance with human requirements.
+Re-executing skips a matching file. Large files that are interrupted may be downloaded from the top, and the continuation will depend on the actual transmission result.
 
-默认参数：同时传输 16 个文件、同时核对 16 个文件、每个文件使用 4 条传输连接；
-文件达到 256M 时启用多线程，每块 64M；启用快速列表，重试 10 次、底层重试 20 次，连接超时 15 秒、请求超时 5 分钟、重试间隔 10 秒。
-通过 `--transfers`、`--checkers`、`--streams`、`--chunk-size`、`--cutoff`、`--retries`、
-`--low-level-retries`、`--connect-timeout`、`--timeout`、`--retries-sleep` 和
-`--no-fast-list` 调整。并发的合适值需要按带宽、内存与文件分布测试。
+Default parameter: transmit 16 files simultaneously, check 16 files at the same time, using 4 transfers per file;
+Enables multiple threads at 256M, 64M each block; Enables a fast list, retrying 10 times, retrying 20 times at the bottom, connecting 15 seconds, requesting 5 minutes and 10 seconds between retrying.
+Through `--transfers`, `--checkers`, `--streams`, `--chunk-size`, `--cutoff`, `--retries`,
+`--low-level-retries`,`--connect-timeout`,`--timeout`,`--retries-sleep` and
+`--no-fast-list` adjusts. The appropriate value for simultaneous distribution needs to be tested by bandwidth, memory and file distribution.
 
-## 人类明确要求或审核批准后的额外校验
+## Additional verification required or approved by humans explicitly
 
-以下 `verify` 操作用于人类明确要求或审核批准的核验。上传、下载完成后按实际传输结果报告，
-额外校验默认保持未执行。
+The following `verify` operation is used for humans to explicitly request or verify approvals.
+Additional verification defaults remain unexecuted.
 
 ```bash
 python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
@@ -130,14 +146,14 @@ python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
   --execute --receipt /path/to/workspace/receipts/experiment-check-001.json
 ```
 
-`verify` 是单向 `rclone check`，要求本地选中文件在远程存在且匹配；远程可保留额外文件。
-筛选下载后，校验时使用相同的纳入与排除参数（`--include` 和 `--exclude`）。单文件校验加 `--file`，本地与远程文件名必须相同。
-rclone 使用存储服务支持的文件摘要或文件属性。人类明确要求或审核批准独立 SHA256 核验时，
-按该次指定范围另行计算或维护清单。
-收据仅在 `verify` 实际成功后标记 `remote_integrity=CHECKED`，普通传输记录为 `NOT_RUN`；
-传输结果、额外核验结果及科研结论分别按实际依据报告。
+`verify` is a one-way `rclone check` , requiring local selected files to be available and matched remotely; remotes can save additional files.
+After filtering downloads, verify using the same inclusion and exclusion parameters(`--include` and `--exclude`).Check-up of single files `--file`,Local and remote filenames must be the same.
+rclone uses a file summary or file attribute supported by a storage service. When humans explicitly request or verify the approval of an independent SHA256, you can find a file that you want to verify.
+The list is calculated or maintained separately from that assigned range.
+The receipt is only for... `verify` Mark after actual success `remote_integrity=CHECKED`,Normal Transfer Record As `NOT_RUN`;
+The transmission results, additional verification results and scientific findings are reported on a factual basis.
 
-## 查看压缩包中的选定内容
+## View the selected contents in the compression package
 
 ```bash
 python -m harness.utils.transfer.archive "${rh_transfer_context[@]}" \
@@ -145,10 +161,10 @@ python -m harness.utils.transfer.archive "${rh_transfer_context[@]}" \
   --include data/SpatialPheno_datasets --execute
 ```
 
-`list --execute` 以只读方式列出选中内容，处理过程需要顺序解压扫描 tar 压缩流。
-默认预览仅打印参数；包内目标的实际存在情况由带 `--execute` 的读取操作确认。
+`list --execute` lists the selected content in read-only format, and the process requires a sequentially decompressed scan of the tar compression stream.
+The default preview is only printed parameters; the actual existence of the target in the package is confirmed by a reading operation with `--execute`.
 
-## 只解压一个目录
+## Only one directory to decompress
 
 ```bash
 python -m harness.utils.transfer.archive "${rh_transfer_context[@]}" \
@@ -158,52 +174,52 @@ python -m harness.utils.transfer.archive "${rh_transfer_context[@]}" \
   --execute --receipt /path/to/workspace/receipts/dataset-extract-001.json
 ```
 
-这里 `--strip-components 2` 去掉 `data/SpatialPheno_datasets/`：
-`data/SpatialPheno_datasets/mouseAD/example.h5ad` 会写入
+Here. `--strip-components 2` Get rid of it. `data/SpatialPheno_datasets/`:
+`data/SpatialPheno_datasets/mouseAD/example.h5ad` will write
 `/path/to/workspace/data/SpatialPheno_datasets/mouseAD/example.h5ad`。
-目标必须使用新的目录路径；目标路径已占用时，工具拒绝该次提取并保留已有目录。
+The target must use a new directory path; when the target path is occupied, the tool rejects the extraction and retains the existing directory.
 
-其他选择方式：
+Other options:
 
 ```bash
-# 一个文件：通过 include 指定目标
+# One document: adopted include Specify Target
 --include data/SpatialPheno_datasets/mouseAD/example.h5ad
 
-# 多个目录或文件
+# Multiple directories or files
 --include data/project_a --include data/project_b
 
-# 所有 h5ad，并排除缓存目录
+# All h5ad,And exclude cache directories
 --include '*.h5ad' --exclude '*/cache/*'
 ```
 
-解压筛选匹配完整包内路径；指定目录名时自动包含其中的文件和子目录，通配符按 Python fnmatch 规则匹配，
-`*` 可以跨越 `/`。默认区分大小写；`--ignore-case` 可忽略。rclone 的传输筛选按前文说明的规则处理。
+The depress screen matches the path in the complete package; the file and subdirectories are automatically included when the name of the directory is specified, and the wildcards match by the Python {\fnmatch) rule.
+`*` You can cross `/`. Default case-sensitive; `--ignore-case` is negligible. rcline's transmission filters follow the rules described above.
 
-- `--reserve-gib 2`：默认保留 2 GiB，写每个文件前检查空间。
-- `--progress-interval 20`：每 20 秒打印扫描进度；设为 0 关闭周期进度。
-- 普通提取记录文件路径和字节数。人类明确要求文件摘要时，添加 `--sha256`，边写边计算并将摘要保存到返回结果及可选 JSON 收据中；Python 接口采用 `sha256=True`。
-  摘要提供文件身份；与外部清单比较按人类指定的核验任务执行。
-- 只支持普通文件与目录；选中的符号链接、硬链接、设备等特殊项会拒绝。
-- 拒绝越界路径、输出路径冲突、已有目标和解码错误。先提取到目标父目录内的临时目录，
-  成功扫描并通过解码器检查后再改为正式目录名。
-- 失败默认清理本次临时目录；`--keep-partial` 会保留它并打印路径，供人工检查。
-  保留的目录用于人工检查；再次提取仍按完整提取流程处理。
-- 原压缩包保留，磁盘输出范围限于筛选选中的目录和文件。依赖顺序访问的 `.tar.zst` 仍需顺序扫描，
-  选择性提取节省输出空间，扫描时间和远程下载流量取决于实际扫描与传输过程。
+- `--reserve-gib 2`: Default to keep 2 GiB to check space before writing each file.
+- `--progress-interval 20`: Print scan progress per 20 seconds; set to 0 for closure cycle progress.
+- Normally extracts the path and bytes of a record file. When a human specifically requests a file summary, add `--sha256`,Write-by-Calculate and save summary to return result and optional JSON In receipt; Python Interface implementation `sha256=True`.
+  The summary provides an identity of the document; it is performed in accordance with a human-designated verification mission compared with the external list.
+- Only normal files and directories are supported; the selected symbol links, hard links, devices, etc. will be rejected.
+- Refuses to cross-border routes, exit paths conflict, and has a target and decode error. First, access to a temporary directory in the target parent directory.
+  Successfully scanned and checked through a decoding device before changing to an official directory name.
+- Failed to by default clear this temporary directory; `--keep-partial` will keep it and print the path for manual inspection.
+  The maintained catalogue is used for manual check-ups; re-extracting is still processed in a complete extraction process.
+- Keeps the original compression package while executing the extraction command separately. The cleanup of the full decompression after downloading is executed by this document "Default decompression after downloading the tar package". The disk output is limited to filtering the selected directory and file. The `.tar.zst` in the order of access still needs to be scanned in sequence.
+  Selective extraction saves output space, and scanning time and remote download traffic depend on the actual scanning and transmission process.
 
-所有收据使用新路径，已有收据保留原文。命令成功、数据一致性和科学复现分别按各自依据报告。
+All receipts use a new path and are kept in their original language.
 
-## 可选的工具检查
+## Optional tool check
 
-工具检查作为按需选择的操作，仅在用户明确要求时执行 `python -m pytest -q tests/test_transfer.py`。该测试使用本地合成文件和临时的本地目录连接，连接范围限于本地测试资源。
+The tool check is selected as a needs-based operation, only `python -m pytest -q tests/test_transfer.py` if the user so requests. This test uses local synthetic files and temporary local directory connections, which are limited to local testing resources.
 
 
-## 整体与子功能
+## Whole & Sub function
 
-本目录以实际文件处理对象区分两种工具，共同服务于用户明确要求的数据搬运。
+The catalogue distinguishes two tools from actual document-processing objects, serving jointly the data removal specifically requested by the user.
 
-| 局部条目 | 完整子功能 | 如何服务整体 |
+| Local entries | Full sub-function | How to serve the whole |
 | --- | --- | --- |
-| `__init__.py` | 声明传输包。 | 提供传输工具的模块导入入口。 |
-| `b2.py` | 预览或执行 rclone 下载、上传和核对。 | 把选定连接中的文件搬运到指定位置。 |
-| `archive.py` | 预览 tar 成员并按明确路径选择性解压。 | 把压缩资料安全展开为指定输出。 |
+| `__init__.py` | Declare the transfer package. | The module import portal that provides the transfer tool. |
+| `b2.py` | Preview or execute rclone download, upload and check. | Moves the selected connection file to a given location. |
+| `archive.py` | Preview of the tar members and selective decompression according to a clear path. | Expands the compressed information security as the specified output. |

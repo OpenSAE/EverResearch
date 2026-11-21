@@ -1,1 +1,1 @@
-"""模型家族与系列声明的包入口。"""
+"""Model family and package entry for series of statements."""

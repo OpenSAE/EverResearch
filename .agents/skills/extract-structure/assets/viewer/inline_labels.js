@@ -1,5 +1,5 @@
-/* 目的和主要功能：按实际关系成员选择有语义依据的短摘要，并将支路和汇流段的说明直接排在图上。
- * 适用范围：Skill 的交互画布；原始语义 JSON 为依据，展示摘要由各文件的布局提示提供。
+/* Purpose and main function: Select a short semantic summary based on the actual relationship member and direct the description of the secondary and concourse segments to the chart.
+ * Scope: Skill interactive canvass;in original syntax JSON Based on which the presentation summary is provided by the layout tips of the documents.
  */
 'use strict';
 function wrapCaptionText(text,limit=12){
@@ -28,7 +28,7 @@ function buildInlineCaptions(scene,segments,data,presentation={}){
     const to=same(originals.map(r=>r.to)),from=same(originals.map(r=>r.from));
     if(to&&targets[to])return targets[to];if(from&&sources[from])return sources[from];
     if(targets[e.to])return targets[e.to];
-    return unique(e.refs.map(refText)).join('；');
+    return unique(e.refs.map(refText)).join(';');
   }
   function summarize(keys){
     const edges=keys.map(key=>edgeBy.get(key));if(edges.length===1)return connectionText(edges[0]);
@@ -36,7 +36,7 @@ function buildInlineCaptions(scene,segments,data,presentation={}){
     if(to&&targets[to])return targets[to];if(from&&sources[from])return sources[from];
     const originals=edges.flatMap(e=>raw(e.refs)),rawTo=same(originals.map(r=>r.to)),rawFrom=same(originals.map(r=>r.from));
     if(rawTo&&targets[rawTo])return targets[rawTo];if(rawFrom&&sources[rawFrom])return sources[rawFrom];
-    return unique(edges.map(connectionText)).join('；');
+    return unique(edges.map(connectionText)).join(';');
   }
   const groups=new Map();
   for(const segment of segments){const key=JSON.stringify(segment.keys);if(!groups.has(key))groups.set(key,{keys:segment.keys,candidates:[]});groups.get(key).candidates.push(segment);}
@@ -52,7 +52,7 @@ function buildInlineCaptions(scene,segments,data,presentation={}){
     const commonText=summarize(group.keys);
     const branchTexts=unique(group.keys.map(key=>connectionText(edgeBy.get(key))));
     // A joined list repeats the branch labels; retain those labels on the branches.
-    if(branchTexts.length>1&&commonText===branchTexts.join('；'))continue;
+    if(branchTexts.length>1&&commonText===branchTexts.join(';'))continue;
     // A tiny inlet cannot carry a bundle description. Keep its actual branch
     // descriptions instead; the shared wire still retains all clickable members.
     const spans=new Map();for(const s of group.candidates){const h=s.a.y===s.b.y,key=(h?'h:':'v:')+(h?s.a.y:s.a.x);if(!spans.has(key))spans.set(key,[]);spans.get(key).push([h?Math.min(s.a.x,s.b.x):Math.min(s.a.y,s.b.y),h?Math.max(s.a.x,s.b.x):Math.max(s.a.y,s.b.y)]);}

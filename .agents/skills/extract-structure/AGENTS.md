@@ -1,11 +1,11 @@
-# 网页托管说明
+# Web hosting instructions
 
-## 目的和主要功能
+## Purpose
 
-说明 ExtractStructure 网页发布时所选仓库与 GitHub Pages 站点的对应关系。
+Description of the location of the selected repository and GitHub Pages site at the time of the release of the ExtratStructure web page.
 
-## 适用范围
+## Scope
 
-用户要求将图发布到 GitHub Pages 时使用。日常分析与本地 HTML 交付采用技能入口中的方式。
+User requests to post the diagram to GitHub Pages. Daily analysis and local HTML delivery is done in the skills portal.
 
-每个项目的网页使用所属仓库的 GitHub Pages 设置和部署流程。确认本次页面所属项目与目标站点，按用户的发布范围处理。
+The web page of each project uses the GitHub Pages settings and deployment process from the repository to which it belongs.

@@ -1,44 +1,44 @@
-# 基础层操作方案
+# Base level operating options
 
-## 目的和主要功能
+## Purpose
 
-通过文件归属和调用顺序，定位并维护从正式命令到组件、任务和结果的项目级协调逻辑。
+Project-level coordination logic from formal commands to components, tasks and results is located and maintained through the order in which documents are attributed and called.
 
-## 适用范围
+## Scope
 
-用于新增、修改或移除科研项目的基础层功能。表中位置相对于目标项目根目录，采用 `src/` 布局的主包从 `src/<主包>/` 查找。已有项目以正常入口实际调用的等价文件为准。新整理的项目使用 `base/` 时，按实际职责建立所需模块。
+Adds, modifies or removes the base layer function of a scientific project. The table position is used relative to the target project root directory. `src/` Layout Main Package From `src/<Main Package>/` Find. Existing items are based on the actual price equivalents called at the normal entry. `base/` , the required modules are created on a functional basis.
 
-## 文件归属
+## Attribution of files
 
-| 位置 | 何时使用 | 负责内容及调用关系 |
+| Location | When to use | Responsible for content and call relationships |
 | --- | --- | --- |
-| 根目录已有命令脚本、`<主包>/cli.py` 或 `<主包>/__main__.py` | 研究者从命令行启动或读取结果时 | 接收命令和参数，调用基础层或正式读取入口，返回退出状态或显示信息。 |
-| `base/runner.py` 或主包已有运行入口 | 一条流程需要组合配置、数据集、模型和任务时 | 从配置解析得到组件选项，用组件公开接口建立数据读取器或模型，再调用任务。需要在失败后释放的资源由取得资源的运行代码管理。 |
-| `base/config.py`、`conf/config.yaml` 及项目实际采用的配置分组或配方 | 多个配方、环境或覆盖项需要合成时 | 主配置提供默认值，`conf/dataset/`、`conf/model/`、`conf/task/` 等已有分组提供可独立选择的选项。基础层按项目现有顺序合成参数并交给调用者。单次生效配置随该次运行记录保存。 |
-| `base/paths.py` 或项目已有路径模块 | 默认配置、数据和结果路径需要跨入口一致时 | 统一从项目根或明确声明的配方位置解析默认相对路径。接收用于外部资源的参数或环境变量，将具体路径传给组件。项目说明注明命令行相对路径的起点。 |
-| `base/registry.py` 或 `<主包>/registry.py`，以及 `datasets/plugins.py`、`models/plugins.py`、`tasks/plugins.py` 或其等价位置 | 数据、模型或任务需要按配置标识独立选择时 | 组件一侧声明标识和公开实现。项目登记入口负责解析，运行器使用解析结果。少量固定组合可在运行器直接调用。 |
-| `base/runtime.py` 或已有设备、环境模块 | 正常入口需要管理设备、精度、种子、进程组或其他运行资源时 | 建立运行环境，执行期向任务交付所需资源，成功或失败后按入口约定释放。任务使用运行环境完成自身计算。 |
-| `base/checkpoints.py`、`base/records.py` 或已有结果模块 | 多个入口使用同一检查点格式，或任务需要统一记录运行状态与产物时 | 共用读写代码处理路径、文件和状态记录。模型解释权重，任务决定保存时机和业务字段，结果读取者按登记的记录接口查找产物。按实际调用启用相应模块。 |
-| `datasets/`、`models/`、`tasks/` | 定位组件交接和修改专用行为时 | 数据集负责样本、划分和元数据。模型负责构造、前向和权重语义。任务负责组合校验、科研计算、指标及任务状态。基础层调用这些公开接口。 |
-| `experiment/` 中对应运行目录、README 与 `doc/` | 找到结果消费者或更新正式使用方式时 | 运行记录说明生效配置和产物位置。README 给出命令和入口。受影响的组件说明记录参数、结果和恢复条件。 |
+| Root directory has command scripts, `<main-package>/cli.py` or `<main-package>/__main__.py` | When the researcher starts or reads the results from the command line | Receives commands and parameters, calls the base layer or the official reading entrance, returns exit status or displays information. |
+| `base/runner.py` or main package already has a running entrance | When a process requires a combination of configurations, data sets, models and tasks | The component option is obtained from the configuration resolution, and a data reader or model is created using the public interface of the component, and the task is called. The resource that needs to be released after failure is managed by the operational code that obtained the resource. |
+| `base/config.py`, `conf/config.yaml` and the configuration or formulation actually used by the project | When multiple formulations, environments or covers need to be synthesized | The primary configuration provides defaults, `conf/dataset/`, `conf/model/`, `conf/task/`, etc. already available groups provide options that can be selected independently. The base layer synthesizes the parameters in the current order of the project and gives them to the caller. The single-acting configuration is saved with the running record. |
+| `base/paths.py` or a path module already exists for the item | Default configuration, data and result path needs to be aligned across the portal | The project description indicates the starting point for the relative path of the command line. |
+| `base/registry.py` or `<main-package>/registry.py`, and `datasets/plugins.py`, `models/plugins.py`, `tasks/plugins.py` or their equivalent | When data, models or tasks need to be independently selected with a configuration identifier | Declaration of identification and public realization on the side of the component. The project registration entry is responsible for decomposition, which is used by the operator. A small fixed set can be called directly by the operator. |
+| `base/runtime.py` or existing equipment, environment module | When normal access requires the management of equipment, precision, seeds, process groups or other running resources | The mission uses the operating environment to carry out its own calculations. |
+| `base/checkpoints.py`, `base/records.py` or already available result modules | When multiple entry points use the same inspection point format, or tasks need to be recorded in a uniform state of operation and product | Common reading and writing code processing paths, files and status records. Models explain weights, tasks decide to save time and business fields, and the result is that the reader finds the product using the registered record interface. The corresponding module is activated on the actual call. |
+| `datasets/`、`models/`、`tasks/` | When the location component is handed over and the behaviour of the exclusive is modified | The data set is responsible for the sample, division and metadata. The model is responsible for the construction, forward and weighting syntax. |
+| `experiment/` corresponding to running directories, README and `doc/` | When the result is found or the official use is updated | The operational record indicates the configuration and location of the product in effect. README gives the command and entry. The affected component describes the parameters, results and restoration conditions. |
 
-## 增加
+## Increase
 
-1. 从一个已经明确的使用情形出发，写下「命令或接口 → 生效配置 → 数据与模型入口 → 任务入口 → 结果读取者」。对每个交接找出传入对象、参数或文件，以及负责释放资源或记录状态的位置。
-2. 先复用现有配置加载与组件入口。公开选项需要按标识选择时更新相应登记、公开配置和运行器。固定入口直接连接所需实现。共用设备、进程组或结果读写按文件归属实现，并接到实际调用者。
-3. 从 README 命令或正式调用者追到新增逻辑，确认入口能传入预期参数、任务能取得所需对象、后续读取者能定位产物。按授权进行最小运行检查。文档写明实际入口与需要的条件。
+1. From a given situation of use, write down the "command or interface effective configuration data and model entry Query mission entry Quest reader". For each transfer, find the incoming object, parameter or file, and the location responsible for releasing the resource or recording the status.
+2. Reload the existing configuration and component portal first. The public option requires to update the corresponding registration, public configuration and operator when the identification selection is made. The fixed access is directly connected. Common equipment, process group or result reading and writing is done by document attribution and the actual caller is received.
+3. Follow the new logic from the README command or the official caller to confirm that the entry can enter the expected parameters, that the mission can obtain the desired object, and that the subsequent reader can locate the product. A minimum running check is authorized. The document indicates the actual entry and the requirements.
 
-## 修改
+## Modify
 
-1. 找出受影响的命令、公开标识、配方、调用顺序和产物读取者。调整配置时核对默认值与覆盖顺序。调整运行资源时核对初始化、执行和退出。调整读写时核对文件路径、字段、旧格式和恢复所需状态。
-2. 把改动放到实际负责文件。配置值进 `conf/` 或具体运行参数，合成规则进配置加载器，科研行为进对应组件。平台、设备和其他共用流程由基础层维护。同步涉及的配置、调用者和说明。
-3. 核对受影响的正式入口，以及仍需要读取的旧结果。涉及失败后的资源管理或部分产物时，说明当前行为和受影响的读取者。运行与指标对照按用户授权和实际改动开展。
+1. Finds the commands, public identification, formulation, call order and product reader affected. Checks the defaults and overwhelming order when adjusting the configuration. Checks initialization, execution and exit when adjusting running resources. Checks the file path, fields, old formats and restores the required state when adjusting for reading and writing.
+2. Put the change in the actual responsible file. Configure value `conf/` Platforms, equipment and other common processes are maintained at the base level. Synchronize the configuration, caller and description involved.
+3. Check the public entry points affected and the old results that still need to be read. When it comes to the management of resources or parts of the product after failure, describe the current behaviour and the affected reader.
 
-## 移除
+## Remove
 
-1. 查找待移除能力的入口、登记、默认值、配置、直接调用以及历史结果读取者。先为保留流程落实替代路径，或明确受影响的调用和结果。
-2. 在批准范围内移除专属入口、实现、配置和说明，保留剩余流程仍需的共用函数与历史读取入口。核对保留入口能解析其选项，按现有方式找到生效配置与产物。
+1. Finds the entry, registration, default, configuration, direct call, and historical result readers of the ability to be removed. First, you implement an alternative path for the retention process, or you identify the affected call and result.
+2. Removes the exclusive access, realizes, configures and explains within the limits of approval, and retains the common functions and historical reading portals that are still required for the remaining process. Checks with the retention portals to interpret their options and find the effective configuration and product in the current way.
 
-## 参考项目中的落点
+## Points for reference items
 
-nanoGPT 整理副本中的 `train.py` 和 `sample.py` 调用 `base/runner.py`。`base/config.py` 加载 `conf/`，`base/runtime.py` 准备设备、精度及训练进程组，`base/checkpoints.py` 提供检查点读写。训练任务持有优化器并决定保存哪些状态。采用主包运行目录的 CUB 模板由 `cub_template/runtime/runner.py` 承担协调，和根目录 `base/runner.py` 对应同一职责。
+The `train.py` and `sample.py` call `base/runner.py`. `base/config.py` Loads `conf/`, `base/runtime.py` the team of preparation equipment, accuracy and training processes, `base/checkpoints.py` provides the checkpoint reading and writing. The training mission contains optimizers and determines what status to keep. The CUB template using the master package running directory is coordinated by `cub_template/runtime/runner.py` and the root directory `base/runner.py` corresponds to the same function.

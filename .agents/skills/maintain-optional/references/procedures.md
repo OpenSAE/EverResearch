@@ -1,92 +1,92 @@
-# 按需资产操作方案
+# Asset-to-needs operating programme
 
-## 目的和主要功能
+## Purpose
 
-明确独立脚本、测试、项目文档和外部文件的归属、接入关系及维护方式。
+Identify the attribution, access and maintenance of independent scripts, tests, project files and external documents.
 
-## 适用范围
+## Scope
 
-用于增加、修改、移除或整理上述资产。表中路径相对于目标项目根目录。先沿项目的实际命令、读取者和现有资料找等价位置。采用 ResearchHarness 布局时，按下表选择新增文件的位置。子目录随实际使用场景启用。
+The table path corresponds to the target project root directory. First, you find the equivalent of the project's actual command, reader and available information. When you use the ResearchHarness layout, select the location of the new file according to the following table. The subdirectories are enabled with the actual use of the scene.
 
-## 文件归属
+## Attribution of files
 
-| 位置 | 何时使用 | 负责内容与实际入口 |
+| Location | When to use | Responsible for content and actual entry point |
 | --- | --- | --- |
-| `scripts/<用途>/` | 有可独立发起的批处理、整理、汇总或导出 | 保存操作者入口及所需说明。脚本通过公开接口调用任务、结果读取器或其他正式实现。使用说明给出运行目录、参数和输出。 |
-| `scripts/examples/`、`scripts/release/` | 已有演示或发布操作需要独立发起 | 分别保存演示入口和发布入口。共享计算与读写继续由相应实现提供。 |
-| `tests/test_<行为>.py`、`tests/product/` | 有持续维护的公开行为或需要复查的回归 | 少量用例可直接放在 `tests/`。已有一组产品行为时按项目约定放入 `tests/product/`。从项目现行测试命令或工作流定位收集入口。 |
-| `tests/integration/` | 需要检查跨模块、实际服务或运行环境的交接 | 保存接入链路用例，并说明运行条件、所需资源及覆盖范围。 |
-| `tests/fixtures/` | 多组测试共用固定输入或预期结果 | 保存小型样本、来源和需要区分的字段。单组独立样本可放在相关用例旁。 |
-| 根目录 `README.md`、`doc/datasets.md`、`doc/models.md`、`doc/tasks.md` | 研究者需要查组件、配方、参数和任务产物 | README 提供入口和导航。三份组件说明分别负责数据集、模型、任务及各类共享参数。已有同用途文档时在实际位置补齐，从 README 指向它。 |
-| `doc/code/`、`doc/code/development/` | 有需要长期查阅的架构、接口和维护方法 | 前者说明组件交接及代码职责，后者放开发流程和扩展示例。 |
-| `doc/knowledge/`、`doc/environment/` | 有持续维护的研究知识或运行环境说明 | 分别保存科研依据、术语和决定，以及依赖、解释器、设备与环境准备方法。实验实测事实追到相应运行记录。 |
-| `third_party/<上游名>/` | 正常使用需要随项目保存外部源码或资料 | 保存正式副本、对应版本、许可与本地改动说明。依赖声明或正式调用指向实际使用的版本。项目自有适配归实际调用的模块。 |
-| `experiment/<对应运行目录>/` | 实验或其分析脚本产生对应运行的资料时 | 保存该次运行的配置、日志、报告、权重与临时计算产物。正式说明引用记录位置。长期测试样本按测试资料归位，准备后的数据集归项目登记的数据根。 |
+| `scripts/<purpose>/` | There are batches, sorting, aggregations or exportes that can be initiated independently | Saves the operator's entry and the description you want. Scripts are called through an open interface to a task, a result reader or other official accomplishment. Use instructions to give a running directory, parameters and output. |
+| `scripts/examples/`、`scripts/release/` | The demonstration or release operation needs to be independently initiated | Saves the presentation and release portals, respectively. Shared computing and reading and writing continue to be provided accordingly. |
+| `tests/test_<behavior>.py`、`tests/product/` | Public behaviour with ongoing maintenance or return subject to review | A small number of examples can be placed directly at `tests/`. A group of products is placed at `tests/product/` as agreed by the project. |
+| `tests/integration/` | Need to check cross-module, physical service or operating environment interface | Maintenance of examples of access links, with an indication of operating conditions, resource requirements and coverage. |
+| `tests/fixtures/` | Multi-group testing for shared fixed input or expected results | Saves small samples, sources and fields that need to be distinguished. |
+| Root Directory `README.md`,`doc/datasets.md`,`doc/models.md`,`doc/tasks.md` | Researchers need to check components, formulations, parameters and mission products | README provides access and navigation. Three components describe data sets, models, tasks and various shared parameters, respectively. The same document is filled in physical position and points to it from README. |
+| `doc/code/`、`doc/code/development/` | Structures, interfaces and maintenance methods that require long-term access | The former describes the transfer of components and the coding function, while the latter presents examples of development processes and extensions. |
+| `doc/knowledge/`、`doc/environment/` | Research knowledge or operational environment statement with ongoing maintenance | The test results follow the corresponding run records. |
+| `third_party/<upstream-name>/` | Normal use requires keeping external source code or information with the project | Saves an official copy, corresponding version, licence and local change description. Reliance on a declaration or official call point to the version that is actually used. The project has its own fit-for-use module. |
+| `experiment/<run-directory>/` | When the experiment or its analysis script produces information on the corresponding operation | Keeps the configuration, log, report, weight and provisional calculator of the operation. Formally indicates the location of the reference record. |
 
-## 从真实需求形成持续能力
+## Building sustainability from real needs
 
-- **产生之前确认用途。** 独立脚本从已经发生或明确要执行的操作出发。测试从实际故障、公开行为约定或现有使用者的预期出发。外部文件从项目确实需要的实现或资料出发。可以缩小或构造输入来复现已有条件，保留决定实际结果的行为。
-- **用当前项目的事实选择做法。** 先确定谁发起操作、输入从哪里来、结果交给谁，以及怎样判定实际结果可用。采用现有语言、运行环境、工具和入口。在当前任务授权下执行检查，记录实际命令、结果位置和影响判断的未验证事项。
-- **把有效部分接到日常使用。** 有持续用途的资产进入项目里实际有人使用的入口、维护位置和说明。项目内部正式的实现、检查和说明按文件归属表进入对应位置。技能执行产生的临时副本、中间结果和日志归本技能的 `results/<任务标识>/`。一次性排查结束后，按实际用途保留证据，并按授权处置临时材料。
-- **按需要衔接功能审查。** `review-functionality` 适用于审查指定源码和目录，以实际用途、调用关系和核心功能检查形成保留、接入、替换或移除的判断。测试是两者衔接最紧密的部分。审查确定真实场景与判据，本技能把检查做出来、运行并按价值接入正式测试。独立脚本和外部源码是直接审查对象，本技能落实入口、调用和资产维护。通过当前项目可用的技能发现入口按需查阅，两项技能各自可以独立使用。
+- **Validation of use before creation.** The independent script is based on operations that have occurred or are clearly to be performed. Tests start from actual malfunctions, public engagements, or the expectations of existing users. External documents start from what is actually required by the project or from information.
+- **Factual selection of the current project.** Use the existing language, operating environment, tools, and entry points. Under the current mandate, checks are carried out to record unverified matters of actual command, outcome location and impact judgement.
+- **Bring the active part to the daily use..** If you have a continuing use, you will enter the entry, maintenance location and description that is actually in use in the project. `results/<run ID>/`.Upon completion of one-time rehearing, evidence is retained for actual use and temporary material is disposed of as authorized.
+- **Connect functional review as required.** `maintain-code` This applies to the review of assigned source codes and directories to form a determination of retention, access, replacement or removal by means of physical use, call relationships and core functional checks. Tests are the closest part of the interface. The review determines the real scenes and determinations, and the skills make the checks available, run and access the formal tests in value terms. Independent scripts and external source codes are the subject of direct review, the skills are the entry, call and asset maintenance.
 
-## 独立脚本
+## Independent Script
 
-用于有具体操作者和可交付结果的工程操作或科研辅助操作。典型职责包括批量整理、跨结果汇总、导出和人工操作。是否需要独立脚本，取决于操作是否需要单独发起，以及现有入口能否满足使用方式。
+The typical duties include batch collation, cross-result aggregation, export and manual operations.
 
-1. **产生。** 从使用者要完成的操作和要取得的文件或结果倒推。找到实际输入和当前的手工步骤，查已有命令、脚本和正式读取接口。确定脚本需要承担的组织工作，以及哪些计算或读写可以直接复用。先写能完成当前实际操作的最小入口。
-2. **处理。** 明确运行位置、输入范围、参数、输出位置和重复执行的行为。沿项目已有方式识别有效输入、缺项和部分结果，使使用者能看出哪些内容已处理。使用独立输出位置试跑，涉及覆盖时采用当前授权。反复使用的脚本使用项目现有命名和放置方式。
-3. **执行与验证。** 获准时，用代表性的实际输入执行，检查退出状态、生成文件，以及使用者确实依赖的范围、字段和数值。存在会影响使用的缺项或重复执行行为时，选用真实遇到或已有约定的条件确认。成功标准以使用者能取得和继续使用交付物为准。
-4. **使用与自身更新。** 在操作者实际查阅的位置提供运行命令、环境、输入来源和结果位置。修改已有脚本时，从现有调用点确认哪些参数和输出被使用。涉及真实使用者的接口变化时，一并更新这些调用、读取和说明。是否继续独立、接入或移除取决于功能价值时，使用 `review-functionality` 审查实际操作与交付。
-5. **更新项目。** 有持续人工用途时把脚本接到项目正常的人工入口。多个入口共同使用的稳定计算进入负责的实现，脚本通过该实现继续提供操作。成为正式科研任务一部分时，沿任务的正常分发、配置和结果读取接入。通过原使用路径确认接入后的交付。
+1. **Generates.** Pushes back from the operation to be performed by the user and from the document or result to be obtained. Finds actual input and current manual steps to check that commands, scripts and official reading interfaces are in place. Determines which calculations or reading and writing of scripts are required to be used directly. Write first the smallest entry to complete the current operation.
+2. **Processes.** Clarify the running position, input range, parameter, output location, and duplicated behavior. The valid input, missing items, and partial results are identified in a way that allows the user to see what is being processed. Use an independent output position to try and run with the current authorization when over. Repeated scripts use the current name and place of the item.
+3. When **Executes and validates.** is approved, the exit status, the generation of the file, and the range, fields and values on which the user does rely. Where there are gaps or duplicates that affect the use, the selection is confirmed by the actual encounter or agreed conditions. The success criterion is based on the user's ability to obtain and continue using the delivery.
+4. **Use and update itself.** provides the operational command, environment, input source and result location at the location that the operator actually looks at. When you change a script, confirm which parameters and outputs are used from the existing call point. Update these calls, read and describe when the interface of the real user changes. Whether or not to continue independent, access or remove depends on the functional value, use `maintain-code` to review the actual operation and delivery.
+5. **Update Item.** When there is a continuous manual use, the script is delivered to the normal manual entry point of the project. The stable calculation used by multiple portals enters the responsible achievement, through which the script continues to operate. When it becomes part of a formal scientific mission, the normal distribution, configuration and results of the mission are readable.
 
-移除脚本时，先查 README、定时任务、工作流以及直接调用者。脚本已并入正式入口时，更新调用和迁移说明。按范围移除原脚本、专属配置和示例，并记录旧产物的读取位置。
+When you remove a script, check the README, the time job, the workflow and the direct caller. When the script is incorporated into the public entry point, update the call and migration instructions. Remove the original script, the exclusive configuration and the example by range and record the reading position of the old product.
 
-## 测试与共用测试资料
+## Testing and sharing of test information
 
-用于记录和保护真实的行为约定，也为比较候选改动提供可重复的证据。是否增加检查，取决于该行为对实际使用的影响，以及现有检查是否已经能发现同类问题。
+The agreement used to record and protect a genuine act also provides repetitious evidence for comparing the candidate changes.
 
-1. **产生。** 从实际故障、正式入口的行为约定或已知调用者要求确定被检查的行为。查实际负责模块和已有测试入口，写清当前观察、正确结果及其来源。需要为功能去留或重构作判断时，先用 `review-functionality` 选择能区分前后结果的真实场景。
-2. **处理。** 复用已有用例、检查工具和样本准备方式。最小输入保留触发故障或决定结果的条件，断言聚焦调用者可见的行为。多个检查共同依赖的固定资料归项目的共用位置，说明来源及各字段承担的作用。
-3. **执行与验证。** 获准时通过项目已有入口先运行最小用例。对于故障修复，用它确认修复前观察到的是预期要调查的失败，改正实际负责模块后用同一检查确认通过。新行为用真实使用入口确认预期结果。必要时再运行受影响的相邻检查。区分断言失败和解释器、依赖、数据等前置条件造成的运行失败。
-4. **使用与自身更新。** 在项目现有检查入口说明运行方式和条件。维护旧用例时，从它保护的行为查明为什么需要调整。行为已明确改变时同步更新预期，输入版本变化时保留原检查需要的条件，移动测试时确认它仍被实际测试入口发现。
-5. **更新项目。** 具有长期防回归价值的临时用例随修复转入正式测试，并由项目现有测试分组或工作流执行。核心行为未满足时更新负责实现和相关调用。保留正式检查所需的最小资料，使后续维护者能从失败结果定位实际行为。
+1. **Generates.** from the actual failure, the public entry point agreement or the known caller requires that the inspected act be determined. Check the actual responsible module and the available test entry, and write down the current observation, the correct result and its source. When the function is judged, use `maintain-code` to select the actual scene that distinguishes the outcome from the previous one.
+2. **Process.** Reuse existing examples, inspection tools and sample preparation methods. The minimum entry is to maintain the conditions for triggering a malfunction or determining the outcome, and to assert the visible behaviour of the focus caller.
+3. When approved, **executes and validates.** starts with the minimum use of the project's entry point. For failure repair, it identifies the expected failure to investigate, corrects the actual responsibility module and confirms it with the same check. The new act confirms the expected result with the real use access. If necessary, run the affected next-door inspection. Distinguishing between the assertion of failure and failure caused by pre-conditions such as the interpreter, dependence, data etc.
+4. Use **for self-updating.** describes how and under what conditions the project operates at the existing check entrance. When maintaining the old example, ascertain from the behaviour it protects why adjustments are needed.
+5. **Update Project.** Temporary use with long-term non-regressive value is transferred to a formal test and is performed by the existing test group or workflow of the project.
 
-移除测试时，先说明对应行为是否已取消、由哪个现行用例覆盖，或为何失去长期检查价值。同步测试入口和工作流。共享样本随剩余用例保留，专属样本随获准范围处理。
+When you remove a test, indicate whether the corresponding act has been cancelled, covered by an existing example, or why the value of the permanent check has been lost. Synchronize the test entry and workflow. Share the sample with the remaining example and process the exclusive sample with the permission.
 
-## 项目文档
+## Item documents
 
-用于保留跨人、跨任务或跨时间使用的知识，包括如何操作、结果在哪些条件下成立，以及为何采用某项决定。内容可以随代码、配置或结果就近保存，独立文档服务于需要集中查阅的实际读者。
+The contents can be saved close to the code, configuration, or result, and stand-alone documents serve the actual reader who needs to be consulted.
 
-1. **产生。** 先明确读者需要回答的问题或完成的动作。查已有主题文档、读者入口和事实来源，再选择补充现有章节或建立独立说明。决定记录说明发生的情境、采用的做法和影响，实验解释注明依据和适用范围。
-2. **处理。** 工程用法依据当前入口、配置和产物。研究结论依据实际运行记录和结果。图表说明依据当前图、生成过程和统计范围。区分实际观察、解释和待确认之处。把完整说明放在负责位置，让相关入口指向它。
-3. **验证。** 沿读者预期的使用顺序核对链接、命令、前置条件和输出位置。有实际执行授权时，按说明走通用户需要的步骤并查看交付物。其余用现行接口、已有产物和记录逐条核对，说明仍待实跑的关键环节。
-4. **使用与自身更新。** 从读者已有的导航、使用说明或交付物入口找到文档。更新时沿所有实际引用找出受影响的说明、示例和交付包。历史结论保留原来的运行条件和版本，现行用法采用当前负责人和入口。
-5. **更新项目。** 文档工作发现实际行为与已确认的约定有差距时，查清负责实现和使用者，按授权修复相应能力或更新已确定的约定。在入口或产物改变后同步文档，确保下一位读者能沿新的路径完成工作。
+1. **Generate.** First, it is clear whether the reader needs to work, complete the operation, search the parameters, or understand the rationale. Check the documents and factual sources, follow the generic name of the code, project, and discipline, and choose to supplement the existing chapter or establish an independent statement.
+2. **Process.** The project is based on the current entry, configuration and product. The findings are based on the actual run records and results. The chart shows the current chart, the generation process and the statistical scope. Distinguishing the actual observations, explanations and areas to be confirmed.
+3. **Authentication.** Check links, commands, prefixes and output locations according to the intended order of use of the reader. When an authorization is actually executed, the steps required to move through the user and view the delivery are described. The rest are checked article by article using the current interface, existing products and records to indicate the key elements that remain to run.
+4. **Use and update itself.** Finds the document from the reader's available navigation, instructions or delivery portal. The update identifies the affected statements, examples and delivery packages along with all actual references.
+5. **Update Project.** Document work identifies the person responsible and the user for achieving and repairing the capacity or updating the identified agreement, as authorized. Sync files after the entry or product changes to ensure that the next reader is able to complete the work along the new path.
 
-移除或合并文档时，先查 README、其他文档、公开交付物和代码中的引用。现行内容归入新的负责页面并同步导航，历史口径随原运行记录保留其来源。
+When you remove or merge a document, look first at references in README, other documents, public deliveries and codes. The current contents are placed on the new responsible page and are synchronized with the navigation, and the historical calibre is kept with the original running record.
 
-### 数据集、模型和任务说明
+### Project document index and component description
 
-强烈推荐从 README 链接到 `doc/datasets.md`、`doc/models.md` 和 `doc/tasks.md`。项目已有相同用途的页面时，在原位置补齐。每份说明按实际数据集、模型系列或选项、任务和重要模式分节。
+From README Enter `doc/README.md`,Maps each physical level one directory. When the project uses the project protocol, the fixed access and format of the data set, model, task, parameter, experiment, knowledge, environmental and source structure is maintained in accordance with its project file specifications.
 
-- **共有参数。** 从各组件真正共用的配置、接口和调用代码确认参数名、含义、单位及生效位置。多个组件共用一个参数但默认值不同，说明共有语义，把不同默认值写在对应小节。配置受配方、命令行或检查点覆盖时，注明优先关系。
-- **每个条目。** 写清主要功能和使用场景、选择方式或正式入口、主要输入和输出，以及关键参数的含义、适用条件和需要知道的默认值。将组件名称连到实际实现或配方。数据集重点说明来源、划分和样本，模型重点说明输入输出、变体和权重，任务重点说明组合方式、计算或指标和结果位置。
-- **核对入口和参数。** 数据集从 `datasets/` 的读取或准备入口及数据配置查起。模型从 `models/` 中的系列声明、构建和权重加载查起。任务从 `tasks/` 的正式接口、所选配方、运行分发和结果读取处查起。写清某个名称是命令参数、配置键，还是实现内部常量。默认值以实际默认入口为依据，有配方差异时另列。
-- **维护变动。** 沿默认配置、真实配方和参数读取处核对描述。组件增删、默认值变化、指标改变或结果搬迁时，同步对应条目、共有说明和导航。历史结果用当次配置解释。
+- **Shared Parameters.** Confirms the parameter name, meaning, unit and position from the actual configuration, interface and call code shared by each component. Multiple components share one parameter but the default value is different, indicating the common syntax, the source of the default value for the reference parameter page, and the actual difference in the corresponding subsection. When the configuration is overwritten by the formula, command line or check point, indicate the priority relationship.
+- **For each entry.** Writes the main function and use scene, selection method or public entry point, main input and output, as well as the meaning of the key parameters, the conditions of application and the default values that need to be known. Link the name of the component to actual realization or formulation. The data set focuses on the source, division and sample, the model highlights the input output, variant and weight, and the task highlights the grouping, calculation or indicator and the location of the result.
+- The **check access and parameters.** data sets start with the reading or preparation portal and data configuration of `datasets/`. The model starts with a series of statements, build and weight loads in `models/`. The task starts with the `tasks/` official interface, selected formulation, run distribution and result reading. Write whether a name is a command parameter, configuration key, or achieves an internal constant. Default values are based on the actual default entry and are shown separately when there is a formula difference.
+- **Maintenance changes.** Checks the description along the default configuration, real formulation and parameter reading. Synchronize the entries, common description and navigation when adding or deleting components, default changes, indicator changes or results move. The historical results are explained in the current configuration.
 
-## 纳入项目的外部文件
+## External documentation for inclusion in projects
 
-用于项目实际需要保留的外部源码、参考实现或资料。独立维护的责任包括来源、版本、本地改动和更新关系。引入形式根据实际调用、可复现性和项目现有依赖机制决定。
+The responsibility for independent maintenance includes source, version, local modification and updating. The form of introduction is determined on the basis of actual callability, replicability and the project’s existing dependency mechanisms.
 
-1. **产生。** 从项目真实缺少的能力或资料出发，找到使用者、所需范围和实际接入点。核对来源、版本、许可和项目现有获取方式。只有持续使用确实需要随项目保存外部文件时，才建立正式副本。范围取调用所需部分及其必要配套资料。
-2. **处理。** 试用副本保留与原来源的对应关系，记录获取位置、版本或提交、适用许可和本地变更。需要辨识精确文件版本时记录校验值。项目自己的转换或适配放在项目负责的实现里。外部副本内确需保留的改动记录原因和文件范围。
-3. **执行与验证。** 获准时，从项目真实入口用代表性输入验证调用，包括所需运行环境、实际读取的版本和交给下游的结果。替换前后采用相同使用条件比较项目关心的行为。许可、资源或运行环境尚未确认时，记录它对正式接入的实际影响。
-4. **使用与自身更新。** 从项目已有的依赖读取或适配入口使用。更新时查实际调用者和已保存结果的版本记录，比较上游变更和本地适配，逐项处理接口、配置、输出或版本记录变化。需要决定是否接入、替换或移除时，使用 `review-functionality` 评估实际贡献和影响。
-5. **更新项目。** 试用证明有持续需求后，让正式调用指向可追溯的版本，同步项目所需的配置、环境、说明和核心检查。仍有历史结果使用旧版本时保留当时的来源记录。以正式入口可以取得项目需要的功能或资料作为接入完成条件。
+1. **Generate.** Only if continuous use actually requires the project to keep external documents with the project.
+2. **Processes.** experimental copies keep their correspondence with the original source, recording the location, version or submission, applicable licence and local change. Validation values are to be recorded when the exact document version is identified. The project ' s own conversion or adaptation is to be placed in the project ' s implementation. External copies are to be retained for the reasons for the change and the scope of the document.
+3. When **executes and validates.** is approved, a representative input is entered from the real entry of the project to validate the call, including the required operating environment, the actual version read and the results given downstream.
+4. **is used to update itself.** is used to read or adapt from existing project dependencies. The update looks at the actual caller and saved version of the results, compares the upstream changes with the local adaptation, and processes changes in the interface, configuration, output or version. `maintain-code` is used to assess the actual contribution and impact.
+5. The **project is updated.**, after a trial has proved to be a continuing need, formally points to a retroactive version, synchronizes the configuration, environment, description, and core check required for the project. There are still historical results, using the old version, to keep the current source records.
 
-移除外部副本时，先查导入、构建、打包内容、文档链接与历史版本引用。调整正式调用所需的替代依赖，移除专属适配和记录时保留历史运行能够指到的原来源与版本。
+When you remove an external copy, check the import, build, package content, document link and historical version references. Adjust the alternative dependencies needed for the official call, and keep the original source and version to which the historical run can be pointed when you remove the exclusive fit and record.
 
-## 参考项目中的落点
+## Points for reference items
 
-CUB 模板的 `tests/test_workflow.py` 覆盖运行链路，`tests/test_boundaries.py` 检查职责边界，工程维护示例在 `doc/code/development/engineering.md`。nanoGPT 整理副本从 README 指向 `doc/datasets.md`、`doc/models.md` 和 `doc/tasks.md`，参数说明沿数据准备、模型实现和 `conf/` 配方核对。它的 `bench.py` 是已有独立脚本入口，适用脚本维护步骤。
+The CUB template `tests/test_workflow.py` covers the operational links, `tests/test_boundaries.py` checks the functional boundaries, with examples of project maintenance at `doc/code/development/engineering.md`. nanoGPT collates copies from README to `doc/datasets.md`, `doc/models.md` and `doc/tasks.md`, with parameters for data preparation, model realization and reconciliation with `conf/` formulations. It `bench.py` is a stand-alone script entry and applies the script maintenance step.

@@ -1,6 +1,6 @@
-"""目的：提供可独立执行的预检任务，并记录实际检查结果。
+"""Purpose: Provide independent precheck missions and record the results of actual inspections.
 
-适用范围：显式预检、性能比较和正式任务的自动预检。
+Scope of application: Visible precheck, performance comparison and automated precheck of official assignments.
 """
 
 from ...contracts import EvaluationResult, TaskModule
@@ -14,14 +14,14 @@ class PrecheckTask(TaskModule):
             for key, minimum in (("samples", 2), ("warmup", 0), ("repeats", 2)):
                 value = cfg["benchmark"][key]
                 if type(value) is not int or value < minimum:
-                    raise ValueError(f"benchmark.{key} 必须是至少 {minimum} 的整数")
+                    raise ValueError(f"benchmark.{key} It must be at least. {minimum} Integer number")
             fraction = cfg["benchmark"].get("max_cuda_memory_fraction", 0.9)
             if type(fraction) not in {int, float} or not 0 < fraction <= 1:
-                raise ValueError("benchmark.max_cuda_memory_fraction 必须在 (0, 1] 内")
+                raise ValueError("benchmark.max_cuda_memory_fraction It must be. (0, 1] Internal")
             return
         samples = cfg["precheck"]["samples"]
         if type(samples) is not int or samples < 2:
-            raise ValueError("precheck.samples 必须是至少 2 的整数")
+            raise ValueError("precheck.samples It must be at least. 2 Integer number")
 
     def run(self, request):
         role = "performance" if request.action == "benchmark" else "precheck"

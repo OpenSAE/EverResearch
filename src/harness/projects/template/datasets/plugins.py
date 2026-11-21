@@ -1,4 +1,4 @@
-"""正式数据集标识，供项目登记入口读取。"""
+"""Official data set identifier for access to project registration portals."""
 
 from . import cub200
 from .cub200 import offline_samples

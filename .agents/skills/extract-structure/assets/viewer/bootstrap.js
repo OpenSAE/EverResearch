@@ -1,5 +1,5 @@
-/* 目的和主要功能：加载 ExtractStructure 图资料，连接内部绘图组件与目录、文件导航。
- * 适用范围：本技能的文章、目录和文件图页面；通过统一入口读取服务资料或内嵌资料。
+/* Purpose and main function: Load ExtractStructure Chart information, connect internal drawing components to directories, file navigation.
+ * Scope of application: Articles, directories and file diagram pages of this skill; access to service information or embedded information through a unified portal.
  */
 'use strict';
 (()=>{
@@ -59,7 +59,7 @@
     const requested=runtime.requested();
     const current=catalog.graphs.find(g=>g.source===requested||g.id===requested)||(!requested?catalog.graphs[0]:null);
     const id=current?.id||requested;
-    if(!id){status.textContent=t('尚无代码图，请先通过 Skill 保存 JSON。');return;}
+    if(!id){status.textContent=t('There’s no code yet. Please pass. Skill Save JSON.');return;}
     if(!runtime.standalone&&current&&location.pathname!==current.url)try{history.replaceState(null,'',current.url+location.search+location.hash);}catch{}
     const source=current?.source||requested;
     const directory=current?.kind==='folder'?source:source.slice(0,source.lastIndexOf('/'));
@@ -75,7 +75,7 @@
       if(i){const divider=document.createElement('span');divider.className='path-divider';divider.textContent='/';path.append(divider);}
       const targetSource=parts.slice(0,i+1).join('/'),parentSource=parts.slice(0,i).join('/');
       const siblings=catalog.graphs.filter(g=>g.source===targetSource||g.source.slice(0,g.source.lastIndexOf('/'))===parentSource);
-      const select=document.createElement('select');select.className='path-segment';select.setAttribute('aria-label',t('切换 {path}',{path:targetSource}));
+      const select=document.createElement('select');select.className='path-segment';select.setAttribute('aria-label',t('Switch {path}',{path:targetSource}));
       for(const item of siblings.sort(byTypeAndName)){const option=new Option(item.source.split('/').at(-1)+(item.kind==='folder'?'/':''),runtime.url(item.source));option.dataset.kind=item.kind;select.append(option);}
       select.value=runtime.url(targetSource);
       select.onchange=()=>runtime.follow(select.value,{focus_path:source});
@@ -90,9 +90,9 @@
     if(ticket!==generation)return;
     if(!payload.graph){
       document.title=source+' / ExtractStructure';
-      status.textContent=t('当前目录尚未生成目录图');
+      status.textContent=t('The current directory has yet to generate a table of contents');
       const message=document.createElement('p');message.className='graph-empty-message';
-      message.textContent=t('此目录尚未生成目录图。可通过上方路径返回上级，或选择子目录、Python 文件查看已有图。');
+      message.textContent=t('This directory has not yet generated a table of contents. You can return to your superiors by the above path, or choose a subdirectories., Python File View Existing Chart.');
       document.querySelector('#canvas').append(message);
       document.querySelectorAll('.toolbar button,.toolbar input,.toolbar select').forEach(control=>control.disabled=true);
       return;
@@ -106,7 +106,7 @@
     window.B={original:payload.graph,data:graph,layouts,presentation:hints.presentation,title:hints.title||graph.source,input_sha256:payload.sha256,restore:GraphLocale.restore(graph.source)};
     document.title=(hints.title||graph.source)+' / ExtractStructure';
     window.ExtractViewerMount();
-  }catch(error){if(ticket===generation)status.textContent=t('加载失败：{error}',{error:error.message});}
+  }catch(error){if(ticket===generation)status.textContent=t('Loading failed:{error}',{error:error.message});}
   }
   window.addEventListener('extract:navigate',renderPage);
   window.addEventListener('hashchange',()=>{if(runtime.standalone)renderPage();});

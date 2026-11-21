@@ -1,7 +1,7 @@
-# 目的和主要功能：声明 ResearchHarness 的包元数据、构建后端、依赖、CLI 入口、
-# 包资源及开发工具配置。
-# 适用范围：供安装、打包和显式调用开发工具时读取；不保存项目科研输入或本机绑定，
-# 不因配置了测试和检查工具而自动执行验证。
+# Purpose and main function: declaration ResearchHarness package metadata, build backend, depend on, CLI Access.,
+# Package resource and development tool configuration.
+# Scope of application: For reading during installation, packing and visible call development tool; not to save project scientific input or institutional binding,
+# No auto-validation due to the configuration of testing and inspection tools.
 
 [build-system]
 requires = ["setuptools>=77", "wheel"]
@@ -15,7 +15,7 @@ readme = "README.md"
 requires-python = ">=3.11,<3.13"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
-dependencies = ["PyYAML>=6,<7"]
+dependencies = ["PyYAML>=6,<7", "pyspellchecker>=0.9,<1"]
 
 [project.optional-dependencies]
 dev = ["pytest>=7", "build>=1.2", "ruff==0.15.22"]

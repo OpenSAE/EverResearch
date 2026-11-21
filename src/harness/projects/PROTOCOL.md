@@ -1,98 +1,112 @@
-# 项目工程协议
+# Project engineering agreement
 
-## 目的和主要功能
+## Purpose
 
-规定科研项目的目录职责、改动检查、运行前检查、性能比较、环境记录、结果交付与人类审阅。项目助手据此实施工作，中央据此定位不同项目的输入、状态和产物。
+The project assistant carries out the project on the basis of which the central location of the input, status and product of the different project is determined.
 
-## 适用范围
+## Scope
 
-适用于采用本协议的接入项目，从 SAEBase 当前工程开始。新增或修改的功能按涉及条款执行。已有结构可通过项目说明映射同一职责，并在相关改动时处理实际缺口。条款的预算、阈值、命令和路径映射由项目按用途确定。
+The new or modified functionality is performed by the terms of reference. The existing structure can map the same function through the project description and address the actual gaps in the relevant changes. The budget, threshold, command and path map of the terms are determined by the project by purpose.
 
-## 协议与参考项目同步
+## Synchronize protocols with reference items
 
-每次修改本协议，同一次维护更新 [参考项目](template/README.md) 中对应的位置。该项目提供可运行的 CUB-200 分类和工程维护样例，适用于学习布局、验证协议的用途和参照建立项目。
+This agreement is updated at the same time as the [reference item](template/README.md)]. The project provides a runable CUB-200 classification and project maintenance sample, which applies to learning layouts, the purpose of the certification agreement and the reference establishment project.
 
-- 目录或命名规则更新时，同步模板中的实际目录、入口、引用和布局表。
-- 运行、检查或数据交接规则更新时，同步模板中负责的代码、配置或真实产物示例。从正常入口确认受影响的行为。
-- 按用途启用的规则，用模板的说明标明触发条件与对应位置。模板适用时用真实实现示范，其他项目特有的配置或行为由项目自己的说明举例。
-- 审阅改动时，可从每条新增或修订的规则找到模板中的对应文件、命令或适用说明。已有项目在实际维护中验证规则，再把对其他项目有用的改进带回协议和模板。
+- Syncs the actual directories, entry points, references and layout tables in the templates when the directory or naming rules are updated.
+- Synchronizes the examples of the code, configuration or real product that is responsible for in the template when running, checking or updating the rules for data handover.
+- The trigger conditions and the corresponding position are indicated by a description of the template in accordance with the user-enabled rule. The template is demonstrated by real realization when applied, and other project-specific configurations or behaviours are exemplified by the project ' s own description.
+- When reviewing changes, corresponding documents, orders or instructions from the template can be found for each new or revised rule. There are existing items that validate the rules in their actual maintenance and bring back the protocol and template for improvements that are useful for other items.
 
-## 目录与命名
+## Directory and Naming
 
-[科研项目目录与文件职责](LAYOUT.md)规定一级布局、二级目录的启用条件、文件归属、命名和调用关系。采用本协议的科研软件在接入、建立项目、调整布局或新增组件时按该文件定位实际职责。
+Access to ResearchHarness is enabled on an as-needed basis to provide the project’s own resource choice through public orders, parameters or environmental variables.
 
-项目说明记录正常命令、配置、组件、运行结果和项目特有路径。根目录的 datasets、models、tasks 是必备的三类科研组件。SAEBase 和 CUB 模板提供该布局的实际参照。
+[Catalogue of research projects and documentation functions](LAYOUT.md)Sets the conditions for first-level layout, second-level directories, document attribution, naming and call relationships.
 
-**组件扩展。** 新组件沿既有正式选择入口接入，组件自行检查专用参数，任务检查组合是否相容。用现有入口检查新配方，确认旧配方仍按原义运行。拆分组件时保持已公开入口，调用者不依赖其内部文件。共享实现以实际调用者为依据。修改共同规则时，模板须在同一次维护中给出对应代码、配方或实际工作示例。
+The physical entry and product are tracked from [maintain-project](../../../.agents/skills/maintain-project/SKILL.md), the specific maintenance of the various components of the organization, and the entire link is checked back at the normal entrance when accessing a strange project, inspecting the entire project or maintaining a cross-component process.
 
-采用 SAEBase 式组件组合的项目，通过主配置选择数据、模型和任务配置组。各类组件在所属目录登记，运行层统一选择和分发。任务的公开接口负责检查与返回结构化结果，具体计算归任务实现。项目使用预检时，把预检作为可独立选择的任务，并由正式运行入口保存实际检查回执。
+The project description records normal commands, configurations, components, operational results and project-specific paths. The root directory contains three types of scientific components. The SAEBase and CUB templates provide actual references to the layout.
 
-## 文件功能与维护检查
+**Component Extensions.** New components are accessed along the official selected entry, with the component checking its own parameters and the compatibility of the task group. Use the existing entry to check the new formulation and confirm that the old formulation is still functioning as it is. Split the component to keep it open and callers do not rely on their internal files. Sharing is achieved on the basis of the actual caller. When changing the common rules, the template must give examples of the corresponding code, formulation or actual work in the same maintenance.
 
-修改功能时先确定正常入口、实际调用者、输入输出及失败后的处理方式。主要模块在文件开头说明用途和适用范围。数据读取、计算和结果保存分别由明确模块负责，公共实现由调用者导入；命令脚本负责参数与编排。审查同时核对入口、受影响的配置和说明，以及结果能否被下一步读取。
+The project using the SAEBASe module combination selects the data, model and task configuration group through the main configuration. The various components are registered in their own directory and are selected and distributed at the operational level. The public interface of the task is responsible for checking and returning the structured results, which are calculated as the task is accomplished. The precheck is used as a stand-alone task and the actual check-back is saved at the official running entry.
 
-| 改动类型 | 对应检查 |
+[Scientific project documentation and maintenance reporting](DOCUMENTATION.md)Defines how the project establishes document indexes and fixed entries, preserves scientific knowledge, environmental and structural descriptions, and synchronizes implementation, review, and experimental reports.
+
+## File function and maintenance check
+
+The main module starts with a description of the use and scope of application. Data access, calculation and preservation of the results are the responsibility of the clear module, which is the subject of public access; command scripts are responsible for the parameters and organization of the caller; check the entry, the configuration and description affected, and whether the results can be read at a later stage. Open parameters are tracked through the normal entry to consumers and to visible behaviour.
+
+When reviewing the assigned code or processing duplicated realizations, functional gaps, check the code, up and down, and products from a real-use scene with [maintain-code](../../../.agents/skills/maintain-code/SKILL.md), and repair and repeat them within the authorization. When adding, removing or modifying public parameters, synchronize [maintain-conf](../../../.agents/skills/maintain-conf/SKILL.md) with the actual consumer treatment meaning, default value, overlay, old formulation and configuration document.
+
+| Change Type | Countercheck |
 | --- | --- |
-| 说明或目录调整 | 核对实际入口、引用和文件位置 |
-| 修复程序行为 | 从正常入口确认出错情形和修复后的结果，优先复用现有测试 |
-| 改变公共接口或结果格式 | 检查现有调用者、旧格式读取和失败信息 |
-| 改变研究计算路径 | 用代表性输入对照实际结果，注明合成或真实数据及比较范围 |
+| Description or table of contents adjustments | Check the physical entry, citation and file location |
+| Corrective procedure behaviour | Prioritization of existing tests for the identification of errors from normal access points and recovery results |
+| Change public interface or result format | Checks the current caller, old format for reading and failure information |
+| Change Research Calculator Path | Use representative input to indicate synthetic or real data and range of comparisons against actual results |
 
-检查按实际风险和项目授权开展。有持续回归价值时，才建立或扩展长期测试及其目录。检查记录注明命令、执行范围、结论和未覆盖条件。项目使用现有执行与验证授权，正式运行预算由相应任务确定。
+The inspection is carried out on the basis of actual risk and project authorization. Long-term tests and their directories are established or extended only when there is a continuous return value.
 
-## 预检、计时与瓶颈分析
+## precheck, timing and bottlenecks analysis
 
-有高成本任务时，项目应提供正常入口可独立调用的 Precheck。预检和正式任务共享配置、数据、模型和正式计算步骤。预检负责检查依赖、设备、输入和资源，并以有界工作量确认实际路径。正式任务保存预检回执，依照具体失败原因继续、调整或停止。
+The whole project goes through the center. `rh projects project check`.Project root has an entity `base/`,`datasets/`,`models/`,`tasks/`,`conf/`,Use normal commands to review the actual splitting of the main function and to retain the original function and result to read evidence.
 
-使用性能模式时，`tasks/precheck/` 负责预算、阶段计时、瓶颈分析和加速候选比较。目标任务交付实际输入、工作单位、可测步骤及结果一致性判据。项目先按实际调用链记录准备、读取或等待、计算、传输、落盘等所涉及的阶段。需要异步执行的设备在计时边界同步，报告说明阶段是否重叠。
+The project provides `precheck`, which can be independently called under `tasks/`. Each official scientific mission is automatically called before the calculation is made and is then formally calculated after adoption. Pre-test and the official mission share the current configuration, actual data and model selection and formal execution logic. The dependencies, equipment, input, minimum calculation, result path, format and official reading are quickly validated with a very small number of samples and steps. The official mission saves the precheck evidence.
 
-记录预热和重复次数、取样范围、工作量、环境、数值策略、各阶段耗时和资源峰值。瓶颈结论引用基线的实测阶段及其测量范围。共享准备、各候选独有准备、调优成本、被测执行分别记录。阶段级性能与正式任务端到端性能分别说明。失败或未测部分保留原因。
+When using the performance model, `tasks/precheck/` is responsible for budget, phase time, bottleneck analysis and accelerated candidate comparison. Targeted tasks are actually entered, work unit, measurable steps and results consistency determination. The project is based on the stage involved in the actual call chain to record, read or wait, calculate, transmit, drop a disc. The equipment that requires a different step is synchronized at the time boundary, and the report indicates whether the phase overlaps.
 
-## 加速候选与采用
+Record the number of preheats and repetitions, sample range, workload, environment, numerical strategy, time-consuming and resource peaks at each stage. The bottleneck conclusion refers to the realistic phase of the baseline and its measurement range. Share preparation, candidates' unique preparation, fine-tuning costs, and measured execution separately. Phase-level performance and official mission-end-to-end performance are shown separately.
 
-根据实测瓶颈选择缓存、批处理、并行或复用候选。Precheck 在相同输入、工作量、环境和数值策略下比较当前配置与候选，并保存结果一致性、耗时与资源的依据。候选同时满足既定结果判据、资源预算和实际收益才推荐采用。前向或局部操作的推荐仅适用于对应范围，正式训练收益用正式工作量核实。
+## Accelerated candidate and adoption
 
-报告提供当前配置、候选配置、阶段开销、收益、决定与理由。未通过的候选保留拒绝原因，正式执行沿用可用配置。通过配置或已登记策略采用推荐时，运行清单记录实际使用值。复用调优结果前核对影响收益和正确性的模型、任务、输入规模和环境条件。改变结果身份或数值策略时按“功能更新与人类审阅”处理。
+Precheck compares the current configuration with the candidate with the same input, workload, environment and numerical strategy, and preserves the basis for consistency of results, time and resources. Candidates are recommended for application only if they satisfy established results criteria, resource budgets and actual benefits. The recommendations for prior or partial operations apply only to the corresponding range, and formal training proceeds are verified with a formal workload.
 
-参考项目以工作进程数比较演示完整过程。正常入口执行真实性能预检、报告基线瓶颈，再给出可由配方采用的候选。说明见 [工程工作示例](template/doc/code/development/engineering.md)，供扩展性能预检和审阅结果时使用。
+The report provides the current configuration, candidate configuration, phase cost, revenue, decision and reason. The reasons for rejecting a candidate that has not been adopted are used for formal implementation. When a recommendation is introduced through a configuration or registered strategy, the running list records the actual use value. Checks the model, tasks, size of input and environmental conditions that affect the return and correctness prior to the reuse result.
 
-## 环境信息
+The full process is demonstrated by comparing the number of work processes with the reference items. The normal entry is used to pre-screen the performance, report the baseline bottlenecks, and then give a candidate for the formulation. [Example of Engineering Work](template/doc/code/development/engineering.md),For expansive precheck and review results.
 
-项目记录所选环境和运行进程实测环境。运行记录至少能定位实际解释器、关键软件版本、执行设备和影响结果的运行设置。涉及 GPU 或性能比较时补充设备、可用显存、运行库及线程或数值策略。报告引用本次运行记录或对应快照，并标明采集时间与来源。中央环境快照可提供机器背景，项目运行记录负责说明本次实际使用情况。
+## Environmental information
 
-## 运行结果交付
+The project records the environment of the selected environment and the operational process. The operational record locates at least the operational settings of the actual interpreter, key software version, implementation equipment and impact results. The report refers to the current operating record or matching snapshot, and indicates the time and source of collection. The central environment snapshot provides the machine background, and the project operating record describes the actual use.
 
-每个项目将实验产物统一写入项目根目录的一级目录 `experiment/`。训练、预检、性能比较和随运行生成的日志、报告与权重使用此根目录。程序由项目根推导路径，配置和命令行只选择实验名称、运行标识及目录内层级。参考模板由运行记录模块固定此位置。
+## Run-out delivery
 
-`conf/` 集中维护一套项目默认配置。特定实验在 `experiment/` 对应位置使用并保存具体参数。每个实验用 `subname` 描述实验本身或探索对象，使用一至三个词，以小写下划线分隔。运行目录按数据集、模型、任务、`subname` 和单次运行标识组织。
+Start, restore or screen the experiment using existing parameters, and check the configuration, result path and readable product from the public entry point with [maintain-experation](../../../.agents/skills/maintain-experiment/SKILL.md), and update the laboratory report with actual evidence when reading already in operation.
 
-每次运行使用唯一标识，并在运行目录直接保存合并默认值和覆盖后的生效配置。清单指向该文件。单次运行的建议目录为 `metadata/`、`reports/`、`logs/` 和按需使用的 `artifacts/`、`tmp/`。持久结果通过 `metadata/manifest.json` 或项目明确登记的等价入口读取，原始结果和权重由清单引用。临时资料有独立位置，接续运行按项目原有身份和恢复条件处理。
+Each project consolidates the experimental product into the first-level directory `experiment/` of the root directory of the project. This directory is used for training, prechecking, performance comparison and the resulting logs, reports and weights. The program is guided by the root, and the configuration and command line selects only the experimental name, the operational identifier and the level of the directory. The reference template is fixed by the running record module.
 
-| 中央汇总需要的字段 | 约定 |
+The first-level position of the experimental tree is determined by the actual input data. The results of the joint analysis are located at its public entry point by the main data or registered joint input, and the records are kept for the actual members and sources. The results of the batching experiments are read along the respective public entry points and the movement status is managed by the movement point.
+
+`conf/` Centralizes a set of project default configurations. Specific experiments are in `experiment/` Use and save specific parameters against the position. Each experiment uses `subname` Describes the experiment itself or the object of exploration, using one to three words, separated by lower-case underlined. The operational directory is divided by datasets, models, tasks and the name of the experiment with an independent meaning and the implementing role organization. `capture/non_whiten/answer_stability`.The executive layer name expresses the performance use or control role. Serial number, date, random seed and other operational parameters are written in the configuration or list. Duplicate execution of the same use and role is distinguished from the list.
+
+The list refers to the file. The list of recommendations for a single run is `metadata/`, `reports/`, `logs/` and `artifacts/`, `tmp/`. The long-term results are read through `metadata/manifest.json` or the specified price equivalent entry of the item, and the original results and weights are quoted in the list. The temporary information is in an independent location, which is followed by the project's original identity and restoration conditions.
+
+| Fields required for central summary | A promise. |
 | --- | --- |
-| `schema_version` | 清单格式版本，由项目记录字段或映射 |
-| `project_id`、`run_id`、`task` | 项目和运行身份 |
-| `status`、`updated_at` | 最新状态和带时区时间，常用状态为 running、succeeded、failed、blocked、partial |
-| `inputs`、`configuration`、`source` | 数据、模型或其他输入身份，实际配置和源码版本 |
-| `environment` | 本次实测环境记录或其引用 |
-| `outputs` | 产物角色与相对运行目录的路径 |
-| `diagnostics` | 实际缺项、错误或部分完成说明，可提供下一步 |
+| `schema_version` | List format version, by project record field or map |
+| `project_id`、`run_id`、`task` | Project and running identity |
+| `status`、`updated_at` | Current status and time-time, commonly running, subcredged, failed, blocked, partial |
+| `inputs`、`configuration`、`source` | Data, models or other input identities, actual configuration and source version |
+| `environment` | Current environmental record or references to it |
+| `outputs` | Path of the product role to the relative running directory |
+| `diagnostics` | Statement of actual deficiency, error or partial completion, to provide the next step |
 
-项目已有清单可通过字段对应提供这些信息。未知信息明确缺失，旧记录按实际来源解读。助手和后续工具先读清单再找结果。集中汇总时读取项目登记的清单入口和字段映射。
+The list of items is available by field. Unknown information is clearly missing and the old records are read by actual source. The helper and the follow-up tool read the list and find the results.
 
-## 功能更新与人类审阅
+## Functional update and human review
 
-日常修复、整理、已定指标下的等效优化由项目助手在现有授权内完成，交付实际行为和检查依据。下列情形在采用新方案前交给人类判断。
+Equivalence under established targets is routinely repaired, collated, and completed by the project assistant within the existing mandate, delivering the basis for actual behaviour and inspection.
 
-| 触发条件 | 需要说明的决定 |
+| Trigger condition | Decision requiring clarification |
 | --- | --- |
-| 研究指标、数据范围、样本、权重或数值策略改变，影响结论或历史可比性 | 展示代表性前后结果，说明旧结果能否沿用及重算代价 |
-| 公共入口、结果格式或目录变更影响现有使用者 | 列出受影响调用者、迁移或兼容方案 |
-| 计算成本、时间、外部发布或权限发生须由人类决定的变化 | 说明具体范围、预算、选项与预期后果 |
-| 共同协议改动会改变其他项目的工作方式 | 给出一线案例、拟改条款、适用项目与过渡方式 |
+| Study of changes in indicators, data ranges, samples, weights or numerical strategies, impacting conclusions or historical comparability | Presentation of representative pre- and post-representation results, indicating whether old results can be replicated and recosted |
+| Public access, results format or directory changes affect existing users | Listing of affected callers, relocations or compatibility options |
+| Changes in costing, time, external publication or authority that must be determined by humans | Description of specific scope, budget, options and expected consequences |
+| Changes in the common agreement will change the working methods of other projects | Give a first-line case, proposed changes, application of projects and transition modalities |
 
-审阅材料以实际对象或代表样例为主，包含当前行为、拟改行为、证据、选择和建议。已作决定写到项目反馈或实际负责文件，后续沿用。项目助手可直接提出和验证改进，人类决定涉及新研究目的、投入和共用取舍的部分。
+The review material is based on a sample of actual objects or representatives and consists of current behaviour, proposed behaviour, evidence, options and recommendations. The decision has been taken to provide feedback on the project or the actual responsible document, which will be followed.
 
-## 项目落实与共同更新
+## Project implementation and joint update
 
-接入项目在同名说明中登记采用版本、目录映射、运行与测试入口、预检与性能预算、环境来源、结果清单及例外。明确已具备与待落实的条款，避免把规划当成现有能力。技能负责完成具体工作时采用对应条款，工程实践的事实、变更原因和效果进入项目反馈。可复用的改进回到此协议或负责模块。当前协议由项目助手按文档执行，机器汇总和自动检查需要接入实际清单读取者后生效。
+In the same description, the access project registers the use of the version, catalogue map, running and testing portal, precheck and performance budget, environmental sources, results list, and exceptions. Clearly, there are provisions to be implemented, so that planning is not considered to be an existing capacity. Skills are used to implement specific work, and the facts, causes and effects of the project are fed back into the project. Reusable improvements are returned to this agreement or to the responsible module. The current protocol is implemented by the project assistant on a document basis, and machine aggregation and automatic check takes effect after access to the actual list.

@@ -1,6 +1,6 @@
-"""目的和主要功能：复现资源限制采集及其快照与比较行为。
+"""Purpose and main function: Replicating resource limitation collection and its snapshot and comparative behaviour.
 
-适用范围：用户按需执行的环境采集回归测试；使用隔离输入检查快照与比较。
+Scope of application: Environmental retrievation tests performed by users on a needs basis; screening snapshots and comparisons using quarantined input.
 """
 import copy
 import json

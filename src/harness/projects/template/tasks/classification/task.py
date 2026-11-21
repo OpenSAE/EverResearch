@@ -1,6 +1,6 @@
-"""目的：将分类实现接入统一的任务执行接口。
+"""Purpose: Task execution interface to achieve universal access to classifications.
 
-适用范围：分类任务登记、参数检查和运行。计算归 operation.py。
+Scope of application: Classification task registration, parameter checking and operation. operation.py.
 """
 
 from torch.utils.data import Subset
@@ -28,7 +28,7 @@ class ClassificationTask(TaskModule):
     def performance_workload(self, request):
         count = min(len(request.inputs.fixed_train), request.config["benchmark"]["samples"])
         if count < 2:
-            raise ValueError("性能比较至少需要两个样本")
+            raise ValueError("It takes at least two samples to compare performance.")
         data = Subset(request.inputs.fixed_train, range(count))
         model = request.build_model()
         model.eval()

@@ -1,77 +1,82 @@
 ---
 name: huggingface-maintain
-description: 访问和维护 Hugging Face 账号、Spaces 与数据集仓库。用于查看登录身份和仓库、上传或更新数据集与 Space 文件、维护说明、查看运行状态、重启或暂停 Space，以及配置环境变量和密钥。
+description: Visits and maintenance Hugging Face Account number, Spaces with the data set repository. Use to view the login identity and the warehouse, upload or update the data set and Space File, maintenance description, viewing status, restart or pause Space,And configure environment variables and keys.
 ---
 
-# Hugging Face 访问与维护
+# Hugging Face Access and Maintenance
 
-## 目的和主要功能
+## Purpose
 
-使用 Hugging Face 官方命令和 Python 客户端，访问用户账号并维护明确指定的 Spaces 与数据集。将用户的自然语言请求落实为仓库读取、文件提交、运行状态查询和指定的维护操作。
+Use the Hugging Face official command and the Python client to access user accounts and maintain clearly specified Spaces and data sets. Put user requests in natural languages into repository reading, file submission, running status query and specified maintenance operations.
 
-## 适用范围
+## Scope
 
-用户要求查看 Hugging Face 登录身份、仓库及文件，创建或更新数据集和 Space，下载指定内容，或者管理 Space 运行与配置时使用。任务对象由本次指定的账号或组织、完整仓库名称、仓库类型、文件范围和操作决定。模型训练、推理服务部署与数据加工按用户单独提出的任务处理。
+The user requests to view the Hugging Face login identity, warehouse and file, create or update datasets and space, download the specified content, or manage the Space run and configuration. The target is determined by the account number or organization, the full repository name, the repository type, the file range and the operation. Modelling training, reasoning service deployment and data processing are handled according to the user's individual task.
 
-## 工具与账号
+## Tools and accounts
 
-- 使用已安装的 `hf` 命令及 `huggingface_hub` Python 包。先查看本机命令帮助或方法签名，使用当前版本实际支持的接口。参考官方[命令说明](https://huggingface.co/docs/huggingface_hub/en/guides/cli)了解访问与文件操作，参考 [Space 管理说明](https://huggingface.co/docs/huggingface_hub/en/guides/manage-spaces)了解运行与配置操作。
-- 使用 `hf auth whoami` 确认当前登录身份。Python 采用 `HfApi()`，复用现有登录或 `HF_TOKEN` 环境变量。账号和组织从当前身份与用户指定目标中确定，整个技能可随文件夹移动。
-- 需要登录时，指导用户在自己的终端使用 `hf auth login`，或通过运行环境的凭据入口配置 `HF_TOKEN`。令牌、Space 密钥及完整认证响应保留在凭据处理环节；对话、命令参数、草稿和日志只记录身份、密钥名称及操作结果。
-- 登录成功说明身份已确认；具体仓库的读写能力依据该仓库的访问结果与凭据权限判断。用户指定组织仓库时，使用该组织的完整仓库名称。
+- Use installed `hf` Orders and `huggingface_hub` Python Package. First look at the help or method signature of the machine's command, using the interface that the current version actually supports.[Command description](https://huggingface.co/docs/huggingface_hub/en/guides/cli)Understanding access and file operations, reference [Space Management note](https://huggingface.co/docs/huggingface_hub/en/guides/manage-spaces)Know how to run and configure.
+- Use `hf auth whoami` to confirm the current login identity. Python uses `HfApi()` to reuse the existing login or `HF_TOKEN` environment variable. The account number and organization are determined from the current identity and user-specified target, and the entire skill can be moved with the folder.
+- When login is required, direct users to use `hf auth login` at their own terminals, or configure `HF_TOKEN` through a certificate entry to the operating environment. The tokens, space keys and complete authentication responses are kept at the certificate processing point; dialogue, command parameters, drafts and logbooks only record identity, key names and operational results.
+- The user designates the organization's warehouse, using the full name of the organization.
 
-## 把请求落实为操作
+## Make the request operational
 
-1. 确定对象：完整仓库名称为 `账号或组织/仓库名`；类型为 `dataset` 或 `space`。文件操作同时确定本地来源、远端相对路径，以及用户指定的分支。
-2. 查询已有状态：读取目标仓库信息、文件清单，必要时读取相关说明或 Space 配置。新建仓库时明确名称、类型、公开或私有；新建 Space 同时确定静态页面、Gradio 或 Docker 类型。
-3. 用户已经明确目标和操作时，直接完成授权范围内的工作。会改变目标或效果的关键信息缺失时，先询问该项。删除远端内容、改变可见性、扩大上传范围或增加付费资源，各自依据用户的明确要求执行。
-4. 上传前准备内部副本，查看将提交的实际文件与对应远端内容。根据当前请求执行新增和更新；远端删除依据明确选定的删除范围执行。
-5. 报告实际提交、下载位置或运行状态，提供仓库或 Space 链接。提交返回成功与应用运行就绪分别报告；查询状态采用有限次数，仍在构建时说明当前状态。
+1. Determines the object: The complete repository name is `owner/repository`; the type is `dataset`, `space` or `model`. The file operation also determines the local source, the remote relative path, and the branch specified by the user.
+2. Query for existing status: Read the target repository information, list of documents and, if necessary, description or Space configuration. Clear name, type, public or private when building a new warehouse; New Space also determines the static page, Gradio or Docker type.
+3. When the user has identified the objectives and operations, the task within the mandate is done directly. Ask the item if the key information that will change the objective or effect is missing. Delete the remote content, change visibility, expand the upload range or increase the paid resources, each on the basis of the user's express request.
+4. Prepare an internal copy before upload to see the actual document to be submitted and the corresponding remote content. Execute new and updated in accordance with the current request; remove at the remote end the execution based on the explicitly selected deletion range.
+5. Report the actual submission, download location or state of operation, providing a repository or Space link. Submit a report on the return success and application readiness separately; the query status is used for a limited number of times and still indicates the current status at the time of construction.
 
-## 本地资料与上传副本
+## Local data and upload copy
 
-本技能目录由当前 `SKILL.md` 所在位置确定。每次产生资料时使用内部目录 `results/<用途与时间或其他标识>/`，按需保存 `staging/` 上传副本、`downloads/` 下载内容、缓存和操作记录。
+This skills directory is currently available `SKILL.md` location is determined. Use an internal directory every time information is generated `results/<Use and time or other marking>/`,Save as required `staging/` Upload copy,`downloads/` Download content, cache and operation records.
 
-上传从用户选定的目录或文件复制到 `staging/`，以该内部副本提交。副本初始文件内容与选定范围一致；原输入保持只读。需要新增说明、修改数据集卡片、整理目录或补充 Space 配置时，在内部副本按本次要求处理。明确本地文件与远端相对路径的对应关系，提交前只展示必要的变更摘要。
+Uploads from a user-selected directory or file to `staging/` to submit an internal copy. The original file content is consistent with the selection; the original input is read-only. When new descriptions, changes to the dataset card, directories or additions to the Space configuration are required, the internal copy is processed in accordance with this request. Clarify the correspondence of the local file to the remote relative path and display only a summary of the changes necessary before submitting.
 
-复制时识别符号链接的实际目标；链接指向选定范围外的内容时，明确实际上传对象后处理。上传使用选定的文件集合，凭据、准备日志与缓存分别留在各自用途目录。
+Identifys the actual target of the symbol link when copying; the link points to the content outside the selected range, specifying the actual object after transfer. Uploading uses the selected file collection and leaves the certificate, the preparation log and the cache in their respective directories.
 
-下载目录显式指向技能内部；用户明确指定外部交付位置时按该位置交付，本地准备仍在技能内。需要 Hub 缓存时，在启动官方工具前将 `HF_HUB_CACHE` 指向本次任务内部缓存目录，认证仍沿用已有位置。
+## Download Droppoint & Cache
 
-每个任务目录使用 `log_updates.jsonl` 记录新增或更新的本地产物：带时区时间、技能内相对路径、简要内容、实际来源工具或文件。远端操作记录仓库、类型、文件范围、提交标识或运行状态；密钥操作只记录名称和成功与否。
+- **Normal Hub Download.** Check the current interpreter. Hugging Face Cache Settings. The default root directory is `~/.cache/huggingface`,Settings `XDG_CACHE_HOME` Period `$XDG_CACHE_HOME/huggingface`,Remarkable. `HF_HOME` Priority. Hub,Xet and Datasets The default for processing the cache is under this root. `hub/`,`xet/` and `datasets/`,It can be passed separately. `HF_HUB_CACHE`,`HF_XET_CACHE`,`HF_DATASETS_CACHE` Overwrite. Use `local_dir` You can directly specify the destination directory of the downloaded file. The path is determined before importing the client or starting the sub-process, and the existing authentication location is maintained..[Hub Environmental variables](https://huggingface.co/docs/huggingface_hub/en/package_reference/environment_variables) · [Download File](https://huggingface.co/docs/huggingface_hub/en/guides/download) · [Datasets Cache](https://huggingface.co/docs/datasets/en/cache)
+- **Skills Tasks.** A visible selection of an internal download directory, and a repository that maintains a copy of the download entry using this skill. Sets an independent task Hub,Xet Cache and a temporary directory of the process to facilitate the understanding of the actual drop point and the continuation of recovery. When a single file is read-only or delivered directly, use the actually needed official download entry.
+- The **project is officially entered.** is a permanent location and source version of the project registration.
 
-### 下载已有资产并建立本地工作目录
+Each job catalogue uses `log_updates.jsonl` to record new or updated local products: time-bound, skills-based relative paths, brief content, physical source tools or documents. Remote operation records repository, type, file range, submission identification or operational status; key operations only record name and success.
 
-用户要求下载或建立仓库本地副本时，使用本技能的 `scripts/download_assets.py`。它通过官方客户端下载指定提交的全部仓库文件，以账号或组织、仓库类型及仓库名组织本地目录。下载前读取文件数量和大小，结合实际磁盘空间确定可完成本次范围。
+### Download existing assets and create a local job directory
+
+When the user requests to download or create a local copy of the warehouse, use `scripts/download_assets.py` for this skill. It downloads all submitted warehouse files from the official client to organize the local directory by account number or organization, warehouse type and warehouse name.
 
 ```text
-results/<任务标识>/
+results/<run ID>/
 ├── inventory.json
 ├── log_updates.jsonl
 ├── cache/
-└── <账号或组织>/
-    └── spaces/、datasets/ 或 models/
-        └── <仓库名>/
+├── tmp/
+└── <Account number or organization>/
+    └── spaces/,datasets/ or models/
+        └── <Warehouse Name>/
             ├── repository.json
             ├── source/
             └── checkout/
 ```
 
-`source/` 保存本次固定提交的原始文件，`checkout/` 是独立的维护工作副本，两者保持仓库内原有文件结构。`repository.json` 记录远端地址、仓库类型、提交版本和文件清单。后续编辑在 `checkout/` 进行，上传准备从选定工作内容复制到 `staging/`。更新远端来源时建立新的具名任务，保留已有版本和本地修改。
+`source/` Saves the original file of this regular submission, `checkout/` is an independent maintenance copy, both of which maintain the original file structure in the warehouse. `repository.json` Records remote address, warehouse type, submission version, and list of documents. The subsequent editing takes place at `checkout/`, uploading the selected job content for copying to `staging/`. Creates a new named task when the remote source is updated, and maintains the existing version and local changes.
 
-将 `<skill-directory>` 替换为本技能完整路径，按本次实际范围重复 `--repo`：
+Replace `<skill-directory>` with the full skill path and repeat `--repo` in this actual range:
 
 ```bash
-python <skill-directory>/scripts/download_assets.py --task <任务标识> \
-  --repo space:<账号或组织>/<仓库名> \
-  --repo dataset:<账号或组织>/<数据集名>
+python <skill-directory>/scripts/download_assets.py --task <run ID> \
+  --repo space:<Account number or organization>/<Warehouse Name> \
+  --repo dataset:<Account number or organization>/<Data set name>
 ```
 
-普通网络下载中断后，使用相同任务名、相同仓库清单及 `--resume` 继续固定版本的下载。程序按下载、来源副本、工作副本和仓库记录的持久阶段继续：复制先在具名临时目录完成，再整体成为正式副本。恢复保留已有工作副本和本地编辑；旧任务的已有来源副本先与固定版本核对，内容一致时继续生成缺少的工作副本。本地副本保存仓库文件和来源提交，Git 历史、Space 的服务端密钥及运行磁盘资料分别按用户提出的额外范围处理。
+After the normal web download has been interrupted, the same taskname, the same warehouse list and `--resume` continue to be downloaded in a fixed version. The program continues by the continuous phase of downloading, source copy, working copy and warehouse record: copying is completed in the name ' s temporary directory and then the entire body becomes an official copy. Repossessing the existing working copy and local editor; existing source copies of the old task are checked with the fixed version and continue to generate missing working copies when the content is consistent. Local copies are kept for the repository file and source submission, Git history, Space service interface key and running disk information, respectively, according to the additional range suggested by the user.
 
-## 常用操作
+## Common Operations
 
-Python 操作统一从下面的官方客户端开始；示例中的名称和路径替换为当前任务实际值。示例供按任务选择调用，创建、上传、暂停和配置分别对应用户请求。
+The Python operation begins with the official client below; the name and path in the example is replaced by the actual value of the current task. The example is used to select the task to be called, create, upload, suspend and configure the respective user request.
 
 ```python
 from huggingface_hub import HfApi, hf_hub_download
@@ -79,17 +84,17 @@ from huggingface_hub import HfApi, hf_hub_download
 api = HfApi()
 ```
 
-### 读取账号资源和仓库
+### Read account number resources and warehouses
 
 ```python
-# namespace 来自当前账号或用户指定的组织；按需要增加返回数量。
+# namespace From current account number or user-designated organization; increase number of returns as needed.
 datasets = [item.id for item in api.list_datasets(author=namespace, limit=20)]
 spaces = [item.id for item in api.list_spaces(author=namespace, limit=20)]
 info = api.repo_info(repo_id=repo_id, repo_type=repo_type)
 files = api.list_repo_files(repo_id=repo_id, repo_type=repo_type)
 ```
 
-按需要读取选定文件，使用明确的下载位置。数据集下载保留 `repo_type="dataset"`，Space 文件使用 `repo_type="space"`。
+Read the selected file as needed, using a specified download location. The data set downloads are maintained at `repo_type="dataset"`, the Space file at `repo_type="space"`.
 
 ```python
 path = hf_hub_download(
@@ -98,7 +103,7 @@ path = hf_hub_download(
 )
 ```
 
-### 创建、上传及更新数据集
+### Create, upload and update data sets
 
 ```python
 url = api.create_repo(repo_id=repo_id, repo_type="dataset", private=private)
@@ -108,9 +113,9 @@ commit = api.upload_folder(
 )
 ```
 
-单文件更新使用 `api.upload_file(path_or_fileobj=staged_file, path_in_repo=remote_path, repo_id=repo_id, repo_type="dataset", commit_message=message)`。更新数据集卡片时，将 `README.md` 作为实际选定的上传文件。保留用户的数据格式、划分和许可；需要新增这些信息时依据实际资料填写。
+The single file is updated with `api.upload_file(path_or_fileobj=staged_file, path_in_repo=remote_path, repo_id=repo_id, repo_type="dataset", commit_message=message)`. When the data set card is updated, `README.md` is used as the actually selected upload file. The user's data format, partitioning and permission are maintained; this information is completed on the basis of actual information if additional information is required.
 
-### 创建、更新和运行 Space
+### Create, update and run Space
 
 ```python
 url = api.create_repo(
@@ -123,20 +128,20 @@ commit = api.upload_folder(
 runtime = api.get_space_runtime(repo_id=repo_id)
 ```
 
-Space 代码、依赖与 `README.md` 中的应用类型和入口配置保持一致。重启调用 `api.restart_space(repo_id=repo_id)`，暂停调用 `api.pause_space(repo_id=repo_id)`；从暂停恢复使用普通重启。硬件、存储和其他收费设置按明确指定的资源要求处理。
+Space code, relying on the application type and access configuration in `README.md`. Restarting `api.restart_space(repo_id=repo_id)`, suspending `api.pause_space(repo_id=repo_id)`, suspending normal restarts from suspending. Hardware, storage and other charge settings are handled in accordance with clearly specified resource requirements.
 
-### 设置变量和密钥
+### Set Variables and Keys
 
-普通配置调用 `api.add_space_variable(repo_id=repo_id, key=key, value=value)`。密钥从用户指定的凭据入口或环境变量读取，再调用 `api.add_space_secret(repo_id=repo_id, key=key, value=secret_value)`。完成后报告名称与操作状态，配置变更可能触发 Space 重启，随后查询实际运行状态。
+Normal configuration calls `api.add_space_variable(repo_id=repo_id, key=key, value=value)`. The key is read from the user-specified certificate entry or environment variable, and then calls `api.add_space_secret(repo_id=repo_id, key=key, value=secret_value)`. After completion, report the name and operational status of the report, and the configuration change may trigger Space restart and then query the actual operational status.
 
-## 常见结果处理
+## Common Results Processing
 
-- 认证失败时，确认当前凭据来源并指导重新登录；权限不足时，核对仓库类型、完整名称和凭据授权范围。
-- 仓库未找到时，结合登录身份与目标名称说明实际访问结果；私有仓库的访问能力以服务返回为准。
-- 文件较多或较大时，按实际规模选用官方大目录上传能力，准备副本与缓存继续保存在本技能内。
-- 网络中断或写入结果不明时，先读取远端文件或提交状态，再决定是否重试。提交冲突时重新读取当前版本，按用户确定的变更范围处理可合并内容并继续；需要选择相冲突的内容时，说明具体差异与选项。
-- 失败报告保留必要的状态码和原因；密钥值及带认证信息的地址在输出前移除。
+- If the authentication fails, confirm the current source of the certificate and guide the re-entry; check the type of warehouse, the full name and the scope of the certificate if the authority is insufficient.
+- When the warehouse is not located, the actual visit results are stated in combination with the name of the login and the target; the access capacity of the private warehouse is based on the return of the service.
+- When documents are larger or larger, the official large catalogue upload capability is selected on a physical scale, and the preparation of copies and caches continues to be kept in this skill.
+- If the network interrupts or the writing results are not known, read the remote file or state of submission before deciding whether to try again. Read the current version again when a conflict is submitted, and you can consolidate the contents according to the range of changes determined by the user and continue; specify the differences and options when the conflicting content is selected.
+- The failure report retains the required status code and reason; the key value and the address with authentication information are removed before the output.
 
-## 开发检查
+## Development inspection
 
-修改下载程序后，按明确测试范围运行 `python tests/test_download.py`。它用本地客户端替身检查来源副本、工作副本与仓库记录的中断恢复，并检查已有编辑保留。真实账号访问和网络下载由对应任务选定资源后执行。
+When you change the download program, run `python tests/test_download.py` with a clear test range. It checks local client back-to-back copies of sources, working copies and warehouse records, and check that the edit is maintained. Real account access and network downloads are executed with the resources selected by the corresponding task.

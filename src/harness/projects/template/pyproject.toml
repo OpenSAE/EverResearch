@@ -1,5 +1,5 @@
-# 目的和主要功能：定义参考分类项目的安装和命令入口。
-# 适用范围：独立安装模板与运行本地工程检查。
+# Purpose and main function: definition of installation and command entry for reference classification items.
+# Scope of application: independent installation of templates and running of local engineering checks.
 [build-system]
 requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
@@ -18,6 +18,10 @@ cub-template = "cub_template.cli:main"
 packages = ["cub_template", "cub_template.runtime", "cub_template.datasets", "cub_template.datasets.cub200", "cub_template.models", "cub_template.models.resnet", "cub_template.models.resnet.resnet18", "cub_template.models.cnn", "cub_template.models.cnn.small_cnn", "cub_template.tasks", "cub_template.tasks.classification", "cub_template.tasks.precheck"]
 
 [tool.setuptools.package-dir]
+cub_template = "base/cub_template"
 "cub_template.datasets" = "datasets"
 "cub_template.models" = "models"
 "cub_template.tasks" = "tasks"
+
+[tool.pytest.ini_options]
+pythonpath = ["base"]

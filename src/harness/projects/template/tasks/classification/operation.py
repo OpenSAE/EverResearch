@@ -1,6 +1,6 @@
-"""目的：执行分类训练和评估并计算 Top-1 准确率、平均交叉熵。
+"""Purpose: Implementation of disaggregated training and evaluation and calculation Top-1 Accuracy rate, average cross-cradon.
 
-适用范围：共享给正式训练、Precheck 和性能比较。
+Scope of application: shared for formal training, Precheck Compared to performance.
 """
 
 import math
@@ -48,10 +48,10 @@ def epoch(model, batches, device, optimizer=None):
         correct += (logits.argmax(dim=1) == labels).sum()
         loss_sum += loss * len(labels)
     if not total:
-        raise ValueError("分类阶段没有样本")
+        raise ValueError("No samples at classification stage")
     mean_loss = loss_sum.item() / total
     if not torch.isfinite(loss_sum).item():
-        raise ValueError("分类阶段出现非有限损失")
+        raise ValueError("Non-limited losses at the classification stage")
     return {"samples": total, "top1_accuracy": correct.item() / total, "loss": mean_loss}
 
 
@@ -66,20 +66,22 @@ def precheck(model, train, fixed_train, device, cfg):
     evaluation_batch = loader(Subset(fixed_train, range(samples)), cfg, workers)
     training = epoch(model, train_batch, device, optimizer)
     tail = len(train) % batch_size
+    tail_samples = 0
     if tail == 1 and samples != 1:
         tail_batch = loader(Subset(train, [len(train) - 1]), cfg, workers, training=True)
         try:
-            epoch(model, tail_batch, device, optimizer)
+            tail_samples = epoch(model, tail_batch, device, optimizer)["samples"]
         except (RuntimeError, ValueError) as exc:
             raise ValueError(
-                f"训练最后一批只有一张图，当前模型无法完成该批次。"
-                f"请更换批大小或图像尺寸后重新预检。原始错误：{exc}"
+                f"There’s only one map for the last batch, and the current model can’t complete the batch.."
+                f"Please change the batch size or image size to pre-check. Original error:{exc}"
             ) from exc
     evaluation = epoch(model, evaluation_batch, device)
     synchronize(device)
     return {
         "train_step": training,
         "evaluation_step": evaluation,
+        "samples_checked": training["samples"] + evaluation["samples"] + tail_samples,
         "workers": workers,
         "singleton_tail_checked": tail == 1,
         "seconds": perf_counter() - start,
@@ -120,13 +122,13 @@ def validate_config(cfg, operation):
     for section, key, minimum in limits:
         value = cfg[section][key]
         if type(value) is not int or value < minimum:
-            raise ValueError(f"{section}.{key} 必须是至少 {minimum} 的整数")
+            raise ValueError(f"{section}.{key} It must be at least. {minimum} Integer number")
     if operation in {"train", "precheck"}:
         rate = cfg["training"]["learning_rate"]
         if type(rate) not in {int, float} or not math.isfinite(rate) or rate <= 0:
-            raise ValueError("training.learning_rate 必须是有限正数")
+            raise ValueError("training.learning_rate It must be a limited positive number.")
 
 
 def validate_components(dataset, model):
     if dataset.CLASSES != model.CLASSES:
-        raise ValueError(f"数据包含 {dataset.CLASSES} 类，模型输出 {model.CLASSES} 类")
+        raise ValueError(f"Data Organisation {dataset.CLASSES} Category, Model Output {model.CLASSES} Category")

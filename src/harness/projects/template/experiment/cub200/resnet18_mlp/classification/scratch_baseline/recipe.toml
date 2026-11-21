@@ -1,5 +1,5 @@
-# 目的：声明 CUB-200-2011 官方划分上的 ResNet18 + MLP 分类基线。
-# 适用范围：本地已准备数据的正式训练和运行前检查。
+# Purpose: Declaration CUB-200-2011 It’s official. ResNet18 + MLP Categorized baseline.
+# Scope of application: formal training for locally prepared data and pre-operational inspections.
 [dataset]
 name = "cub200"
 root = "../../../../../data/CUB_200_2011"

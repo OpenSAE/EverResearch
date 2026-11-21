@@ -1,5 +1,5 @@
-/* 目的和主要功能：保留 L2 组内排列，并按当前展开范围紧凑排列功能块。
- * 适用范围：目录图和文件图的展开、收起及拖动后的布局；全部展开使用原始 L2 坐标。
+/* Purpose and main function: reservation L2 Arrange in groups and closely align the functional blocks according to the current expansion.
+ * Scope of application: Expand, close and drag layout of table of contents and file diagrams; all roll-out original L2 Coordinates.
  */
 'use strict';
 function compactExpansionLayout(scene,model,layouts,saved={},context={}){
@@ -11,7 +11,7 @@ function compactExpansionLayout(scene,model,layouts,saved={},context={}){
     const visibleLower=new Set(scene.nodes.filter(n=>n.level==='L2').map(n=>n.id));
     for(const n of scene.nodes){const representative=skeleton.representatives?.[n.id],dock=n.level==='L1'&&visibleLower.has(representative)?skeleton.docks?.[n.id]:null;
       const fixed=dock||(n.level==='L1'?skeleton.anchors:skeleton.nodes)[n.id];
-      if(!fixed)throw new Error('固定布局缺少节点：'+n.id);
+      if(!fixed)throw new Error('Fixed layout missing nodes:'+n.id);
       positions[n.id]={...layouts[n.level].nodes[n.id],...fixed,width:W,height:H,...saved[n.id]};
     }
     return positions;

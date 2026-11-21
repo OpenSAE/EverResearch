@@ -1,5 +1,5 @@
-/* 目的和主要功能：为服务页面与独立页面提供统一的数据、导航、资源与后台计算入口。
- * 适用范围：ExtractStructure 共用查看器；独立页面从内嵌资料读取，服务页面使用同源请求。
+/* Purpose and main function: To provide a unified data, navigation, resources and back-office computing portal for service and stand-alone pages.
+ * Scope: ExtractStructure Shared viewer; stand-alone page reading from embedded information, service page using co-source requests.
  */
 'use strict';
 (()=>{
