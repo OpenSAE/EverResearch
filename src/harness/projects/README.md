@@ -215,7 +215,7 @@ The script directory is organized according to the user's operating organization
 | One run `config.yaml` or the configuration format used for the item | Configure successfully after parsing | Saves the configuration with the default, selected components and overwhelms. The running list points to the file. |
 | One run `metadata/` | When a run result to be handed over | The `manifest.json` is the default reading portal, which can register the equivalent path. Configure, precheck back, place the environment record here or quote from the list. |
 | One run `reports/`, `logs/`, `artifacts/`, `tmp/` | When corresponding output is available | Readable reports, process logs, usable products, and temporary materials are assigned separately. |
-| `assets/history_experiment/<named-result>/` | Keep existing experiments or demonstrations | The operation that you leave at `experiment/` must be checked for identity, effective configuration and product. |
+| `assets/history_experiment/<named-result>/` | Keep existing experiments or demonstrations | Document the source and readback procedure in `README.md`. Preserve original file names, directory structure, and source snapshots under `files/`. Active code belongs in its regular source directory. Runs in `experiment/` must pass the identity, effective configuration, and output checks. |
 | `.researchharness/project.yaml`、`.researchharness/central.json` | When using the respective access function | The project is subject to a central project order. |
 | `.agents/skills/<skill-name>/` | When there are projects or skills-sharing | Each skill provides `SKILL.md`. The project maintains its own skills, which are centrally shared and accessible by a project switch. |
 

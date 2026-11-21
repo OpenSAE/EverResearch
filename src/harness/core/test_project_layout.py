@@ -49,6 +49,30 @@ def test_layout_accepts_documentation_build_sources_under_named_site(capsys, tmp
     assert {item["path"] for item in violations} == {"doc/Unowned.rst"}
 
 
+def test_layout_preserves_original_paths_inside_historical_runs(capsys, tmp_path):
+    root = tmp_path / "ContextMemory"
+    archive = root / "assets/history_experiment/archived_results"
+    original = archive / "files/A0_1/S1 (baseline)/TrainRun.py"
+    original.parent.mkdir(parents=True)
+    original.touch()
+    readme = archive / "README.md"
+    readme.touch()
+    check(root, capsys, 0)
+
+    readme.unlink()
+    outside = root / "assets/evaluation/reference_schema/files"
+    outside.mkdir(parents=True)
+    (outside.parent / "README.md").touch()
+    (outside / "TrainRun.py").touch()
+    (root / "experiment/unknown_dataset").mkdir(parents=True)
+    report = check(root, capsys, 1)
+    assert {item["path"]: item["rule"] for item in report["violations"]} == {
+        "assets/history_experiment/archived_results/README.md": "asset_description",
+        "assets/evaluation/reference_schema/files/TrainRun.py": "assets",
+        "experiment/unknown_dataset": "experiment",
+    }
+
+
 def test_real_template_reports_only_legacy_names(capsys, monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
     report = check(TEMPLATE, capsys, 1)

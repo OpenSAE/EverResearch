@@ -26,7 +26,7 @@ Use this skill when onboarding an unfamiliar repository, reviewing a whole proje
 
 Follow the [project layout rules](../../../src/harness/projects/README.md#project-layout), the [engineering protocol](../../../src/harness/projects/README.md#project-execution), and the [documentation guide](../../../src/harness/projects/README.md#project-documentation). The [CUB template](../../../src/harness/projects/template/README.md) demonstrates an entry point, components, prechecks, and run records. Apply the current rules where the template differs.
 
-- Give the project root a purpose-driven PascalCase name with two or three words and at least one complete English word. Name project-owned files and directories after their jobs with underscores between words where needed. Reserve version digits for real data or model identities and preserve names owned by frameworks and upstream packages.
+- Give the project root a purpose-driven PascalCase name with two or three words and at least one complete English word. Name project-owned files and directories after their jobs with underscores between words where needed. Reserve version digits for real data or model identities. Put project-owned framework integration in the directory that owns it and connect it through the public entry point. Preserve original names inside the designated upstream or historical archive.
 - Provide physical top-level `base/`, `datasets/`, `models/`, `tasks/`, and `conf/` directories. Put shared interfaces, dispatch, and runtime code in `base/`. Give each research component its own actual implementation in the corresponding directory. Put automatic startup diagnosis in `tasks/precheck/` and implement research computation in separately named tasks. Have public commands load `conf/config.<format>`.
 - Follow every still-supported reproduction command to its actual dataset preparation, model construction, training, evaluation, and analysis. Move each implementation to the directory that owns it. Keep script entry points focused on orchestration and argument forwarding. Preserve supported imports and installed commands through package mappings or thin compatibility entry points. Recheck both source and installed entry points when applicable.
 - Use `maintain-code` to check `base/`, `datasets/`, `models/`, `tasks/`, and active `scripts/` and `tests/` for misplaced, duplicated, or fragmented implementations. Check each level of `base/`, `tasks/`, `scripts/`, `tests/`, and recognized legacy source trees for the limit of 15 directly contained files. Review directories with more than 15 direct subdirectories. Dataset and model trees are governed by component responsibilities and path rules.
@@ -35,7 +35,7 @@ Follow the [project layout rules](../../../src/harness/projects/README.md#projec
 
 ## Inspect mixed directories and existing runs
 
-When a path is rejected at the directory level, inventory its actual contents before moving them. Then rescan to reveal any previously unvisited paths. For whole-tree reorganization, include ignored paths, snapshots, and saved runs in the inventory. Group files with the same purpose and destination, and identify individual exceptions.
+Use the published layout to choose a compliant destination for every rejected path. Inventory the actual contents of a rejected directory, including ignored paths, snapshots, and saved runs. Group files with the same purpose and destination. Move each group, update its actual references and writers, then rescan to reveal any previously unvisited paths. Record original paths, destinations, and checks in the project maintenance record.
 
 | Material | Where it belongs |
 | --- | --- |
@@ -44,7 +44,11 @@ When a path is rejected at the directory level, inventory its actual contents be
 | Project documentation and documentation builds | `doc/`, with named documentation sites under `doc/code/` and their existing build structure preserved |
 | Frozen runs, demos, and historical outputs | `assets/history_experiment/<named-result>/files/`, with their original contents, provenance, and readback instructions |
 | Active experiment runs | `experiment/`, with an effective configuration, run manifest, and declared outputs that match the physical paths |
-| Small temporary work or material awaiting disposition | A named directory under `tmp/`, with its origin and outstanding decision recorded |
+| Upstream packages kept with the project | `third_party/<upstream-name>/`, with the original package paths, provenance, and license |
+| Data and reusable resources | The appropriate data root, or a named asset under `assets/` |
+| Temporary or unidentified material without active references | `tmp/to_clean/<named-origin>/`, with the original files, paths, and follow-up notes |
+
+Choose the destination in the project and carry out the move. Keep current code and callers in their assigned directories. Preserve still-supported public commands through the project's normal entry points. Remove vacated noncompliant paths and obsolete links, and repeat the central check until it exits with zero violations. Track outstanding functional and experiment validation separately. Stop the round if disk space is insufficient. If active writes or filesystem permissions block a move, record where to resume and keep layout acceptance pending.
 
 Run `rh projects experiment check <project-root>` in addition to the project check. Inspect the physical experiment tree, including results ignored by version control. Verify each run's dataset, optional model, task, research purpose, execution role, and run ID. Track default and batch output paths from their producers to actual readers. Fix both producers and consumers when migrating. Preserve frozen configurations, source snapshots, and original results as historical evidence. Verify whether retained or migrated results still open through the actual reader.
 

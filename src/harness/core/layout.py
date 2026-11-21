@@ -28,6 +28,7 @@ DOC_PAGES = (
 )
 PAYLOAD = r"[A-Za-z0-9][A-Za-z0-9_.+-]*"
 RESOURCE = rf"(?![^/]+\.(?:py|sh|R|r|jl|js|ts|m|ipynb|sbatch)$){PAYLOAD}"
+HISTORY_FILES = rf"assets/history_experiment/{NAME}/files"
 ROOT_FILES = (
     r"README\.md|AGENTS\.md|LICENSE(?:\.txt|\.md)?|NOTICE(?:\.txt|\.md)?|CITATION\.cff"
     r"|CHANGELOG\.md|CONTRIBUTING\.md|pyproject\.toml|setup\.(?:py|cfg)"
@@ -85,10 +86,12 @@ RULES = {
          rf"tests/fixtures(?:/{NAME})*/{PAYLOAD}"),
     ),
     "assets": Rules(
-        (rf"assets(?:/{NAME}){{0,2}}", rf"assets/{NAME}/{NAME}/(?:files(?:/{NAME})*|scripts(?:/{NAME})*)"),
+        (rf"assets(?:/{NAME}){{0,2}}", rf"assets/{NAME}/{NAME}/(?:files(?:/{NAME})*|scripts(?:/{NAME})*)",
+         rf"{HISTORY_FILES}(?:/[^/]+)*"),
         (r"assets/README\.md", rf"assets/{NAME}/{NAME}/README\.md",
          rf"assets/{NAME}/{NAME}/files(?:/{NAME})*/{RESOURCE}",
-         rf"assets/{NAME}/{NAME}/scripts(?:/{NAME})*/{SCRIPT}"),
+         rf"assets/{NAME}/{NAME}/scripts(?:/{NAME})*/{SCRIPT}",
+         rf"{HISTORY_FILES}(?:/[^/]+)*/[^/]+"),
     ),
     "data": Rules((r"data", rf"data/{NAME}(?:/{PAYLOAD})*"),
                   (rf"data(?:/{NAME})?/README\.md", rf"data/{NAME}(?:/{PAYLOAD})+/{PAYLOAD}")),
