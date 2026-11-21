@@ -1,52 +1,109 @@
 # ResearchHarness
 
-ResearchHarness helps you maintain research projects and check the path from local data to saved results. It provides shared maintenance skills for coding assistants, a command-line interface for local data and Python bindings, and read-only checks for project layout and experiment records.
+**Less time managing research code. More time doing research.**
 
-Each project keeps its own dependencies, data loaders, models, tasks, and run commands. ResearchHarness connects those pieces to a shared workspace and gives you a consistent way to check them.
+Research projects grow messy. Scripts pile up, configurations drift, datasets move, and experiment results become hard to trace.
 
-## Quick start
+ResearchHarness helps you and your coding agent keep research projects organized, maintainable, and reproducible.
 
-Use Python 3.11 or 3.12. Keep the ResearchHarness checkout, your project, and any shared data directory under the same workspace when practical.
+## What ResearchHarness Does
 
-From the parent workspace, with a checkout at `ResearchHarness/` and an existing project at `ExampleProject/`:
+- **Organize your research.** Keep datasets, models, tasks, configurations, and experiments in a consistent structure.
+- **Maintain projects with AI.** Let your coding agent understand and maintain your project instead of fixing files one by one.
+- **Make experiments traceable.** Keep configurations, execution records, and results connected.
+- **Catch problems early.** Check project structure and experiment records before small inconsistencies become bigger problems.
+- **Reuse what works.** Apply the same research maintenance workflows across different projects.
 
-```bash
-python -m pip install -e ./ResearchHarness
-rh projects --harness-root ./ResearchHarness register example --path ./ExampleProject
-rh projects --harness-root ./ResearchHarness apply example
-rh projects --harness-root ./ResearchHarness status example
+## How It Works
+
+**Start from scratch or bring your existing code.**
+
+Whether you're building a new research project or cleaning up an existing codebase, ResearchHarness helps your coding agent organize it into a consistent structure.
+
+```text
+YourProject/
+├── base/          # Shared code and execution
+├── datasets/      # Data loading and processing
+├── models/        # Model implementations
+├── tasks/         # Training, evaluation, and analysis
+├── conf/          # Experiment configurations
+├── experiment/    # Experiment records and results
+├── scripts/       # Standalone utilities
+├── tests/         # Tests and checks
+└── doc/           # Project documentation
 ```
 
-`apply` links the shared skills into the project and adds a managed section to its assistant instructions. Start with [maintain-project](.agents/skills/maintain-project/SKILL.md) for a whole-project review.
+Each component has a clear responsibility, making it easier for agents to understand, modify, and extend your research without losing track of how everything fits together.
 
-To bind a local dataset and interpreter, then launch your project's own Python entry point:
+**ResearchHarness keeps code and results reusable, readable, and traceable throughout agent-driven development.**
+
+As your project evolves, shared maintenance workflows help keep its structure, configurations, and experiment records consistent.
+
+## See It in Action
+
+**From scattered research code to an organized, maintainable project.**
+
+**Before ResearchHarness**
+
+- Scripts and configurations scattered across folders
+- Dataset paths tied to individual machines
+- Experiments difficult to track or revisit
+- Every new project requires another round of cleanup
+
+**With ResearchHarness**
+
+- Consistent project organization
+- Reusable workflows for your coding agent
+- Local data and environments connected to each project
+- Structured experiment records and checks
+
+*A real project walkthrough will show the workflow from project inspection to organized code and reviewable results.*
+
+## Get Started
+
+Connect an existing research project in a few commands.
 
 ```bash
-rh projects bind example --data main=/path/to/data --python /path/to/venv/bin/python
-rh projects run example -- main.py --data-root '{data:main}'
+pip install -e ./ResearchHarness
+rh projects --harness-root ./ResearchHarness register myproject --path ./MyProject
+rh projects --harness-root ./ResearchHarness apply myproject
 ```
 
-Replace `main.py` and `--data-root` with your project's interface. The launcher uses the selected interpreter and starts in the project's root.
+Then ask your coding agent:
 
-## Check a project
+> Review and maintain this research project using ResearchHarness.
 
-| Command | What it checks |
+### One Skill to Coordinate Your Research
+
+**`maintain-project` is the central coordinator of ResearchHarness.**
+
+It guides your coding agent through the entire project, coordinating specialized skills for each component:
+
+| Skill | What it manages |
 | --- | --- |
-| `rh projects project check ./ExampleProject` | Required directories, component source, configuration, environment documentation, and path conventions. |
-| `rh projects layout check ./ExampleProject` | Naming, file placement, and directory structure. |
-| `rh projects experiment check ./ExampleProject` | Saved run manifests, effective configuration, and declared output files. |
-| `rh projects precheck check --help` | How to check saved evidence from a successful run and a run blocked by precheck. |
+| [`maintain-dataset`](.agents/skills/maintain-dataset/SKILL.md) | Datasets, preprocessing, and data loading |
+| [`maintain-model`](.agents/skills/maintain-model/SKILL.md) | Model implementations and variants |
+| [`maintain-task`](.agents/skills/maintain-task/SKILL.md) | Training, evaluation, and research tasks |
+| [`maintain-conf`](.agents/skills/maintain-conf/SKILL.md) | Configurations and parameters |
+| [`maintain-experiment`](.agents/skills/maintain-experiment/SKILL.md) | Experiment execution and result records |
+| [`maintain-base`](.agents/skills/maintain-base/SKILL.md) | Shared code and execution workflows |
 
-Use the project's own precheck to verify a specific data, model, and task combination. A representative run can show that the selected samples can be read, the model can be built or loaded, and the task can complete a small computation on the selected device. ResearchHarness reads the resulting evidence.
+You don't need to manage every component separately. Start with [`maintain-project`](.agents/skills/maintain-project/SKILL.md) for project-wide work, or use a specialized skill when you want to focus on one part.
 
-## Learn by example
+As your research evolves, the same workflows help keep your code organized and your results traceable.
 
-- [CUB-200 classification template](src/harness/projects/template/README.md) shows how configuration, data loading, model construction, precheck, and experiment records fit together. Its offline example uses synthetic inputs. The CUB-200 recipe uses a locally supplied dataset.
-- [Project layout](src/harness/projects/README.md#project-layout) and [engineering protocol](src/harness/projects/README.md#project-execution) describe the conventions used in project reviews.
-- [Workspace operations](src/harness/projects/README.md) covers shared skills, local resources, and reviewable ExtractStructure maps.
+## Built for Everyday Research
 
-Project settings, resource bindings, and reviewed structure maps are stored locally under `src/project/maintained/`.
+Whether you're starting a new experiment, adding a dataset, switching models, or returning to an old project, ResearchHarness gives you a consistent way to keep your research code under control.
+
+**Your research keeps moving. Your codebase should keep up.**
+
+## Explore More
+
+- **[Skills](.agents/skills/)** — Reusable workflows for research project maintenance
+- **[Example Project](src/harness/projects/template/README.md)** — A complete research project demonstrating the workflow
+- **[Documentation](src/harness/projects/README.md)** — Setup, organization, experiment records, and advanced usage
 
 ## License
 
-[Apache License 2.0](LICENSE)
+[Apache 2.0](LICENSE)
