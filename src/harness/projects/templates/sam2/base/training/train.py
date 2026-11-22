@@ -21,7 +21,7 @@ from iopath.common.file_io import g_pathmgr
 from omegaconf import OmegaConf
 
 from sam2.precheck.gate import require_directory
-from sam2.workspace import project_workspace
+from sam2.workspace import checkpoint_path, data_root, project_workspace
 from training.utils.train_utils import makedir, register_omegaconf_resolvers
 
 os.environ["HYDRA_FULL_ERROR"] = "1"
@@ -136,14 +136,14 @@ def main(args) -> None:
         raise ValueError("Training outside a checkout requires --experiment-log-dir")
     if workspace is not None:
         split = cfg.get("dataset", {}).get("file_list_txt")
-        if split == "data/training_lists/upstream/MOSE_sample_train_list.txt":
-            cfg.dataset.file_list_txt = str(workspace / split)
+        if split == "training_lists/upstream/MOSE_sample_train_list.txt":
+            cfg.dataset.file_list_txt = str(data_root() / split)
         checkpoint = cfg.trainer.checkpoint.model_weight_initializer
         if checkpoint is not None:
             loader = checkpoint.get("state_dict", {})
             path = loader.get("checkpoint_path")
-            if path == "data/checkpoints/local/sam2.1_hiera_base_plus.pt":
-                loader.checkpoint_path = str(workspace / path)
+            if path == "checkpoints/local/sam2.1_hiera_base_plus.pt":
+                loader.checkpoint_path = str(checkpoint_path(Path(path).name))
     submitit_conf = cfg.get("submitit", None)
     assert submitit_conf is not None, "Missing submitit config"
 

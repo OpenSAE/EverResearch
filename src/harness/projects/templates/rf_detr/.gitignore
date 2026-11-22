@@ -237,3 +237,6 @@ scripts/examples/cookbooks/export/export_apple/
 
 # MacOS files
 .DS_Store
+
+# Connection records maintained online on-line.
+/.researchharness/online/

@@ -14,6 +14,12 @@ def project_workspace():
     return None
 
 
+def data_root():
+    root = project_workspace() or Path.cwd()
+    if root.parent.name == "templates" and (root.parents[4] / "src/harness/cli.py").is_file():
+        root = root.parents[4]
+    return root.parent / "data" / "sam2"
+
+
 def checkpoint_path(filename):
-    root = project_workspace()
-    return root / "data" / "checkpoints" / "local" / filename if root else Path("checkpoints") / filename
+    return data_root() / "checkpoints" / "local" / filename

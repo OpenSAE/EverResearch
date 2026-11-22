@@ -184,3 +184,6 @@ logs
 _logs
 outputs
 /experiment/
+
+# Connection records maintained online on-line.
+/.researchharness/online/

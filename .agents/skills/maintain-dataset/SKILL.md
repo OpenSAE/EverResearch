@@ -16,12 +16,12 @@ Enter the target data set, the tasks used and the range of changes.
 The actual commands, components and configurations are found from the `AGENTS.md`, README, or access instructions. First, a sample of the tasks is traced back to the call back to read, prepare and divide responsibilities.
 
 - Add **. ** allows normal access to select a new data set, source or preset.
-- **Changes.** changes the reading, preparation, division or sample interface of existing data sets, indicating which calls and historical results affect.
-- Removes **. ** removes the specified preset, read-out, or task support. The range is the complete unmounting of the entire data set, confirming that the retention is still available for input. Original data, shared caches and historical results are processed as specified.
+- ** Changes. ** changes the reading, preparation, division or sample interface of existing data sets, indicating which calls and historical results affect.
+- Removes **. ** removes the specified preset, read-out, or task support. The range is the complete unmounting of the entire data set, confirming that the retention is still available. Original data, shared caches and historical results are processed as specified.
 
-[Data Set Operating Scheme](references/procedures.md)Lists the document attributions, the sequence of implementation of the three types of changes and the conditions for their completion.
+[Data Set Operating Scheme](references/procedures.md)Lists the document attributions, the sequence of implementation of the three types of changes and the conditions for their completion..
 
-The root of the data that the task actually reads. Pre-processed products and reusable subdivisions are stored in the corresponding data set directory, the locks and temporary storage at the preparation stage follow the root of the data, and atoms are written in the same file system. Original downloads and generic caches from Hugging Face are processed by `huggingface-maintain` download instructions.
+First determine the working area actually read by the task `data/` The decompression and indexing file of the directly supported data version follows the root of the data. `assets/` Resources. Locks and temporary storage follow actual writing positions, atoms write in the same file system. Hugging Face Original download and universal cache button `huggingface-maintain` processing of download instructions.
 
 ## Samples, labels, partitions or caches do not match configuration
 
@@ -30,16 +30,14 @@ Take a small batch of samples actually taken by the official mission and return 
 ## Validation criteria
 
 - Checks whether the sample identity, number, label meaning, sequence or shape, and whether the same data contract is followed in the case of a cache.
-- If you are in a position to do so, you will be able to use the project’s comparative unit to verify the segregation, such as the object-level task of the study, by the identity of the object, rather than by line only.
+- If you are in a position to do so, you will be able to use the project’s comparative unit to verify the segregation, such as the object-level task of the study, by the identity of the object, and not just by line.
 
 ## Document Sync & Delivery
 
-Synchronize data set entries, affected configurations and mission statements, and record how the source, sample, division or reading has changed. Deliver to humans the normal selection, actual sample evidence and impact on the comparability of established tasks and experiments. `maintain-conf` Collaboration.
-
-The changes are recorded in the project-by-project project file.
+Synchronize data set entries, affected configurations and mission statements, and record how the source, sample, division or reading has changed. Deliver to humans the normal selection, actual sample evidence and impact on the comparability of existing tasks and experiments. `maintain-conf` Collaboration.
 
 ## Item-by-line
 
 The data set is organized in terms of data sources and sample meanings. The named subset of the project definition is placed under the corresponding data set, indicating the selection, inclusion, labeling or division of differences and selection methods. The compatible preset for the same subset is written in the same entry. The text describes the source, sample unit, field and label, division and sample or preprocessing, selected tasks, output and limits. The different presets maintain the actual differences. The background is explained in the original paper or official description to determine the local behaviour by reading and formulating the project.
 
-The text of the data set page presents the input, label, division and selection conditions, and a summary of how it supports the current selection is given in the data description. For example, indicate which queue the description of the supply classification applies.
+The text of the data set page presents the input, label, division and selection conditions, and a summary of how it supports the current selection is quoted in the data description. For example, indicate which queue the description of the supply classification applies.

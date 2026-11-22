@@ -1,8 +1,8 @@
+<div align="center">
+
 > This template includes source code, configuration, and documentation. Obtain example inputs, pretrained weights, and media from the upstream project and set local paths before running resource-dependent examples.
 
 > Upstream repository: [GitHub](https://github.com/ByteDance-Seed/Depth-Anything-3).
-
-<div align="center">
 <h1 style="border-bottom: none; margin-bottom: 0px ">Depth Anything 3: Recovering the Visual Space from Any Views</h1>
 <!-- <h2 style="border-top: none; margin-top: 3px;">Recovering the Visual Space from Any Views</h2> -->
 
@@ -107,7 +107,7 @@ from depth_anything_3.api import DepthAnything3
 device = torch.device("cuda")
 model = DepthAnything3.from_pretrained("depth-anything/DA3NESTED-GIANT-LARGE-1.1")
 model = model.to(device=device)
-example_path = "assets/examples/SOH"
+example_path = "assets/examples/soh/files"
 images = sorted(glob.glob(os.path.join(example_path, "*.png")))
 prediction = model.inference(
     images,
@@ -135,7 +135,7 @@ mkdir -p $GALLERY_DIR
 
 # CLI auto mode with backend reuse
 da3 backend --model-dir ${MODEL_DIR} --gallery-dir ${GALLERY_DIR} # Cache model to gpu
-da3 auto assets/examples/SOH \
+da3 auto assets/examples/soh/files \
     --export-format glb \
     --export-dir ${GALLERY_DIR}/TEST_BACKEND/SOH \
     --use-backend
@@ -151,7 +151,7 @@ da3 video assets/examples/robot_unitree.mp4 \
     --export-feat "11,21,31"
 
 # CLI auto mode without backend reuse
-da3 auto assets/examples/SOH \
+da3 auto assets/examples/soh/files \
     --export-format glb \
     --export-dir ${GALLERY_DIR}/TEST_CLI/SOH \
     --model-dir ${MODEL_DIR}
@@ -162,8 +162,8 @@ For repeatable local inference, add a named experiment. First preview the resolv
 then run the same command without `--show-config`.
 
 ```bash
-da3 auto assets/examples/SOH --experiment scene_geometry --show-config
-da3 auto assets/examples/SOH --experiment scene_geometry
+da3 auto assets/examples/soh/files --experiment scene_geometry --show-config
+da3 auto assets/examples/soh/files --experiment scene_geometry
 ```
 
 See the [project documentation](doc/README.md) for the source layout, the experiment manifest and how

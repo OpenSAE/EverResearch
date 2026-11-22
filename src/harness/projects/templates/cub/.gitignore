@@ -4,3 +4,6 @@ experiment/
 __pycache__/
 *.egg-info/
 .pytest_cache/
+
+# This machine mounts the resulting guidelines, skills links and binding locations online.
+/.researchharness/online/

@@ -143,3 +143,6 @@ pic2.py
 /tmp/
 en_results
 zh_results
+
+# Connection records maintained online on-line.
+/.researchharness/online/

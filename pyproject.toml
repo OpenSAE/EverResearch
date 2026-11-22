@@ -29,7 +29,18 @@ include = ["harness*"]
 namespaces = false
 
 [tool.setuptools.package-data]
-harness = ["projects/*.yaml", "projects/*.md", "projects/*.md.in", "core/*.md", "utils/*.md", "utils/transfer/*.md"]
+harness = [
+    "projects/*.yaml",
+    "projects/*.md",
+    "projects/*.md.in",
+    "projects/standalone/*.md",
+    "projects/standalone/*.py",
+    "projects/standalone/offline/*.md",
+    "projects/standalone/offline/*.py",
+    "core/*.md",
+    "utils/*.md",
+    "utils/transfer/*.md",
+]
 
 [tool.ruff]
 line-length = 100

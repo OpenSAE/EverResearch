@@ -35,10 +35,13 @@ def read(harness, project_id):
     }
 
 
-def data_directory(root, value):
+def data_directory(harness, root, value):
     path = (root / Path(value).expanduser()).resolve(strict=True)
     if not path.is_dir():
         raise ProjectError(f"Data path should point to directory:{path}")
+    shared_data = harness.workspace / "data"
+    if shared_data.is_symlink() or not path.is_relative_to(shared_data):
+        raise ProjectError(f"Data directory must be within the workspace data root {shared_data}: {path}")
     return str(path)
 
 
@@ -58,7 +61,7 @@ def update(harness, project_id, *, data=(), remove_data=(), python=None, clear_p
         name, separator, path = entry.partition("=")
         if not separator or not path:
             raise ProjectError("Data binding uses name=path")
-        bindings["data"][identity(name)] = harness.store_path(Path(data_directory(root, path)))
+        bindings["data"][identity(name)] = harness.store_path(Path(data_directory(harness, root, path)))
     for name in remove_data:
         bindings["data"].pop(identity(name), None)
     if python is not None:
@@ -121,7 +124,7 @@ def run(harness, project_id, arguments, *, environment=()):
         name = match[1]
         if name not in bindings["data"]:
             raise ProjectError(f"{project_id} Data directory not yet bound {name}")
-        return data_directory(root, bindings["data"][name])
+        return data_directory(harness, root, bindings["data"][name])
 
     expanded = [DATA_REFERENCE.sub(replace, value) for value in arguments]
     process_environment = os.environ.copy()

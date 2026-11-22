@@ -11,6 +11,8 @@ from sam2.tasks import image_inference
 
 
 def test_installed_config_paths_cover_supported_models_and_legacy_names():
+    from sam2.workspace import data_root
+
     project = Path(__file__).resolve().parents[1]
     reference = (project / "doc" / "conf.md").read_text()
     configured = {config for config, _ in image_inference.MODELS.values()}
@@ -32,9 +34,11 @@ def test_default_model_preview_does_not_write_or_build(monkeypatch, tmp_path, ca
     settings = json.loads(capsys.readouterr().out)
     assert settings["model"] == "sam2.1-hiera-large"
     assert settings["config"] == "configs/sam2.1/sam2.1_hiera_l.yaml"
+    from sam2.workspace import data_root
+
     project = Path(__file__).resolve().parents[1]
     assert settings["checkpoint"] == str(
-        (project / "data" / "checkpoints" / "local" / "sam2.1_hiera_large.pt").resolve()
+        (data_root() / "checkpoints" / "local" / "sam2.1_hiera_large.pt").resolve()
     )
     assert Path(settings["experiment_dir"]).is_relative_to(project / "experiment")
     assert settings["model_config"]["_target_"] == "sam2.modeling.sam2_base.SAM2Base"

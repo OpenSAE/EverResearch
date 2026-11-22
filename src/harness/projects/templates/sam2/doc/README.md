@@ -15,7 +15,7 @@ Use this guide to run SAM 2 or maintain its datasets, models, tasks and examples
 | [`datasets/`](datasets.md) | RGB images, video-object training mixtures and SA-V annotations. |
 | [`models/`](models.md) | SAM 2 construction, Hiera backbones and checkpoint loading. |
 | [`tasks/`](tasks.md) | Image prediction, video tracking, training, evaluation and benchmarking. |
-| [`data/`](datasets.md) | Sample image and video inputs, training splits and local checkpoint paths. |
+| [Workspace data](datasets.md) | Sample image and video inputs, training splits and local checkpoint paths. |
 | [`scripts/`](tasks.md) | Thin entry points and interactive notebooks. |
 | [`experiment/`](experiment.md) | New results and their effective settings. |
 | `assets/` | Reference figures and supporting resources. |

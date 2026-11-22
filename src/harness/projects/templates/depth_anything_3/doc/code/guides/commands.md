@@ -65,8 +65,8 @@ Use a named experiment to preserve each local execution and its resolved configu
 example from the repository root.
 
 ```bash
-da3 auto assets/examples/SOH --experiment scene_geometry --show-config
-da3 auto assets/examples/SOH --experiment scene_geometry
+da3 auto assets/examples/soh/files --experiment scene_geometry --show-config
+da3 auto assets/examples/soh/files --experiment scene_geometry
 da3 results experiment/soh/da3nested_giant_large_1_1/inference/scene_geometry
 ```
 
@@ -599,7 +599,7 @@ da3 auto ./unknown_input \
 
 ```bash
 # 📦 Export both NPZ and GLB formats
-da3 auto assets/examples/SOH \
+da3 auto assets/examples/soh/files \
     --export-format mini_npz-glb \
     --export-dir ./workspace/soh
 

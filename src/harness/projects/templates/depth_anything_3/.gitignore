@@ -36,3 +36,6 @@ temp*.png
 /outputs
 /experiment/
 /tmp/
+
+# Connection records maintained online on-line.
+/.researchharness/online/

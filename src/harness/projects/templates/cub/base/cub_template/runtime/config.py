@@ -88,11 +88,15 @@ def resolve_data_root(config, config_path, override, *, requires_root):
         if override is not None:
             raise ValueError("The selected data set is not accepted --data-root")
         return
-    root = (
-        Path(override).expanduser()
-        if override is not None
-        else Path(config_path).resolve().parent / config["root"]
-    )
+    if override is not None:
+        root = Path(override).expanduser()
+    elif config.get("root"):
+        root = Path(config_path).resolve().parent / config["root"]
+    else:
+        project = Path(__file__).resolve().parents[3]
+        if project.parent.name == "templates" and (project.parents[4] / "src/harness/cli.py").is_file():
+            project = project.parents[4]
+        root = project.parent / "data/CUB_200/CUB_200_2011"
     config["root"] = str(root.resolve())
 
 

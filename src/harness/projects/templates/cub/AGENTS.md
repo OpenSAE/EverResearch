@@ -2,22 +2,40 @@
 
 ## Purpose
 
-Helping assistants maintain CUB-200 classification items by actual entry point to enable code, inspection and results to demonstrate ResearchHarness project protocols together.
+Helping assistants maintain CUB-200 classification items by physical access to enable code, inspection and results to demonstrate ResearchHarness project protocols together.
 
 ## Scope
 
-Applys to the development and use of this template by searching for portals from README.md and selecting the inspection and review mode by doc/code/development/engineering.md. When maintaining within the ResearchHarness source code, use the project protocol specified by the superior projects/README.md#project-execution.
+Applys to the development and use of this template. First selects the maintenance mode and then finds the actual entry from the project README.
 
-## Working methods
+<!-- researchharness:search -->
+## Locate projects and files
 
-The data reading, modelling, classification tasks and operation support are grouped into corresponding modules. The new functionality is synchronized with the configuration, normal access, affected testing and reading of the results. The location of the corresponding directory, parameters, experiments, knowledge, environment and source structure is checked from doc/README.md. The code change updates the affected entries at the same time.
+Start with known registrations and explicit paths when locating a project, command, or configuration. When you need a broader search, list the immediate directories first and pick specific paths. Limit routine recursive searches to active source material. Search local workspace output, historical snapshots, experiment results, or caches by explicitly naming the required files or directories and limiting the output.
+<!-- /researchharness:search -->
 
-A programme to influence the disaggregation of data, indicators, numerical semantics, public access or calculator inputs, with practical examples and back and forth results. doc/code/development/engineering.md or specific responsibility modules, and where other projects are required, propose a central agreement or corresponding improvement of shared capacity.
+<!-- researchharness:mode -->
+## Choose the maintenance mode
 
-## Shared skills
+### Purpose and main functions
 
-Read the corresponding skills from `.agents/skills/` for this item. `maintain-dataset`, `maintain-model` and `maintain-task` for adding, modifying and removing components, `maintain-conf` for adding and deleting parameters or changing meanings and default values, `maintain-experiment` for selecting single parameters and implementing, tracking, restoring, debugging and recording experiments. `maintain-optional` for independent maintenance of scripts, testing, documentation and external documentation for inclusion in the project. `maintain-base` for maintaining basic coordination between components. `maintain-code` for reviewing, repairing and resurveying codes based on real scenes. `maintain-skill` for evaluating and maintaining the practical effects of skills. `maintain-knowledge` for organizing and preserving knowledge. `extract-structure` For project extract source structure.
+Use the project setting to select its maintenance guide and structure checker.
 
-The selection of data sets, models and tasks is found from `plugins.py` to `conf/config.yaml`. For each experiment, one to three words `subname` are given, describing the experimental use or object of exploration, and is configured to be stored with a single operation. Training, precheck and performance comparisons are included at `experiment/` of the root of the project. The experiment uses `python -m cub_template run` for offline formulations in README, and `benchmark` for performance comparison, and reads already operating lists and products from `inspect`. The current training is leading to the final model weighting. Follow-up runs determine from the running records what is missing and continue to train to verify whether the task supports restoration.
+### Scope
 
-_Other Organiser ResearchHarness The shared skills link is located directly in the middle of the source tree. Skips when copying to an independent workspace `.agents/skills/`,Registered as a general item `rh projects apply <project ID>` Generate skills links in the workspace.
+Use this section for project maintenance, checking the online connection, or running an offline structure check.
+
+Start by reading `.researchharness/mode.toml`. Its `enabled` setting selects this project's maintenance mode. Follow the user's choice and obtain authorization before changing it.
+
+- **`enabled = false` selects offline maintenance.** Use the project's [offline operations guide](.researchharness/offline/operations.md). It explains how to plan, carry out, and finish maintenance using the project's files, commands, tests, and data.
+- **`enabled = true` selects online maintenance.** Run `python -IS .researchharness/maintain.py status` first. When it prints `online`, read the central guide at the reported path. Follow that guide to the operations manual, shared skills, and central checks in the ResearchHarness repository. If the status command fails, report the cause and pause work that requires central maintenance until the user restores the connection or selects offline mode.
+- **A missing or invalid setting blocks maintenance.** Report the problem and continue once the setting has been corrected or the user has chosen a mode.
+
+When a structure check is authorized, run `python -IS .researchharness/maintain.py check` from the project root. The command runs the checker for the selected mode. Follow the project README for installation, training, prechecks, and reading results.
+<!-- /researchharness:mode -->
+
+## CUB project modus operandi
+
+The data sets, models and tasks are selected from their respective `plugins.py` and `conf/config.yaml`. For each experiment, one or three words describing the purpose of the study are given as `subname`. Training, pre-testing and performance are compared to the `experiment/` at the root of the project. Validate with README ' s bounded formulation and read sub-lists and products with `inspect`.
+
+The code, configuration and description are synchronized with the actual functions.

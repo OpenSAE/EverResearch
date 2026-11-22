@@ -53,7 +53,7 @@ For detailed information on various evaluations, please refer to our [paper](htt
 To download all the pretrained checkpoints run the command below (note that this might take some time depending on your connection so might be good to grab ☕️ while you wait).
 
 ```bash
-bash scripts/models/get_models.sh   # Downloads to data/checkpoints/
+bash scripts/models/get_models.sh   # Downloads to /path/to/workspace/data/fastvlm/checkpoints/
 ```
 
 ### Usage Example
@@ -64,7 +64,7 @@ python main.py --model-path /path/to/checkpoint-dir \
                   --prompt "Describe the image."
 ```
 
-If you downloaded the 0.5B Stage 3 checkpoint into the checkout's `data/checkpoints/` directory, you can omit `--model-path`. The command selects MPS, CUDA, or CPU in that order. Use `--device` to make the choice explicit. After installation, `fastvlm` accepts the same options.
+If you downloaded the 0.5B Stage 3 checkpoint into the workspace directory `/path/to/workspace/data/fastvlm/checkpoints/`, you can omit `--model-path`. The command selects MPS, CUDA, or CPU in that order. Use `--device` to make the choice explicit. After installation, `fastvlm` accepts the same options.
 
 Run `python main.py --show-config` to inspect defaults and overrides before loading a model. Use `--precheck --image-file /path/to/image.png` to check the selected model and image with a one-token probe. Inference runs this check automatically, prints the answer, and saves a manifest under `experiment/`. Read the result with `python main.py --read-result /path/to/metadata/manifest.json`. [Configuration and parameters](doc/conf.md) [Result layout and readback](doc/experiment.md)
 

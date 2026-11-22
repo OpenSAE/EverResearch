@@ -16,7 +16,7 @@ from sam2.build_sam import build_sam2_video_predictor
 from pathlib import Path
 
 from sam2.precheck.gate import require_directory, require_file
-from sam2.workspace import checkpoint_path, project_workspace
+from sam2.workspace import checkpoint_path, data_root
 
 
 def main():
@@ -36,7 +36,7 @@ def main():
     model_cfg = "configs/sam2.1/sam2.1_hiera_b+.yaml"
 
     # Initialize with video
-    video_dir = require_directory((project_workspace() or Path.cwd()) / "data/notebook_videos/upstream/bedroom", "Benchmark video")
+    video_dir = require_directory(data_root() / "notebook_videos/upstream/bedroom", "Benchmark video")
     # scan all the JPEG frame names in this directory
     frame_names = [
         p

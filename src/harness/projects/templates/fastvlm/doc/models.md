@@ -6,7 +6,7 @@ The PyTorch task uses `--model-path` to select a checkpoint and `--device` to se
 
 ## Shared parameters
 
-The default recipe selects the published 0.5B Stage 3 folder in project-local `data/checkpoints/`. An explicit local checkpoint can live in any directory. The release list specifies model size, training stage and source URL. [Published weights](../README.md#model-zoo) [Device and checkpoint options](conf.md)
+The default recipe selects the published 0.5B Stage 3 folder in shared workspace directory `/path/to/workspace/data/fastvlm/checkpoints/`. An explicit local checkpoint can live in any directory. The release list specifies model size, training stage and source URL. [Published weights](../README.md#model-zoo) [Device and checkpoint options](conf.md)
 
 ## FastVLM PyTorch family
 

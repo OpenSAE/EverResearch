@@ -9,7 +9,7 @@ Install FastVLM and run image-prompt inference from the repository's main instru
 | `datasets/` | Local image reading and sample identity. [Input contracts](datasets.md) |
 | `models/` | PyTorch checkpoints, vision encoders and language models. [Models and weights](models.md) |
 | `tasks/` | Image-prompt generation, precheck, export, and inherited serving and training commands. [Task inputs and outputs](tasks.md) |
-| `data/`, `scripts/` | Published checkpoint files and their download helper. [Checkpoint preparation](../data/README.md) |
+| Workspace data, `scripts/` | Published checkpoint files and their download helper. [Checkpoint preparation](environment/checkpoints.md) |
 | `experiment/` | Execution records, predictions and precheck reports. [Results and readback](experiment.md) |
 | `assets/` | Figures, serving examples, upstream notices, MLX-VLM patch and original acceptance archive. [Project history](maintenance.md) |
 | `third_party/apple_demo/` | SwiftUI demo, camera framework and Xcode project. [Xcode demo](../third_party/apple_demo/README.md) |

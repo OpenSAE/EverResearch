@@ -149,3 +149,6 @@ skyseg.onnx
 # pixi environments
 .pixi
 *.egg-info
+
+# Connection records maintained online on-line.
+/.researchharness/online/

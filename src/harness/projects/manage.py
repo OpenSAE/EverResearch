@@ -1,4 +1,4 @@
-"""Synchronize the sharing of skills and the distribution of project resources and structural results.
+"""Connect to central maintenance guidelines and distribution of project resources and structural results operations.
 
 For defined selection of workspaces and projects rh projects Command.
 """
@@ -7,11 +7,13 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
+from hashlib import sha256
 import json
 import os
 from pathlib import Path
 import re
 import sys
+import tomllib
 
 import yaml
 
@@ -25,36 +27,42 @@ from . import maintenance, resources, structure
 
 START = "<!-- researchharness:projects -->"
 END = "<!-- /researchharness:projects -->"
+MODE_START = "<!-- researchharness:mode -->"
+MODE_END = "<!-- /researchharness:mode -->"
+SEARCH_START = "<!-- researchharness:search -->"
+SEARCH_END = "<!-- /researchharness:search -->"
+SEARCH_GUIDANCE = '## Locate projects and files\n\nStart with known registrations and explicit paths when locating a project, command, or configuration. When you need a broader search, list the immediate directories first and pick specific paths. Limit routine recursive searches to active source material. Search local workspace output, historical snapshots, experiment results, or caches by explicitly naming the required files or directories and limiting the output.'
+ONLINE_IGNORE = "/.researchharness/online/"
 MAINTENANCE_SKILLS = {
-    "maintain-project": "Onboarding and project-wide maintenance",
-    "maintain-base": "Entry points, configuration, dispatch, and runtime",
-    "maintain-dataset": "Datasets, sample loading, labels, splits, and caches",
-    "maintain-model": "Model variants, construction, and checkpoint loading",
-    "maintain-task": "Task computation, prechecks, metrics, and results",
-    "maintain-conf": "Public settings, defaults, presets, and overrides",
-    "maintain-experiment": "Configure, run, resume, or inspect an experiment",
-    "maintain-optional": "Standalone scripts, tests, docs, and external files",
-    "maintain-code": "Code review, duplication, and missing behavior",
-    "maintain-tmp": "Temporary engineering work and investigation",
-    "maintain-skill": "Evaluate and maintain skills",
-    "maintain-knowledge": "Maintain research notes",
+    "maintain-project": "Project-wide access, inspection or cross-component maintenance",
+    "maintain-base": "Access, configuration synthesis, distribution of components or common operation",
+    "maintain-dataset": "Dataset, sample reading, labeling, sorting or cache",
+    "maintain-model": "Model, variant, construction or weight load",
+    "maintain-task": "Task calculation, pre-check, indicator or outcome interface",
+    "maintain-conf": "Open Parameters, Defaults, Configure Presets or Overwrite Orders",
+    "maintain-experiment": "Configure, run, restore or read the results of a single experiment",
+    "maintain-optional": "Independent script, test, document or external file",
+    "maintain-code": "Code review, duplicate realization or functional gap",
+    "maintain-tmp": "One-time clean-up and temporary engineering work",
+    "maintain-skill": "Assessment and maintenance skills per se",
+    "maintain-knowledge": "Collating and preserving research knowledge and thinking",
 }
 
 PROJECT_ACTIONS = (
-    ("Read, investigate, or plan", "read", "Existing entry points, settings, and records"),
-    ("Maintain shared entry points", "base", "`base/` and existing root entry points"),
-    ("Change a dataset implementation", "datasets", "`datasets/`"),
-    ("Change a model", "models", "`models/`"),
-    ("Change a task or precheck", "tasks", "`tasks/`"),
-    ("Change public configuration", "conf", "`conf/`"),
-    ("Run or inspect an experiment", "experiment", "Public entry point and `experiment/`"),
-    ("Write a test or script", "tests-scripts", "`tests/`, `scripts/`, or the owning component"),
-    ("Create temporary files or code", "tmp", "`tmp/<purpose>/`"),
-    ("Update the runtime environment", "environment", "Bound environment and `doc/environment/`"),
-    ("Download and prepare data", "data", "`data/<dataset>/<version>/` or the bound data root"),
-    ("Keep reusable assets", "assets", "`assets/<type>/<resource>/` or the configured cache"),
-    ("Maintain third-party code", "third-party", "`third_party/<upstream>/`"),
-    ("Update documentation", "doc", "`doc/` and existing navigation"),
+    ("Reading, research, planning", "read", "Existing access, configuration and records"),
+    ("Maintenance of public access and operation", "base", "`base/` and existing root entrances"),
+    ("Modify datasets achieved", "datasets", "`datasets/`"),
+    ("Modified model realization", "models", "`models/`"),
+    ("Modify Task or Precheck", "tasks", "`tasks/`"),
+    ("Modify Open Configuration", "conf", "`conf/`"),
+    ("Run experiments or read back results", "experiment", "public entry point and `experiment/`"),
+    ("Prepare test or assistive scripts", "tests-scripts", "`tests/`,`scripts/` or responsible for its realization"),
+    ("Create a one-time file or code", "tmp", "`tmp/<Purpose>/`"),
+    ("Update the operating environment", "environment", "already bound environment and `doc/environment/`"),
+    ("Download and prepare data", "data", "Workspace `data/<Data Set>/<Version>/`"),
+    ("Retention of reusable resources", "assets", "`assets/<Type>/<Resources>/` Or the original cache root"),
+    ("Maintenance of third-party source code", "third-party", "`third_party/<Upstream>/`"),
+    ("Update Document", "doc", "`doc/` and current navigation"),
 )
 
 
@@ -114,13 +122,22 @@ def state_path(harness, project_id):
     return harness.resolve(f".workspace/harness/projects/manage/connection_{identity(project_id)}.json")
 
 
-def skill_directory(root):
-    """Keep a project's repository-wide skill alias dedicated to its original target."""
-    default = root / ".agents/skills"
-    directory = root / ".agents/researchharness-skills" if default.is_symlink() else default
-    if directory.is_symlink() or not directory.resolve().is_relative_to(root):
-        raise ProjectError(f"Shared skills directories need to be located in the project area:{directory}")
-    return directory
+def project_maintenance_mode(root):
+    """Read the explicit switch for projects that carry standalone maintenance."""
+    directory = root / ".researchharness"
+    path = directory / "mode.toml"
+    if directory.is_symlink() or path.is_symlink():
+        raise ProjectError("Project maintenance switches shall be a normal file within the project")
+    if not path.exists():
+        return None
+    data = tomllib.loads(path.read_text(encoding="utf-8"))
+    if set(data) != {"enabled"} or type(data["enabled"]) is not bool:
+        raise ProjectError(".researchharness/mode.toml Need to be specified enabled = true or false")
+    return data["enabled"]
+
+
+def online_guide(harness, project_id):
+    return harness.resolve(f".workspace/harness/projects/manage/guide_{identity(project_id)}.md")
 
 
 def maintenance_guidance(skill_path, operations_path, desired, lightweight_checks):
@@ -129,97 +146,98 @@ def maintenance_guidance(skill_path, operations_path, desired, lightweight_check
     lines = [
         "### Daily maintenance and lightweight checks",
         "",
-        "**Classify each operation before acting.** Before an edit, move, install, download, "
-        "or command, choose a row below and follow its procedure. Split cross-component "
-        "requests into separate operations. Before the first action of each kind, read its guide "
-        "and the applicable `SKILL.md`. Resolve project paths from the project root and "
-        "shared resources from their actual bindings.",
+        "**Choose the operation before making changes.** Before editing, moving files, installing, downloading, or running a command, "
+        "Puts the action under one of the functions in the following table, opens the corresponding guidance and implements the section ’ s judgement, implementation and end steps."
+        "Cross-component requests multiple actions and separate categories. Each class reads the corresponding guidelines and applies prior to the first operation. `SKILL.md`."
+        "The path in the guidance is broken down by the root of the item, and the parent area resources are based on the actual position attached.",
         "",
-        "**When asked to implement a feature:**",
+        "**When asked to implement a feature, follow these steps.**",
         "",
-        "1. Define the user-facing entry point, input, expected result, and a small acceptance case. "
-        "Trace the closest documented command to its configuration, implementation, and reader.",
-        "2. If an existing setting meets the request, use it. Extend the current component when it "
-        "owns the behavior. Add a named component under its existing top-level directory when it "
-        "has an independent input, behavior, or selection.",
-        "3. Change the owning implementation, then connect any needed registry entries, settings, "
-        "dispatch, and result readers. Keep supported output fields and reuse the existing recorder. "
-        "Put one-time probes under the existing `tmp/<purpose>/` and decide what to retain afterward.",
-        "4. Verify with a small input through the same entry point. Check the actual "
-        "output path and readback. Run authorized structure checks when paths change and update docs.",
+        "1. Write out which entry the user will provide, what results to see, and select a small sample to complete the judgement."
+        "Along README Nearest current command, trace to configuration, responsible for realization and result reading position.",
+        "2. Identify the kind of change. If an existing parameter supports the request, use the current recipe or command-line option. "
+        "Change in existing components when it is achieved; when independent input, behaviour or selection,"
+        "Adds a named component to the corresponding existing level I directory..",
+        "3. Change responsibility to achieve first, then connect to registration, configuration, distribution and readback that requires change. Sync defaults and documents when new public options are available;"
+        "Use the existing results to write to the entry when changing the task output, register the product and keep the old field in use."
+        "The code that needs to be checked first, put in the existing one. `tmp/<Purpose>/`,Relocation after completion by return, tool or official function.",
+        "4. Validate target behaviour with a minimum input from the same entry, check the actual generation path and read back."
+        "Perform approved structural checks when the path changes and update user-accessible notes.",
         "",
-        "For example, add per-class accuracy to the existing classification task by extending its "
-        "final evaluation and using its current report writer. Check fixed labels and predictions, "
-        "then read the report back through the normal interface. Add a setting only if users need "
-        "to choose whether to include the metric.",
+        "For example, to add per-class accuracy to an existing classification task, start with its evaluation and report. "
+        "Calculate indicators in the final mission assessment and maintain them through an existing experimental recorder; check the indicators with a fixed sample and read them back through the normal entrance."
+        "Increase configuration only if the user needs an independent switch.",
         "",
-        "| Operation guide | Destination |",
+        "| Operational guidance | Main position |",
         "| --- | --- |",
         *(f"| [{action}](<{operations_path.as_posix()}#{section}>) | {destination} |"
           for action, section, destination in PROJECT_ACTIONS),
         "",
-        "**Use the existing top-level directories.** Daily tasks stay within existing compliant "
-        "locations. Keep top-level directory names and avoid temporary output at the root. "
-        "Confirm the command's working directory, output, and cache locations before running it. "
-        "Use read-only investigation until an unclear write has a defined category and destination. "
-        "Creating a standard top-level directory or restructuring requires explicit authorization.",
+        "**Use the established layout.** For daily tasks, keep the existing top-level directories and use their designated paths. "
+        "Keep intermediate output out of the project root. Before running a command, confirm its working directory, output paths, and cache location. "
+        "Read only the survey when the classification is not clear, and write when applicable duties and compliance points are identified."
+        "A clear project access or restructuring authorization is required for the first time when a standard catalogue or a restructuring of the overall structure is required.",
         "",
-        "**Check paths after each batch.** Compare new, moved, and generated paths with the intended "
-        "destinations. Correct layout violations introduced by this work before continuing.",
+        "**Review the paths after each batch.** Inspect new, moved, and generated files, and correct any misplaced output before continuing. "
+        "The change was found to result in the non-adoption of the structure, which was repaired and delivered.",
     ]
     rows = [
         f"| {purpose} | [`{name}`]({(skill_path / name / 'SKILL.md').as_posix()}) |"
         for name, purpose in MAINTENANCE_SKILLS.items()
         if name in desired
     ]
+    rows.extend(
+        f"| Shared skills | [`{name}`]({(skill_path / name / 'SKILL.md').as_posix()}) |"
+        for name in sorted(desired.keys() - MAINTENANCE_SKILLS.keys())
+    )
     if rows:
-        lines.extend(("", "| Maintenance area | Skill to read |", "| --- | --- |", *rows))
+        lines.extend(("", "| Maintain content | First-reading skills |", "| --- | --- |", *rows))
     if lightweight_checks:
         lines.extend((
             "",
-            "**Lightweight follow-up checks are enabled.** Use the smallest applicable check through "
-            "the normal entry point. Use `rh projects layout check` when paths or output locations "
-            "change. For a project-wide check, use `rh projects project check` or the authorized "
-            "`rh projects maintenance` index. Use one structure check per tree state. "
-            "Use experiment or precheck evidence commands only when relevant. Reuse focused tests, "
-            "configuration previews, or prechecks with existing local resources and bounded inputs. "
-            "Downloads, installs, and full research runs follow the task's authorization.",
+            "**Lightweight follow-up checks are enabled.** After the change, run the smallest relevant check through the normal entry point. "
+            "Use when adding, deleting, moving, changing name or changing output path `rh projects layout check`."
+            "For the whole project `rh projects project check`,Available when central index is approved for writing `rh projects maintenance` Reuse Structure Results."
+            "Run one structure check for each state of the project tree. "
+            "Experimental records and precheck evidence as required `rh projects experiment check` and `rh projects precheck check`."
+            "Prioritize existing light testing, configuration preview or pre-check for behavioural change, using available resources and peer input."
+            "Downloads, installations, official scientific operations and large-scale calculations carried out on a mission basis.",
             "",
-            "Report the actual entry point, coverage, results, and any behavior that still needs evidence.",
+            "When delivered, describe the entry point, the behaviour covered and the results.,"
+            "Complete the check that can be done and indicate which part of the behavior is still lacking operational evidence..",
         ))
     else:
-        lines.extend(("", "**Lightweight follow-up checks require task authorization.** "
-                      "When authorized, reuse central checks and the project's existing checks."))
+        lines.extend(("", "**Lightweight follow-up checks follow the task authorization.** When authorized, use central read-only checks and existing project checks."))
     return "\n\n" + "\n".join(lines)
 
 
-def guidance(harness, project_id, value, directory, desired):
-    root = harness.root
-    project_root = directory.parent.parent
-    if project_root.is_relative_to(harness.workspace):
-        root = Path(os.path.relpath(root, project_root))
-    skills = "enabled" if value["skills"] else "disabled"
-    project_notes = harness.project_record(project_id).relative_to(harness.root) / "README.md"
-    skill_path = directory.relative_to(project_root)
-    skill_entry = f"See `{skill_path}/researchharness/SKILL.md` for the connection guide."
-    if directory.name == "researchharness-skills" and desired:
-        other_skills = sorted(desired.keys() - MAINTENANCE_SKILLS.keys())
-        if other_skills:
-            skill_entry += "\n\n Other available shared skills\n\n"
-            skill_entry += "\n".join(f"- `{skill_path / name / 'SKILL.md'}`" for name in other_skills)
-    operations_path = root / "src/harness/projects/operations.md"
+def guidance(harness, project_id, value, desired, guide):
+    if not value["skills"]:
+        return f"""{START}
+## ResearchHarness Optional access
+
+The project itself. README Provides installation, configuration and running access..
+Our own resources are available. `rh projects resources {project_id}` Question.
+{END}"""
+    operations_path = Path(os.path.relpath(
+        harness.root / "src/harness/projects/operations.md", guide.parent,
+    ))
+    skill_path = Path(os.path.relpath(harness.root / ".agents/skills", guide.parent))
+    notes = harness.project_record(project_id) / "README.md"
+    notes_path = Path(os.path.relpath(notes, guide.parent))
     workflow = maintenance_guidance(skill_path, operations_path, desired, value["lightweight_checks"])
     return f"""{START}
-## ResearchHarness connection
+## ResearchHarness Online maintenance
 
-Use the project's README, dependency declarations, and normal entry points to install, configure, and run it.
-The registered project ID is `{project_id}`. The ResearchHarness root is `{root}` and shared skills are {skills.lower()}.
-Resolve relative paths from the project root. Project notes, when available, are at `{project_notes}` under the ResearchHarness root.
+### Purpose
 
-Follow project review and authorization rules and the current request.
-Use `rh projects status {project_id}` to inspect the connection, `rh projects set` to change shared skill settings, and `rh projects resources {project_id}` to see local data and Python bindings.
+Provision of projects `{project_id}` Central Operations Guidance, Original Skills Entry and Light Validation Options.
 
-{skill_entry}{workflow}
+### Scope
+
+For this item to select an online maintenance item. README Provide independent means of installation, configuration and operation.
+Project maintenance follows the physical access and call relationships of the project. GitHub Process & Current Session Authorization.
+Central engineering experience records, if maintained `{notes_path}` View. This machine data is linked to Python Select with `rh projects resources {project_id}` Query. Skills links point directly at ResearchHarness Original in warehouse.{workflow}
 {END}"""
 
 
@@ -234,28 +252,179 @@ def agent_text(text, block):
     return text.rstrip() + "\n\n" + block + "\n"
 
 
+def with_search_guidance(text):
+    """Write the same search instructions into every generated project guide."""
+    if text.count(SEARCH_START) != text.count(SEARCH_END) or text.count(SEARCH_START) > 1:
+        raise ProjectError("AGENTS.md in which the search paragraph tags are incomplete")
+    block = f"{SEARCH_START}\n{SEARCH_GUIDANCE}\n{SEARCH_END}"
+    if SEARCH_START in text:
+        before, rest = text.split(SEARCH_START, 1)
+        if SEARCH_END not in rest:
+            raise ProjectError("AGENTS.md in which the search paragraph is marked in the wrong order")
+        _, after = rest.split(SEARCH_END, 1)
+        return before + block + after
+    positions = [text.index(marker) for marker in (MODE_START, START) if marker in text]
+    if positions:
+        start = min(positions)
+        return text[:start] + block + "\n\n" + text[start:]
+    separator = "\n\n" if text.strip() else ""
+    return text.rstrip() + separator + block + "\n"
+
+
+def remove_legacy_skill_files(harness, root, installed):
+    """Remove central-generated aliases and guides, preserving project-owned content."""
+    known = catalogue(harness)
+    previous = {name: harness.root / target for name, target in installed.get("links", {}).items()}
+    for relative in (".agents/skills", ".agents/researchharness-skills",
+                     ".researchharness/online/skills"):
+        directory = root / relative
+        if (directory.is_symlink() or not directory.resolve().is_relative_to(root)
+                or not directory.is_dir()):
+            continue
+        removed = False
+        for name in known.keys() | previous.keys():
+            link = directory / name
+            if link.is_symlink() and link.resolve() in {known.get(name), previous.get(name)}:
+                link.unlink()
+                removed = True
+        entry = directory / "researchharness/SKILL.md"
+        if remove_legacy_skill_guide(root, entry):
+            removed = True
+            if not any(entry.parent.iterdir()):
+                entry.parent.rmdir()
+        if removed and not any(directory.iterdir()):
+            directory.rmdir()
+
+    remove_legacy_skill_guide(root, root / ".researchharness/legacy/connection_guide.md")
+    guide = root / ".researchharness/online/README.md"
+    if (guide.is_file() and not guide.is_symlink() and not guide.parent.is_symlink()
+            and guide.resolve().is_relative_to(root)):
+        original = guide.read_text(encoding="utf-8")
+        if START in original:
+            remaining = agent_text(original, "")
+            if remaining.strip():
+                save_bytes(guide, remaining.encode(), source=__file__)
+            else:
+                guide.unlink()
+
+
+def remove_legacy_skill_guide(root, path):
+    if (path.is_symlink() or path.parent.is_symlink() or not path.is_file()
+            or not path.resolve().is_relative_to(root)):
+        return False
+    content = path.read_bytes()
+    template = Path(__file__).with_name("researchharness.skill.md.in").read_bytes()
+    # Recognize the previous distributed guide as well as the last template.
+    older_guide = "e0adfe5c565832c410fc914bd4518d8878c594b82810f598d2a67751d57cdcb8"
+    if content == template or sha256(content).hexdigest() == older_guide:
+        path.unlink()
+        return True
+    return False
+
+
+def setup_maintenance(harness, source, *, online=False):
+    """Install project-owned maintenance files and migrate known legacy links."""
+    root = harness.source_directory(source)
+    if harness.root.is_relative_to(root):
+        raise ProjectError("The project directory cannot contain the central working area")
+    current_mode = project_maintenance_mode(root)
+    project_id = next((name for name, value in harness.bindings().items()
+                       if harness.bound_path(value).resolve() == root), None)
+    if online and project_id is None:
+        raise ProjectError("Online access requires the registration of projects before running. setup-maintenance --online")
+    state = state_path(harness, project_id) if project_id else None
+    installed = json.loads(state.read_text()) if state and state.exists() else {}
+    selected = current_mode
+    if selected is None:
+        selected = online or bool(project_id and installed.get("settings", {}).get("skills"))
+    if online and not selected:
+        raise ProjectError("The item has been explicitly selected for offline; change directly when switch is granted .researchharness/mode.toml")
+
+    bundle = Path(__file__).with_name("standalone")
+    directory = root / ".researchharness"
+    agent = root / "AGENTS.md"
+    ignore = root / ".gitignore"
+    files = ("maintain.py", "offline/check.py", "offline/operations.md")
+    for path in (directory / "offline", directory / "online", agent, ignore,
+                 *(directory / name for name in files)):
+        if path.is_symlink() or not path.resolve().is_relative_to(root):
+            raise ProjectError(f"Project maintenance documents must be in the project and use a normal file or directory:{path}")
+
+    text = agent.read_text(encoding="utf-8") if agent.exists() else ""
+    if START in text or END in text:
+        text = agent_text(text, "")
+    if text.count(MODE_START) != text.count(MODE_END) or text.count(MODE_START) > 1:
+        raise ProjectError("AGENTS.md Maintenance mode paragraph tag incomplete")
+    section = (bundle / "agents.md").read_text(encoding="utf-8").rstrip()
+    block = f"{MODE_START}\n{section}\n{MODE_END}"
+    if MODE_START in text:
+        before, rest = text.split(MODE_START, 1)
+        _, after = rest.split(MODE_END, 1)
+        text = before + block + after
+    else:
+        separator = "\n\n" if text.strip() else ""
+        text = f"{text.rstrip()}{separator}{block}\n"
+    text = with_search_guidance(text)
+
+    created = {}
+    preserved = []
+    for name in files:
+        path = directory / name
+        if path.exists():
+            if not path.is_file():
+                raise ProjectError(f"Maintenance of entrance requires normal files:{path}")
+            # Upgrade only the released launcher that still expects project-local skills.
+            old_launcher = "a8b2e1c7dd3d636bad4c4434a82a6863e0d002ff4f3ba9ff8d4a430a580086ce"
+            if name != "maintain.py" or sha256(path.read_bytes()).hexdigest() != old_launcher:
+                preserved.append(name)
+                continue
+        created[path] = (bundle / name).read_bytes()
+    for path, content in created.items():
+        save_bytes(path, content, source=__file__)
+    ignore_text = ignore.read_text(encoding="utf-8") if ignore.exists() else ""
+    if ONLINE_IGNORE not in ignore_text.splitlines():
+        comment = "# Connection records maintained online on-line."
+        separator = "\n\n" if ignore_text.strip() else ""
+        save_bytes(ignore, (ignore_text.rstrip() + f"{separator}{comment}\n{ONLINE_IGNORE}\n").encode(),
+                   source=__file__)
+    if not agent.exists() or text != agent.read_text(encoding="utf-8"):
+        save_bytes(agent, text.encode(), source=__file__)
+    if current_mode is None:
+        save_bytes(directory / "mode.toml",
+                   ("# Purpose and main function: Selection of the source of the project maintenance rules.\n"
+                    "# Scope of application: AGENTS.md,Project maintenance entrance and central mounted reading.\n"
+                    f"enabled = {str(selected).lower()}\n").encode(), source=__file__)
+    attached = False
+    if selected and project_id:
+        apply(harness, project_id)
+        attached = True
+    else:
+        remove_legacy_skill_files(harness, root, installed)
+    return {"project": str(root), "mode": "online" if selected else "offline",
+            "attached": attached, "preserved": preserved}
+
+
 def status(harness, project_id):
     _, root, value = settings(harness, project_id)
-    expected = catalogue(harness)
-    links = skill_directory(root)
-    actual = {
-        name: (links / name).is_symlink() and (links / name).resolve() == target
-        for name, target in expected.items()
-    }
+    project_mode = project_maintenance_mode(root)
+    if project_mode is not None:
+        value["skills"] = project_mode
+    expected = catalogue(harness) if value["skills"] else {}
     state = state_path(harness, project_id)
     applied = json.loads(state.read_text()) if state.exists() else None
+    guide = online_guide(harness, project_id) if project_mode else root / "AGENTS.md"
     return {
         "project_id": project_id,
         "path": str(root),
         "settings": value,
-        "skills": actual,
-        "shared_skill_directory": str(links),
-        "skill_entry": "project-skill-directory" if links.name == "skills" else "AGENTS.md",
+        "skills": {name: True for name in expected},
+        "shared_skill_directory": str(harness.root / ".agents/skills") if value["skills"] else None,
+        "skill_entry": ("central-guide" if project_mode else "AGENTS.md") if value["skills"] else None,
+        "maintenance_guide": str(guide) if value["skills"] and guide.is_file() else None,
         "resources": resources.read(harness, project_id),
         "last_applied_settings": (
             {"lightweight_checks": False, **applied["settings"]} if applied else None
         ),
-        "client_reload": "New session to read shared skills; already existing session reloads by actual loading status of client.",
     }
 
 
@@ -266,62 +435,61 @@ def apply(harness, project_id, changes=None):
 
 def apply_skills(harness, project_id, changes):
     path, root, original = settings(harness, project_id)
+    project_mode = project_maintenance_mode(root)
+    if project_mode is not None and changes and "skills" in changes:
+        raise ProjectError("This item is by: .researchharness/mode.toml controls;rechanging the contents of enabled Value")
+    if project_mode is False:
+        raise ProjectError("Project maintenance switch is closed; please use the offline entry on the project belt")
     value = {**original, **(changes or {})}
-    known = catalogue(harness)
+    if project_mode is True:
+        value["skills"] = True
     state = state_path(harness, project_id)
-    old = json.loads(state.read_text()) if state.exists() else {}
-    installed = old.get("links", {})
-    previous = {name: harness.root / target for name, target in installed.items()}
-    # Adopt earlier hand-installed central links, so the off switch also removes them.
-    targets = {**previous, **known}
-    directory = skill_directory(root)
-    if installed and root / old.get("directory", ".agents/skills") != directory:
-        raise ProjectError("Existing shared skills positions have changed, and please check last application log and project skills directory")
-    desired = known if value["skills"] else {}
-    for name, target in targets.items():
-        if name not in desired and name not in previous:
-            continue
-        link = directory / name
-        if link.exists() or link.is_symlink():
-            if not link.is_symlink() or link.resolve() not in {target, previous.get(name)}:
-                raise ProjectError(f"Retention of project-owned skills {link};Please specify how the same-named skill is accessed.")
-    agent = root / "AGENTS.md"
-    entry = directory / "researchharness/SKILL.md"
-    for file in (agent, entry):
-        if file.is_symlink() or not file.resolve().is_relative_to(root):
-            raise ProjectError(f"Access requires normal files of the project itself:{file}")
-    updated_agent = agent_text(
-        agent.read_text() if agent.exists() else "",
-        guidance(harness, project_id, value, directory, desired),
-    )
+    installed = json.loads(state.read_text()) if state.exists() else {}
+    desired = catalogue(harness) if value["skills"] else {}
+    root_agent = root / "AGENTS.md"
+    if root_agent.is_symlink():
+        raise ProjectError(f"Access requires normal files of the project itself:{root_agent}")
+    root_text = root_agent.read_text() if root_agent.exists() else ""
+    guide = root_agent
+    connection = None
+    if project_mode:
+        if ".researchharness/mode.toml" not in root_text:
+            raise ProjectError("Item AGENTS.md You have to explain first. .researchharness/mode.toml The two entrances.")
+        guide = online_guide(harness, project_id)
+        connection = root / ".researchharness/online/connection.json"
+        if connection.is_symlink() or connection.parent.is_symlink():
+            raise ProjectError(f"Online connection records must be located within the project:{connection}")
+
+    original_guide = root_text if guide == root_agent else ""
+    updated_guide = agent_text(original_guide, guidance(harness, project_id, value, desired, guide))
+    if guide == root_agent:
+        updated_agent = updated_guide
+    elif START in root_text or END in root_text:
+        updated_agent = agent_text(root_text, "")
+    else:
+        updated_agent = root_text
+    updated_agent = with_search_guidance(updated_agent)
     settings_text = updated_settings(path, project_id, changes) if changes else None
-    directory.mkdir(parents=True, exist_ok=True)
-    for name in targets:
-        link = directory / name
-        if name not in desired and link.is_symlink() and link.resolve() in {targets[name], previous.get(name)}:
-            link.unlink()
-    for name, target in desired.items():
-        link = directory / name
-        destination = target
-        if root.is_relative_to(harness.workspace):
-            destination = Path(os.path.relpath(target, directory))
-        if not link.is_symlink():
-            link.symlink_to(destination, target_is_directory=True)
-        elif link.readlink() != destination:
-            link.unlink()
-            link.symlink_to(destination, target_is_directory=True)
-    save_bytes(agent, updated_agent.encode(), source=__file__)
-    save_bytes(entry, Path(__file__).with_name("researchharness.skill.md.in").read_bytes(), source=__file__)
+    remove_legacy_skill_files(harness, root, installed)
+    if guide != root_agent:
+        save_bytes(guide, updated_guide.encode(), source=__file__)
+    if updated_agent != root_text:
+        save_bytes(root_agent, updated_agent.encode(), source=__file__)
+    if connection is not None:
+        save(connection, {
+            "purpose": "Central working area for online maintenance of positioning projects.",
+            "scope": "Only for project maintenance switches to read on.",
+            "root": os.path.relpath(harness.root, root),
+            "project_id": project_id,
+        }, source=__file__)
     if settings_text is not None:
         save_bytes(path, settings_text.encode(), source=__file__)
     save(
         state,
         {
-            "purpose": "Record applied project skills and access documents.",
-            "scope": "Project shared skills links and collaboration notes.",
+            "purpose": "Record applied project maintenance settings.",
+            "scope": "For Project Access Query and Mode Migration.",
             "settings": value,
-            "directory": directory.relative_to(root).as_posix(),
-            "links": {name: target.relative_to(harness.root).as_posix() for name, target in desired.items()},
             "updated_at": datetime.now(timezone.utc).isoformat(),
         },
         source=__file__,
@@ -359,6 +527,9 @@ def main(argv=None):
         elif action == "run":
             command.add_argument("arguments", nargs=argparse.REMAINDER)
     commands.add_parser("list")
+    setup_parser = commands.add_parser("setup-maintenance", help="Maintenance portals to be used independently for project delivery")
+    setup_parser.add_argument("path")
+    setup_parser.add_argument("--online", action="store_true", help="Enable online access to registered items when first configured")
     maintenance_check = commands.add_parser("maintenance", help="Increased acceptance and inspection items and updated central maintenance index")
     maintenance_check.add_argument("path")
     maintenance_check.add_argument("--fresh", action="store_true", help="Recheck all structural conditions")
@@ -412,6 +583,10 @@ def main(argv=None):
             print(json.dumps(result, ensure_ascii=False, indent=2))
             return 0 if result["passed"] else 1
         harness = load_harness(args.harness_root)
+        if args.action == "setup-maintenance":
+            result = setup_maintenance(harness, args.path, online=args.online)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0
         if args.action == "maintenance":
             result = maintenance.check(
                 harness, args.path, fresh=args.fresh, limit=args.limit, record=args.record,

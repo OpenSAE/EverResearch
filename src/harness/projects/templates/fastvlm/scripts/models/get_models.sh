@@ -6,7 +6,11 @@
 set -euo pipefail
 
 project_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)
-checkpoints="$project_root/data/checkpoints"
+workspace=$(dirname -- "$project_root")
+if [[ "$(basename -- "$workspace")" == templates && -f "$project_root/../../../../../src/harness/cli.py" ]]; then
+    workspace=$(cd -- "$project_root/../../../../../.." && pwd)
+fi
+checkpoints="$workspace/data/fastvlm/checkpoints"
 download_url=https://ml-site.cdn-apple.com/datasets/fastvlm
 
 mkdir -p "$checkpoints"

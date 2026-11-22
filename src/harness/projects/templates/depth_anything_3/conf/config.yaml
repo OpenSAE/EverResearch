@@ -8,7 +8,7 @@ inference:
   export_format: glb
 catalogs:
   dataset:
-    soh: data/media/examples/SOH
+    soh: assets/examples/soh/files
     media: datasets/media
   model:
     da3nested_giant_large_1_1: da3nested-giant-large

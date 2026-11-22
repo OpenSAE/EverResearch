@@ -42,13 +42,11 @@ def experiment_directory(input_path: str, model: str, name: str) -> Path:
             "--export-dir to export to an explicit location"
         )
     source = Path(input_path).resolve()
-    source_name = _slug(source.stem if source.is_file() else source.name)
     model_name = _slug(Path(model).name)
     catalogs = OmegaConf.load(CONFIG_ROOT / "config.yaml").catalogs
-    registered_input = catalogs.dataset.get(source_name)
-    dataset = (
-        source_name if registered_input and (root / registered_input).resolve() == source
-        else "media"
+    dataset = next(
+        (name for name, path in catalogs.dataset.items() if path and (root / path).resolve() == source),
+        "media",
     )
     registered_model = model_name if model_name in catalogs.model else "local_model"
     return root / "experiment" / dataset / registered_model / "inference" / name

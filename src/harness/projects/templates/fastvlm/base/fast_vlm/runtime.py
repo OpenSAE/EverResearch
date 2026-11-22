@@ -24,6 +24,13 @@ def project_root():
     return None
 
 
+def checkpoint_root():
+    root = project_root() or Path.cwd()
+    if root.parent.name == "templates" and (root.parents[4] / "src/harness/cli.py").is_file():
+        root = root.parents[4]
+    return root.parent / "data" / "fastvlm"
+
+
 def defaults():
     config_path = (
         SOURCE_ROOT / "conf/config.json"
@@ -44,7 +51,7 @@ def _model_source(value):
         legacy = root / "checkpoints"
         old = path.resolve()
         if legacy in old.parents:
-            current = root / "data" / old.relative_to(root)
+            current = checkpoint_root() / old.relative_to(root)
             if current.exists():
                 return str(current)
     if path.exists() or path.is_absolute() or value.startswith(("./", "../", "checkpoints/", "data/")):
@@ -58,7 +65,7 @@ def resolve_config(overrides):
     if "model_path" not in overrides:
         legacy_model = Path("./llava-v1.5-13b")
         config["model_path"] = str(
-            legacy_model.resolve() if legacy_model.is_dir() else (project_root() or Path.cwd()) / config["model_path"]
+            legacy_model.resolve() if legacy_model.is_dir() else checkpoint_root() / config["model_path"]
         )
     config["model_path"] = _model_source(config["model_path"])
     config["model_base"] = _model_source(config["model_base"])

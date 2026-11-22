@@ -65,11 +65,6 @@ def component(root, root_modules):
 
 RULES = {
     "base": code_tree("base", rf"base(?:/{NAME})+"),
-    "hydra_plugins": Rules(
-        (r"hydra_plugins", rf"hydra_plugins(?:/{NAME})+"),
-        (rf"hydra_plugins/(?:{NAME}\.py|README\.md)",
-         rf"hydra_plugins(?:/{NAME})+/(?:{CODE}|README\.md)"),
-    ),
     "datasets": component("datasets", "plugins"),
     "models": component("models", "plugins|build"),
     "tasks": component("tasks", "plugins"),
@@ -98,8 +93,6 @@ RULES = {
          rf"assets/{NAME}/{NAME}/scripts(?:/{NAME})*/{SCRIPT}",
          rf"{HISTORY_FILES}(?:/[^/]+)*/[^/]+"),
     ),
-    "data": Rules((r"data", rf"data/{NAME}(?:/{PAYLOAD})*"),
-                  (rf"data(?:/{NAME})?/README\.md", rf"data/{NAME}(?:/{PAYLOAD})+/{PAYLOAD}")),
     # The project owns the checkout location. Upstream owns names inside it.
     "third_party": Rules((r"third_party", rf"third_party/{PAYLOAD}(?:/[^/]+)*"),
                          (r"third_party/README\.md", rf"third_party/{PAYLOAD}(?:/[^/]+)*/[^/]+")),
@@ -109,11 +102,9 @@ RULES = {
 EXPECTED = {
     "assets": "use assets/<Resource type>/<Resources>/README.md,files/ or scripts/",
     "conf": "use conf/config.<format> or conf/<Source Path Front Two Levels>/<Profile>",
-    "data": "use data/<Data Set>/<Version>/ Save Data",
     "datasets": "use datasets/<Data set or family>/<Optional members>/ Save Data Achieved",
-    "doc": "Use a fixed description page, or code,knowledge,environment,experiment Organizational theme",
+    "doc": "Use a fixed description page or code,knowledge,environment,experiment Organizational theme",
     "experiment": "use experiment/<Data Set>/<Optional Model>/<Tasks>/<Research use>/ Save Run",
-    "hydra_plugins": "Only by Hydra Auto-discovered plugin source, name root reserved as none __init__.py Table of contents",
     "models": "use models/<Family>/<Optional Series>/ Save model realization",
     "tasks": "use tasks/<Tasks>/<Optional subtasks>/ Save Research Calculator",
     "tests": "use tests/test_<Behaviour>.py or tests/ It’s... product,integration,fixtures Branch",
@@ -207,13 +198,25 @@ def checkable_name(parts, is_directory):
         return False
     if top == "assets" and len(parts) > 3:
         return parts[3] == "scripts" and len(parts) > 4
-    if top == "data" or parts[:2] == ["tests", "fixtures"]:
-        return is_directory and (top != "data" or len(parts) <= 3)
+    if parts[:2] == ["tests", "fixtures"]:
+        return is_directory
     if top == "experiment":
         return (is_directory and len(parts) >= 2
                 and not any(part in {"artifacts", "reports", "logs", "metadata", "tmp", "executions"}
                             or re.fullmatch(EXECUTION, part) for part in parts[1:]))
     return True
+
+
+def saebase_package(declaration):
+    """Allow the established SAEBase spelling for the opensae-saebase project."""
+    if declaration.is_symlink() or not declaration.is_file():
+        return False
+    try:
+        with declaration.open("rb") as stream:
+            project = tomllib.load(stream).get("project")
+    except (OSError, ValueError):
+        return False
+    return isinstance(project, dict) and project.get("name") == "opensae-saebase"
 
 
 def check_layout(root, *, remember=None):
@@ -232,7 +235,13 @@ def check_layout(root, *, remember=None):
         violations.append({"path": path, "rule": rule, "expected": expected})
 
     if not project_name_valid(root.name):
-        fail(".", "project_name", "Project root name with two or three words PascalCase,It’s full English words, named for engineering purposes.")
+        allowed = False
+        if root.name == "SAEBase":
+            declaration = root / "pyproject.toml"
+            allowed = (remember(declaration, saebase_package) if remember
+                       else saebase_package(declaration))
+        if not allowed:
+            fail(".", "project_name", "Project root name with two or three words PascalCase,It’s full English words, named for engineering purposes.")
 
     def visit(directory, parent=""):
         nonlocal inspected
@@ -262,7 +271,7 @@ def check_layout(root, *, remember=None):
             fixed_file = (not is_directory and (entry.name == "config.py" or is_configuration_file(entry)
                                                 or relative == "doc/conf.md"))
             if checkable_name(parts, is_directory) and not fixed_file:
-                component = top in {"datasets", "models", "data"} and len(parts) <= 3
+                component = top in {"datasets", "models"} and len(parts) <= 3
                 component_config = top == "conf" and parts[1] in {"datasets", "models"}
                 allow_digits = top == "experiment" or (
                     is_directory and (component or component_config)

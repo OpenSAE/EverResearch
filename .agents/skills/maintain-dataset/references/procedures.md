@@ -15,8 +15,8 @@ The project access description indicates how the log catalogue corresponds to th
 | `datasets/<dataset>/__init__.py` | Open reading, preparation or selection of entry points to declare the tasks supported |
 | `datasets/<dataset>/dataset.py`、`prepare.py`、`transforms.py` | Saves the reading, preparation and transformation by actual duty. Special offline samples are placed in the DDS directory |
 | `datasets/plugins.py`, Public Access and Registration Entrance | Public identification and aliases are matched to realization. |
-| `conf/dataset/`,`conf/paths/`,Select its formula. | Preset, enter root position and overwrite value. Real input is registered data root |
-| `tasks/<task>/`, precheck, list reader | Check if the combination works, consumes a sample and records the actual input identity |
+| `conf/config.<format>`, corresponding source `conf/datasets/` branch, select its formulation | Defines the default, working-area data path and overwhelm values for the data set. The shared path configuration belongs to the actually responsible source branch, such as `conf/base/` for `base/` |
+| `tasks/<task>/`, pre-check, list reader | Check if the combination works, consumes a sample and records the actual input identity |
 
 Each document is enabled in accordance with the duties assigned to it.
 
@@ -37,10 +37,10 @@ Each document is enabled in accordance with the duties assigned to it.
 ## Remove
 
 1. Determines the range as a source, preset, aliases, mission support, or the entire data set.
-2. Lists the tasks that must be retained and their input selections. Retention missions depend on the data set for the only input, indicating what capacity it will lose. Alternative data need to be determined by humans when they change the scientific calibre.
+2. Lists the tasks that must be retained and their input selection. Retention missions depend on the data set to provide the only input, indicating what capacity it will lose. Alternative data need to be determined by humans when they change the scientific calibration.
 3. Process the reservation call and then remove the selected configuration, registration and exclusive realization. Synchronize commands, activity descriptions, associated tests and exclusive status when the entire data set is removed. Shared functions are assigned to the remaining caller. Original data, shared caches and results are processed as specified.
 4. Checks the removed selection entry and retention combinations as agreed. The historical results continue to be interpreted according to the input identity at the time of actual generation.
 
 ## Points for reference items
 
-`datasets/cub200/dataset.py` for the CUB template to read the official input, `offline_samples.py` to generate a sample of the offline exercise under the same data set. `datasets/plugins.py` to register the two types of input, `conf/config.yaml` definition selection. Use `--set dataset=synthetic` to select offline input and confirm the sample from the official precheck to the classification step when permission is granted. When one of the presets is removed, the formulation that refers to it is found and the calls are processed.
+`datasets/cub200/dataset.py` for the CUB template to read the official input, `offline_samples.py` to generate a sample of the offline exercise under the same data set. `datasets/plugins.py` to register the two types of input, `conf/config.yaml` definition selection. Use `--set dataset=synthetic` to select offline input and confirm the sample from the official pre-check to the classification step when permission is granted. When one of the presets is removed, the formulation that refers to it is found and the calls are processed.

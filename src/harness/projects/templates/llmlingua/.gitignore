@@ -404,3 +404,6 @@ dist/*
 
 # Managed experiment output
 /experiment/
+
+# Connection records maintained online on-line.
+/.researchharness/online/

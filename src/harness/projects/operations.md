@@ -1,141 +1,147 @@
-# Project maintenance procedures by operation
+# Maintenance items by operational category
 
 ## Purpose
 
-Help project assistants carry out requests within the project's existing file structure. Each procedure explains how to recognize the operation, where to start, what to change, and how to verify and finish it.
+Helps the project assistant to implement user requirements into the existing document structure.
 
 ## Scope
 
-Use this guide for projects that follow the ResearchHarness layout. The managed section in the project's `AGENTS.md` links to each procedure. Use the project's current commands, configuration, run records, and specialist skills as implementation references. When onboarding a project, establish its current responsibilities and the authorized scope first.
+The management paragraphs of Project `AGENTS.md` are linked here. When you are given a job, you can look at the corresponding sections by the type involved; current commands, configurations, running records, and specific skills of the project provide the basis for realization. In the case of an unknown or pending project, existing duties and user authorizations are confirmed on a project-wide maintenance basis.
 
-## Choose the operations required by the request
+## How to select the operation after receiving the request
 
-1. **Identify the use case.** Find the user-facing command, expected input, and observable result. Trace the closest existing command to its configuration, responsible implementation, and result reader. When available, use the maintenance index to narrow the changes and prior evidence to review.
-2. **Choose the smallest appropriate change.** Use an existing setting when it meets the request. Extend an existing component when it owns the behavior. Add a named component inside its existing top-level directory when it has an independent input, output, caller, or selection. Before removing behavior, identify the commands, recipes, documentation, and readers that rely on it.
-3. **Split requests with multiple responsibilities.** For example, downloading a new revision and running an existing model usually requires data preparation and experiment execution. Add a dataset implementation change only if the input contract changes, and a configuration change only if the project needs a lasting public option. Confirm inputs, destinations, commands, and outputs for each operation. Share evidence from the same run across all applicable procedures.
-4. **Resolve the destination before writing.** Work within existing compliant top-level directories and registered resources. Creating a standard top-level directory for the first time or restructuring the project requires explicit onboarding or structure-change authorization. If a write cannot be classified or its output location is unknown, use read-only investigation to resolve it.
+1. ** Determines the user's actual operations and results. ** Finds where the user enters, what inputs, what results should be seen. Finds the person or program that configures, is responsible for achieving and reading the results from the closest current command in README. When an index is maintained, the project first narrows the reading with the entry, change and old evidence.
+2. ** Determines how this is done. ** The current parameter is already supported by the current configuration or command. The current component is subject to a change in the component's behaviour. When an individual can be selected, independently entered, or independently called, a named component is added to the responsible directory, and its registration and access is made available. When removing the action, check the person who is still calling the configuration, command, document and result reader.
+3. ** Categorize by physical action. ** A request can contain several operations. For example, "downloading a new version of the data and running an existing model" usually includes downloading data, running experiments, entering the data set only when the input format changes, and reconfiguring the project only when there is a long-term need to increase the public selection. Each action confirms its own chapter, the place where it will read and write, the call-in and the expected product.
+4. ** Determines the range of deliverables. ** Ordinary tasks follow the existing level I catalogue and the proper drop point. If the required level I catalogue is lacking, use the existing compliance location or registered external resources; the first launch of the standard catalogue and the entire project restructuring is a clearly approved access or structural maintenance.
 
-Record the paths in scope and preserve existing user changes. After each coherent batch, compare the actual additions, moves, and generated files with the intended destinations. For an edit within an existing path, choose the smallest relevant behavior check. For changes to names, paths, or output destinations, use one authorized structure check. Use `rh projects layout check` for layout changes, and `rh projects project check` or the authorized writable `rh projects maintenance` index for project-wide checks. Correct layout violations introduced by the current work before continuing.
+Record the path that this round will touch and the user changes that already exist. Batch endings compare the path that actually adds, moves, and generates. You can use the current version to control the status and list of files, or you can directly view the known target directory. If you change the body of the document, you can first verify the specific behaviour. If you have a new path, change the name, move or change the operational output, select the corresponding central check. Local layouts are `rh projects layout check`, the whole item is `rh projects project check` or has the authorized `rh projects maintenance`. Common status check results.
 
 <a id="read"></a>
 
-## Read, investigate, or plan
+## Reading, investigation and planning
 
-1. Start with the requested object and its current instructions, entry points, source, or results. Follow actual callers to establish evidence.
-2. Diagnose failures from the original command, effective configuration, error, and artifacts. If investigation requires executing something, classify the action as result inspection, temporary work, or an experiment before proceeding.
-3. Report observations, locations, and what remains uncertain. Classify any requested written deliverable under the applicable procedure.
+1. When asked by the user about the status, cause or programme, you start with the object you have specified. Read the project description, the relevant entry, the affected document or the outcome, and complete the basis of the actual call.
+2. If you need to run a search to answer a failure, you will be able to determine whether it is a read-out, temporary work or a full-time operation with an output, which is handled by the respective category and authorization.
+3. Deliver the actual observed facts, the corresponding path and the judgement that remains to be confirmed. When the user requests the document to be delivered, the document is placed in the applicable category, such as a document or a one-time document.
 
 <a id="base"></a>
 
-## Maintain shared entry points and runtime code
+## Maintenance of public entrances and operating layers
 
-1. Trace the public CLI or API to command parsing, configuration composition, component dispatch, or result handling under `base/`. Find callers such as scripts, installed commands, and tests.
-2. Keep shared coordination in `base/`. Put dataset, model, and task logic in the component that owns it. Preserve existing root-level entry points, build declarations, and dependency manifests.
-3. When changing path resolution, exercise the relevant working-directory or installed launch mode. If the result interface changes, check existing readers with a saved artifact. Update the affected instructions.
-4. Finish when the supported entry points resolve the intended components, settings, and destinations. Use `maintain-base` for implementation details.
+1. When a user changes the command, parameter resolution, configuration synthesis, distribution of components or common storage, this is done from the open entrance to `base/`; it is concerned about scripts, tests or installed commands for the entrance.
+2. Generic resolution, resource selection and call sequences are repaired at `base/`. Individual data sets, models or task algorithms are assigned to corresponding components; only actions shared by multiple actual callers refer to the base layer. The root directory entrance is maintained as the current open entry, and the construction of the declaration and relying list remains in place.
+3. The routing resolve identifies the user as starting from the root of the project, the command after installation, or the external work directory. The actual configuration source and the target path is checked with the normal entry. The installation of the portal is completed when the statement is installed. The public result interface is changed by checking the readings that are still supported by the existing product and by updating the corresponding description.
+4. **Completion Conditions.** The supported access points can still be formally achieved, and the changed information on behaviour and failure can be physically accessed. Tools, caches and operational products are placed in their respective positions of responsibility. `maintain-base`.
 
 <a id="datasets"></a>
 
-## Add, change, or remove a dataset implementation
+## Add, modify or remove datasets to achieve
 
-1. Distinguish a data location change, a download, and a change to loading, labels, transforms, splits, or sample fields. The last group belongs in `datasets/`.
-2. Trace a sample from its task back to the dataset selection, configuration, loader, and split. Reuse a preset or subset for variations of the same source. Register a named implementation when there is a distinct input contract. Identify active recipes before removing a dataset.
-3. Use a small representative sample to check identity, fields, shape, labels, and split. Rebuild affected caches when preprocessing or splitting changes while preserving original input. Cover a retained old recipe where applicable.
-4. Finish when the normal entry point selects and reads the expected sample and its source and version are traceable. Update the relevant dataset and configuration documentation. Use `maintain-dataset` for detailed add, change, and remove cases.
+1. Determines what the request affects first. The place where the data in the same format is replaced is the data binding or running selection; the change to read, label, divide, preprocess or sample field is `datasets/`; only the original file is obtained and processed by data download.
+2. In addition to the variable from the same source, take into account the existing preset or subset; when the new input contract is independently selected, add a name to the respective data set location and connect to the existing registration. When the affected tasks or public parameters are updated, group separately. Remove first the tasks, formulations and documents that are still selected.
+3. Check the field, shape, identity, label and division that the task actually reads in using a small representative sample. Confirms whether the cache is still applicable when preprocessing or partitioning is modified, rebuilds the corresponding data version on condition and protects the original input.
+4. **Completion Conditions.** The expected samples can be selected and read from the existing access and the data sources and versions can be located in sync. `doc/datasets.md` The corresponding entry and the description of the affected configuration. The detailed steps for adding or deleting `maintain-dataset`.
 
 <a id="models"></a>
 
-## Add, change, or remove a model
+## Add, modify or remove models
 
-1. Find the selected variant, constructor, checkpoint resolution, and outputs consumed by the task. Use the existing binding for a compatible checkpoint replacement. Reuse the constructor for a same-family parameter variant. Give independent architectures or input/output contracts their own implementation.
-2. Update the responsible model under `models/` and connect any needed registry entries or presets. Before removal, identify active recipes, tasks, retained checkpoints, and shared implementations.
-3. Use the normal constructor or precheck to confirm model and checkpoint selection. Exercise a small forward pass and verify the outputs consumed by a representative task. Check existing checkpoint readers when the checkpoint interface changes.
-4. Finish when users can select the intended model, compatible combinations work, and unsupported combinations produce a clear reason. Update model and affected configuration documentation. Use `maintain-model` for implementation details.
+1. The output of the model from the task configuration check for actual construction parameters, weight re-resolution and task reading. Only existing binding or weight paths are used when replacing compatible weights; the congener variable priority re-use constructor; the independent structure or input output contract is the result of a new name model.
+2. `models/` for the corresponding family or series of maintenance structures and loads, to update model registrations and public presets as required.
+3. Checks the selected variable, the source of the actual weight, and the load results with the official construction or pre-check entry. Take a small batch from the affected task to go forward and check the output of the actual consumption of the task.
+4. The ** completion condition. ** normal entrance clearly selects the model, with the right combination having the available output and the reason for incompatibility. Synchronization models describe and change the task and parameter document. Details are `maintain-model`.
 
 <a id="tasks"></a>
 
-## Add, change, or remove a task or precheck
+## Add, modify or remove tasks and precheck
 
-1. Trace the command to task registration, computation, reporting, and result readers. Extend the current task for a new metric or output field. Use a named task or subtask for a separately selectable operation with independent inputs or outputs. Keep shared task prechecks in `tasks/precheck/`.
-2. Implement the computation and connect only the required dispatch and configuration changes. Write results through the existing run recorder and register artifacts in the manifest. Define units, denominators, inclusion rules, and missing values for changed metrics. Identify consumers before removing an output.
-3. Run the smallest relevant case through the normal entry point and read its result back. When changing the precheck or its stop behavior, check one valid input and one invalid input that should stop before computation.
-4. Finish when the normal entry point connects the task, precheck, and result readers, and task documentation explains how to use and interpret them. Use `maintain-task` for implementation details.
+1. From existing commands to task registration, computing, reporting and follow-up readers. Give priority to expanding a task when a task has been added to an indicator or result field; a task or sub-task can be created for a task that is selected individually and has an independent input output. Shared precheck follows `tasks/precheck/`.
+2. The new result is written into the list by the original recorder and registered in the list. The indicator changes the list, the denominator, the rules and the missing values. The procedure and the old results are still read before the output is removed.
+3. Checks the selected components, results and readbacks with a minimum of valid input from the regular mission entry. When pre-check access or failure is changed, verify a valid input and a clearly invalid input, confirming that the latter stopped before the official calculation. Direct references are made when the same condition is covered by the available running evidence.
+4. **Completion Conditions.** The public entry points are connected to the actual tasks, pre-checks, and the results are read, and the relevant documents describe how the products are run and explained. `maintain-task`.
 
 <a id="conf"></a>
 
-## Change public configuration or select an existing setting
+## Modify open configuration or select existing parameters
 
-1. Distinguish a one-off override, a reusable recipe, and a change to the option, default, or meaning that callers see. Use existing overrides for one run and the established configuration location for reusable recipes. Preserve historical effective configuration with its original run.
-2. Trace defaults, precedence, and actual readers. Change the responsible branch in `conf/`. Connect the default and validation for a new setting; handle retained recipes when changing semantics or removing a setting.
-3. Check defaults and explicit overrides through configuration preview, a focused test, or a short precheck. Add invalid values or old recipes only when the change affects them.
-4. Finish when selection works through the normal entry point and the resulting behavior is observable. Document the default, applicability, and override procedure. Use `maintain-conf` for implementation details.
+1. Determines whether the user changes a value for this operation, saves a renewable formulation, or changes the open options, defaults, or meanings that all callers face. A single run uses the existing overwhelming, and the fully reusable formulation is placed in the current configuration; the historical running of the project retains its own effective configuration.
+2. Follow the default definition, the order of overwhelming and the actual readout along the public entry point. Open configuration is maintained for the `conf/` branch, with options added only when there is an independent user selection. New parameters are to be followed by defaults and verifications; changes to semantics or removal parameters are to process the formulation and caller that are still in use.
+3. Checks the default values and the visible overlays with a configuration preview, existing tests or short prechecks. When it comes to invalid values or old formulations, only the corresponding scenes are added to confirm that the changes are passed to the actual behaviour.
+4. **Completion Conditions.** Users can select the required values from the normal entrance and the results of the validity are visible. `doc/conf.md` or the default value, conditions of application and examples of overwhelming on the item page. `maintain-conf`.
 
 <a id="experiment"></a>
 
-## Start, resume, or inspect an experiment
+## Start, restore or read experiments
 
-1. Distinguish inspecting an existing result, reusing a run, resuming an interrupted run, and launching a new one. Read through the normal result command and manifest. Before resuming, confirm support for recovery and match the configuration, data, model, environment, and checkpoint.
-2. For a new run, establish inputs, device, recipe, budget, and output and cache locations. Use the public entry point so the normal precheck, configuration snapshot, and manifest are recorded under `experiment/`. Preserve previous runs.
-3. On failure, inspect its state, precheck evidence, or logs. Route missing data, invalid configuration, and implementation defects to their corresponding procedures. Read artifacts back through the public result interface.
-4. Finish with the actual run status, manifest, artifact paths, and readback instructions. Report what the run actually covered. Use `maintain-experiment` for tracking and recovery details.
+1. Read the old results from the list and from the normal read-back command. Prior to restoration, confirm the mission is resilient and check the original configuration, data, models, environment and check point identity.
+2. New start-up preselection data, models, tasks, formulations and equipment to check the actual output root, cache, log and operating budget. Start with a formal project command to allow precheck, configuration snapshots and lists to be generated according to the normal process; the official product is returned to `experiment/` with that operation. The pre-conservation operation is clearly to resume processing along the original entry as it continues.
+3. Checks the status, pre-check checkback or log if you fail. Missing data, configuration is invalid and error is transferred to the corresponding category for recovery from the original entrance. Use the normal read-back command to confirm the operation and effective configuration to which the output belongs.
+4. **Completion Conditions.** A short certification indicates only the work it actually covers; the formal conclusion is based on the corresponding operational evidence. `maintain-experiment`.
+
+<a id="publishing"></a>
+
+## Publish Item to GitHub
+
+Online maintenance default from `github-publish` The original installation, construction and testing portal of the project is still available for release of a copy., GitHub Release Profiles on Project Roots `.github/`.Two modes of publication[Project release rules](README.md#project-publishing)Whichever applies to the selection of the release entrance or the migration for which the release process is in place.
 
 <a id="tests-scripts"></a>
 
-## Write tests or scripts and decide what to keep
+## Preparation of tests or supporting scripts and decision to retain them
 
-1. Find a current test, public command, or precheck that can reproduce the behavior. Extend an existing case when it only needs a new input or assertion. Use a temporary probe when the behavior is still being investigated.
-2. Put durable automated regressions in `tests/` using existing discovery conventions. Put reusable commands with a human operator in `scripts/`. Keep one-time probes in `tmp/<purpose>/`. Scripts call the real implementation and tests use small inputs or fixtures with actual users.
-3. After running, move production logic to its responsible component and connect the normal entry point. Keep stable assertions that protect a meaningful behavior or failure as regression tests. Retain a thin script when it has a recurring user and document its inputs and outputs. Remove completed one-time probes and their output, or archive evidence the user needs at its proper destination.
-4. Finish when the retained test is discoverable and runnable, scripts are useful from their documented entry point, and production behavior is independent of the temporary directory. Check test collection when discovery paths change. Use `maintain-optional` and `maintain-tmp` for implementation details.
+1. See ** for off-the-shelf usage. ** for pre-recovering target behaviour with current project testing, formal command or approved configuration precheck. There is already a case to expand this use when only one input or assertion is missing.
+2. ** Writes to the corresponding location by use. ** Auto-returns are found in the existing `tests/` test framework; individual manual batch or export commands are placed at `scripts/`; a one-time comparison is placed at `tmp/<purpose>/`. Scripts return to the official module to test the entry of a small sample of the project or the folder of the actual reuser. The test generated file is completed by the temporary directory of the test tool and the agreed end of the project.
+3. **Retention decision after run.** The logic of the formal function is moved to its responsibility. `base/`,`datasets/`,`models/` or `tasks/`,The minimum assertion that this failure or the protection of public behaviour can be stabilized is retained as a regression test. The thin commands that are clear operators and reuses are kept as scripts, specifying how they are entered, produced and used. The code and output used only for this inspection are cleared after the check has been completed; the user requests that the retained evidence be archived according to their actual purpose..
+4. **Completion Conditions.** The regression test can be found and run separately according to the existing rules. The person who uses the tool can find the real access and the formal function is independent of the temporary file. `maintain-optional` with `maintain-tmp`.
 
 <a id="tmp"></a>
 
-## Create and clean up temporary files or code
+## Create and clear one-time files or codes
 
-1. Prefer an existing precheck, reader, or test when it can answer the question. For a one-time probe, put scripts, sample copies, output, and logs in a named directory under the existing `tmp/`. Confirm where tool side effects will land.
-2. Temporary scripts can call public interfaces. Keep production code, configuration, tests, and docs usable without the temporary directory. Stage data operations that need atomic moves on the data filesystem.
-3. Move useful implementation or evidence to its appropriate permanent location and verify it there. Keep only the materials needed for recovery or authorized evidence, then clean up this task's temporary files.
-4. Finish when the official entry point has no dependency on the temporary work and necessary evidence can be found at its permanent destination. Use `maintain-tmp` for details.
+1. See if existing pre-checks, results read or test answer the question. When a new one-time code is needed, the existing `tmp/<purpose>/` focus on scripts, temporary copies, outputs and logs. The pre-run confirmation tool does not disperse the generated file to another location.
+2. A temporary script can call the official interface. The formal configuration, code, test, and document of the project should be separated from the temporary directory. This involves the temporary downloading or processing of a file system that requires the same data as the data, using the existing temporary storage under the data root.
+3. When you have completed, check the actual use of this round of interim documents. The material that needs to be retained for a long period of time, or the material moved to the official location and validated for reading back by the corresponding category; the material that has a restoration purpose only retains the required part and the rest of the interim document is cleaned up.
+4. **Completion Conditions.** The public entry point is not dependent on the provisional catalogue for this round, and the necessary evidence can be obtained from the official location. `maintain-tmp`.
 
 <a id="environment"></a>
 
-## Update the runtime environment or dependencies
+## Update the operating environment or depend
 
-1. Identify the actual interpreter, device, and installed versions from project declarations, resource bindings, and the normal entry point. Verify missing packages with that interpreter. Record public dependency changes in the existing dependency declaration and local interpreter changes in the resource binding.
-2. Reuse a compatible environment where possible. Put an independent environment in the parent workspace's `envs/` or its registered location. Use the project's install command or `rh projects install` with its declared dependencies. Confirm the target and other users before changing a shared environment.
-3. Verify the relevant import, device, or entry point using the selected interpreter. Update `doc/environment/` when the installation or runtime requirements change.
-4. Finish when the resource binding, dependency declarations, and real launch use the intended environment.
+1. Check the actual Python, equipment and dependent versions from the project statement, the normal entrance, and the machine. The diagnosis of dependence first identifies the missing items with the current project interpreter. Updates the resource binding only when replacing the machine interpreter; the new package or version on which the user relies is declared by the existing project relying on the list.
+2. Prioritizes the reuse of compatible environments. The parent area `envs/` or the registered location is to be arranged in an independent environment. The declared dependency is to be installed in the existing project mode or by `rh projects install`. The target interpreter, shared user and expected writing position are to be confirmed before running the installation.
+3. When installed or switched, the affected import, equipment or normal entry is checked with the actual interpreter. Only the light inspection that confirms the condition when the condition of the equipment is involved is selected.
+4. ** Conditions for completion. ** This machine binds, relies on statements and actually activates with the same interpreter, and the environment is in the agreed position, `doc/environment/` to indicate new requirements for preparation.
 
 <a id="data"></a>
 
-## Download, extract, or prepare data
+## Download, depress and prepare data
 
-1. Derive the needed dataset, version, source, file list, and layout from its loader and recipe. Reuse an existing matching copy when available.
-2. Set the destination and staging location before downloading. Use the existing `data/<dataset>/<version>/` or a registered data root. Keep staging needed for atomic operations on the data filesystem. Use the local client configuration for shared Hugging Face caches.
-3. Verify the download or extraction against available checksums or file lists, then open a representative sample and check its split with the actual loader. Route format changes to dataset implementation. Record the source and version and clear staging specific to this task.
-4. Finish when the project can select and read the prepared data and each staging or cache path has a clear owner.
+1. The data set, version, source, required file and directory shape are first identified from the loader and formulation, checking whether there are available copies of existing data roots. The same version is directly bound and read; the corresponding name position is used for additions.
+2. Specifies the target and temporary location before you start download. The official data is placed in the working area `data/<dataset>/<version>/`, which is horizontal with ResearchHarness and the project. The item is read by configuration, parameter or binding. The current data root is followed when the atomic name is changed or the subsequent download is required. The common cache of the Hugging Face client is configured on the machine, and the prepared project input is positioned on the actual data root.
+3. Retain the source version and apply the formulation to clean up the remaining balance of the current round.
+4. The ** condition for completion. ** project can select the available version from the specified data root, and the data, download hold and pre-processing cache can account for the attribution.
 
 <a id="assets"></a>
 
-## Keep reusable assets and caches
+## Save resources and caches for long-term reuse
 
-1. Identify the reader, reuse across runs, and regeneration method. Keep dataset-specific preprocessing caches with the data version, client caches at their configured locations, and run-specific scores, predictions, or checkpoints with their run. Put fixed, independently reusable resources such as lookup tables or frozen transformations in `assets/`.
-2. Group resources under `assets/<type>/<resource>/`. Put resources in `files/` and resource-specific scripts in `scripts/`. Add a README explaining source, version, reader, and update procedure. Put general preparation logic in the component that owns it.
-3. Use the real reader to verify path, version, and format. Keep existing resources when active callers need them and update selection at the actual reader when switching versions.
-4. Finish when a normal caller can locate the right version and reproduce its provenance. Use `maintain-optional` for asset handling.
+1. Make sure who reads the file, whether to cross-run the re-use, and how to rebuild it. Files that directly match raw data, such as depression and indexing, follow the working area data root; prepare the results, fixed questions and answers for the project to be used independently, or name the cache. `assets/` Resources; common caches reused by the client follows the configured location; indicators, projections and models generated by a given execution are running with the same time. `assets/`.
+2. In the current group `assets/<type>/<resource>/`, the resources are placed at `files/`, and the dedicated script for this resource is placed at `scripts/`. Use a peer README to explain how users, sources, versions, updates and resources correspond to the selection conditions.
+3. Validate the path, compatible version and format from the actual reader. The original resource retains its identity when it is still in use; it needs to be synchronized or read. The results of the one-time assessment follow the experiment and the user specifies the historical originals retained to be organized according to the historical resources of the project.
+4. **Completion Conditions.** The user can find the correct version from the public entry point, knowing where the resource comes from and when it is updated. `maintain-optional`.
 
 <a id="third-party"></a>
 
-## Maintain third-party code and files
+## Maintenance of third-party source codes and files
 
-1. Identify the dependency, upstream version, and actual imports. Use the environment procedure for installed dependencies. Maintain existing vendored content under `third_party/<upstream>/`.
-2. Preserve upstream naming, license, and provenance, and record local differences. Keep project adapters in the responsible component or runtime. Find supported callers before changing upstream versions or entry points.
-3. Verify which version the project actually loads through its normal entry point and update the source and usage documentation. Finish when the upstream source, version, adapter, and real caller are traceable. Use `maintain-optional` for details.
+1. Check the project’s reliance declaration, upstream version and actual import. `third_party/<Upstream>/` corresponding object.
+2. Keep the names, permits and sources in the upstream package and record the local differences. The appropriate code for the project is assigned to the actual responsible component or base layer.
+3. Check the actual loaded version and the affected feature from the normal project entrance, update the source description and call the document.**Completion Conditions**The actual entry is still accessible. `maintain-optional`.
 
 <a id="doc"></a>
 
-## Update documentation and navigation
+## Update Document and Navigator
 
-1. Follow the user-facing README or `doc/README.md` to the page that explains the actual command, defaults, inputs, output, and paths. Update an existing page when it serves the reader; add and link a named page for an independent topic.
-2. Update each affected component, configuration, task, environment, or experiment page in the same change. Use existing commands and reproducible small inputs for examples. Preserve the facts and effective configuration of historical runs.
-3. Check changed links, example commands, and result paths from the reader's entry point. Classify and authorize any example execution according to its actual operation. Finish when users can find the right command, prerequisites, settings, and result reader. Use `maintain-optional` and the project manual for documentation conventions.
+1. Find the existing page from README or `doc/README.md` to check the official command, default value, input conditions, results and actual path. If you have a page to answer, update the page; add a name page and index to the corresponding document position when you have an independent reader and theme.
+2. When components, parameters, tasks, environments and experimental readings are changed, the actual responsible page is updated with the same batch of changes. Common examples refer to existing commands and small samples that can be reviewed. The historical trial report is described by the current configuration and evidence.
+3. Check this affected relative link, path, illustrative command and the location of the result from the reader's portal by article. The example needs to be executed according to the type of operation and the authorization..**Completion Conditions**The reader is able to find the exact entry, operating condition, parameter meaning and result reading. `maintain-optional` and project manual.

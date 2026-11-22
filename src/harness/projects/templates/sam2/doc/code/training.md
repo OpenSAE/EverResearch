@@ -32,7 +32,7 @@ To get started with the training code, we provide a simple example to fine-tune 
         # PATHS to Dataset
         img_folder: null # PATH to MOSE JPEGImages folder
         gt_folder: null # PATH to MOSE Annotations folder
-        file_list_txt: data/training_lists/upstream/MOSE_sample_train_list.txt # Optional list of training videos
+        file_list_txt: /path/to/workspace/data/sam2/training_lists/upstream/MOSE_sample_train_list.txt # Optional list of training videos
     ```
 - To fine-tune the base model on MOSE using 8 GPUs, run 
 
@@ -67,7 +67,7 @@ To get started with the training code, we provide a simple example to fine-tune 
     applied, without writing files or starting a job. A run writes
     `config_resolved.yaml` to the experiment log directory for later inspection.
 
-    The training losses can be monitored using `tensorboard` logs stored under `tensorboard/` in the experiment log directory. We also provide a sample validation [split](../../data/training_lists/upstream/MOSE_sample_val_list.txt) for evaluation purposes. To generate predictions, follow this [guide](video.md) on how to use our `vos_inference.py` script. After generating the predictions, you can run the `sav_evaluator.py` as detailed [here](dataset.md#sa-v-val-and-test-evaluation). The expected MOSE J&F after fine-tuning the Base plus model is 79.4.
+    The training losses can be monitored using `tensorboard` logs stored under `tensorboard/` in the experiment log directory. We also provide a sample validation [split](.././workspace/data/sam2/training_lists/upstream/MOSE_sample_val_list.txt) for evaluation purposes. To generate predictions, follow this [guide](video.md) on how to use our `vos_inference.py` script. After generating the predictions, you can run the `sav_evaluator.py` as detailed [here](dataset.md#sa-v-val-and-test-evaluation). The expected MOSE J&F after fine-tuning the Base plus model is 79.4.
     
     
     After training/fine-tuning, you can then use the new checkpoint (saved in `checkpoints/` in the experiment log directory) similar to SAM 2 released checkpoints (as illustrated [here](../../README.md#image-prediction)).

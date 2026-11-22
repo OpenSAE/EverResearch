@@ -6,11 +6,16 @@ Validate the official command interface using the newly created project director
 import json
 from pathlib import Path
 import re
+import shutil
+import subprocess
 import sys
 
 import pytest
 
 from harness.cli import main
+
+
+SEARCH_PARAGRAPH = 'Start with known registrations and explicit paths when locating a project, command, or configuration. When you need a broader search, list the immediate directories first and pick specific paths. Limit routine recursive searches to active source material. Search local workspace output, historical snapshots, experiment results, or caches by explicitly naming the required files or directories and limiting the output.'
 
 
 @pytest.fixture
@@ -41,6 +46,12 @@ def test_shared_skills_preserve_project_content(command, workspace):
     root, project, central_skill = workspace
     own = project / ".agents/skills/local"
     own.mkdir(parents=True)
+    (own / "SKILL.md").write_text("# Project-owned skill\n")
+    legacy_link = own.parent / "example"
+    legacy_link.symlink_to(central_skill, target_is_directory=True)
+    legacy_guide = own.parent / "researchharness/SKILL.md"
+    legacy_guide.parent.mkdir()
+    legacy_guide.write_bytes(Path(__file__).with_name("researchharness.skill.md.in").read_bytes())
     agents = project / "AGENTS.md"
     agents.write_text("# Project instructions\n")
     client = project / ".codex/config.toml"
@@ -48,16 +59,22 @@ def test_shared_skills_preserve_project_content(command, workspace):
     client.write_text("# Existing client settings\n")
     linked = command("apply", "example")
     assert linked["skills"] == {"example": True}
-    assert (own.parent / "example").resolve() == central_skill
-    assert (own.parent / "researchharness/SKILL.md").read_bytes() == (
-        Path(__file__).with_name("researchharness.skill.md.in").read_bytes()
-    )
+    assert Path(linked["shared_skill_directory"]) == central_skill.parent
+    assert not legacy_link.is_symlink()
+    assert not legacy_guide.exists()
+    assert "../central/.agents/skills/example/SKILL.md" in agents.read_text()
     command("apply", "example")
     assert agents.read_text().count("<!-- researchharness:projects -->") == 1
+    assert agents.read_text().count(SEARCH_PARAGRAPH) == 1
     assert agents.read_text().startswith("# Project instructions\n")
-    assert command("set", "example", "--skills", "off")["skills"] == {"example": False}
+    disabled = command("set", "example", "--skills", "off")
+    assert disabled["skills"] == {}
+    assert disabled["maintenance_guide"] is None
+    assert disabled["shared_skill_directory"] is None
+    assert "../central" not in agents.read_text()
+    assert agents.read_text().count(SEARCH_PARAGRAPH) == 1
     assert (root / "src/project/maintained/example/project.yaml").is_file()
-    assert own.is_dir()
+    assert (own / "SKILL.md").read_text() == "# Project-owned skill\n"
     assert client.read_text() == "# Existing client settings\n"
 
 
@@ -89,13 +106,11 @@ def test_apply_routes_maintenance_and_persists_check_authorization(
         skill = root / ".agents/skills" / name
         skill.mkdir()
         (skill / "SKILL.md").write_text(f"# {name}\n")
-    skill_directory = ".agents/skills"
     if custom_skill_directory:
         owned = project / "skills"
         owned.mkdir()
         (project / ".agents").mkdir()
         (project / ".agents/skills").symlink_to(owned, target_is_directory=True)
-        skill_directory = ".agents/researchharness-skills"
     settings = root / "src/project/maintained/example/project.yaml"
     settings.parent.mkdir(parents=True)
     settings.write_text("# Existing settings\nproject_id: example\nskills: true\n")
@@ -104,17 +119,18 @@ def test_apply_routes_maintenance_and_persists_check_authorization(
 
     assert command("apply", "example")["settings"]["lightweight_checks"] is False
     text = agents.read_text()
-    assert f"{skill_directory}/maintain-dataset/SKILL.md" in text
-    assert f"{skill_directory}/maintain-conf/SKILL.md" in text
+    assert "../central/.agents/skills/maintain-dataset/SKILL.md" in text
+    assert "../central/.agents/skills/maintain-conf/SKILL.md" in text
+    assert not (project / ".agents/researchharness-skills").exists()
     assert "maintain-model" not in text
-    assert "Lightweight follow-up checks require task authorization" in text
-    assert "Classify each operation before acting" in text
+    assert "Lightweight follow-up checks follow the task authorization" in text
+    assert "Choose the operation before making changes" in text
     assert "When asked to implement a feature" in text
-    assert "If an existing setting meets the request" in text
-    assert "add per-class accuracy to the existing classification task" in text
-    assert "Keep top-level directory names" in text
-    assert "working directory, output, and cache locations before running" in text
-    assert "Check paths after each batch" in text
+    assert "If an existing parameter supports the request" in text
+    assert "add per-class accuracy to an existing classification task" in text
+    assert "keep the existing top-level directories" in text
+    assert "Before running a command, confirm its working directory, output paths, and cache location" in text
+    assert "Review the paths after each batch" in text
     sections = re.findall(r'\]\(<([^>]+/operations\.md)#([a-z-]+)>\)', text)
     assert len(sections) == 14
     for path, anchor in sections:
@@ -127,7 +143,7 @@ def test_apply_routes_maintenance_and_persists_check_authorization(
     }
     assert "Lightweight follow-up checks are enabled" in agents.read_text()
     assert "rh projects layout check" in agents.read_text()
-    assert "Use one structure check per tree state" in agents.read_text()
+    assert "Run one structure check for each state of the project tree" in agents.read_text()
     assert settings.read_text().startswith("# Existing settings\n")
     assert "lightweight_checks: true" in settings.read_text()
     assert command("apply", "example")["last_applied_settings"]["lightweight_checks"] is True
@@ -136,15 +152,86 @@ def test_apply_routes_maintenance_and_persists_check_authorization(
     command("set", "example", "--skills", "on")
     assert "Lightweight follow-up checks are enabled" in agents.read_text()
     command("apply", "example", "--lightweight-checks", "off")
-    assert "Lightweight follow-up checks require task authorization" in agents.read_text()
+    assert "Lightweight follow-up checks follow the task authorization" in agents.read_text()
     assert agents.read_text().startswith("# Existing project instructions\n")
     assert agents.read_text().count("<!-- researchharness:projects -->") == 1
 
 
+def test_project_mode_reads_central_originals_only_online(command, workspace):
+    root, project, central_skill = workspace
+    shutil.copytree(
+        Path(__file__).parents[1], root / "src/harness",
+        ignore=shutil.ignore_patterns("templates", "__pycache__"),
+    )
+    command("setup-maintenance", str(project), "--online")
+    instructions = (project / "AGENTS.md").read_text()
+    assert instructions.count(SEARCH_PARAGRAPH) == 1
+    assert instructions.index(SEARCH_PARAGRAPH) < instructions.index("## Choose the maintenance mode")
+    command("apply", "example")
+    assert (project / "AGENTS.md").read_text() == instructions
+    launcher = project / ".researchharness/maintain.py"
+    mode = launcher.parent / "mode.toml"
+    connection = launcher.parent / "online/connection.json"
+
+    def status():
+        return subprocess.run(
+            [sys.executable, "-IS", str(launcher), "status"], cwd=project,
+            text=True, capture_output=True,
+        )
+
+    result = status()
+    assert result.returncode == 0, result.stderr
+    selected, guide_path = result.stdout.splitlines()
+    guide = Path(guide_path)
+    assert selected == "online"
+    assert guide.is_relative_to(root)
+    skill_path = re.search(r"\]\(([^)]+/example/SKILL\.md)\)", guide.read_text())[1]
+    assert (guide.parent / skill_path).resolve() == central_skill / "SKILL.md"
+    assert list(connection.parent.iterdir()) == [connection]
+    assert not (project / ".agents").exists()
+
+    original = mode.read_text()
+    mode.write_text("enabled = false\n")
+    connection.write_text("unreadable connection")
+    result = status()
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.splitlines() == [
+        "offline", str(launcher.parent / "offline/operations.md"),
+    ]
+    assert command("status", "example")["shared_skill_directory"] is None
+    assert not list(project.rglob("SKILL.md"))
+    (project / "data").mkdir()
+    report = subprocess.run(
+        [sys.executable, "-IS", str(launcher), "check"], cwd=project,
+        text=True, capture_output=True,
+    )
+    assert report.returncode == 1, report.stderr
+    assert {"path": "data", "rule": "root_directory"} in json.loads(report.stdout)["violations"]
+
+    mode.write_text(original)
+    result = status()
+    assert result.returncode == 2
+    assert "Online maintenance is unavailable" in result.stderr
+    assert not result.stdout
+
+
+def test_standalone_setup_preserves_project_instructions(command, workspace):
+    _, project, _ = workspace
+    agents = project / "AGENTS.md"
+    original = "# Project instructions\n\nLocal working rules.\n"
+    agents.write_text(original)
+    assert command("setup-maintenance", str(project))["mode"] == "offline"
+    generated = agents.read_text()
+    assert generated.startswith(original)
+    assert generated.count(SEARCH_PARAGRAPH) == 1
+    command("setup-maintenance", str(project))
+    assert agents.read_text() == generated
+
+
 def test_run_uses_bound_python_data_and_project(command, workspace, tmp_path):
     _, project, _ = workspace
-    data = tmp_path / "dataset with spaces"
-    data.mkdir()
+    data = tmp_path / "data" / "dataset with spaces"
+    data.mkdir(parents=True)
     python = tmp_path / "env/bin/python"
     python.parent.mkdir(parents=True)
     python.symlink_to(sys.executable)
@@ -159,6 +246,7 @@ def test_run_uses_bound_python_data_and_project(command, workspace, tmp_path):
         "'cwd': os.getcwd(), 'data': sys.argv[1], 'env': os.environ['PROJECT_DATA'],"
         " 'python': sys.executable, 'prefix': sys.prefix}))\n"
     )
+    assert "workspace data root" in command("bind", "example", "--data", f"main={project}", expected=1)
     command("bind", "example", "--python", str(python), "--data", f"main={data}")
     assert command("list") == [
         {"project": "example", "path": str(project), "data": {"main": str(data)}, "python": str(python)}
@@ -189,4 +277,4 @@ def test_review_pins_export_and_keeps_other_versions_selectable(command, tmp_pat
     assert result["review"]["sha256"] == a["sha256"]
     assert [item["id"] for item in command("structure", "list", "example")] == [b["id"], a["id"]]
     Path(a["page"]).write_text("changed")
-    assert "Inconsistencies" in command("structure", "show", "example", a["id"], expected=1)
+    assert "inconsistent" in command("structure", "show", "example", a["id"], expected=1)

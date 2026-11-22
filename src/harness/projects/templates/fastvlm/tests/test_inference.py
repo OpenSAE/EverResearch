@@ -35,7 +35,7 @@ def test_preview_uses_packaged_defaults_and_cli_overrides_from_another_directory
     config = json.loads(result.stdout)
     assert config == {
         **runtime.defaults(),
-        "model_path": str(ROOT / runtime.defaults()["model_path"]),
+        "model_path": str(runtime.checkpoint_root() / runtime.defaults()["model_path"]),
         "top_p": 0.8,
         "num_beams": 3,
         "device": "cpu",

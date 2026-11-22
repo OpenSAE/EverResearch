@@ -11,7 +11,7 @@ catalogs:
     cub200:
       name: cub200
       image_size: 224
-      root: ../data/CUB_200_2011
+      root: null
     synthetic:
       name: synthetic
       image_size: 32

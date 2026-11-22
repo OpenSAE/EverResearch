@@ -10,7 +10,7 @@ checkpoint. Benchmark datasets must be prepared as described in the
 [benchmark guide](../code/guides/benchmark.md).
 
 Run `python -m pytest -q` for local tests and
-`da3 auto assets/examples/SOH --experiment scene_geometry --show-config`
+`da3 auto assets/examples/soh/files --experiment scene_geometry --show-config`
 to check input detection, configuration and output planning without loading weights.
 Saved inference results identify the actual Python interpreter and version in
 their execution manifests. The preserved SOH reports include the original

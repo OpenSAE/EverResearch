@@ -95,6 +95,7 @@ def test_layout_rejects_and_recovers_at_each_level(capsys, tmp_path):
     assert all(item["rule"] == "name_english_word" for item in baseline)
 
     directories = {
+        "data": "root_directory",
         "scratch_runs": "root_directory",
         "src": "root_directory",
         "conf/tasks/unregistered": "configuration_owner",

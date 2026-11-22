@@ -13,4 +13,6 @@ checkpoints/*.pt
 demo/backend/checkpoints/*.pt
 
 /assets/native_extension/connected_components/files/*.so
-/data/checkpoints/local/*.pt
+
+# Connection records maintained online on-line.
+/.researchharness/online/

@@ -10,7 +10,7 @@ After installing SAM 2 and its dependencies, it can be used as follows ([DAVIS 2
 ```bash
 python main.py video \
   --sam2_cfg configs/sam2.1/sam2.1_hiera_b+.yaml \
-  --sam2_checkpoint ./data/checkpoints/local/sam2.1_hiera_base_plus.pt \
+  --sam2_checkpoint /path/to/workspace/data/sam2/checkpoints/local/sam2.1_hiera_base_plus.pt \
   --base_video_dir /path-to-davis-2017/JPEGImages/480p \
   --input_mask_dir /path-to-davis-2017/Annotations/480p \
   --video_list_file /path-to-davis-2017/ImageSets/2017/val.txt \
@@ -22,7 +22,7 @@ To evaluate on the SA-V dataset with per-object PNG files for the object masks, 
 ```bash
 python main.py video \
   --sam2_cfg configs/sam2.1/sam2.1_hiera_b+.yaml \
-  --sam2_checkpoint ./data/checkpoints/local/sam2.1_hiera_base_plus.pt \
+  --sam2_checkpoint /path/to/workspace/data/sam2/checkpoints/local/sam2.1_hiera_base_plus.pt \
   --base_video_dir /path-to-sav-val/JPEGImages_24fps \
   --input_mask_dir /path-to-sav-val/Annotations_6fps \
   --video_list_file /path-to-sav-val/sav_val.txt \

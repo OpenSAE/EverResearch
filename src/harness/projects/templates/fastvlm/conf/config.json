@@ -1,5 +1,5 @@
 {
-  "model_path": "data/checkpoints/llava-fastvithd_0.5b_stage3",
+  "model_path": "checkpoints/llava-fastvithd_0.5b_stage3",
   "model_base": null,
   "image_file": null,
   "dataset": "user_image",

@@ -47,7 +47,7 @@ flowchart LR
 | `tasks/streaming/` | Runs chunking, alignment and point cloud fusion for long sequences. |
 | `tasks/precheck/` | Checks prediction input and output compatibility, benchmark sources and streaming configuration. |
 | `conf/` | Holds CLI defaults and the model, benchmark and streaming recipes. |
-| `data/media/examples/`, `assets/` | Store example inputs, README figures and original SOH run evidence. |
+| `assets/` | Store example inputs, README figures and original SOH run evidence. |
 | `doc/` | Provides CLI, API, benchmark, streaming and environment documentation. |
 | `scripts/`, `third_party/salad/` | Hold the inference notebook, streaming tools and upstream loop detection dependency. |
 | `tests/` | Covers CLI configuration, input selection, output generation and manifest readback. |
@@ -67,9 +67,9 @@ Options passed on the command line override those defaults. The Python construct
 passes the CLI's checkpoint path or Hugging Face model ID to `from_pretrained`.
 
 ```bash
-da3 auto assets/examples/SOH --experiment scene_geometry --show-config
-da3 auto assets/examples/SOH --experiment scene_geometry
-da3 auto assets/examples/SOH --experiment scene_geometry --export-format npz-glb
+da3 auto assets/examples/soh/files --experiment scene_geometry --show-config
+da3 auto assets/examples/soh/files --experiment scene_geometry
+da3 auto assets/examples/soh/files --experiment scene_geometry --export-format npz-glb
 da3 results experiment/soh/da3nested_giant_large_1_1/inference/scene_geometry
 ```
 

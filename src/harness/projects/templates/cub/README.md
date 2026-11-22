@@ -1,19 +1,19 @@
-# CUB-200 Classification Reference Project
+# CUB-200 Classification Reference Items
 
 ## Purpose
 
-Train a ResNet-18 with a multilayer classifier head for 200-class image classification on CUB-200-2011. The template demonstrates component selection, prechecks, performance comparisons, and experiment records.
+Trains ResNet18 plus MLP headers to do 200-type whole-chart classification on CUB-200-2011. As a reference item for ResearchHarness, displays how components are organized, run, performance checks, results delivered and functional changes are maintained.
 
 ## Scope
 
-Run the template in its source directory or copy it to a standalone workspace. Use Python and PyTorch, and run the examples from the project root. Install with `python -m pip install -e .`, or set `PYTHONPATH=base` if the dependencies are already installed. The package exposes its components under the `cub_template` namespace.
+From ResearchHarness Source directory used, or will be the whole cub The directory is copied to a stand-alone workspace as the starting point for the new project. `PYTHONPATH=base` . The project uses local Python and PyTorch,Runs from the root directory. `python -m pip install -e .`,Can also run directly when there is a dependency `python -m cub_template`.Three components of the root directory are included in the pack `cub_template` Namespace to avoid being named like the environment Python Collision.
 
-Use ResearchHarness to link shared skills, bind a local Python interpreter and data directory, and store structure maps when you attach this project to a workspace.
+These commands can be used in an independent workspace. When you choose to access ResearchHarness, you can use it to synchronize skills, bind the CDer Python and the directory of data, and the results of the registration structure.
 
 ## Full Layout
 
 ```text
-template/
+cub/
 ├── README.md,AGENTS.md,pyproject.toml
 ├── datasets/
 │   ├── plugins.py
@@ -64,7 +64,7 @@ template/
     └── knowledge/,environment/,code/
 ```
 
-`datasets/`,`models/`,`tasks/` It is a mandatory catalogue, each maintaining the registration of components. and SAEBase Similarly, the normal entry configuration, the operating layer calculates and returns the structured results based on the configuration selected tasks, the tasks defined and the results. Prechecks can be selected independently and are called from the operational level before formal training. Runlist records the prechecking check, the results of the task and the path of the product.
+`datasets/`,`models/`,`tasks/` It is a mandatory catalogue, each maintaining the registration of components. and SAEBase Similarly, the normal entry configuration, the operating layer calculates and returns the structured results based on the configuration selected task. Prechecks can be selected independently and are called from the operational level before formal training. Runlist logs precheck, task results and product path.
 
 The data root is specified by the formula or `--data-root`. Run the root is fixed to the project level 1 directory `experiment/` and is positioned from the root of the project. Normal running is saved by `<dataset>/<model>/<task>/<subname>/<run-id>/`. Use `--subname` to use one or three words for the experiment to describe the purpose, such as `scratch_baseline` or `imagenet_finetune`. Use the same name when running the same experiment again, and the program creates a separate running directory. The list of configuration or component selection failures is `unresolved/<subname>/`. The official result is located by `metadata/manifest.json`.
 
@@ -72,9 +72,19 @@ The data root is specified by the formula or `--data-root`. Run the root is fixe
 
 [Item documents](doc/README.md)Provide level I catalogue descriptions, use of parameters, experimental reports, scientific knowledge, implementation of environmental and source structure.
 
-## Skills portal maintained by the project
+## Select Project Maintenance Mode
 
-Open working session from the template directory, press `AGENTS.md` Selection `.agents/skills/` This template provides examples of operational components registration, independent precheck, performance comparisons, and results checks. Skills links that skip the template when copying to an independent workspace, are registered and the shared skills are opened and linked through the project access portal.
+Item `AGENTS.md` Description of the basis `.researchharness/mode.toml` Select a maintenance source. The template defaults to shut down the central access and allows for the use of a handheld manual and a standard library check from an independent workspace. `python -IS .researchharness/maintain.py status` and `python -IS .researchharness/maintain.py check`.
+
+To mount from the ResearchHarness that is available on this machine, the user sets `enabled` to `true`. The following commands are run on the project directory, starting directly with `apply` when already registered. Example by ResearchHarness in the project equivalent directory.
+
+```bash
+rh projects --harness-root ../ResearchHarness register cub --path .
+rh projects --harness-root ../ResearchHarness apply cub
+python -IS .researchharness/maintain.py status
+```
+
+Mount the generated online information at `.researchharness/online/`. The online mode fails to report when central is not available, switching to user-decided. The next section of the "offline exercise" refers to a scientific mission that runs with synthetic data and is independent of the project maintenance switch.
 
 ## Offline Exercise
 
@@ -99,7 +109,7 @@ The performance precheck report compares the number of current work processes an
 
 ## Official CUB-200 baseline
 
-Prepare [Caltech-UCSD Birds-200-2011 official data](https://www.vision.caltech.edu/datasets/cub_200_2011/) to point `--data-root` to a decompression catalogue containing `images/`, `images.txt`, `image_class_labels.txt`, `train_test_split.txt`. Run configuration only to read local data, with the model starting with a random weight. The official division is used to fix 5,994 training charts and 5,794 test charts.
+Prepare [Caltech-UCSD Birds-200-2011 official data](https://www.vision.caltech.edu/datasets/cub_200_2011/) to point `--data-root` to a decompression catalogue containing `images/`, `images.txt`, `image_class_labels.txt`, `train_test_split.txt`. Run the configuration to read only local data, starting with random weights. Officially divided between 5,994 training charts and 5,794 test charts.
 
 ```bash
 python -m cub_template precheck --subname scratch_baseline --data-root "$cub_data"
@@ -112,7 +122,7 @@ The `cub_data` is first set as a directory of in-house data. The training is ran
 
 - `config.yaml` Saves a configuration that actually works.
 - `metadata/manifest.json` Saves configuration references, data sources, software source documents, Hashi, measured environment, state and relative product paths.
-- `reports/` Save-stage indicators, prechecks, performance comparisons or final tests.
+- `reports/` Save-stage indicators, pre-checks, performance comparisons or final tests.
 - `artifacts/model.pt` Saves the final model weight for this training.
 - When data is missing, the list records specific missing items and restores them by `blocked`.
 

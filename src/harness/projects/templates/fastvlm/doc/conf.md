@@ -10,7 +10,7 @@ The runtime reads this recipe for image-prompt inference. [Default recipe](../co
 
 | Key | Recipe default | Command and effect |
 | --- | --- | --- |
-| `model_path` | `"data/checkpoints/llava-fastvithd_0.5b_stage3"` | `--model-path` selects a checkpoint directory or Hub repository. |
+| `model_path` | `"checkpoints/llava-fastvithd_0.5b_stage3"` | The default path is relative to the workspace dataset directory `data/fastvlm/`. `--model-path` selects a checkpoint directory or Hub repository. |
 | `model_base` | `null` | `--model-base` supplies a base checkpoint for compatible LLaVA adapters. |
 | `image_file` | `null` | `--image-file` supplies the required local image. One image is decoded as RGB. |
 | `dataset` | `"user_image"` | `--dataset` records the source of that file and selects the first result directory. Use a lowercase name such as `coco_val`, with digits and single underscores allowed after the first letter. |

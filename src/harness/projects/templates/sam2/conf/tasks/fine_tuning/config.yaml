@@ -12,7 +12,7 @@ configs/sam2.1_training/sam2.1_hiera_b+_MOSE_finetune.yaml:
   dataset:
     img_folder: null
     gt_folder: null
-    file_list_txt: data/training_lists/upstream/MOSE_sample_train_list.txt
+    file_list_txt: training_lists/upstream/MOSE_sample_train_list.txt
     multiplier: 2
   vos:
     train_transforms:
@@ -294,7 +294,7 @@ configs/sam2.1_training/sam2.1_hiera_b+_MOSE_finetune.yaml:
         ignore_missing_keys: null
         state_dict:
           _target_: training.utils.checkpoint_utils.load_checkpoint_and_apply_kernels
-          checkpoint_path: data/checkpoints/local/sam2.1_hiera_base_plus.pt
+          checkpoint_path: checkpoints/local/sam2.1_hiera_base_plus.pt
           ckpt_state_dict_keys:
           - model
   launcher:

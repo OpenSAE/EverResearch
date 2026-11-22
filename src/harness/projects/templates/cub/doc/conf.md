@@ -16,15 +16,15 @@ This is used to use the current template formulation and to maintain open parame
 
 ### `dataset`
 
-Select the image source. Default `cub200` to read real bird images. `synthetic` is a random seed that produces small image samples to check the entry. Switch with `--set dataset=synthetic`. See [Dataset](datasets.md) for data selection, splits, and synthetic inputs.
+Select the image source. Default `cub200` to read real bird images. `synthetic` is a random seed that produces small image samples to check the entry. Switch with `--set dataset=synthetic`. See [data set](datasets.md) for data selection and disaggregation, and how offline synthetic input can be generated.]
 
 ### `model`
 
-Select the model and its default parameters. Default `resnet18_mlp`. Subclasses and CNN see [Models](models.md) for variants, classifier head widths, and weights. Switching through `--set model=<id>`.
+Select the model and its default parameters. Default `resnet18_mlp`. Subclasses and CNN see [model](models.md)](for model selection and weight, check the head width of two ResNet18 classifications). Switching through `--set model=<identifier>`.
 
 ### `task`
 
-Select the task identifier. Default `classification`. precheck and compare sub-commands can select the corresponding process. See [Target](tasks.md) for selection and access to the product, for official classification and for the use of precheck.
+Select the task identifier. Default `classification`. Pre-check and compare sub-commands can select the corresponding process. See [Task](tasks.md)](for selection operations and access to their products, for official classification and for the use of precheck).
 
 ### `dataset.image_size`
 
@@ -32,7 +32,7 @@ Specifies that the RGB image is long, integer and at least 32 pixels. CUB defaul
 
 ### `dataset.root`
 
-Specifies the CUB data decompression directory, with the default relative formula position `../data/CUB_200_2011`. The command line `--data-root` gives priority to a synthetic formulation provided by the generator.
+Specifies the CUB data depressurization directory, using the working area `data/CUB_200/CUB_200_2011` by default. When setting the relative path of the formula visible, resolves it from the formula directory. The command line gives priority to `--data-root` and the synthetic formulation is provided by the generator.
 
 ### `model.hidden_dim`
 
@@ -64,7 +64,7 @@ PyTorch uses CPU threads, positive integers, default 4. Changes can affect the c
 
 ### `training.seed`
 
-random seeds, non-negative integers, default 42, for training in random operation and synthetic image generation.
+Random torrents, non-negative integers, default 42, for training in random operation and synthetic image generation.
 
 ### `training.batch_size`
 
