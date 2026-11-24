@@ -1,6 +1,6 @@
 ---
 name: maintain-skill
-description: Evaluate whether the specified skills will achieve the user ' s purpose in the actual use of the scene.
+description: Record project conversations, analyze file placement and naming from recorded work, and improve or independently evaluate the skills responsible.
 ---
 
 # Assessment and maintenance skills
@@ -13,6 +13,16 @@ When the result is found to be biased, the cause is located along the execution 
 
 The input includes the target skills and the project or environment in which they are used, as well as the user's description of the purpose, true request or operational record. First, you fill the scene with the existing material; then you ask the user to be clear when the target skills, the use environment or the expected results are still uncertain and change the conclusions.
 
+## Record or analyze a project conversation
+
+When invoked with **记录**, create or update the Markdown log for the selected project conversation in this skill's `agent_log/` directory. Save the user's exact requests in order, a factual summary of what the assistant did for each request, and the paths of new, modified, moved, or generated files. Recording is complete when the file has been written and read back.
+
+When invoked with **分析**, open the selected conversation log and audit how the assistant handled file placement, naming, and subsequent reading and writing. Send the user the findings with the current path, correct path, applicable rule, cause, and evidence. Analysis stops at the findings until the user gives a correction, accepts a finding, or otherwise directs a skill change. When either command is invoked on its own, use the current project and conversation if they uniquely identify the intended log.
+
+When the user responds, use only the findings and corrections they authorize as the basis for changes. Improve the relevant skill rules so they cover other projects and comparable cases. A repair may change one skill file or several skills and their companion files. By default, show the changed locations and what each change is expected to catch after editing and before the independent test. The user can turn off this preview with `preview_after_edit=false`. A preview is a review point. If the user has already authorized the test, continue after showing it unless they have asked to review first.
+
+Follow [Conversation logs and independent review](references/conversation-review.md) for the exact log format, audit output, feedback handling, and test handoff. The reference applies to the 记录 and 分析 entry points and to follow-up skill changes based on those logs.
+
 ## Run Options
 
 The default is `report_before_fix` `true`. You can write in this request `report_before_fix=false` or state "direct fix" to inform you before the restoration is closed. On-line, before being modified, a brief description of the actual result that deviates from the user ' s purpose, the identified cause and how it is to be repaired. When new material deviations are detected, an update is provided before the next round of changes. After the notification, the approved work continues, only if the programme involves a new mandate or requires a user ' s trade-off.
@@ -23,6 +33,12 @@ The default is `report_before_fix` `true`. You can write in this request `report
 2. Prefer to existing real-life requests, run records and deliverables. Preserve reviewable benchmarks before restoration and initiate the initial test as "by an independent testing assistant". Record the skill versions, object status, environment, operational and delivery.
 3. Check the content of the delivery and downstream use on a successful basis. The successful loading of skills, the exit of scripts and the existence of the product will only indicate that the corresponding steps have been completed. The determination of whether or not the purpose of the delivery is achieved is based on the actual ability of the user to use the delivery results. Recording evidence comes from the real environment, the isolated recurrence or the static analysis; the latter two are used for positioning issues, and the true environment conclusions are based on actual observations.
 
+## Keep each responsibility in its owning file
+
+Before adding or changing guidance, find the file that already owns the operation. Identify its trigger, inputs, decisions, actions, and completion evidence. Keep project coordination in `maintain-project`, specialist procedure in the skill responsible for it, and detailed supporting material in that skill's companion files. Conversation records, feedback, and independent test design belong to `maintain-skill`.
+
+When guidance is repeated, reconcile its requirements in the owning file and replace other copies with links that explain when to use it. If a change crosses several responsibilities, update each owner and their call points together. Give every file a distinct purpose. Preserve supported entry points and evidence requirements when moving instructions. Review neighboring skills for conflicting rules after a move.
+
 ## Positioning, repairing and retracing causes
 
 1. Determines whether the skills were discovered and used, whether the then-directed guidance enabled the assistant to make the necessary judgement, whether the actual access and tools were capable of being consumed, and whether the results were consumed downstream.
@@ -31,16 +47,34 @@ The default is `report_before_fix` `true`. You can write in this request `report
 
 ## By an independent test assistant
 
-The evaluator is responsible for selecting the target, retaining the benchmark, reviewing the results and repairing skills, or formally achieving them. Each assignment is made using a clean context. The assigned body is fixed to the following two rows, which fills in the name of the skills and the absolute path of the subject.
+The evaluator selects the target, retains the benchmark, and reviews the results. For project file placement and naming evaluations, start a clean-context subagent with exactly these two lines:
 
 ```text
-The next skill you're going to use is...: xxx
-This skill is aimed at the target.: xxx
+maintain-project
+<ProjectName>
 ```
 
-Use a normal, accessible skill portal and target. The authorization is implemented in the context of the implementation environment and in the official rules of the subject’s own. Only these two messages enter the assigned text. The name of the mission, the dialogue inherited, the follow-up, the sharing of notes and the initial documents must avoid disclosing the assessment diagnosis, the location to be checked, the modification, the expected outcome or the acceptance answer. The multiple objects are conducted in the order specified by the user; the same object is repaired using the new test assistant. The test assistant independently takes evidence, executes and reports according to the normal entrance to the skill and target project.
+Fill in only the actual project name, for example the uniquely registered name. Select an environment in which that name resolves to the intended project. Supply no file paths, log contents, findings, proposed fixes, expected outcomes, or acceptance answers. Give the subagent a neutral task label and do not inherit conversation history or send hints. Establish project access and permissions in the execution environment before dispatch. For other skill evaluations, use the same clean-context procedure with the selected skill name and its target identifier. The subagent independently discovers, repairs within its authorization, and reports from the ordinary project entry points.
 
 Upon receipt of the response, the evaluators independently examine the actual documents, operational evidence and subsequent use to determine whether the report is reasonable and the results met the standard. Pre-test evidence and the necessary raw samples are retained to avoid the situation that has been processed to cover the original gap. Python can check the path, product and reading back; the assistant is right to judge and continue to process on the basis of this independent operation and delivery.
+
+## Independent detection and repair of file placement
+
+When testing is authorized, start the clean-context subagent with only the two-line project assignment above. Keep the conversation log and every evaluation detail outside the assignment. Let the subagent independently inspect and repair the project within the authorization available in its environment.
+
+The maintenance assistant starts from the physical tree and public commands. Trace representative producers and consumers for each discovered category. Repair the responsible writer and affected readers, migrate existing files with their identities intact, and verify that a new invocation follows the repaired path. Work through all affected instances, including older runs still read by a current command. Leave actively written files in place until their producer has finished. Report each finding with its original path, intended path, producer, reader, and verification evidence. The evaluator reviews the actual changes and uses a fresh independent subagent for a repeat check after any further repair.
+
+Select coverage from the project's actual capabilities:
+
+| Case | Evidence required |
+| --- | --- |
+| Reusable preparation and alternative splits | A named asset preserves source provenance and distinct input identities. The writer and representative readers use the revised location. |
+| Default, named, repeated and batch execution | All segments of each generated path satisfy the naming rule. Exercise a descriptive name and invalid names containing dates or opaque identifiers, including a suffix under a valid parent. Verify that rejection precedes directory creation, and repeated execution preserves earlier evidence. |
+| Training and downstream analysis | A retained analysis can rerun independently, traces the source checkpoint or data, and lists the actual outputs. The producer and manifest agree on report and artifact ownership. |
+| Temporary tools and research-specific scripts | Disposable output is bounded to its working area, installed dependencies resolve outside the project, and reusable commands can be found under the owning research area. |
+| Existing runs and checker conflicts | A normal reader retrieves the same retained result after migration. Record central checker output separately from the independent check for descriptive names and file ownership. Report unresolved differences with exact paths and rules. |
+
+At a review-only stage, show the revised skill locations and explain which evidence each rule would require. Start the independent test when the user authorizes it or when the current mandate already includes it. Apply any user-requested review pause before launch.
 
 ## Receiving and Inspection File Naming and Reading
 
