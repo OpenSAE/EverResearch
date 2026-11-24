@@ -2,8 +2,9 @@
 # Scope: ResearchHarness in working copy Git Track Range.
 .workspace/
 /src/project/maintained/
-/.agents/skills/github-publish/
-/.agents/skills/huggingface-maintain/
+/.agents/skills/maintain-github/results/
+/.agents/skills/maintain-huggingface/results/
+/.agents/skills/maintain-knowledge/note/
 /src/project/*/resources.json
 /src/project/*/structure/
 /src/project/*/log_updates.jsonl

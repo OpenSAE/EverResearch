@@ -22,7 +22,7 @@ When a common methodology is developed, you can identify the problems, the condi
 
 **Direct use of tailor-made skills for individual maintenance.** Datasets, models and missions are used separately `maintain-dataset`,`maintain-model` and `maintain-task`.Cross-component movement and shared operational capability utilization `maintain-base`,Open Parameter Use `maintain-conf`,Single run configuration and experimental operation use `maintain-experiment`,Use of stand-alone scripts, tests, component documents and external files `maintain-optional`.Maintenance of the entire project by `maintain-project` Assignment of specific tasks according to these responsibilities.
 
-Use of one-time engineering work `maintain-tmp`.Access projects can be accessed through ResearchHarness Dependence on binding the interpreter and installing the project statement. Hugging Face The download location is managed by the client configuration of the machine, which is installed `huggingface-maintain` , you can use its download instructions, and the real data is stored in the parent's area. `data/` , preprocessing and reusable caches follow the corresponding data set..
+Use of one-time engineering work `maintain-tmp`.Access projects can be accessed through ResearchHarness Dependence on binding the interpreter and installing the project statement. Hugging Face The download location is managed by the client configuration of the machine, which is installed `maintain-huggingface` , you can use its download instructions, and the real data is stored in the parent's area. `data/` , preprocessing and reusable caches follow the corresponding data set..
 
 ## 1. Main Directory of ResearchHarness
 

@@ -70,7 +70,7 @@ Setup and synchronization refresh the same search guidance in the project's `AGE
 
 Projects with offline maintenance or no ResearchHarness connection choose their own publishing process. Put their GitHub release configuration under the project root's `.github/`.
 
-For projects using online maintenance, `github-publish` handles release preparation, comparison, and delivery. Its internal copies hold release, upload, and deployment scripts and configurations. The skill prepares the diff and any build or package, then pushes or creates a release within the approved scope. Project installation, build, run, and test commands remain available in both modes. The project's `.github/` can also handle continuous integration, code review, and issue collaboration. Apply the relevant workflow when changing modes and migrate only the approved files.
+For projects using online maintenance, `maintain-github` handles release preparation, comparison, and delivery. Its internal copies hold release, upload, and deployment scripts and configurations. The skill prepares the diff and any build or package, then pushes or creates a release within the approved scope. Project installation, build, run, and test commands remain available in both modes. The project's `.github/` can also handle continuous integration, code review, and issue collaboration. Apply the relevant workflow when changing modes and migrate only the approved files.
 
 ### Daily maintenance and light authentication
 
@@ -269,7 +269,7 @@ The data sets and models in the experimental path are functional. When the proje
 
 `rh projects experiment check <project-root>` Checks the list, configuration, routing and matching of documents to the list in `artifacts/` and `reports/` for formal experiments. The whole project is maintained simultaneously at `rh projects project check <project-root>`. The results include the number of implementations and specific non-compliance paths. The official reading back of the project continues to verify the actual results.
 
-The project's dependency list is placed in the official position, and the interpreter binds and installs the entrance ResearchHarness.Hugging Face Downloads and General Caches By Local Client or `huggingface-maintain` task directory processing. Data conversion results and reusable caches are attributed to the corresponding data root.
+The project's dependency list is placed in the official position, and the interpreter binds and installs the entrance ResearchHarness.Hugging Face Downloads and General Caches By Local Client or `maintain-huggingface` task directory processing. Data conversion results and reusable caches are attributed to the corresponding data root.
 
 ### View the landing directory rules from the template
 

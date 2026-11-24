@@ -83,7 +83,7 @@ Record the path that this round will touch and the user changes that already exi
 
 ## Publish Item to GitHub
 
-Online maintenance default from `github-publish` The original installation, construction and testing portal of the project is still available for release of a copy., GitHub Release Profiles on Project Roots `.github/`.Two modes of publication[Project release rules](README.md#project-publishing)Whichever applies to the selection of the release entrance or the migration for which the release process is in place.
+Online maintenance default from `maintain-github` The original installation, construction and testing portal of the project is still available for release of a copy., GitHub Release Profiles on Project Roots `.github/`.Two modes of publication[Project release rules](README.md#project-publishing)Whichever applies to the selection of the release entrance or the migration for which the release process is in place.
 
 <a id="tests-scripts"></a>
 

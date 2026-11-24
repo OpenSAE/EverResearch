@@ -21,7 +21,7 @@ The actual commands, components and configurations are found from the `AGENTS.md
 
 [Data Set Operating Scheme](references/procedures.md)Lists the document attributions, the sequence of implementation of the three types of changes and the conditions for their completion..
 
-First determine the working area actually read by the task `data/` The decompression and indexing file of the directly supported data version follows the root of the data. `assets/` Resources. Locks and temporary storage follow actual writing positions, atoms write in the same file system. Hugging Face Original download and universal cache button `huggingface-maintain` processing of download instructions.
+First determine the working area actually read by the task `data/` The decompression and indexing file of the directly supported data version follows the root of the data. `assets/` Resources. Locks and temporary storage follow actual writing positions, atoms write in the same file system. Hugging Face Original download and universal cache button `maintain-huggingface` processing of download instructions.
 
 ## Samples, labels, partitions or caches do not match configuration
 

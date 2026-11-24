@@ -23,7 +23,7 @@ The table path corresponds to the target project root directory. First, you find
 | `third_party/<upstream-name>/` | Normal use requires keeping external source code or information with the project | Saves an official copy, corresponding version, licence and local change description. Reliance on a declaration or official call point to the version that is actually used. The project has its own fit-for-use module. |
 | `experiment/<matching-run-directory>/` | When the experiment or its analysis script produces information on the corresponding operation | Keeps the configuration, log, report, weight and provisional calculator of the operation. Formally indicates the location of the reference record. |
 
-GitHub releases configurations that are placed according to the maintenance mode selected for the project. The project is self-published using the root directory `.github/`, and online maintenance is defaulted to prepare and execute the release from within your skills by `github-publish`.
+GitHub releases configurations that are placed according to the maintenance mode selected for the project. The project is self-published using the root directory `.github/`, and online maintenance is defaulted to prepare and execute the release from within your skills by `maintain-github`.
 
 ## Building sustainability from real needs
 
