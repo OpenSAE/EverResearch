@@ -78,7 +78,7 @@ rh_transfer_context=(
 Python calls can be used directly at `b2.Engine()` or `archive.Engine()`. You need to upload `project_id` to the associated item on your reply.
 
 The rcline is located at `/usr/bin/rclone`; the private connection configuration is usually
-`/path/to/user/.config/rclone/rclone.conf`. This machine `b2:` is an alias of the existing B2 remote connection.
+Use the caller’s rclone configuration. In the examples, `b2:` is the name of a configured B2 remote.
 Other machines use their own configuration. The key is managed by the rclone private connection configuration, the code and the receipt are used to connect aliases and results.
 
 ## Download directory by specified range
@@ -88,8 +88,8 @@ Matches an existing file that skips; errors are reported and the original docume
 
 ```bash
 python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
-  pull --remote b2:example-bucket/projects/SpatialPheno \
-  --local /path/to/workspace/SpatialPheno \
+  pull --remote b2:example-bucket/projects/example-project \
+  --local /path/to/workspace/example-project \
   --exclude '/experiment/**' --exclude '/extract_embedding/**' \
   --exclude '/old_project/**'
 ```
@@ -99,8 +99,8 @@ rclone's filter rules begin with `/` as opposed to the transfer root directory. 
 
 ```bash
 python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
-  pull --remote b2:example-bucket/projects/SpatialPheno/experiment \
-  --local /path/to/workspace/SpatialPheno/experiment \
+  pull --remote b2:example-bucket/projects/example-project/experiment \
+  --local /path/to/workspace/example-project/experiment \
   --execute --receipt /path/to/workspace/receipts/experiment-copy-001.json
 ```
 
@@ -141,8 +141,8 @@ Additional verification defaults remain unexecuted.
 
 ```bash
 python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
-  verify --local /path/to/workspace/SpatialPheno/experiment \
-  --remote b2:example-bucket/projects/SpatialPheno/experiment \
+  verify --local /path/to/workspace/example-project/experiment \
+  --remote b2:example-bucket/projects/example-project/experiment \
   --execute --receipt /path/to/workspace/receipts/experiment-check-001.json
 ```
 
@@ -158,7 +158,7 @@ The transmission results, additional verification results and scientific finding
 ```bash
 python -m harness.utils.transfer.archive "${rh_transfer_context[@]}" \
   list --archive /path/to/workspace/data.tar.zst \
-  --include data/SpatialPheno_datasets --execute
+  --include data/example-dataset --execute
 ```
 
 `list --execute` lists the selected content in read-only format, and the process requires a sequentially decompressed scan of the tar compression stream.
@@ -169,21 +169,21 @@ The default preview is only printed parameters; the actual existence of the targ
 ```bash
 python -m harness.utils.transfer.archive "${rh_transfer_context[@]}" \
   extract --archive /path/to/workspace/data.tar.zst \
-  --destination /path/to/workspace/data/SpatialPheno_datasets \
-  --include data/SpatialPheno_datasets --strip-components 2 \
+  --destination /path/to/workspace/data/example-dataset \
+  --include data/example-dataset --strip-components 2 \
   --execute --receipt /path/to/workspace/receipts/dataset-extract-001.json
 ```
 
-Here. `--strip-components 2` Get rid of it. `data/SpatialPheno_datasets/`:
-`data/SpatialPheno_datasets/mouseAD/example.h5ad` will write
-`/path/to/workspace/data/SpatialPheno_datasets/mouseAD/example.h5ad`。
+Here. `--strip-components 2` Get rid of it. `data/example-dataset/`:
+`data/example-dataset/sample/example.h5ad` will write
+`/path/to/workspace/data/example-dataset/sample/example.h5ad`。
 The target must use a new directory path; when the target path is occupied, the tool rejects the extraction and retains the existing directory.
 
 Other options:
 
 ```bash
 # One document: adopted include Specify Target
---include data/SpatialPheno_datasets/mouseAD/example.h5ad
+--include data/example-dataset/sample/example.h5ad
 
 # Multiple directories or files
 --include data/project_a --include data/project_b
