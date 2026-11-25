@@ -32,13 +32,16 @@ Use this skill when adding, removing, or changing a setting exposed through a fi
 
 ## Check project maintenance before editing
 
-Before changing an existing project, run `rh projects project status <project-root>`.
-With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
-repository's own rules unless the user asked to use EverResearch. For that request, use
-[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
-EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
-before applying those rules. Read-only inspection and planning can proceed in any state. When status
-cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
+Before applying EverResearch rules to project edits, check the project root for
+`.researchharness/mode.toml`. If it is missing, follow the repository's own rules. When the user
+asks to use EverResearch on that project, hand off to [maintain-project](../maintain-project/SKILL.md)
+for authorized setup before applying these rules. Read-only inspection and planning can proceed
+before setup.
+
+If the mode file is present, run `rh projects project status <project-root>`. With `managed`, use
+the reported guide and follow the authorized request. If the connection is unavailable or its
+status cannot be verified, explain the gap and resolve it before applying EverResearch rules.
+
 
 ## Trace each parameter to its consumer
 

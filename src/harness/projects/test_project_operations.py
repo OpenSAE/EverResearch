@@ -263,7 +263,11 @@ def test_standalone_setup_preserves_project_instructions(command, workspace):
         path = project / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(content)
-    large = project / "checkpoint.bin"
+    data = project / "data"
+    data.mkdir()
+    for name in ("small.npy", "photo.JPG", "weights.pt", "samples.zip", "audio.wav", "video.mp4"):
+        (data / name).write_bytes(b"data")
+    large = project / "artifact.blob"
     with large.open("wb") as stream:
         stream.truncate(LARGE_FILE_BYTES + 1)
     setup = command("setup-maintenance", str(project))
@@ -278,7 +282,10 @@ def test_standalone_setup_preserves_project_instructions(command, workspace):
         assert set(manifest["files"]) == {*project_files, "AGENTS.md", ".gitignore"}
         for name, content in project_files.items():
             assert bundle.extractfile(f"files/{name}").read() == content
-        assert manifest["large_files"] == [{"path": large.name, "size_bytes": LARGE_FILE_BYTES + 1}]
+        assert {item["path"]: item["size_bytes"] for item in manifest["large_files"]} == {
+            large.name: LARGE_FILE_BYTES + 1,
+            **{f"data/{item.name}": 4 for item in data.iterdir()},
+        }
         assert f"files/{large.name}" not in bundle.getnames()
         assert manifest["links"] == {".agents/skills/example": str(central_skill)}
         assert ".researchharness/mode.toml" in manifest["created_paths"]
@@ -293,7 +300,9 @@ def test_standalone_setup_preserves_project_instructions(command, workspace):
     assert report["guide"] == str(launcher.parent / "offline/operations.md")
     assert generated.startswith(original)
     assert generated.count(SEARCH_PARAGRAPH) == 1
+    (archive.parent / "initial-setup.tar.lock").touch()
     assert command("setup-maintenance", str(project))["backup"] is None
+    assert list(archive.parent.iterdir()) == [archive]
     assert archive.read_bytes() == original_backup
     assert agents.read_text() == generated
     (launcher.parent / "offline/operations.md").unlink()
@@ -323,6 +332,26 @@ def test_retried_setup_keeps_the_original_backup(command, workspace, monkeypatch
     assert Path(command("setup-maintenance", str(project))["backup"]) == archive
     assert archive.read_bytes() == before_retry
     assert agents.read_bytes().startswith(b"# Edited before retry\n")
+
+
+def test_initial_backup_prioritizes_project_source_under_the_total_limit(command, workspace, monkeypatch):
+    from harness.projects import setup_backup
+
+    _, project, _ = workspace
+    monkeypatch.setattr(setup_backup, "BACKUP_BUDGET_BYTES", 18)
+    (project / "first.misc").write_bytes(b"a" * 15)
+    (project / "model.py").write_bytes(b"pass   \n")
+    (project / "config.yml").write_bytes(b"value: 1")
+    (project / "report.md").write_bytes(b"report")
+    result = command("setup-maintenance", str(project))
+    archive = Path(result["backup"])
+    with tarfile.open(archive) as bundle:
+        manifest = json.load(bundle.extractfile("manifest.json"))
+        assert manifest["files"] == ["config.yml", "model.py"]
+        assert sum(item.size for item in bundle if item.name.startswith("files/")) == 16
+        assert manifest["large_files"] == [
+            {"path": "report.md", "size_bytes": 6}, {"path": "first.misc", "size_bytes": 15},
+        ]
 
 
 def test_run_uses_bound_python_data_and_project(command, workspace, tmp_path):

@@ -47,8 +47,8 @@ Before applying EverResearch rules to project edits, run `rh projects project st
 The JSON result reports `managed` with the active guide, `unmanaged` when maintenance is inactive, or
 `unavailable` with the reason an existing connection cannot be used. The command reads maintenance
 files without running the project's launcher. Read-only layout checks and adoption planning can run
-before setup. For an unmanaged project, follow its own instructions unless the user opts into
-EverResearch and authorizes setup.
+before setup. A project without `.researchharness/mode.toml` follows its own instructions until its
+user authorizes EverResearch setup, including projects with legacy registrations.
 
 For a project in `example/`, run these commands from the shared workspace:
 
@@ -64,8 +64,10 @@ rh projects --harness-root ./ResearchHarness status example
 
 Run the authorized first setup before moving or editing project files. It saves project files,
 including code, configurations, and documentation, in `.researchharness/backups/initial-setup.tar.gz`.
-It skips hidden directories, caches, and virtual environments. Files over 20 MiB are listed by path
-and size. Setup always copies the originals it modifies. A retry reuses the first archive.
+It skips hidden directories, caches, and virtual environments. Data, model weights, archives, and
+media are listed by path and size, as are other files over 20 MiB or beyond the 200 MB limit on
+copied content. Setup prioritizes the originals it changes, then code, configuration, and
+documentation. A retry reuses the first archive.
 
 To recover, extract the archive into a separate directory. Review the originals in `files/` and the
 recorded links and newly created paths in `manifest.json` before restoring anything. Large-file

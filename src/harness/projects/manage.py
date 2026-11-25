@@ -26,7 +26,7 @@ from harness.core.project import check_project
 from . import onboarding
 from harness.core.workspace import save, save_bytes, update_lock
 from . import maintenance, resources, structure
-from .setup_backup import BACKUP_IGNORE, save_initial_backup
+from .setup_backup import BACKUP_IGNORE, BACKUP_LOCK_IGNORE, remove_legacy_backup_lock, save_initial_backup
 from .standalone.maintain import online_guide as check_online_guide, require_file
 
 START = "<!-- researchharness:projects -->"
@@ -414,8 +414,10 @@ def setup_maintenance(harness, source, *, online=False):
         if selected and project_id:
             paths.add(directory / "online/connection.json")
         backup = save_initial_backup(root, paths)
-        if BACKUP_IGNORE not in updated_ignore.splitlines():
-            updated_ignore = updated_ignore.rstrip() + f"\n{BACKUP_IGNORE}\n"
+        for rule in (BACKUP_IGNORE, BACKUP_LOCK_IGNORE):
+            if rule not in updated_ignore.splitlines():
+                updated_ignore = updated_ignore.rstrip() + f"\n{rule}\n"
+    remove_legacy_backup_lock(root)
     if updated_ignore != ignore_text:
         save_bytes(ignore, updated_ignore.encode(), source=__file__)
     for path, content in created.items():

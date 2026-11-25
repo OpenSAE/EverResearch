@@ -25,6 +25,10 @@ code. A `managed` result includes the active guide. An `unavailable` result iden
 broken setup. An `unmanaged` result means EverResearch maintenance is inactive for this project.
 Structural checks are separate and can be run before setup.
 
+A project without `.researchharness/mode.toml` follows its own rules until its user authorizes
+EverResearch setup. This also applies when the status command recognizes a legacy registration.
+Complete setup before handing project edits back to a specialist.
+
 For a read-only request, inspect the repository and explain what an adoption plan would change. Before
 using EverResearch to edit an unmanaged project, confirm the target root, existing user work, proposed
 setup changes, and verification steps. Obtain approval for setup or use authorization already given for
