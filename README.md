@@ -29,10 +29,10 @@ EverResearch can also map how a paper or codebase fits together. Open the [inter
 
 ## Quick Start
 
-**Terminal.** Install the current GitHub build with Python 3.11–3.13 and try the demo. For the latest packaged release, use `uv tool install ever-research`.
+**Terminal.** Install EverResearch from PyPI with Python 3.11–3.13 and try the demo.
 
 ```bash
-uv tool install --from git+https://github.com/OpenSAE/EverResearch.git ever-research
+uv tool install ever-research
 rh doctor
 rh utils quick-demo ./QuickDemo
 ```
@@ -88,7 +88,7 @@ GitHub-installed skills download and verify a pinned EverResearch runtime on fir
 | Add a dataset or model | “Add this dataset or model to the current training task. Reuse the existing pipeline and show which configuration selects it.” | A reusable component, the configuration that selects it, and a check through the existing task. |
 | Reproduce an experiment | “Reproduce the baseline from its recorded configuration. Save a separate run and compare the metrics and settings.” | A new experiment record and a comparison tied to both configurations. |
 
-Run `rh projects project check ./MyProject --onboarding` for a read-only inventory and a prompt you can paste into your agent. This preview is the default for a project you have yet to configure. Use `--strict` to validate the structure, or `--json` for the original machine-readable check and pass/fail status.
+Run `rh projects project check ./MyProject --onboarding` for a read-only inventory and a prompt you can paste into your agent. The default stays in onboarding while you configure the project and resolve its remaining layout fixes. In scripts and CI, use `--strict` for a structural pass/fail exit code or `--json` for the same check with machine-readable output.
 
 Start on a new branch with a saved baseline. Ask the agent to preserve your existing entry commands, data, and results. Approve the proposed file changes before the agent applies them and explicitly approve any removal. Review the diff and run the existing commands before merging. The original branch keeps the baseline available if you want to abandon the changes.
 

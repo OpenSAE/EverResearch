@@ -5,5 +5,5 @@ For central project access and tool call.
 
 from .central import HarnessContext, ProjectError, load_harness
 
-__version__ = "0.2.3"
+__version__ = "0.3.0"
 __all__ = ["HarnessContext", "ProjectError", "load_harness"]

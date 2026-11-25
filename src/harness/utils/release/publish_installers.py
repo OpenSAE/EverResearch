@@ -54,8 +54,10 @@ def publish(version, target, directory):
     tag = f"v{version}"
     release = release_info(tag)
     if release is None:
+        changelog = Path("CHANGELOG.md").read_text(encoding="utf-8")
+        notes = changelog.partition(f"\n## {version}\n")[2].split("\n## ", 1)[0].strip()
         gh("create", tag, "--target", target, "--draft", "--title", f"EverResearch {version}",
-           "--notes", "Official EverResearch installers and SHA-256 checksums.")
+           "--notes", notes or "Official EverResearch installers and SHA-256 checksums.")
         release = release_info(tag)
     if release is None:
         raise RuntimeError(f"Cannot read {tag} after creation")

@@ -18,10 +18,10 @@ EverResearch 让你现有的 AI 代理能维护科研项目。它帮助你弄清
 
 ## 快速开始
 
-**终端。** 在 Python 3.11、3.12 或 3.13 环境下安装 GitHub 上的最新版，运行演示。已打包的稳定版可用 `uv tool install ever-research` 安装。
+**终端。** 在 Python 3.11、3.12 或 3.13 环境下从 PyPI 安装 EverResearch，然后运行演示。
 
 ```sh
-uv tool install --from git+https://github.com/OpenSAE/EverResearch.git ever-research
+uv tool install ever-research
 rh doctor
 rh utils quick-demo ./QuickDemo
 ```
@@ -68,7 +68,7 @@ npx --yes skills add https://github.com/OpenSAE/EverResearch/tree/main/plugins/a
 | 加一个数据集或模型 | “把这个数据集或模型接进现有训练流程，告诉我用什么配置选中它，并用原有训练入口验证。” | 可复用的组件、选择它的配置，以及验证结果。 |
 | 复现和比较实验 | “用记录下来的配置复现基线。另存一次运行，并对比两次的参数和指标。” | 一份新实验记录，以及能追溯到配置的结果对比。 |
 
-运行 `rh projects project check ./MyProject --onboarding` 可以生成只读报告，报告里附有可直接贴给代理的指令。未配置的项目默认显示接入报告。用 `--strict` 检查目录是否合规，或用 `--json` 获取原有的机器可读校验结果和通过状态。
+运行 `rh projects project check ./MyProject --onboarding` 可以生成只读报告，报告里附有可直接贴给代理的指令。项目配置好维护入口后，只要还有目录结构需要调整，默认检查就会继续显示接入进度。在脚本和持续集成中，使用 `--strict` 通过退出码判断校验结果，或用 `--json` 同时获取机器可读的结果。
 
 准备整理现有项目时，先保存基线并建一个分支。让代理保留原有入口命令、数据和结果，确认文件改动后再执行，删除文件需单独确认。合并前对照改动，并用原有命令验证。想撤回时，原分支仍保留着整理前的状态。
 

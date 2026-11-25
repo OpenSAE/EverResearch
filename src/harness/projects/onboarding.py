@@ -4,6 +4,8 @@ Used by project check for unfamiliar repositories and by the explicit
 onboarding mode. The report reads the tree without executing project code.
 """
 
+import ast
+from itertools import islice
 from pathlib import Path
 import re
 
@@ -11,6 +13,16 @@ import re
 ENTRY_STEMS = {"train", "eval", "evaluate", "predict", "infer", "inference", "main", "run"}
 ENTRY_SUFFIXES = {".py", ".sh", ".R", ".r", ".jl"}
 CONFIG_SUFFIXES = {".yaml", ".yml", ".toml", ".json", ".ini", ".cfg"}
+SOURCE_DIRECTORIES = {"src", "lib", "utils", "code"}
+SOURCE_ROLES = {
+    "model": ("Model code", "models/"),
+    "network": ("Model code", "models/"),
+    "architecture": ("Model code", "models/"),
+    "dataset": ("Data code", "datasets/"),
+    "dataloader": ("Data code", "datasets/"),
+    "data": ("Data code", "datasets/"),
+    "preprocessing": ("Data code", "datasets/"),
+}
 LOCATIONS = {
     "configs": ("Configuration", "conf/"),
     "config": ("Configuration", "conf/"),
@@ -37,7 +49,43 @@ def entry_purpose(path):
     return None
 
 
-def preview(project):
+def code_candidates(root):
+    """Identify likely model and data modules without importing project code."""
+    directories = [(root, 0)]
+    for directory, depth in directories:
+        for path in sorted(islice(directory.iterdir(), 300)):
+            if path.name.startswith((".", "_")) or path.is_symlink():
+                continue
+            if depth < 3 and len(directories) < 40 and path.is_dir() and (
+                path.name in SOURCE_DIRECTORIES or (path / "__init__.py").is_file()
+            ):
+                if depth or path.name not in LOCATIONS:
+                    directories.append((path, depth + 1))
+                continue
+            words = re.split(r"[_-]", path.stem.lower())
+            role = next((SOURCE_ROLES[word] for word in words if word in SOURCE_ROLES), None)
+            if not role or path.suffix != ".py" or not path.is_file():
+                continue
+            label, destination = role
+            declarations = []
+            try:
+                with path.open("rb") as source:
+                    code = source.read(128 * 1024 + 1)
+                if len(code) <= 128 * 1024:
+                    declarations = [
+                        node.name for node in ast.parse(code).body if isinstance(node, ast.ClassDef)
+                    ][:3]
+            except (OSError, SyntaxError, ValueError, RecursionError):
+                pass
+            yield {
+                "path": path.relative_to(root).as_posix(),
+                "kind": label,
+                "classes": declarations,
+                "suggestion": f"Trace its callers, then consider placing reusable code under {destination}",
+            }
+
+
+def preview(project, *, remaining_fixes=None):
     """Return the observed paths and a bounded, read-only onboarding proposal."""
     root = Path(project).resolve(strict=True)
     if not root.is_dir():
@@ -66,6 +114,7 @@ def preview(project):
             locations.append({
                 "path": path.name + "/", "kind": label,
                 "count": len(examples),
+                "empty": not children,
                 "examples": [str(item.relative_to(root).as_posix()) for item in examples[:5]],
                 "suggestion": suggestion,
             })
@@ -74,6 +123,8 @@ def preview(project):
         "mode": "onboarding",
         "entry_points": entries,
         "locations": locations,
+        "code_candidates": list(islice(code_candidates(root), 20)),
+        "remaining_fixes": remaining_fixes,
         "next_step": (
             "Use EverResearch to plan onboarding this project. Trace its current commands, "
             "configuration, data, and existing outputs. Show the current and proposed paths, "
@@ -83,19 +134,30 @@ def preview(project):
 
 
 def format_preview(report):
-    lines = [f"EverResearch onboarding preview for {report['project']}", "", "What I found"]
+    lines = [f"EverResearch onboarding preview for {report['project']}"]
+    if report["remaining_fixes"] is not None:
+        lines.append(f"Maintenance is set up. Remaining structure fixes: {report['remaining_fixes']}.")
+    lines.extend(("", "What I found"))
     for entry in report["entry_points"]:
         lines.append(f"  Entry point: {entry['path']}")
     for location in report["locations"]:
         examples = ", ".join(location["examples"])
-        suffix = f" ({location['count']}{': ' + examples if examples else ''})"
+        if examples:
+            suffix = f" ({location['count']}: {examples})"
+        else:
+            suffix = " (empty)" if location["empty"] else " (no recognized files)"
         lines.append(f"  {location['kind']}: {location['path']}{suffix}")
-    if not report["entry_points"] and not report["locations"]:
+    for candidate in report["code_candidates"]:
+        classes = ", ".join(candidate["classes"])
+        suffix = f" (classes: {classes})" if classes else ""
+        lines.append(f"  Possible {candidate['kind'].lower()}: {candidate['path']}{suffix}")
+    items = [*report["entry_points"], *report["locations"], *report["code_candidates"]]
+    if not items:
         lines.append("  Start with the project's README and documented commands.")
     lines.extend(("", "Proposed layout and checks"))
-    for item in [*report["entry_points"], *report["locations"]]:
+    for item in items:
         lines.append(f"  {item['path']} -> {item['suggestion']}")
-    if not report["entry_points"] and not report["locations"]:
+    if not items:
         lines.append("  Map the entry points and existing outputs before proposing changes.")
     lines.extend(("", "Paste into your agent", f"  {report['next_step']}",
                   "", "Read-only preview. Review the plan before making changes."))

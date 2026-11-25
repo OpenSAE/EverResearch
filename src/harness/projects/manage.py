@@ -390,11 +390,17 @@ def setup_maintenance(harness, source, *, online=False):
     for path, content in created.items():
         save_bytes(path, content, source=__file__)
     ignore_text = ignore.read_text(encoding="utf-8") if ignore.exists() else ""
+    comment = "# EverResearch stores machine-specific connection records here."
     if ONLINE_IGNORE not in ignore_text.splitlines():
-        comment = "# Connection records maintained online on-line."
         separator = "\n\n" if ignore_text.strip() else ""
-        save_bytes(ignore, (ignore_text.rstrip() + f"{separator}{comment}\n{ONLINE_IGNORE}\n").encode(),
-                   source=__file__)
+        updated_ignore = ignore_text.rstrip() + f"{separator}{comment}\n{ONLINE_IGNORE}\n"
+    else:
+        updated_ignore = ignore_text.replace(
+            f"# Connection records maintained online on-line.\n{ONLINE_IGNORE}",
+            f"{comment}\n{ONLINE_IGNORE}",
+        )
+    if updated_ignore != ignore_text:
+        save_bytes(ignore, updated_ignore.encode(), source=__file__)
     if not agent.exists() or text != agent.read_text(encoding="utf-8"):
         save_bytes(agent, text.encode(), source=__file__)
     if current_mode is None:
@@ -588,12 +594,16 @@ def main(argv=None):
         if args.action == "project":
             root = Path(args.path).resolve(strict=True)
             configured = (root / ".researchharness/mode.toml").is_file()
-            if args.onboarding or (not configured and not args.strict and not args.json):
+            if args.onboarding or not (configured or args.strict or args.json):
                 result = onboarding.preview(root)
                 print(json.dumps(result, ensure_ascii=False, indent=2) if args.json
                       else onboarding.format_preview(result))
                 return 0
             result = check_project(root)
+            if configured and not (args.strict or args.json or result["passed"]):
+                report = onboarding.preview(root, remaining_fixes=len(result["violations"]))
+                print(onboarding.format_preview(report))
+                return 0
             print(json.dumps(result, ensure_ascii=False, indent=2) if args.json
                   else onboarding.format_check(result))
             return 0 if result["passed"] else 1

@@ -7,8 +7,19 @@ import sys
 
 
 def main(argv):
-    if not argv or argv == ["--help"]:
-        print("Usage: rh utils {archive,transfer,probe,compare,quick-demo,release} --help")
+    if not argv or argv in (["--help"], ["-h"]):
+        print("""EverResearch utilities
+
+Usage: rh utils <command> [options]
+
+  quick-demo  Preview project onboarding and reproduce a sample experiment.
+  archive     Inspect an archive or extract selected files.
+  transfer    Move files to or from supported storage.
+  probe       Capture the current software and hardware environment.
+  compare     Compare two environment snapshots.
+  release     Build and verify the files used for distribution.
+
+Use rh utils <command> --help for command options.""")
         return 0
     command, *args = argv
     if command == "quick-demo":

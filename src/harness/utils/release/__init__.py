@@ -41,13 +41,15 @@ SKILLS = {
     "maintain-tmp": (),
 }
 CORE = (
-    "LICENSE", "README.md", "README.zh-CN.md", "pyproject.toml",
+    "LICENSE", "README.md", "README.zh-CN.md", "CHANGELOG.md", "CONTRIBUTING.md", "CITATION.cff",
+    "pyproject.toml",
     "src/harness/*.py", "src/harness/core/*.py", "src/harness/core/README.md",
     "src/harness/projects/*.py", "src/harness/projects/*.md", "src/harness/projects/*.md.in",
     "src/harness/projects/standalone/*.py", "src/harness/projects/standalone/*.md",
     "src/harness/projects/standalone/offline/*.py", "src/harness/projects/standalone/offline/*.md",
     "src/harness/utils/*.py", "src/harness/utils/transfer/*.py", "src/harness/utils/transfer/README.md",
     "src/harness/utils/release/*.py", "src/harness/utils/release/install.mjs",
+    "src/harness/utils/release/assets/*.gif",
     "src/harness/utils/release/plugins/*.mjs", "src/harness/utils/release/plugins/*.md",
 )
 CUB = "src/harness/projects/templates/cub"
@@ -379,7 +381,7 @@ def build_npm(temporary, output, version, wheel, source):
     (npm / "LICENSE").write_bytes(source["LICENSE"])
     (npm / "package.json").write_bytes(json_bytes({
         "name": "@opensae/ever-research", "version": version,
-        "description": "Install ResearchHarness tools and project skills",
+        "description": "Install EverResearch tools and project skills",
         "bin": {"ever-research": "install.mjs"},
         "engines": {"node": ">=18"}, "license": "Apache-2.0",
         "files": ["install.mjs", "rh.py", wheel.name],

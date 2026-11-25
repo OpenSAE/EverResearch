@@ -2,12 +2,13 @@
 
 This file records user-facing changes to EverResearch. See [GitHub Releases](https://github.com/OpenSAE/EverResearch/releases) for published installers and checksums.
 
-## Unreleased
+## 0.3.0
 
-- Show a read-only onboarding report for a first project check. Keep machine-readable structural validation available through `--json`.
+- Show a read-only onboarding report for a first project check and keep showing onboarding progress while a configured project still has layout fixes. The report identifies likely model and dataset code.
+- **Automation:** use `rh projects project check --strict <path>` or `--json` in scripts and CI that rely on the exit code. The default onboarding report exits 0 when the report is generated, even if the project still needs changes.
 - Use the EverResearch name in the CLI and write plain-English project guidance when setting up maintenance.
 - Add a lightweight example that reproduces an experiment from its recorded configuration.
-- Check a clean installation on Linux, macOS, and Windows.
+- Check the published package on Linux, macOS, and Windows.
 
 ## 0.2.3
 

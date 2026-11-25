@@ -152,8 +152,11 @@ def test_unconfigured_project_defaults_to_a_read_only_onboarding_report(tmp_path
     root = tmp_path / "MixedResearch"
     for name in ("train.py", "eval.py", "train_v2_final.py", "configs/first.yaml",
                  "configs/second.toml", "outputs/run_0412/metrics.json",
-                 "data/input.csv", "checkpoints/model.pt", "notebooks/analysis.ipynb"):
+                 "data/input.csv", "notebooks/analysis.ipynb"):
         write(root, name, "")
+    (root / "checkpoints").mkdir()
+    write(root, "src/model.py", "raise RuntimeError('do not import')\nclass Probe: pass\n")
+    write(root, "utils/data.py", "def load(): return []\n")
     before = {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
 
     command = ["projects", "project", "check", str(root)]
@@ -161,7 +164,8 @@ def test_unconfigured_project_defaults_to_a_read_only_onboarding_report(tmp_path
     summary = capsys.readouterr().out
     for text in ("What I found", "Entry point: train.py", "Entry point: eval.py",
                  "configs/ (2:", "outputs/run_0412", "Possible variant of train.py",
-                 "Paste into your agent", "Ask before editing any files"):
+                 "Paste into your agent", "Ask before editing any files",
+                 "checkpoints/ (empty)", "src/model.py (classes: Probe)", "utils/data.py"):
         assert text in summary
 
     assert main([*command, "--onboarding", "--json"]) == 0
@@ -170,10 +174,13 @@ def test_unconfigured_project_defaults_to_a_read_only_onboarding_report(tmp_path
     assert {item["path"] for item in report["entry_points"]} == {
         "train.py", "eval.py", "train_v2_final.py",
     }
+    assert {item["path"] for item in report["code_candidates"]} == {"src/model.py", "utils/data.py"}
     assert main([*command, "--json"]) == 1
     assert json.loads(capsys.readouterr().out)["passed"] is False
     assert {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()} == before
 
     write(root, ".researchharness/mode.toml", "enabled = false\n")
-    assert main(command) == 1
+    assert main(command) == 0
+    assert "Maintenance is set up. Remaining structure fixes:" in capsys.readouterr().out
+    assert main([*command, "--strict"]) == 1
     assert "Project check found" in capsys.readouterr().out

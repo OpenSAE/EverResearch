@@ -1,5 +1,5 @@
 # Purpose: publish verified installers as versioned GitHub Release assets.
-# Scope: guard committed plugin files on main and publish new releases on request.
+# Scope: guard committed plugin files and publish version changes on main.
 name: Publish installers
 
 on:
@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/release-installers.yml'
       - 'plugins/**'
+      - 'pyproject.toml'
   workflow_dispatch:
 
 permissions:
@@ -21,10 +22,34 @@ jobs:
   check-committed-downloads:
     if: github.repository == 'OpenSAE/EverResearch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    outputs:
+      publish: ${{ steps.version.outputs.publish }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
+          fetch-depth: 0
+      - name: Detect a release version change
+        id: version
+        env:
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import subprocess
+          import tomllib
+
+          with open("pyproject.toml", "rb") as config:
+              current = tomllib.load(config)["project"]["version"]
+          publish = os.environ["GITHUB_EVENT_NAME"] == "workflow_dispatch"
+          if not publish:
+              previous = subprocess.check_output(
+                  ["git", "show", f"{os.environ['PUSH_BEFORE']}:pyproject.toml"], text=True
+              )
+              publish = current != tomllib.loads(previous)["project"]["version"]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as result:
+              print(f"publish={str(publish).lower()}", file=result)
+          PY
       - name: Check installer paths
         run: |
           python3 - <<'PY'
@@ -49,7 +74,7 @@ jobs:
               raise SystemExit("Move these generated files to GitHub Release assets:\n" + "\n".join(unexpected))
           PY
   publish:
-    if: github.event_name == 'workflow_dispatch'
+    if: needs.check-committed-downloads.outputs.publish == 'true'
     needs: check-committed-downloads
     permissions:
       contents: write
