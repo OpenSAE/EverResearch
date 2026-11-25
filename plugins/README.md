@@ -19,4 +19,4 @@
 | OpenClaw | [openclaw/](openclaw/) |
 | DeepSeek Harness | [deepseek/](deepseek/) |
 
-[installer/](installer/) 提供 Python wheel、npm 安装器、DeepSeek Harness 组合包、BirdStudy 示例和校验文件。各宿主的安装命令见[安装说明](../src/harness/utils/release/README.md)。使用仓库根目录作为市场来源的宿主可以继续使用[插件市场分支](https://github.com/OpenSAE/ResearchHarness/tree/plugins)。
+[installer/](installer/) 提供 Python wheel、npm 安装器、DeepSeek Harness 组合包、BirdStudy 示例和校验文件。各宿主的安装命令见[安装说明](../src/harness/utils/release/README.md)。本目录也包含 Codex、Claude Code、Cursor 和 GitHub Copilot 的市场清单。

@@ -70,8 +70,7 @@ wheel to make `rh` available in the environment where the host runs commands.
 | Chat-only use | Share project files and the agreement with your model. Run `rh projects project check` in the terminal. |
 
 The marketplace archive includes Codex, Claude, Cursor, and Copilot catalogs
-alongside the host packages. For this private deployment you can use the
-marketplace directory from the repository's `plugins` branch.
+alongside the host packages. Use the repository's top-level `plugins/` directory as the local marketplace.
 Access to a private GitHub repository and permission to install local or team
 plugins depend on your account and host settings.
 
