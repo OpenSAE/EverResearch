@@ -34,7 +34,7 @@ Use this skill when adding, removing, or changing a setting exposed through a fi
 
 Before applying EverResearch rules to project edits, check the project root for
 `.researchharness/mode.toml`. If it is missing, follow the repository's own rules. When the user
-asks to use EverResearch on that project, hand off to [maintain-project](../maintain-project/SKILL.md)
+asks to use EverResearch on that project, hand off to the `maintain-project` skill
 for authorized setup before applying these rules. Read-only inspection and planning can proceed
 before setup.
 
