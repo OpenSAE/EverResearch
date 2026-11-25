@@ -19,68 +19,39 @@ EverResearch gives your AI agent the tools to understand and maintain a research
 
 ## Quick Start
 
-**Terminal.** Install EverResearch from PyPI with Python 3.11–3.13 and try the demo.
-
-```bash
-uv tool install ever-research
-rh doctor
-rh utils quick-demo ./QuickDemo
-```
-
-**Codex.** Install the plugin, then open your research project.
-
-```bash
-codex plugin marketplace add OpenSAE/EverResearch
-codex plugin add ever-research@ever-research
-```
-
-**Other agents.** Install the portable skills in your research project with [Skills CLI](https://skills.sh/opensae/everresearch).
-
-```bash
-npx --yes skills add https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin --all -y
-```
-
-<details>
-<summary><b>Platform guides and other installation options</b></summary>
-
 | Agent | Installation |
 | --- | --- |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/codex-color.svg" alt="" width="18" height="18"> Codex | [Codex plugin](plugins/codex-plugin/) |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/claude-color.svg" alt="" width="18" height="18"> Claude Code, Claude Cowork and web | [Claude plugin](plugins/claude-plugin/) |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/cursor.svg" alt="" width="18" height="18"> Cursor | [Cursor plugin](plugins/cursor-plugin/) |
-| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/githubcopilot.svg" alt="" width="18" height="18"> GitHub Copilot CLI | [Agent Plugin](plugins/agent-plugin/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/githubcopilot.svg" alt="" width="18" height="18"> GitHub Copilot CLI | [Install guide](plugins/agent-plugin/#install-in-github-copilot-cli) |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/gemini-color.svg" alt="" width="18" height="18"> Gemini CLI | [Gemini extension](plugins/gemini-extension/) |
-| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/qwen-color.svg" alt="" width="18" height="18"> Qwen Code | [Agent Plugin](plugins/agent-plugin/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/qwen-color.svg" alt="" width="18" height="18"> Qwen Code | [Install guide](plugins/agent-plugin/#install-in-qwen-code) |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/deepseek-color.svg" alt="" width="18" height="18"> DeepSeek Harness | [DeepSeek plugin](plugins/deepseek/) |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/opencode.svg" alt="" width="18" height="18"> OpenCode | [OpenCode plugin](plugins/opencode/) |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/openclaw-color.svg" alt="" width="18" height="18"> OpenClaw | [OpenClaw plugin](plugins/openclaw/) |
-| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/vercel.svg" alt="" width="18" height="18"> Skills CLI | [Skills.sh](https://skills.sh/opensae/everresearch) |
-| Other agents | [Portable Skills](plugins/agent-plugin/) · [CLI and installer](plugins/installer/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/vercel.svg" alt="" width="18" height="18"> Skills CLI | [Install guide](plugins/agent-plugin/#install-with-the-skills-cli) · [Skills.sh](https://skills.sh/opensae/everresearch) |
 
-Run the following inside Claude Code to add its native plugin.
+**Terminal.** Install from PyPI with Python 3.11–3.13.
 
-```text
-/plugin marketplace add OpenSAE/EverResearch
-/plugin install ever-research@ever-research
+```bash
+uv tool install ever-research
+rh doctor
 ```
 
-Download the wheel, npm installer, or offline plugin ZIPs from [GitHub Releases](https://github.com/OpenSAE/EverResearch/releases/latest). See the [installer guide](plugins/installer/) for exact commands. To use the latest source checkout, run `python -m pip install .` there.
-
-GitHub-installed skills download and verify a pinned EverResearch runtime on first use and cache it on the host. Offline plugin ZIPs include the runtime. For execution, the agent needs Python and access to your project and its dependencies.
-
-</details>
+Offline installers are available on [GitHub Releases](https://github.com/OpenSAE/EverResearch/releases/latest).
 
 ### Three workflows to try
 
 | Goal | Ask your agent | What you get |
 | --- | --- | --- |
-| Adopt an existing project | “Plan how to organize this repository with EverResearch. Identify current commands, data, configs, and results. Show proposed moves and verification steps, then wait for my approval.” | A file-by-file plan and the commands the agent will preserve. |
-| Add a dataset or model | “Add this dataset or model to the current training task. Reuse the existing pipeline and show which configuration selects it.” | A reusable component, the configuration that selects it, and a check through the existing task. |
-| Reproduce an experiment | “Reproduce the baseline from its recorded configuration. Save a separate run and compare the metrics and settings.” | A new experiment record and a comparison tied to both configurations. |
+| Adopt a project | “Plan how to organize this project. Ask before editing.” | Proposed moves and checks. |
+| Add a dataset or model | “Add this dataset or model to my training pipeline.” | A reusable component and its configuration. |
+| Reproduce an experiment | “Rerun the baseline from its saved config and compare results.” | A new run and a metrics comparison. |
 
-Run `rh projects project check ./MyProject --onboarding` for a read-only inventory and a prompt you can paste into your agent. The default stays in onboarding while you configure the project and resolve its remaining layout fixes. In scripts and CI, use `--strict` for a structural pass/fail exit code or `--json` for the same check with machine-readable output.
+Run `rh projects project check ./MyProject --onboarding` for a read-only preview. Scripts and CI can use `--strict` for pass/fail or `--json` for machine-readable results.
 
-Start on a new branch with a saved baseline. Ask the agent to preserve your existing entry commands, data, and results. Approve the proposed file changes before the agent applies them and explicitly approve any removal. Review the diff and run the existing commands before merging. The original branch keeps the baseline available if you want to abandon the changes.
+For existing projects, work on a branch and run the original commands before merging.
 
 ## Features
 

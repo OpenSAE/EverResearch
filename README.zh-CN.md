@@ -8,59 +8,39 @@ EverResearch 让你现有的 AI 代理能维护科研项目。它帮助你弄清
 
 ## 快速开始
 
-**终端。** 在 Python 3.11、3.12 或 3.13 环境下从 PyPI 安装 EverResearch，然后运行演示。
+| 平台 | 安装指南 |
+| --- | --- |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/codex-color.svg" alt="" width="18" height="18"> Codex | [Codex 插件](plugins/codex-plugin/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/claude-color.svg" alt="" width="18" height="18"> Claude Code、Cowork 和网页版 | [Claude 插件](plugins/claude-plugin/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/cursor.svg" alt="" width="18" height="18"> Cursor | [Cursor 插件](plugins/cursor-plugin/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/githubcopilot.svg" alt="" width="18" height="18"> GitHub Copilot CLI | [安装指南](plugins/agent-plugin/#install-in-github-copilot-cli) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/gemini-color.svg" alt="" width="18" height="18"> Gemini CLI | [Gemini 扩展](plugins/gemini-extension/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/qwen-color.svg" alt="" width="18" height="18"> Qwen Code | [安装指南](plugins/agent-plugin/#install-in-qwen-code) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/deepseek-color.svg" alt="" width="18" height="18"> DeepSeek Harness | [DeepSeek 插件](plugins/deepseek/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/opencode.svg" alt="" width="18" height="18"> OpenCode | [OpenCode 插件](plugins/opencode/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/openclaw-color.svg" alt="" width="18" height="18"> OpenClaw | [OpenClaw 插件](plugins/openclaw/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/vercel.svg" alt="" width="18" height="18"> Skills CLI | [安装指南](plugins/agent-plugin/#install-with-the-skills-cli) · [Skills.sh](https://skills.sh/opensae/everresearch) |
+
+**终端。** 使用 Python 3.11–3.13 从 PyPI 安装。
 
 ```sh
 uv tool install ever-research
 rh doctor
-rh utils quick-demo ./QuickDemo
 ```
 
-**Codex。** 安装插件后，打开自己的科研项目。
-
-```sh
-codex plugin marketplace add OpenSAE/EverResearch
-codex plugin add ever-research@ever-research
-```
-
-**其他代理。** 在项目目录用 [Skills CLI](https://skills.sh/opensae/everresearch) 安装通用技能。
-
-```sh
-npx --yes skills add https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin --all -y
-```
-
-<details>
-<summary><b>各平台的安装说明及其他安装方式</b></summary>
-
-| 平台 | 安装说明 |
-| --- | --- |
-| Codex | [Codex 插件](plugins/codex-plugin/) |
-| Claude Code、Cowork 和网页版 | [Claude 插件](plugins/claude-plugin/) |
-| Cursor | [Cursor 插件](plugins/cursor-plugin/) |
-| Copilot CLI、Qwen Code | [通用代理插件](plugins/agent-plugin/) |
-| Gemini CLI | [Gemini 扩展](plugins/gemini-extension/) |
-| DeepSeek Harness | [DeepSeek 插件](plugins/deepseek/) |
-| OpenCode | [OpenCode 插件](plugins/opencode/) |
-| OpenClaw | [OpenClaw 插件](plugins/openclaw/) |
-| 其他代理和终端 | [通用代理插件](plugins/agent-plugin/) · [Python 和 npm 安装](plugins/installer/) |
-
-可在 [GitHub Releases](https://github.com/OpenSAE/EverResearch/releases/latest) 下载安装包、npm 安装器和离线插件 ZIP。使用最新源码时，在源码目录运行 `python -m pip install .`。
-
-从 GitHub 安装的技能会在首次使用时下载、校验并缓存固定版本的运行工具。离线插件 ZIP 已包含运行工具。代理要执行命令，需要能访问项目文件、Python 和项目所需依赖。
-
-</details>
+离线安装包可从 [GitHub Releases](https://github.com/OpenSAE/EverResearch/releases/latest) 下载。
 
 ## 三个常用场景
 
-| 想做到什么 | 可以这样问代理 | 你会得到什么 |
+| 目标 | 怎么问代理 | 你会得到什么 |
 | --- | --- | --- |
-| 接入现有项目 | “看看仓库里的入口、数据、配置和结果。给我具体的整理方案和验证步骤，等我确认再修改。” | 现有路径、新路径、应保留的运行命令和验证方法。 |
-| 加一个数据集或模型 | “把这个数据集或模型接进现有训练流程，告诉我用什么配置选中它，并用原有训练入口验证。” | 可复用的组件、选择它的配置，以及验证结果。 |
-| 复现和比较实验 | “用记录下来的配置复现基线。另存一次运行，并对比两次的参数和指标。” | 一份新实验记录，以及能追溯到配置的结果对比。 |
+| 接入项目 | “给这个项目做个整理方案，等我确认再改。” | 路径调整方案和验证步骤。 |
+| 添加数据集或模型 | “把这个数据集或模型接到现有训练流程。” | 可复用的组件和对应配置。 |
+| 复现实验 | “用保存的配置重跑基线，并比较结果。” | 一份新实验记录和指标对比。 |
 
-运行 `rh projects project check ./MyProject --onboarding` 可以生成只读报告，报告里附有可直接贴给代理的指令。项目配置好维护入口后，只要还有目录结构需要调整，默认检查就会继续显示接入进度。在脚本和持续集成中，使用 `--strict` 通过退出码判断校验结果，或用 `--json` 同时获取机器可读的结果。
+运行 `rh projects project check ./MyProject --onboarding` 可查看只读接入预览。脚本和持续集成可用 `--strict` 判断是否通过，或用 `--json` 获取机器可读结果。
 
-准备整理现有项目时，先保存基线并建一个分支。让代理保留原有入口命令、数据和结果，确认文件改动后再执行，删除文件需单独确认。合并前对照改动，并用原有命令验证。想撤回时，原分支仍保留着整理前的状态。
+整理已有项目时，在分支上操作，合并前用原有命令验证。
 
 ## 科研工作怎么用
 
