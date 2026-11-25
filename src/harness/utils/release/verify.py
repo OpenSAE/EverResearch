@@ -136,7 +136,9 @@ def verify_runtime_download(work, wheel_data, metadata):
             version = metadata["filename"].split("-")[1]
             url = (f"https://github.com/OpenSAE/EverResearch/releases/download/v{version}/"
                    f"{metadata['filename']}")
-            if cached.read_bytes() != wheel_data or download.call_args.args[0] != url:
+            request = download.call_args.args[0]
+            if (cached.read_bytes() != wheel_data or request.full_url != url
+                    or request.get_header("Accept") != "application/octet-stream"):
                 raise ValueError("The launcher did not cache the pinned Release wheel")
         with patch.object(launcher, "urlopen", side_effect=AssertionError("Unexpected download")):
             if launcher.runtime_wheel() != cached:
@@ -182,11 +184,23 @@ def check_release(release, work):
     run(rh, "projects", "project", "check", project, "--json")
     demo = work / "QuickDemo"
     run(rh, "utils", "quick-demo", demo)
-    if json.loads(run(rh, "projects", "project", "status", demo / "MixedStudy"))["state"] != "unmanaged":
+    mixed = demo / "MixedStudy"
+    if json.loads(run(rh, "projects", "project", "status", mixed))["state"] != "unmanaged":
         raise ValueError("The installed CLI did not recognize the unconfigured project")
-    preview = run(rh, "projects", "project", "check", demo / "MixedStudy")
+    preview = run(rh, "projects", "project", "check", mixed)
     if "Paste into your agent" not in preview:
         raise ValueError("The installed CLI did not show the onboarding report")
+    data = mixed / "sample.npy"
+    data.write_bytes(b"example dataset")
+    setup = json.loads(run(rh, "projects", "setup-maintenance", mixed))
+    backup = Path(setup["backup"])
+    with tarfile.open(backup) as archive:
+        manifest = json.load(archive.extractfile("manifest.json"))
+        if ("files/train.py" not in archive.getnames() or "files/sample.npy" in archive.getnames()
+                or {"path": data.name, "size_bytes": data.stat().st_size} not in manifest["large_files"]):
+            raise ValueError("The installed CLI did not back up source and inventory data as expected")
+    if json.loads(run(rh, "projects", "setup-maintenance", mixed))["backup"] is not None:
+        raise ValueError("The installed CLI attempted a second initial backup")
     run(rh, "projects", "register", "bird-study", "--path", project)
     marker = project / ".researchharness/mode.toml"
     marker.write_text(marker.read_text(encoding="utf-8").replace(
