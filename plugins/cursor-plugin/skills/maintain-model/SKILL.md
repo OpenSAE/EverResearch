@@ -3,23 +3,17 @@ name: maintain-model
 description: Add, change, or remove a research model or variant. Use for model configuration, weights, initialization, model interfaces, and compatibility with a task.
 ---
 
-# Model maintenance
+# Maintain research models
 
-## Purpose
+## Purpose and main function
 
-Allows the scientific mission to construct or call on the selected model through the actual model of the root directory `models/` to obtain the expected output and to identify the weights and ancillary resources used.
+Keep model construction, weight selection, and task-facing outputs consistent with the model selected through the project's public entry point.
 
-## Scope
+## Scope of application
 
-Enter the target model, configuration or weight and the actual caller.
+Use this skill to add a model family or variant, change its architecture, inputs or weights, or remove a preset, variant, or supported combination. Identify the selected model and trace the output used by the task back through construction and weight loading. Check direct model callers where the project exposes them.
 
-Determines the configuration, registration and tectonic entry from items `AGENTS.md`, README or access description. Checks the output actually used by the task and then tracks the series of statements, model realizations, and weight loads. When the project has a working stream that calls directly to the model, check these calls.
-
-- Add **. ** Registers the options for a new family, series, variant or resource.
-- **Modify.** Modifys the existing structure, forward direction, compatibility or weight selection and synchronizes the task of using these results.
-- **Removes.** Removes specified variants, presets, compatible combinations, or resources. The range is to fully unmount the entire model, first to process the remaining calls and share.
-
-[Model scheme](references/procedures.md)Describes the layout of the series, the rereading of old power, the sequence of implementation of the three types of changes and the conditions for their completion.
+The [model procedures](references/procedures.md) cover model families, historical weights, and how to verify additions, changes, and removals.
 
 ## Variable, weight or task output does not match the selected model
 

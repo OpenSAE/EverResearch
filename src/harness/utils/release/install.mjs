@@ -63,13 +63,15 @@ function options(args) {
 
 function findPython() {
   const check = ["-I", "-c",
-    "import sys; raise SystemExit(not ((3, 11) <= sys.version_info < (3, 13)))"];
+    "import sys; sys.exit(1) if not ((3, 11) <= sys.version_info < (3, 14)) else print(sys.executable)"];
   for (const [command, ...args] of [
-    ["python3.12"], ["python3.11"], ["python3"], ["python"], ["py", "-3.12"], ["py", "-3.11"],
+    ["python3"], ["python"], ["python3.13"], ["python3.12"], ["python3.11"],
+    ["py", "-3.13"], ["py", "-3.12"], ["py", "-3.11"],
   ]) {
-    if (probe(command, [...args, ...check]).status === 0) return [command, ...args];
+    const result = probe(command, [...args, ...check]);
+    if (result.status === 0 && result.stdout.trim()) return result.stdout.trim();
   }
-  throw new Error("Install Python 3.11 or 3.12, or install uv, then rerun this command.");
+  return null;
 }
 
 try {
@@ -84,7 +86,7 @@ try {
     console.log(JSON.stringify({ projectSkills: skills, installer: uv ? "uv" : "Python runner",
       wheel: spec }, null, 2));
   } else if (uv) {
-    run("uv", ["tool", "install", "--reinstall", "--python", "3.12", spec]);
+    run("uv", ["tool", "install", "--reinstall", "--python", findPython() ?? "3.13", spec]);
     const bin = probe("uv", ["tool", "dir", "--bin"]);
     if (bin.status !== 0 || !bin.stdout.trim()) {
       throw new Error("Could not locate the uv tool binary directory");
@@ -94,8 +96,9 @@ try {
     run(join(bin.stdout.trim(), executable), skills);
   } else {
     if (configuration.withMcp) throw new Error("The --mcp option requires uv.");
-    const [command, ...args] = findPython();
-    run(command, [...args, "-I", join(directory, "rh.py"), ...skills]);
+    const python = findPython();
+    if (!python) throw new Error("Install Python 3.11, 3.12, or 3.13, or install uv.");
+    run(python, ["-I", join(directory, "rh.py"), ...skills]);
   }
 } catch (error) {
   console.error(error.message);

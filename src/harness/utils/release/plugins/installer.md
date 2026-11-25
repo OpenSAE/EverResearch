@@ -10,9 +10,17 @@ rh doctor --json
 If uv reports that its tool directory is missing from PATH, run
 `uv tool update-shell` and open a new terminal.
 
-With Python 3.11 or 3.12 in an activated virtual environment, use
-`python -m pip install ever-research`. The [GitHub wheel](@DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl) is also available for direct download.
-Use `uv tool uninstall ever-research` to remove a CLI installed with uv.
+EverResearch 0.2.1 adds Python 3.13 support. You can also install the
+[same wheel from GitHub](@DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl).
+
+```sh
+uv tool install --python 3.13 @DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl
+```
+
+In an active Python environment, install with `python -m pip install ever-research`
+or use the GitHub wheel URL. From a source checkout, use
+`python -m pip install .` for a regular installation or add `-e` for development.
+Use `uv tool uninstall ever-research` to remove the uv installation.
 
 From a project directory, install the CLI and skills together from the npm archive:
 

@@ -132,7 +132,7 @@ def installed_resources() -> Path:
     """Materialize versioned resources so tools and agents can open real file paths."""
     archive = files("harness").joinpath("public_resources.zip")
     if not archive.is_file():
-        raise ProjectError("Install a ResearchHarness release wheel or supply --harness-root")
+        raise ProjectError("EverResearch resources are missing from this installation. Reinstall EverResearch or supply --harness-root pointing to its source directory.")
     content = archive.read_bytes()
     cache = user_cache_path("researchharness").resolve()
     root = cache / ("resources-" + sha256(content).hexdigest())

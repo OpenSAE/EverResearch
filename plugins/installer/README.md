@@ -20,14 +20,22 @@ rh doctor --json
 If uv reports that its tool directory is missing from PATH, run
 `uv tool update-shell` and open a new terminal.
 
-With Python 3.11 or 3.12 in an activated virtual environment, use
-`python -m pip install ever-research`. The [GitHub wheel](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.0-py3-none-any.whl) is also available for direct download.
-Use `uv tool uninstall ever-research` to remove a CLI installed with uv.
+EverResearch 0.2.1 adds Python 3.13 support. You can also install the
+[same wheel from GitHub](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.1-py3-none-any.whl).
+
+```sh
+uv tool install --python 3.13 https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.1-py3-none-any.whl
+```
+
+In an active Python environment, install with `python -m pip install ever-research`
+or use the GitHub wheel URL. From a source checkout, use
+`python -m pip install .` for a regular installation or add `-e` for development.
+Use `uv tool uninstall ever-research` to remove the uv installation.
 
 From a project directory, install the CLI and skills together from the npm archive:
 
 ```sh
-npm exec --yes --package=https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-0.2.0.tgz -- ever-research
+npm exec --yes --package=https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-0.2.1.tgz -- ever-research
 ```
 
 Node.js 18 or newer is required for this installer. It defaults to the current
@@ -41,7 +49,7 @@ For a terminal installation through the wheel, run
 
 Share the project folder with your agent, then ask “Inspect this research
 project’s layout and tell me what you verified.” Local terminal hosts use
-Python 3.11 or 3.12. The plugin supplies the `rh` program and the agent starts
+Python 3.11, 3.12, or 3.13. The plugin supplies the `rh` program and the agent starts
 it from the skill on first use. It prepares an isolated environment in the
 user cache and may download Python dependencies from the configured package
 index. You can use the supported interpreter already available to the host.

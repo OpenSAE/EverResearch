@@ -3,22 +3,22 @@ name: maintain-optional
 description: Maintain standalone research scripts, tests, documentation, and reusable assets. Use for work such as plotting results, verifying a component, or updating a project guide.
 ---
 
-# Maintenance of required assets for research projects
+# Maintain scripts, tests, documentation, and assets
 
-## Purpose
+## Purpose and main function
 
-Scripts provide operations that can be independently initiated, test the transformation of behaviour expectations into repertoire-executable inspections, document how the project is understood, used and maintained, and external documents allow the project to use traceable external results. The project document guides from a level-I catalogue to components, parameters, experiments, scientific knowledge, implementation of environmental and source code structures, and provides a means of use and factual basis for retroactive use.
+Keep project utilities, checks, documentation, and reusable external resources discoverable from the entry points people use.
 
-## Scope
+## Scope of application
 
-For adding, modifying or removing independent scripts, tests, documents, and external documents that are saved with the project. `AGENTS.md`,README,Available commands and users find real accesses. ResearchHarness Layout from the root of the item `scripts/`,`tests/`,`doc/` and `third_party/` Check-up. Existing items follow a price equivalent with a clear user.
+Use this skill to add, update, or remove standalone scripts, tests, project documentation, or external files. Read the project's `AGENTS.md`, README, and public commands to find the actual users and confirm whether the responsible location is `scripts/`, `tests/`, `doc/`, `assets/`, or `third_party/`.
 
-- **Script.** Maintenance of batch, aggregate, export and demonstration portals with independent operators.
-- **Test.** Formal pilot implementation compared to results `maintain-experiment`.
-- **Document.** Navigates from README to the project document. Synchronize the first-level directory page with the reader's entrance, following the normal operations to verify links, examples and behavioral statements.
-- **Long-term resources and external documents.** Reserves resources of long-term value at `assets/<asset-type>/<asset-name>/`. Each group uses `README.md` to identify sources, uses and updates to place the resource document and the dedicated processing scripts in `files/` and `scripts/` respectively. The common operational entry to the project is in the final directory `scripts/`. The official third-party source code is regulated by the source and licence of `third_party/`.
+- Use `scripts/` for independently invoked utilities such as batch jobs, reports, exports, and demonstrations.
+- Use `tests/` for repeatable checks. Use `maintain-experiment` for scientific trial runs and their results.
+- Keep project documentation linked from the README. Verify page links, examples, and documented behavior through the real entry point.
+- Give persistent assets a named group at `assets/<asset-type>/<asset-name>/`. Record the source, purpose, and update process in its README. Keep resource files and dedicated preparation scripts in `files/` and `scripts/` within the group. Keep vendored source and its license in `third_party/`.
 
-[Asset-to-needs operating programme](references/procedures.md)Read the corresponding section based on this asset type.
+The [asset procedures](references/procedures.md) describe how to handle and verify each type.
 
 ## Validation criteria
 

@@ -3,36 +3,38 @@ name: maintain-optional
 description: Maintain standalone research scripts, tests, documentation, and reusable assets. Use for work such as plotting results, verifying a component, or updating a project guide.
 ---
 
-# Maintenance of required assets for research projects
+# Maintain scripts, tests, documentation, and assets
 
-## Run bundled ResearchHarness commands
+## Run the EverResearch CLI
 
-When a step calls for an `rh` command, run this skill's `scripts/rh.py` with Python
-3.11 or 3.12 and pass the arguments after `rh`. For example, for a project check
-run `python3 <absolute-skill-path>/scripts/rh.py projects project check <project-path>`.
-Resolve the skill path from the current SKILL.md. On Claude Code and Cowork use
-`${CLAUDE_SKILL_DIR}` for that directory, and on Claude web use the script staged in
-the skill directory. Use an already available Python interpreter or let uv
-select one if the host provides uv. The launcher uses the bundled OpenSAE wheel
-and prepares a private Python environment automatically on first use. It may
-fetch Python dependencies from the package index. Continue with file review if
-the host cannot run Python or prepare the environment. State which automated
-checks were unavailable. Never install the similarly named PyPI package.
+This plugin includes EverResearch's `rh` command. Use Python 3.11, 3.12, or 3.13
+to run `scripts/rh.py` from the current skill, followed by the arguments after
+`rh`. For example, pass `projects project check <project-path>` to check a
+project. Use `${CLAUDE_SKILL_DIR}` in Claude Code or Cowork and the staged skill
+directory in Claude web.
 
-## Purpose
+The launcher creates an isolated Python environment on first use and may fetch
+dependencies. With no Python execution available, review the files you can
+access and tell the user which automated checks you could not run.
 
-Scripts provide operations that can be independently initiated, test the transformation of behaviour expectations into repertoire-executable inspections, document how the project is understood, used and maintained, and external documents allow the project to use traceable external results. The project document guides from a level-I catalogue to components, parameters, experiments, scientific knowledge, implementation of environmental and source code structures, and provides a means of use and factual basis for retroactive use.
+For a separate terminal installation, the official PyPI package is
+`ever-research` from OpenSAE. The PyPI project named `researchharness` is
+maintained separately.
 
-## Scope
+## Purpose and main function
 
-For adding, modifying or removing independent scripts, tests, documents, and external documents that are saved with the project. `AGENTS.md`,README,Available commands and users find real accesses. ResearchHarness Layout from the root of the item `scripts/`,`tests/`,`doc/` and `third_party/` Check-up. Existing items follow a price equivalent with a clear user.
+Keep project utilities, checks, documentation, and reusable external resources discoverable from the entry points people use.
 
-- **Script.** Maintenance of batch, aggregate, export and demonstration portals with independent operators.
-- **Test.** Formal pilot implementation compared to results `maintain-experiment`.
-- **Document.** Navigates from README to the project document. Synchronize the first-level directory page with the reader's entrance, following the normal operations to verify links, examples and behavioral statements.
-- **Long-term resources and external documents.** Reserves resources of long-term value at `assets/<asset-type>/<asset-name>/`. Each group uses `README.md` to identify sources, uses and updates to place the resource document and the dedicated processing scripts in `files/` and `scripts/` respectively. The common operational entry to the project is in the final directory `scripts/`. The official third-party source code is regulated by the source and licence of `third_party/`.
+## Scope of application
 
-[Asset-to-needs operating programme](references/procedures.md)Read the corresponding section based on this asset type.
+Use this skill to add, update, or remove standalone scripts, tests, project documentation, or external files. Read the project's `AGENTS.md`, README, and public commands to find the actual users and confirm whether the responsible location is `scripts/`, `tests/`, `doc/`, `assets/`, or `third_party/`.
+
+- Use `scripts/` for independently invoked utilities such as batch jobs, reports, exports, and demonstrations.
+- Use `tests/` for repeatable checks. Use `maintain-experiment` for scientific trial runs and their results.
+- Keep project documentation linked from the README. Verify page links, examples, and documented behavior through the real entry point.
+- Give persistent assets a named group at `assets/<asset-type>/<asset-name>/`. Record the source, purpose, and update process in its README. Keep resource files and dedicated preparation scripts in `files/` and `scripts/` within the group. Keep vendored source and its license in `third_party/`.
+
+The [asset procedures](references/procedures.md) describe how to handle and verify each type.
 
 ## Validation criteria
 

@@ -10,7 +10,7 @@ Use these steps for projects you can access from this environment.
 
 ## Install in OpenCode
 
-Extract the [OpenCode plugin ZIP](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.0-opencode-plugin.zip)
+Extract the [OpenCode plugin ZIP](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.1-opencode-plugin.zip)
 into the project's `.opencode/plugins/ever-research/` directory, or copy the
 `plugins/opencode` directory from an [EverResearch checkout](https://github.com/OpenSAE/EverResearch).
 
@@ -33,7 +33,7 @@ project in OpenCode and ask for a project structure check.
 
 Share the project folder with your agent, then ask “Inspect this research
 project’s layout and tell me what you verified.” Local terminal hosts use
-Python 3.11 or 3.12. The plugin supplies the `rh` program and the agent starts
+Python 3.11, 3.12, or 3.13. The plugin supplies the `rh` program and the agent starts
 it from the skill on first use. It prepares an isolated environment in the
 user cache and may download Python dependencies from the configured package
 index. You can use the supported interpreter already available to the host.

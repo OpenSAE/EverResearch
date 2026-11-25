@@ -2,7 +2,7 @@
 
 Share the project folder with your agent, then ask “Inspect this research
 project’s layout and tell me what you verified.” Local terminal hosts use
-Python 3.11 or 3.12. The plugin supplies the `rh` program and the agent starts
+Python 3.11, 3.12, or 3.13. The plugin supplies the `rh` program and the agent starts
 it from the skill on first use. It prepares an isolated environment in the
 user cache and may download Python dependencies from the configured package
 index. You can use the supported interpreter already available to the host.

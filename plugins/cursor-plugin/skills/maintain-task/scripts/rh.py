@@ -1,6 +1,6 @@
-"""Run the ResearchHarness CLI bundled with a plugin.
+"""Run the EverResearch CLI bundled with a plugin.
 
-Use from a skill that requires a ResearchHarness command in the host's
+Use from a skill that requires an EverResearch command in the host's
 execution environment. The runner installs into a private per-user cache.
 """
 
@@ -80,8 +80,8 @@ def cli_environment(wheel):
 
 def main():
     try:
-        if sys.version_info < (3, 11) or sys.version_info >= (3, 13):
-            raise RuntimeError("ResearchHarness needs Python 3.11 or 3.12 in this environment.")
+        if sys.version_info < (3, 11) or sys.version_info >= (3, 14):
+            raise RuntimeError("EverResearch requires Python 3.11, 3.12, or 3.13.")
         wheel = bundled_wheel()
         rh = cli_environment(wheel)
         environment = os.environ.copy()
@@ -90,7 +90,7 @@ def main():
         environment["RH_PLUGIN_WHEEL"] = str(wheel)
         return subprocess.run([str(rh), *sys.argv[1:]], env=environment).returncode
     except (OSError, RuntimeError, subprocess.CalledProcessError) as error:
-        print(f"ResearchHarness runtime unavailable: {error}", file=sys.stderr)
+        print(f"EverResearch runtime unavailable: {error}", file=sys.stderr)
         return 78
 
 

@@ -3,35 +3,37 @@ name: maintain-experiment
 description: Run, monitor, recover, or review a research experiment. Use for run recipes, effective configurations, execution records, and results produced by the experiment.
 ---
 
-# Experimental maintenance
+# Run and maintain research experiments
 
-## Run bundled ResearchHarness commands
+## Run the EverResearch CLI
 
-When a step calls for an `rh` command, run this skill's `scripts/rh.py` with Python
-3.11 or 3.12 and pass the arguments after `rh`. For example, for a project check
-run `python3 <absolute-skill-path>/scripts/rh.py projects project check <project-path>`.
-Resolve the skill path from the current SKILL.md. On Claude Code and Cowork use
-`${CLAUDE_SKILL_DIR}` for that directory, and on Claude web use the script staged in
-the skill directory. Use an already available Python interpreter or let uv
-select one if the host provides uv. The launcher uses the bundled OpenSAE wheel
-and prepares a private Python environment automatically on first use. It may
-fetch Python dependencies from the package index. Continue with file review if
-the host cannot run Python or prepare the environment. State which automated
-checks were unavailable. Never install the similarly named PyPI package.
+This plugin includes EverResearch's `rh` command. Use Python 3.11, 3.12, or 3.13
+to run `scripts/rh.py` from the current skill, followed by the arguments after
+`rh`. For example, pass `projects project check <project-path>` to check a
+project. Use `${CLAUDE_SKILL_DIR}` in Claude Code or Cowork and the staged skill
+directory in Claude web.
 
-## Purpose
+The launcher creates an isolated Python environment on first use and may fetch
+dependencies. With no Python execution available, review the files you can
+access and tell the user which automated checks you could not run.
 
-Select and record the operational parameters of a single experiment, which are readable with the start, monitoring, restoration, sorting and results of the operation record, product and inspection points.
+For a separate terminal installation, the official PyPI package is
+`ever-research` from OpenSAE. The PyPI project named `researchharness` is
+maintained separately.
 
-## Scope
+## Purpose and main function
 
-Start with the project. `AGENTS.md`,Project description or README The project access description and the project protocol will complement the common requirements. Implementation and resource input will use user authorization for the current task.
+Run, monitor, resume, or review an experiment. Keep its effective configuration, execution record, logs, and results together so it can be understood and reproduced.
 
-[Experimental Programs](references/procedures.md)Describes configuration maintenance, product reading, restoration of judgement, failure positioning and performance comparison.
+## Scope of application
 
-## Use Configuration
+Use this skill for a specific run, a set of runs, or their results. Start with the project's `AGENTS.md`, README, and operating guide. Follow the project's documented entry points and the user's authorization for runs and resource use.
 
-From the default configuration of the project and the formula selection parameters already available, the configuration is covered by the public entry point for a specific experiment. The effective configuration is written to `experiment/` with this operation. When checking for old results or rerun, locate the current configuration from the running list. The new, removed, semantic or default changes in the open parameter are `maintain-conf`. When comparing the parameters with the missing item in the experiment, use the "configuration maintenance" in the operating program.
+The [experiment procedures](references/procedures.md) cover configuration, result inspection, recovery, failure diagnosis, and performance comparisons.
+
+## Use an existing configuration
+
+Start from the project's defaults and recipes. Apply the selected overrides through the public entry point and save the effective configuration with the run under `experiment/`. To review or rerun an earlier experiment, recover its configuration from the run record. Use `maintain-conf` for changes to available parameters, their meaning, or their defaults.
 
 ## Start experiments or read results
 

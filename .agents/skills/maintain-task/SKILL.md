@@ -3,23 +3,17 @@ name: maintain-task
 description: Add, change, or remove a research task such as training or evaluation. Use for task registration, prechecks, dataset and model compatibility, execution, and result interfaces.
 ---
 
-# Maintenance of research tasks
+# Maintain research tasks
 
-## Purpose
+## Purpose and main function
 
-Allow researchers to select root directories from the public entry point. `tasks/` The project as a whole contains at least one official task. `tasks/precheck/`,The official scientific calculations are assigned to the corresponding named tasks.
+Keep the project's scientific tasks runnable through their public entry points. Organize named tasks and their shared precheck under `tasks/`.
 
-## Scope
+## Scope of application
 
-Enter the target task, caller and actual use of the scene.
+Use this skill to add a task, change its algorithm, parameters, checks, metrics, or outputs, or remove a mode or output. Start with the project's `AGENTS.md`, README, or operating guide. Identify the selected data and model, the task's computation, and the readers that depend on its results. Check those readers when changing or removing an output.
 
-Read from project `AGENTS.md`, README or access description location for official distribution, configuration, mission achievement and results. Identify the data and models required, the calculation and indicators of tasks, and who uses the results to continue doing what.
-
-- **Add.** Access to new scientific methods or stand-alone models.
-- **Changes.** Updates an existing algorithm, parameter, precheck, indicator or result interface.
-- **Removes.** Removes the specified mode, option or output. The range is fully unmounted on the entire task, first to process downstream reading and remaining to be called by other tasks.
-
-[Task Operating Scheme](references/procedures.md)Read according to the target.
+The [task procedures](references/procedures.md) explain task structure and the workflow for each kind of change.
 
 ## Automatic precheck before running a formal task
 

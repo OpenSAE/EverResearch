@@ -3,23 +3,19 @@ name: maintain-dataset
 description: Add, update, or remove a research dataset. Use for dataset registration, loaders, preprocessing, splits, dataset choices, and verifying that a task reads the intended samples.
 ---
 
-# Data set maintenance
+# Maintain research datasets
 
-## Purpose
+## Purpose and main function
 
-Allows the official mission to read the required sample through the physical data set in the root directory `datasets/` and to keep the source, label, division, preset and cache identity consistent. The whole project accepts and accepts at least one actual data set.
+Keep dataset sources, labels, splits, presets, and caches consistent with what tasks read through the project's `datasets/` components.
 
-## Scope
+## Scope of application
 
-Enter the target data set, the tasks used and the range of changes.
+Use this skill to add a dataset, source, or preset, change how a dataset is read or prepared, or remove dataset support. Identify the selected dataset, the tasks that use it, and the intended change. Start at the project's documented entry point and trace a representative sample from task selection back to its source and preparation.
 
-The actual commands, components and configurations are found from the `AGENTS.md`, README, or access instructions. First, a sample of the tasks is traced back to the call back to read, prepare and divide responsibilities.
+For removals, check all users of the dataset or preset and verify the remaining selections. Preserve original inputs, shared caches, and historical results according to the project's requirements.
 
-- Add **. ** allows normal access to select a new data set, source or preset.
-- ** Changes. ** changes the reading, preparation, division or sample interface of existing data sets, indicating which calls and historical results affect.
-- Removes **. ** removes the specified preset, read-out, or task support. The range is the complete unmounting of the entire data set, confirming that the retention is still available. Original data, shared caches and historical results are processed as specified.
-
-[Data Set Operating Scheme](references/procedures.md)Lists the document attributions, the sequence of implementation of the three types of changes and the conditions for their completion..
+The [dataset procedures](references/procedures.md) explain file ownership and how to carry out and verify additions, changes, and removals.
 
 ## Place preprocessed inputs under assets
 

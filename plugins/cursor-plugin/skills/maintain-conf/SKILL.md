@@ -3,19 +3,19 @@ name: maintain-conf
 description: Add, remove, or change research configuration parameters. Use for defaults, overrides, compatibility with older configurations, and checking that the consuming code uses the value.
 ---
 
-# Maintenance of scientific project configuration parameters
+# Maintain research configuration
 
-## Purpose
+## Purpose and main function
 
-Let the researchers pass through the project. `conf/config.<format>` A description of the effect of the parameters, default, coverage and impact on the old formulations and experiments.
+Keep configuration parameters understandable and effective. Document their meaning, defaults, precedence, and effect on existing recipes and results.
 
-## Scope
+## Scope of application
 
-The configuration can be derived from a file, command line, environment variable, or project public interface. `maintain-experiment`.Configure the realization of synthesis, cross-component distribution and operation support by `maintain-base` Collaborative processing. Data, models and the computational meaning of mission parameters are processed together with the corresponding component maintenance skills.
+Use this skill when adding, removing, or changing a setting exposed through a file, command line, environment variable, or public interface. Use `maintain-experiment` to choose values for a particular run, and use `maintain-base` for shared configuration assembly and dispatch. Work with the component skill for settings that change a dataset, model, or task.
 
-## How does tracking parameters work?
+## Trace each parameter to its consumer
 
-From Item README,`doc/` Checks for presets, commands and available formulations, and reads or recovers as needed. Records can omit the actual value, the source and the order of the value to be covered, and the application of the object, unit, range and connection conditions. When multiple access points read the same parameter, you find the position responsible for defining and explaining it.
+Read the project's README, documentation, presets, and commands. Identify each value's source and precedence, then verify what the consumer receives. Record the units, valid range, and conditions under which it takes effect. If several entry points read the same setting, locate the module that defines and documents it.
 
 ## Determines whether variable settings are needed
 

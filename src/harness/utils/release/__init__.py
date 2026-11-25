@@ -6,6 +6,7 @@ archives, a member inventory, and checksums to a selected local directory.
 
 import argparse
 from hashlib import sha256
+from io import BytesIO
 import json
 import posixpath
 from pathlib import Path
@@ -65,19 +66,21 @@ SECRETS = re.compile(
     rb"(?:gh[pousr]_|github_pat_|hf_)[A-Za-z0-9_]{25,}|"
     rb"-----BEGIN (?:[A-Z]+ )?PRIVATE KEY-----|/(?:workspace|home|root)/[^\s<>\"')]+"
 )
-PLUGIN_CLI_GUIDANCE = b"""## Run bundled ResearchHarness commands
+PLUGIN_CLI_GUIDANCE = b"""## Run the EverResearch CLI
 
-When a step calls for an `rh` command, run this skill's `scripts/rh.py` with Python
-3.11 or 3.12 and pass the arguments after `rh`. For example, for a project check
-run `python3 <absolute-skill-path>/scripts/rh.py projects project check <project-path>`.
-Resolve the skill path from the current SKILL.md. On Claude Code and Cowork use
-`${CLAUDE_SKILL_DIR}` for that directory, and on Claude web use the script staged in
-the skill directory. Use an already available Python interpreter or let uv
-select one if the host provides uv. The launcher uses the bundled OpenSAE wheel
-and prepares a private Python environment automatically on first use. It may
-fetch Python dependencies from the package index. Continue with file review if
-the host cannot run Python or prepare the environment. State which automated
-checks were unavailable. Never install the similarly named PyPI package."""
+This plugin includes EverResearch's `rh` command. Use Python 3.11, 3.12, or 3.13
+to run `scripts/rh.py` from the current skill, followed by the arguments after
+`rh`. For example, pass `projects project check <project-path>` to check a
+project. Use `${CLAUDE_SKILL_DIR}` in Claude Code or Cowork and the staged skill
+directory in Claude web.
+
+The launcher creates an isolated Python environment on first use and may fetch
+dependencies. With no Python execution available, review the files you can
+access and tell the user which automated checks you could not run.
+
+For a separate terminal installation, the official PyPI package is
+`ever-research` from OpenSAE. The PyPI project named `researchharness` is
+maintained separately."""
 LINK = re.compile(r"\[[^\]\n]+\]\((<[^>]+>|[^\s)]+)\)")
 
 
@@ -126,9 +129,8 @@ def validate_skill_members(skills):
                 raise ValueError(f"Unresolved skill reference in {name}: {link}")
 
 
-def package(root, output):
-    project = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"]
-    version = project["version"]
+def public_members(root):
+    """Select the skills and project resources shared by all build entry points."""
     skills = {}
     for name, patterns in SKILLS.items():
         members = select(root / ".agents/skills" / name, ("SKILL.md", *patterns))
@@ -142,26 +144,37 @@ def package(root, output):
         raise ValueError("The CUB example is incomplete")
     resources.update({f"{CUB}/{path}": content for path, content in cub.items()})
     resources.update(select(root, SHARED))
-    source = {**select(root, (*CORE, ARTIFACT_GUIDE)), **resources}
-    for name, content in source.items():
+    check_public_members(resources)
+    return skills, resources, cub
+
+
+def check_public_members(members):
+    for name, content in members.items():
         if name.endswith((".md", ".py", ".yaml", ".toml", ".mjs", ".json", ".js", ".css", ".html")) and SECRETS.search(content):
             raise ValueError(f"Review possible private content in {name}")
+
+
+def package(root, output):
+    project = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+    version = project["version"]
+    skills, resources, cub = public_members(root)
+    source = {**select(root, (*CORE, ARTIFACT_GUIDE)), **resources}
+    check_public_members(source)
     with tempfile.TemporaryDirectory(prefix="researchharness-build-") as temporary:
         stage = Path(temporary) / "source"
         for name, content in source.items():
             target = stage / name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(content)
-        resource_name = "src/harness/public_resources.zip"
-        archive(stage / resource_name, resources)
-        source[resource_name] = (stage / resource_name).read_bytes()
         wheel_output = Path(temporary) / "wheel"
         subprocess.run(["uv", "build", "--wheel", "--out-dir", str(wheel_output), str(stage)], check=True)
         built_wheel, = wheel_output.glob("*.whl")
         wheel = output / built_wheel.name
         shutil.copyfile(built_wheel, wheel)
         with ZipFile(wheel) as installed:
-            if installed.read("harness/public_resources.zip") != source[resource_name]:
+            with ZipFile(BytesIO(installed.read("harness/public_resources.zip"))) as bundled:
+                contents = {name: bundled.read(name) for name in bundled.namelist()}
+            if contents != resources:
                 raise ValueError("Wheel resources differ from the audited source")
             expected = {name.removeprefix("src/") for name in source if name.startswith("src/harness/")
                         and not name.startswith(f"{CUB}/") and name.endswith(".py")}

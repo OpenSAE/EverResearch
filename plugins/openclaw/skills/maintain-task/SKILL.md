@@ -3,37 +3,33 @@ name: maintain-task
 description: Add, change, or remove a research task such as training or evaluation. Use for task registration, prechecks, dataset and model compatibility, execution, and result interfaces.
 ---
 
-# Maintenance of research tasks
+# Maintain research tasks
 
-## Run bundled ResearchHarness commands
+## Run the EverResearch CLI
 
-When a step calls for an `rh` command, run this skill's `scripts/rh.py` with Python
-3.11 or 3.12 and pass the arguments after `rh`. For example, for a project check
-run `python3 <absolute-skill-path>/scripts/rh.py projects project check <project-path>`.
-Resolve the skill path from the current SKILL.md. On Claude Code and Cowork use
-`${CLAUDE_SKILL_DIR}` for that directory, and on Claude web use the script staged in
-the skill directory. Use an already available Python interpreter or let uv
-select one if the host provides uv. The launcher uses the bundled OpenSAE wheel
-and prepares a private Python environment automatically on first use. It may
-fetch Python dependencies from the package index. Continue with file review if
-the host cannot run Python or prepare the environment. State which automated
-checks were unavailable. Never install the similarly named PyPI package.
+This plugin includes EverResearch's `rh` command. Use Python 3.11, 3.12, or 3.13
+to run `scripts/rh.py` from the current skill, followed by the arguments after
+`rh`. For example, pass `projects project check <project-path>` to check a
+project. Use `${CLAUDE_SKILL_DIR}` in Claude Code or Cowork and the staged skill
+directory in Claude web.
 
-## Purpose
+The launcher creates an isolated Python environment on first use and may fetch
+dependencies. With no Python execution available, review the files you can
+access and tell the user which automated checks you could not run.
 
-Allow researchers to select root directories from the public entry point. `tasks/` The project as a whole contains at least one official task. `tasks/precheck/`,The official scientific calculations are assigned to the corresponding named tasks.
+For a separate terminal installation, the official PyPI package is
+`ever-research` from OpenSAE. The PyPI project named `researchharness` is
+maintained separately.
 
-## Scope
+## Purpose and main function
 
-Enter the target task, caller and actual use of the scene.
+Keep the project's scientific tasks runnable through their public entry points. Organize named tasks and their shared precheck under `tasks/`.
 
-Read from project `AGENTS.md`, README or access description location for official distribution, configuration, mission achievement and results. Identify the data and models required, the calculation and indicators of tasks, and who uses the results to continue doing what.
+## Scope of application
 
-- **Add.** Access to new scientific methods or stand-alone models.
-- **Changes.** Updates an existing algorithm, parameter, precheck, indicator or result interface.
-- **Removes.** Removes the specified mode, option or output. The range is fully unmounted on the entire task, first to process downstream reading and remaining to be called by other tasks.
+Use this skill to add a task, change its algorithm, parameters, checks, metrics, or outputs, or remove a mode or output. Start with the project's `AGENTS.md`, README, or operating guide. Identify the selected data and model, the task's computation, and the readers that depend on its results. Check those readers when changing or removing an output.
 
-[Task Operating Scheme](references/procedures.md)Read according to the target.
+The [task procedures](references/procedures.md) explain task structure and the workflow for each kind of change.
 
 ## Automatic precheck before running a formal task
 

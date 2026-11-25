@@ -44,7 +44,8 @@ def verify_plugins(release, wheel, work):
 
     def compare(actual, label):
         for name, body in expected.items():
-            if name.endswith("/SKILL.md") and b"## Run bundled ResearchHarness commands" in actual.get(name, b""):
+            runner = name.removesuffix("/SKILL.md") + "/scripts/rh.py"
+            if name.endswith("/SKILL.md") and runner in actual:
                 _, frontmatter, _ = body.split(b"---", 2)
                 if actual[name].split(b"---", 2)[1] != frontmatter:
                     raise ValueError(f"Unexpected skill metadata in {label}: {name}")
