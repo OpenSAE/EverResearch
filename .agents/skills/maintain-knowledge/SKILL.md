@@ -1,6 +1,6 @@
 ---
 name: maintain-knowledge
-description: It helps people to document their precious knowledge and thoughts., AI Collapse and display the complete contents, save them immediately after approval or no objection has been made note/;Support for reading existing knowledge and updating follow-up comments.
+description: Save or update a durable note about a lesson, decision, or idea from a conversation. Use when asked to capture knowledge people can read and build on later.
 ---
 
 # Knowledge maintenance

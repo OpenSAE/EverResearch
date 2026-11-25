@@ -1,6 +1,6 @@
 ---
 name: maintain-tmp
-description: One-time scripts and temporary documents to organize and close a scientific project. tmp Work catalogues, clearing of temporary content or access to official directories for continuous use.
+description: Organize or clean up one-off research work. Use for disposable scripts, scratch files, and temporary documents, including deciding where reusable work should live.
 ---
 
 # Temporary work on projects

@@ -1,6 +1,18 @@
 {
-  "name": "researchharness",
+  "name": "ever-research",
   "version": "0.2.0",
-  "description": "Maintain and verify research projects using shared ResearchHarness skills and rh.",
-  "skills": "./skills/"
+  "description": "Maintain and verify research projects with EverResearch.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "EverResearch",
+    "shortDescription": "Maintain research projects",
+    "longDescription": "Inspect and maintain research code, datasets, models, configurations, and experiment records. Automated checks require project files and a Python-capable agent workspace.",
+    "developerName": "OpenSAE",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Project maintenance",
+      "Project structure validation"
+    ],
+    "websiteURL": "https://github.com/OpenSAE/EverResearch"
+  }
 }

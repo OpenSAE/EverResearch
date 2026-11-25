@@ -1,9 +1,23 @@
 ---
 name: maintain-skill
-description: Record project conversations, analyze file placement and naming from recorded work, and improve or independently evaluate the skills responsible.
+description: Record or analyze project maintenance conversations, improve maintenance skills, or evaluate how agents apply them. Use when asked to save a maintenance exchange, review its file-placement decisions, or run a skills exam.
 ---
 
 # Assessment and maintenance skills
+
+## Run bundled ResearchHarness commands
+
+When a step calls for an `rh` command, run this skill's `scripts/rh.py` with Python
+3.11 or 3.12 and pass the arguments after `rh`. For example, for a project check
+run `python3 <absolute-skill-path>/scripts/rh.py projects project check <project-path>`.
+Resolve the skill path from the current SKILL.md. On Claude Code and Cowork use
+`${CLAUDE_SKILL_DIR}` for that directory, and on Claude web use the script staged in
+the skill directory. Use an already available Python interpreter or let uv
+select one if the host provides uv. The launcher uses the bundled OpenSAE wheel
+and prepares a private Python environment automatically on first use. It may
+fetch Python dependencies from the package index. Continue with file review if
+the host cannot run Python or prepare the environment. State which automated
+checks were unavailable. Never install the similarly named PyPI package.
 
 ## Purpose
 

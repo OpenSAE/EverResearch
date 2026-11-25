@@ -1,6 +1,6 @@
 ---
 name: maintain-experiment
-description: Use of existing parameters, operation, monitoring, recovery and debugging experiments for scientific projects to read valid configurations and results and to maintain laboratory reports based on actual evidence.
+description: Run, monitor, recover, or review a research experiment. Use for run recipes, effective configurations, execution records, and results produced by the experiment.
 ---
 
 # Experimental maintenance

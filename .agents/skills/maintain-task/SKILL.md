@@ -1,6 +1,6 @@
 ---
 name: maintain-task
-description: Add, modify or remove research tasks, models and results interfaces, with actual dependency on official distribution, data model combinations, precheck, task computing and product reading and processing.
+description: Add, change, or remove a research task such as training or evaluation. Use for task registration, prechecks, dataset and model compatibility, execution, and result interfaces.
 ---
 
 # Maintenance of research tasks

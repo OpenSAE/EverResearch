@@ -1,7 +1,7 @@
 {
-  "name": "@opensae/researchharness-dsh",
+  "name": "@opensae/ever-research-dsh",
   "version": "0.2.0",
-  "description": "Maintain and verify research projects using shared ResearchHarness skills and rh.",
+  "description": "Maintain and verify research projects with EverResearch.",
   "type": "module",
   "main": "index.mjs",
   "dsh": {

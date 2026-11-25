@@ -1,6 +1,6 @@
 ---
 name: maintain-project
-description: Connect a scientific project to ResearchHarness, coordinate maintenance across component owners, and verify the project through its public entry points.
+description: Connect, inspect, maintain, or verify an entire research project. Use for first-time project setup, project-wide repairs, and changes that span several research components.
 ---
 
 # Maintain a scientific project

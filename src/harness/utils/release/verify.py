@@ -28,30 +28,65 @@ PLUGIN_ENTRIES = {
 }
 
 
-def verify_plugins(release, wheel):
-    """Compare each host bundle to the shared skill files in the wheel."""
+def verify_plugins(release, wheel, work):
+    """Check every plugin's skill inventory and run the bundled CLI."""
     version = wheel.name.split("-")[1]
+    wheel_data = wheel.read_bytes()
     with ZipFile(wheel) as installed:
+        metadata_name, = (n for n in installed.namelist() if n.endswith(".dist-info/METADATA"))
+        if b"Name: ever-research\n" not in installed.read(metadata_name):
+            raise ValueError("Incorrect Python package name")
         with ZipFile(BytesIO(installed.read("harness/public_resources.zip"))) as resources:
             expected = {
                 name.removeprefix(".agents/"): resources.read(name)
                 for name in resources.namelist() if name.startswith(".agents/skills/")
             }
+
+    def compare(actual, label):
+        for name, body in expected.items():
+            if name.endswith("/SKILL.md") and b"## Run bundled ResearchHarness commands" in actual.get(name, b""):
+                _, frontmatter, _ = body.split(b"---", 2)
+                if actual[name].split(b"---", 2)[1] != frontmatter:
+                    raise ValueError(f"Unexpected skill metadata in {label}: {name}")
+            elif actual.get(name) != body:
+                raise ValueError(f"Unexpected skill file in {label}: {name}")
+        for name in actual.keys() - expected.keys():
+            if name.endswith(".whl") and actual[name] == wheel_data:
+                continue
+            if not name.endswith("/scripts/rh.py"):
+                raise ValueError(f"Unexpected plugin addition in {label}: {name}")
+        if actual.get(f"skills/maintain-project/scripts/{wheel.name}") != wheel_data:
+            raise ValueError(f"Missing bundled runtime in {label}")
+
+    readmes = set()
     for platform, manifest in PLUGIN_ENTRIES.items():
-        with ZipFile(release / f"researchharness-{version}-{platform}.zip") as archive:
+        with ZipFile(release / f"ever-research-{version}-{platform}.zip") as archive:
             actual = {name: archive.read(name) for name in archive.namelist()
                       if name.startswith("skills/")}
-            if manifest not in archive.namelist() or actual != expected:
-                raise ValueError(f"Incomplete {platform} manifest or skills")
-    with tarfile.open(release / f"opensae-researchharness-dsh-{version}.tgz") as archive:
+            if manifest not in archive.namelist():
+                raise ValueError(f"Missing manifest in {platform}")
+            readme = archive.read("README.md")
+            if b"@DOWNLOAD@" in readme or b"## Install" not in readme:
+                raise ValueError(f"Incomplete installation guide in {platform}")
+            readmes.add(readme)
+            compare(actual, platform)
+            if platform in {"claude-plugin", "agent-plugin"}:
+                destination = work / platform
+                if platform == "claude-plugin":
+                    files = [n for n in actual if n.startswith("skills/maintain-project/")]
+                    archive.extractall(destination, files)
+                else:
+                    archive.extractall(destination)
+    if len(readmes) != len(PLUGIN_ENTRIES):
+        raise ValueError("Each plugin format must have its own README")
+    with tarfile.open(release / f"opensae-ever-research-dsh-{version}.tgz") as archive:
         manifest = json.load(archive.extractfile("package/package.json"))
         if "bundle" not in manifest.get("dsh", {}):
             raise ValueError("Missing DeepSeek Harness bundle manifest")
         actual = {entry.name.removeprefix("package/"): archive.extractfile(entry).read()
                   for entry in archive.getmembers()
                   if entry.isfile() and entry.name.startswith("package/skills/")}
-        if actual != expected:
-            raise ValueError("Incomplete DeepSeek Harness skills")
+        compare(actual, "DeepSeek")
     return len(PLUGIN_ENTRIES) + 1
 
 
@@ -63,13 +98,18 @@ def check_release(release, work):
             raise ValueError(f"Invalid release checksum for {name}")
         files.add(name)
     wheel, = (release / name for name in files if name.endswith(".whl"))
-    plugins = verify_plugins(release, wheel)
+    plugins = verify_plugins(release, wheel, work)
     example, = (release / name for name in files if name.endswith("-example.zip"))
     with ZipFile(example) as archive:
         archive.extractall(work)
     project = work / "BirdStudy"
+    environment = {**os.environ, "RH_STATE_DIR": str(work / "state"),
+                   "RH_PLUGIN_CACHE_DIR": str(work / "plugin-cache")}
+    for platform in ("claude-plugin", "agent-plugin"):
+        runner = work / platform / "skills/maintain-project/scripts/rh.py"
+        subprocess.run([sys.executable, "-I", str(runner), "projects", "project", "check", str(project)],
+                       cwd=work, env=environment, check=True, capture_output=True, text=True)
     venv = work / "venv"
-    environment = {**os.environ, "RH_STATE_DIR": str(work / "state")}
     scripts = venv / ("Scripts" if os.name == "nt" else "bin")
     python = scripts / ("python.exe" if os.name == "nt" else "python")
     rh = scripts / ("rh.exe" if os.name == "nt" else "rh")

@@ -1,69 +1,101 @@
 #!/usr/bin/env node
-/* Purpose: install the bundled ResearchHarness wheel and project skills.
- * Scope: local, explicitly selected projects and hosts. */
+/* Purpose: install the bundled EverResearch CLI and project-local skills.
+ * Scope: the calling user's tool environment and selected project. */
 import { spawnSync } from "node:child_process";
 import { readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const directory = dirname(fileURLToPath(import.meta.url));
-const usage = "researchharness [--dry-run] [--mcp] --project PATH [--agent NAME ...]";
-const forwarded = [];
-let dryRun = false;
-let withMcp = false;
-let project = false;
-const agents = new Set([
-  "codex", "claude-code", "cursor", "github-copilot", "gemini-cli", "qwen-code",
-  "opencode", "openclaw", "deepseek-harness", "generic",
+const usage = "ever-research [--project PATH] [--agent NAME ...] [--dry-run] [--mcp]";
+const agents = new Map([
+  ["codex", "codex"], ["claude-code", "claude"], ["cursor", "cursor-agent"],
+  ["github-copilot", "copilot"], ["gemini-cli", "gemini"], ["qwen-code", "qwen"],
+  ["opencode", "opencode"], ["openclaw", "openclaw"], ["deepseek-harness", "dsh"],
+  ["generic", null],
 ]);
+
+function probe(command, args) {
+  return spawnSync(command, args, { encoding: "utf8" });
+}
 
 function run(command, args) {
   const child = spawnSync(command, args, { stdio: "inherit" });
-  if (child.error) throw new Error(`${command}: ${child.error.message}`);
+  if (child.error) throw child.error;
   if (child.status !== 0) process.exit(child.status ?? 1);
 }
 
-try {
-  const options = process.argv.slice(2);
-  for (let index = 0; index < options.length; index++) {
-    const option = options[index];
+function options(args) {
+  let project, dryRun = false, withMcp = false;
+  const selected = new Set();
+  for (let index = 0; index < args.length; index++) {
+    const option = args[index];
     if (option === "--help" || option === "-h") {
       console.log(usage);
       process.exit(0);
     }
-    if (option === "--dry-run") {
-      dryRun = true;
-    } else if (option === "--mcp") {
-      withMcp = true;
-    } else if (option === "--project" || option === "--agent") {
-      const value = options[++index];
-      if (!value || value.startsWith("--") || (option === "--agent" && !agents.has(value))) {
-        throw new Error(`Invalid value for ${option}: ${value ?? ""}`);
-      }
+    if (option === "--dry-run") dryRun = true;
+    else if (option === "--mcp") withMcp = true;
+    else if (option === "--project" || option === "--agent") {
+      const value = args[++index];
+      if (!value || value.startsWith("--")) throw new Error(`Missing value for ${option}`);
       if (option === "--project") {
-        if (project) throw new Error("Select exactly one project");
-        project = true;
+        if (project) throw new Error("Select one project");
+        project = value;
+      } else {
+        if (!agents.has(value)) throw new Error(`Unknown agent: ${value}`);
+        selected.add(value);
       }
-      forwarded.push(option, value);
     } else {
       throw new Error(`Unknown option: ${option}`);
     }
   }
-  if (!project) throw new Error("--project is required");
-  const wheels = readdirSync(directory).filter((name) => name.endsWith(".whl"));
-  if (wheels.length !== 1) throw new Error("Installer must contain exactly one ResearchHarness wheel");
+  if (selected.size === 0) {
+    const locate = process.platform === "win32" ? "where.exe" : "which";
+    for (const [host, command] of agents) {
+      if (command && probe(locate, [command]).status === 0) selected.add(host);
+    }
+  }
+  if (selected.size === 0) selected.add("generic");
+  return { dryRun, withMcp, args: ["--project", project ?? process.cwd(),
+    ...Array.from(selected).flatMap((agent) => ["--agent", agent])] };
+}
+
+function findPython() {
+  const check = ["-I", "-c",
+    "import sys; raise SystemExit(not ((3, 11) <= sys.version_info < (3, 13)))"];
+  for (const [command, ...args] of [
+    ["python3.12"], ["python3.11"], ["python3"], ["python"], ["py", "-3.12"], ["py", "-3.11"],
+  ]) {
+    if (probe(command, [...args, ...check]).status === 0) return [command, ...args];
+  }
+  throw new Error("Install Python 3.11 or 3.12, or install uv, then rerun this command.");
+}
+
+try {
+  const configuration = options(process.argv.slice(2));
+  const wheels = readdirSync(directory).filter((name) => /^ever_research-.*\.whl$/.test(name));
+  if (wheels.length !== 1) throw new Error("Installer must contain one EverResearch wheel");
   const wheel = join(directory, wheels[0]);
-  const spec = withMcp ? `${wheel}[mcp]` : wheel;
-  if (dryRun) {
-    console.log(JSON.stringify({ python: ["uv", "tool", "install", spec], skills: ["rh", "skills", "install", ...forwarded] }, null, 2));
-  } else {
-    run("uv", ["tool", "install", "--reinstall", spec]);
-    const bin = spawnSync("uv", ["tool", "dir", "--bin"], { encoding: "utf8" });
-    if (bin.error || bin.status !== 0 || !bin.stdout.trim()) {
+  const spec = configuration.withMcp ? `${wheel}[mcp]` : wheel;
+  const skills = ["skills", "install", ...configuration.args];
+  const uv = probe("uv", ["--version"]).status === 0;
+  if (configuration.dryRun) {
+    console.log(JSON.stringify({ projectSkills: skills, installer: uv ? "uv" : "Python runner",
+      wheel: spec }, null, 2));
+  } else if (uv) {
+    run("uv", ["tool", "install", "--reinstall", "--python", "3.12", spec]);
+    const bin = probe("uv", ["tool", "dir", "--bin"]);
+    if (bin.status !== 0 || !bin.stdout.trim()) {
       throw new Error("Could not locate the uv tool binary directory");
     }
     const executable = process.platform === "win32" ? "rh.exe" : "rh";
-    run(join(bin.stdout.trim(), executable), ["skills", "install", ...forwarded]);
+    process.env.RH_PLUGIN_WHEEL = wheel;
+    run(join(bin.stdout.trim(), executable), skills);
+  } else {
+    if (configuration.withMcp) throw new Error("The --mcp option requires uv.");
+    const [command, ...args] = findPython();
+    run(command, [...args, "-I", join(directory, "rh.py"), ...skills]);
   }
 } catch (error) {
   console.error(error.message);

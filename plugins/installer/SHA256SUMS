@@ -1,4 +1,11 @@
-de785519b03ad982762a6a97eb0a0b69ccaeaacd1ed6d6f4a34acde9d4aa61e0  researchharness-0.2.0-py3-none-any.whl
-a67234f4bb06162cf101f4b604aac2cc904b288eeae4e4217bc311b17f7f28f7  opensae-researchharness-0.2.0.tgz
-e87203ea3a14b3cdc0cb26c6b44d2012e6f05a18bf44d1c8459adb7cd210730e  opensae-researchharness-dsh-0.2.0.tgz
-77bd642c9a97dd1de1e6f8a87dbcebb20e24df4efe2d6b991648ae92f300b000  researchharness-0.2.0-example.zip
+da7f5cc4fe50276bac1ae02c12dedd2e238c04f2a5365540aa8a16b3526736ca  ever-research-0.2.0-agent-plugin.zip
+f10c5fdad2e7668fa7c25ce6555873db1a8b0e265287ca972c78bd9598d98d47  ever-research-0.2.0-claude-plugin.zip
+e99874cbc92bff6a3c91e8da776c0a1e7646398df9b52cbd8acbe31c695956d0  ever-research-0.2.0-codex-plugin.zip
+fef2c2bda1f4432f78532aa7d340bdc8d49646664fa914c4b2935326ef4509d8  ever-research-0.2.0-cursor-plugin.zip
+77bd642c9a97dd1de1e6f8a87dbcebb20e24df4efe2d6b991648ae92f300b000  ever-research-0.2.0-example.zip
+f92f730b8aaf588acd2f1291ab308f209038dbd851d41273551a3345335d770e  ever-research-0.2.0-gemini-extension.zip
+aebc6d18feb8346982d1e0abc95ce1134b84c4f8929d97fec5ecd8e560ca160a  ever-research-0.2.0-openclaw-plugin.zip
+d8e819c8cb4c2ffb0c55a7b4ffd0fb3d42c96f3a8c24c9cd1474b65440986489  ever-research-0.2.0-opencode-plugin.zip
+9b577d362c23932f9933738bcd8497e94ec35b0166323605b2075d88c9f6bd1f  ever_research-0.2.0-py3-none-any.whl
+221b17d8e6b3e8d160a594174baaf9f5e67aa595857ccbaaa70e8f6d9ce2bd83  opensae-ever-research-0.2.0.tgz
+46534e9cd008c163398f2241afaf182347283d211c490eb87bdea00eb499d819  opensae-ever-research-dsh-0.2.0.tgz

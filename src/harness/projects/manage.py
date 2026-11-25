@@ -489,6 +489,7 @@ def apply_skills(harness, project_id, changes):
             "scope": "Only for project maintenance switches to read on.",
             "root": str(relative_or_absolute(harness.state_root, root)),
             **({"installed": True} if harness.state is not None else {}),
+            **({"plugin_cli": plugin_cli} if (plugin_cli := os.environ.get("RH_PLUGIN_CLI")) else {}),
             "project_id": project_id,
         }, source=__file__)
     if settings_text is not None:

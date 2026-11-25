@@ -1,6 +1,6 @@
 ---
 name: maintain-model
-description: Add, modify or remove models, serial variants, configurations and weights of scientific projects, reading and processing actual dependence along specification statements, configurations, mission compatibility and inspection points.
+description: Add, change, or remove a research model or variant. Use for model configuration, weights, initialization, model interfaces, and compatibility with a task.
 ---
 
 # Model maintenance

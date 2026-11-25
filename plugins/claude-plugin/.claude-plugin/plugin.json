@@ -1,8 +1,9 @@
 {
-  "name": "researchharness",
+  "name": "ever-research",
   "version": "0.2.0",
-  "description": "Maintain and verify research projects using shared ResearchHarness skills and rh.",
+  "description": "Maintain and verify research projects with EverResearch.",
   "author": {
     "name": "OpenSAE"
-  }
+  },
+  "homepage": "https://github.com/OpenSAE/EverResearch"
 }

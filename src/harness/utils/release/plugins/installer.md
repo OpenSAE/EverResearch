@@ -1,0 +1,25 @@
+## Install from a terminal
+
+Run the following to install the OpenSAE wheel directly from GitHub:
+
+```sh
+uv tool install @DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl
+rh doctor --json
+```
+
+With Python 3.11 or 3.12 in an activated virtual environment, use
+`python -m pip install @DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl`.
+Use `uv tool uninstall ever-research` to remove a CLI installed with uv.
+
+From a project directory, install the CLI and skills together from the npm archive:
+
+```sh
+npm exec --yes --package=@DOWNLOAD@/opensae-ever-research-@VERSION@.tgz -- ever-research
+```
+
+Node.js 18 or newer is required for this installer. It defaults to the current
+project and detects installed agent commands. You can select agents explicitly
+with `--agent codex --agent claude-code`, choose a project with
+`--project ./MyProject`, and use `--dry-run` to preview the commands.
+For a terminal installation through the wheel, run
+`rh skills install --project . --agent codex` to add project-local skills.

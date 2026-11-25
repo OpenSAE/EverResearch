@@ -48,8 +48,12 @@ def online(action):
     environment = os.environ.copy()
     if connection.get("installed") is True:
         executable = shutil.which("rh")
+        if executable is None and connection.get("plugin_cli"):
+            candidate = Path(connection["plugin_cli"])
+            if candidate.is_file():
+                executable = str(candidate)
         if executable is None:
-            raise ValueError("Install ResearchHarness and put rh on PATH")
+            raise ValueError("Open the ResearchHarness plugin in this environment or install the OpenSAE CLI")
         command = [executable, "projects"]
         environment["RH_STATE_DIR"] = str(root)
     else:

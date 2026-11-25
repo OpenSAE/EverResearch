@@ -1,7 +1,7 @@
 """目的和主要功能：复制选定文件，在 Skill 内准备 Git 差异、提交、版本包及 GitHub 发布。
 
 适用范围：maintain-github Skill 的明确发布任务；原发布目录只读，所有本地写入位于 Skill 内。
-运行使用 Python 标准库、Git 与 GitHub CLI，读取已有登录；默认仅准备，远程写入使用独立命令。
+运行使用 Python 标准库、Git 与 GitHub CLI，由 GitHub CLI 负责认证；默认仅准备，远程写入使用独立命令。
 """
 from __future__ import annotations
 
@@ -83,7 +83,6 @@ class Run:
             raise ValueError('任务不存在：' + name)
         self.name = name
         self.checkout = self.path / 'checkout'
-        self.token = None
         self.receipt = self.load('result.json') if (self.path / 'result.json').exists() else {
             'purpose': 'Record actual GitHub publishing outcomes.',
             'scope': 'This prepared publication only.', 'run': name,
@@ -122,20 +121,14 @@ class Run:
             'GH_CONFIG_DIR': str(self.path / 'config/gh'), 'GH_HOST': 'github.com',
             'GH_PROMPT_DISABLED': '1', 'GIT_TERMINAL_PROMPT': '0', 'GIT_LFS_SKIP_SMUDGE': '1'})
         if auth:
-            if self.token is None:
-                self.token = os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
-                if not self.token:
-                    # Read an existing login once. The token stays in process memory.
-                    original = os.environ.copy()
-                    original.update({'GH_HOST': 'github.com', 'TMPDIR': str(self.path / 'tmp'),
-                        'TMP': str(self.path / 'tmp'), 'TEMP': str(self.path / 'tmp'),
-                        'XDG_CACHE_HOME': str(self.path / 'cache'), 'GH_PROMPT_DISABLED': '1'})
-                    result = subprocess.run(['gh', 'auth', 'token', '--hostname', 'github.com'],
-                        cwd=self.path, env=original, capture_output=True, text=True)
-                    if result.returncode:
-                        raise ValueError('需要已有的 GitHub 登录，或通过环境提供 GH_TOKEN')
-                    self.token = result.stdout.strip()
-            env['GH_TOKEN'] = self.token
+            # Let gh use its own login configuration and Git credential helper.
+            if "GH_CONFIG_DIR" in os.environ:
+                env["GH_CONFIG_DIR"] = str(Path(os.environ["GH_CONFIG_DIR"]).expanduser().resolve())
+            else:
+                env.pop("GH_CONFIG_DIR", None)
+        else:
+            env.pop("GH_TOKEN", None)
+            env.pop("GITHUB_TOKEN", None)
         return env
 
     def command(self, args, *, cwd=None, auth=False, allow_failure=False):
@@ -144,8 +137,9 @@ class Run:
             capture_output=True, text=True, encoding='utf-8', errors='replace')
         if result.returncode and not allow_failure:
             reason = result.stderr.strip() or result.stdout.strip()
-            if self.token:
-                reason = reason.replace(self.token, '[credential]')
+            if auth:
+                reason = re.sub(r"(?:gh[pousr]_|github_pat_)[A-Za-z0-9_]+",
+                                "[credential]", reason)
             raise ValueError(args[0] + ' 操作未完成：' + reason[:3000])
         return result
 
@@ -496,8 +490,6 @@ def main():
     except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
         message = str(error)
         if ACTIVE_RUN is not None:
-            if ACTIVE_RUN.token:
-                message = message.replace(ACTIVE_RUN.token, '[credential]')
             try:
                 ACTIVE_RUN.record(last_attempt='failed', last_error=message)
             except OSError:

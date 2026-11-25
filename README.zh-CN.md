@@ -1,36 +1,45 @@
 [English](README.md) | [中文](README.zh-CN.md)
 
-# ResearchHarness
+# EverResearch
 
 ## 目的和主要功能
 
-ResearchHarness 为科研项目提供一组可移植的代理技能和项目检查命令
-`rh`。它帮助你维护数据集、模型、任务和配置，记录可追溯的实验，
-并通过项目正式入口验证改动。
+EverResearch 帮助科研人员和代理维护数据集、模型、任务、配置与实验。用同一套技能检查项目结构、整理实验记录，并通过项目原有命令验证改动。
 
 ## 适用范围
 
-用于有文件和命令权限的代理环境或终端。模型由宿主环境选择。
-只支持工具连接的宿主可使用可选的本地 MCP。纯聊天环境里，
-你可以将项目材料交给模型出方案，再在终端运行检查。
+可用于有文件和命令权限的代理或终端。只有文件访问权限时，代理可以检查所提供的文件并提出方案。完整自动检查在能访问项目目录的 Python 环境运行。
 
-## 开始使用
+## 安装
 
-[插件目录](plugins/)包含各宿主插件和安装工具。
+按你使用的平台打开安装说明。插件自带 `rh`，需要运行检查时自动准备自己的 Python 环境。宿主需要提供 Python 3.11 或 3.12。首次运行可能需要访问 Python 包索引来安装依赖。
 
-从插件市场目录的 `installer/` 获取 Python wheel 和 BirdStudy 示例。解压示例后，
-用 Python 3.11 或 3.12 安装工具，然后在代理中打开示例项目。
+| 平台 | 安装和验证 |
+| --- | --- |
+| Codex | [Codex](https://github.com/OpenSAE/EverResearch/tree/main/plugins/codex-plugin) |
+| Claude | [Claude Code、Cowork 和网页版](https://github.com/OpenSAE/EverResearch/tree/main/plugins/claude-plugin) |
+| Cursor | [Cursor](https://github.com/OpenSAE/EverResearch/tree/main/plugins/cursor-plugin) |
+| Copilot CLI、Qwen Code、Skills CLI | [通用代理插件](https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin) |
+| Gemini CLI | [Gemini 扩展](https://github.com/OpenSAE/EverResearch/tree/main/plugins/gemini-extension) |
+| OpenCode | [OpenCode](https://github.com/OpenSAE/EverResearch/tree/main/plugins/opencode) |
+| OpenClaw | [OpenClaw](https://github.com/OpenSAE/EverResearch/tree/main/plugins/openclaw) |
+| DeepSeek Harness | [DeepSeek Harness](https://github.com/OpenSAE/EverResearch/tree/main/plugins/deepseek) |
+| 终端及其他代理 | [Python 和 npm 安装入口](https://github.com/OpenSAE/EverResearch/tree/main/plugins/installer) |
+
+从终端安装 CLI，然后用自己的项目路径替换下面的 `./MyProject`。
 
 ```sh
-uv tool install ./researchharness-*.whl
+uv tool install https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.0-py3-none-any.whl
 rh doctor --json
-rh projects project check ./BirdStudy
-rh skills install --project ./BirdStudy --agent codex
+rh projects project check ./MyProject
 ```
 
-将 `codex` 换成你使用的宿主。随包的 `verify.py` 可以从临时环境复验安装、
-项目接入和技能卸载。从自然语言提出需求后，可先请代理给出涉及的实际路径、
-改动内容和验证方式，再决定是否实施。
+如果你想同时安装 CLI 和技能，在项目目录运行以下命令。
 
-[安装与复验指南](src/harness/utils/release/README.md)说明了 Python 与 npm 安装、
-宿主插件、命令行和本地 MCP 的用法。[许可证](LICENSE)。
+```sh
+npm exec --yes --package=https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-0.2.0.tgz -- ever-research
+```
+
+安装后，在代理里打开项目，问它“检查这个科研项目的目录结构，告诉我有哪些问题，以及你实际验证了什么”。
+
+[构建和验收指南](src/harness/utils/release/README.md) · [许可证](LICENSE)

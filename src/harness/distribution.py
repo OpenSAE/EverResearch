@@ -7,6 +7,7 @@ import argparse
 from hashlib import sha256
 from importlib.metadata import PackageNotFoundError, version
 import json
+import os
 from pathlib import Path
 import platform
 import shutil
@@ -38,7 +39,7 @@ PREVIOUS = ".researchharness-previous-"
 
 def release_version():
     try:
-        return version("researchharness")
+        return version("ever-research")
     except PackageNotFoundError:
         return "source"
 
@@ -103,6 +104,27 @@ def install_skills(context, project, agents, *, operation, dry_run):
     for directory in directories:
         if not directory.resolve().is_relative_to(project):
             raise ProjectError(f"Skill directory escapes the selected project: {directory}")
+    wheel = os.environ.get("RH_PLUGIN_WHEEL") if operation == "install" else None
+    if wheel:
+        from .utils.release import plugin_runtime, select
+
+        with tempfile.TemporaryDirectory(prefix="ever-research-skills-") as temporary:
+            staged = Path(temporary) / "skills"
+            shutil.copytree(sources, staged)
+            wheel = Path(wheel)
+            if wheel.name != f"ever_research-{release_version()}-py3-none-any.whl":
+                raise ProjectError("Select the EverResearch wheel matching this installation")
+            runner = Path(__file__).with_name("utils") / "release" / "rh.py"
+            members = select(sources, ("**/*.md",))
+            for path, body in plugin_runtime(members, runner.read_bytes(), wheel).items():
+                target = staged / path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(body)
+            return apply_skills(staged, directories, operation, dry_run=dry_run)
+    return apply_skills(sources, directories, operation, dry_run=dry_run)
+
+
+def apply_skills(sources, directories, operation, *, dry_run):
     results = []
     if not dry_run and operation == "install":
         for directory in directories:

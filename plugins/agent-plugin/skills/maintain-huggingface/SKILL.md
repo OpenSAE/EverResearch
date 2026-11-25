@@ -1,9 +1,23 @@
 ---
 name: maintain-huggingface
-description: 访问和维护 Hugging Face 账号、Spaces 与数据集仓库。用于查看登录身份和仓库、上传或更新数据集与 Space 文件、维护说明、查看运行状态、重启或暂停 Space，以及配置环境变量和密钥。
+description: Review or maintain Hugging Face datasets and Spaces. Use to check repository or runtime status, download assets, publish selected files, or manage Space settings.
 ---
 
 # Hugging Face 访问与维护
+
+## Run bundled ResearchHarness commands
+
+When a step calls for an `rh` command, run this skill's `scripts/rh.py` with Python
+3.11 or 3.12 and pass the arguments after `rh`. For example, for a project check
+run `python3 <absolute-skill-path>/scripts/rh.py projects project check <project-path>`.
+Resolve the skill path from the current SKILL.md. On Claude Code and Cowork use
+`${CLAUDE_SKILL_DIR}` for that directory, and on Claude web use the script staged in
+the skill directory. Use an already available Python interpreter or let uv
+select one if the host provides uv. The launcher uses the bundled OpenSAE wheel
+and prepares a private Python environment automatically on first use. It may
+fetch Python dependencies from the package index. Continue with file review if
+the host cannot run Python or prepare the environment. State which automated
+checks were unavailable. Never install the similarly named PyPI package.
 
 ## 目的和主要功能
 

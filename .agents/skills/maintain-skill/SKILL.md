@@ -1,6 +1,6 @@
 ---
 name: maintain-skill
-description: Record project conversations, analyze file placement and naming from recorded work, and improve or independently evaluate the skills responsible.
+description: Record or analyze project maintenance conversations, improve maintenance skills, or evaluate how agents apply them. Use when asked to save a maintenance exchange, review its file-placement decisions, or run a skills exam.
 ---
 
 # Assessment and maintenance skills

@@ -1,6 +1,6 @@
 ---
 name: extract-structure
-description: "ExtractStructure has two modes: read Markdown, TeX, or PDF in depth and visualize an article's overall structure, or summarize an engineering project's structure and explore its files and subfolders. Use the selected object and scope; offer the two modes and visible entry points when the user is choosing. Instructions, drawing programs, and results reside inside this skill."
+description: Read a Markdown, LaTeX, or PDF paper in depth, or explain how a codebase is organized. Use when asked for a structural walkthrough, diagram, or interactive HTML overview.
 ---
 
 # ExtractStructure — Understand articles and engineering projects

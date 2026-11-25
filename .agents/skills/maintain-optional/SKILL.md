@@ -1,6 +1,6 @@
 ---
 name: maintain-optional
-description: Maintenance of independent scripts, tests, project files, valuable resources and imported external documents for research projects, including projects doc Navigation, components, parameters, experiments and environmental description, and access to official access for long-term use.
+description: Maintain standalone research scripts, tests, documentation, and reusable assets. Use for work such as plotting results, verifying a component, or updating a project guide.
 ---
 
 # Maintenance of required assets for research projects

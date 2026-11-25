@@ -1,9 +1,23 @@
 ---
 name: maintain-experiment
-description: Use of existing parameters, operation, monitoring, recovery and debugging experiments for scientific projects to read valid configurations and results and to maintain laboratory reports based on actual evidence.
+description: Run, monitor, recover, or review a research experiment. Use for run recipes, effective configurations, execution records, and results produced by the experiment.
 ---
 
 # Experimental maintenance
+
+## Run bundled ResearchHarness commands
+
+When a step calls for an `rh` command, run this skill's `scripts/rh.py` with Python
+3.11 or 3.12 and pass the arguments after `rh`. For example, for a project check
+run `python3 <absolute-skill-path>/scripts/rh.py projects project check <project-path>`.
+Resolve the skill path from the current SKILL.md. On Claude Code and Cowork use
+`${CLAUDE_SKILL_DIR}` for that directory, and on Claude web use the script staged in
+the skill directory. Use an already available Python interpreter or let uv
+select one if the host provides uv. The launcher uses the bundled OpenSAE wheel
+and prepares a private Python environment automatically on first use. It may
+fetch Python dependencies from the package index. Continue with file review if
+the host cannot run Python or prepare the environment. State which automated
+checks were unavailable. Never install the similarly named PyPI package.
 
 ## Purpose
 

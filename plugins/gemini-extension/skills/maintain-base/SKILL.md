@@ -1,6 +1,6 @@
 ---
 name: maintain-base
-description: Maintains the base coordination layer of the scientific project. This is used to connect commands, configurations, data sets, models and tasks, adjust component selection, task distribution, shared operating environment, inspection points or reading and writing results.
+description: Maintain the shared launchers and infrastructure of a research project. Use for command dispatch, cross-component wiring, resource selection, checkpoints, and shared result I/O.
 ---
 
 # Maintenance of the research project base level

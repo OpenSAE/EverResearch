@@ -1,6 +1,6 @@
 ---
 name: maintain-huggingface
-description: 访问和维护 Hugging Face 账号、Spaces 与数据集仓库。用于查看登录身份和仓库、上传或更新数据集与 Space 文件、维护说明、查看运行状态、重启或暂停 Space，以及配置环境变量和密钥。
+description: Review or maintain Hugging Face datasets and Spaces. Use to check repository or runtime status, download assets, publish selected files, or manage Space settings.
 ---
 
 # Hugging Face 访问与维护

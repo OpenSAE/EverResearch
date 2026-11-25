@@ -1,6 +1,6 @@
 ---
 name: maintain-conf
-description: Add, remove or modify the open configuration parameters of the scientific project, deal with parameters meaning, default values, fixed regression behaviour, the order of coverage and the old formulation, and verify the effects of the parameters from actual consumers.
+description: Add, remove, or change research configuration parameters. Use for defaults, overrides, compatibility with older configurations, and checking that the consuming code uses the value.
 ---
 
 # Maintenance of scientific project configuration parameters

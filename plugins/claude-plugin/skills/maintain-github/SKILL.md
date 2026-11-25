@@ -1,9 +1,23 @@
 ---
 name: maintain-github
-description: 将用户选定的项目、目录或文件复制到本技能内，查看实际变化后发布到 GitHub；也可明确本地路径与范围，对照 GitHub 项目和本地技能，说明差异并请用户决定是否对齐。原目录始终只读；说明、程序和所有本地准备文件均在本技能内。
+description: Compare selected local files with a GitHub repository, prepare a publishable copy, or push approved changes to GitHub. Use for requests to publish, update, or review the selected material.
 ---
 
 # Maintain GitHub — 把选定内容发布到 GitHub
+
+## Run bundled ResearchHarness commands
+
+When a step calls for an `rh` command, run this skill's `scripts/rh.py` with Python
+3.11 or 3.12 and pass the arguments after `rh`. For example, for a project check
+run `python3 <absolute-skill-path>/scripts/rh.py projects project check <project-path>`.
+Resolve the skill path from the current SKILL.md. On Claude Code and Cowork use
+`${CLAUDE_SKILL_DIR}` for that directory, and on Claude web use the script staged in
+the skill directory. Use an already available Python interpreter or let uv
+select one if the host provides uv. The launcher uses the bundled OpenSAE wheel
+and prepares a private Python environment automatically on first use. It may
+fetch Python dependencies from the package index. Continue with file review if
+the host cannot run Python or prepare the environment. State which automated
+checks were unavailable. Never install the similarly named PyPI package.
 
 ## 目的和主要功能
 
@@ -165,6 +179,6 @@ description: 将用户选定的项目、目录或文件复制到本技能内，�
 
 完成后返回真实的提交、PR 或 Release 链接，用一两句话说明发布了什么。只制作本地版本包时，返回内部文件的完整路径。发生部分失败时，分别报告已完成和待处理的操作。
 
-全部本地产物保存在本技能的 `results/<任务标识>/`。任务记录说明发布来源、文件放置位置、实际差异和已完成结果；登录凭据只在当前进程中使用。
+全部本地产物保存在本技能的 `results/<任务标识>/`。任务记录说明发布来源、文件放置位置、实际差异和已完成结果；GitHub CLI 负责认证，任务结果保存提交或发布状态。
 
 测试、浏览器验证和额外源码修改按用户明确要求处理。每次外部写入均以用户对具体发布任务的授权为依据。

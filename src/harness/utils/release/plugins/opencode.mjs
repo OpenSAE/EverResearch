@@ -6,7 +6,7 @@ const skills = JSON.parse(readFileSync(new URL("./skills.json", import.meta.url)
 const root = fileURLToPath(new URL("./skills", import.meta.url));
 
 export default {
-  id: "researchharness",
+  id: "ever-research",
   async server() {
     return {
       config(config) {

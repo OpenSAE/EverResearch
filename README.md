@@ -1,14 +1,14 @@
 [English](README.md) | [中文](README.zh-CN.md)
 
-# ResearchHarness
+# EverResearch
 
 **Less time managing research code. More time doing research.**
 
 Research projects grow messy. Scripts pile up, configurations drift, datasets move, and experiment results become hard to trace.
 
-ResearchHarness helps you and your coding agent keep research projects organized, maintainable, and reproducible.
+EverResearch helps you and your coding agent keep research projects organized, maintainable, and reproducible.
 
-## What ResearchHarness Does
+## Purpose and main function
 
 - **Organize your research.** Keep datasets, models, tasks, configurations, and experiments in a consistent structure.
 - **Maintain projects with AI.** Let your coding agent understand and maintain your project instead of fixing files one by one.
@@ -16,11 +16,11 @@ ResearchHarness helps you and your coding agent keep research projects organized
 - **Catch problems early.** Check project structure and experiment records before small inconsistencies become bigger problems.
 - **Reuse what works.** Apply the same research maintenance workflows across different projects.
 
-## How It Works
+## Scope of application
 
 **Start from scratch or bring your existing code.**
 
-Whether you're building a new research project or cleaning up an existing codebase, ResearchHarness helps your coding agent organize it into a consistent structure.
+Whether you're building a new research project or cleaning up an existing codebase, EverResearch helps your coding agent organize it into a consistent structure.
 
 ```text
 YourProject/
@@ -37,7 +37,7 @@ YourProject/
 
 Each component has a clear responsibility, making it easier for agents to understand, modify, and extend your research without losing track of how everything fits together.
 
-**ResearchHarness keeps code and results reusable, readable, and traceable throughout agent-driven development.**
+**EverResearch keeps code and results reusable, readable, and traceable throughout agent-driven development.**
 
 As your project evolves, shared maintenance workflows help keep its structure, configurations, and experiment records consistent.
 
@@ -45,14 +45,14 @@ As your project evolves, shared maintenance workflows help keep its structure, c
 
 **From scattered research code to an organized, maintainable project.**
 
-**Before ResearchHarness**
+**Before EverResearch**
 
 - Scripts and configurations scattered across folders
 - Dataset paths tied to individual machines
 - Experiments difficult to track or revisit
 - Every new project requires another round of cleanup
 
-**With ResearchHarness**
+**With EverResearch**
 
 - Consistent project organization
 - Reusable workflows for your coding agent
@@ -61,29 +61,57 @@ As your project evolves, shared maintenance workflows help keep its structure, c
 
 *A real project walkthrough will show the workflow from project inspection to organized code and reviewable results.*
 
-## Get Started
+## Install
 
-The [plugin directory](plugins/) contains the current host plugins and installers.
+**Use an agent plugin.** Choose your platform and follow its installation
+entry. The plugin includes the `rh` command and prepares its own Python
+environment on first use.
 
-Install the release wheel, check a project, and connect the skills to your agent:
+| Platform | Installation and first check |
+| --- | --- |
+| Codex | [Codex](https://github.com/OpenSAE/EverResearch/tree/main/plugins/codex-plugin) |
+| Claude | [Claude Code, Cowork and web](https://github.com/OpenSAE/EverResearch/tree/main/plugins/claude-plugin) |
+| Cursor | [Cursor](https://github.com/OpenSAE/EverResearch/tree/main/plugins/cursor-plugin) |
+| GitHub Copilot CLI, Qwen Code, Skills CLI | [Agent Plugin](https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin) |
+| Gemini CLI | [Gemini extension](https://github.com/OpenSAE/EverResearch/tree/main/plugins/gemini-extension) |
+| OpenCode | [OpenCode](https://github.com/OpenSAE/EverResearch/tree/main/plugins/opencode) |
+| OpenClaw | [OpenClaw](https://github.com/OpenSAE/EverResearch/tree/main/plugins/openclaw) |
+| DeepSeek Harness | [DeepSeek Harness](https://github.com/OpenSAE/EverResearch/tree/main/plugins/deepseek) |
+| Shell and other agents | [Terminal and npm installer](https://github.com/OpenSAE/EverResearch/tree/main/plugins/installer) |
+
+**Use the terminal.** Install OpenSAE's Python wheel directly from GitHub:
 
 ```bash
-uv tool install ./researchharness-*.whl
+uv tool install https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.0-py3-none-any.whl
 rh doctor --json
 rh projects project check ./MyProject
-rh skills install --project ./MyProject --agent codex
 ```
 
-Then ask your agent to inspect the project's existing entry points and files
-before proposing a maintenance change. The [installation and verification guide](src/harness/utils/release/README.md)
-covers terminal-only use, supported host entry points, the example project, and MCP.
+To install the CLI and add project-local skills in one step, run this from your
+project directory:
 
-For source development, install with `uv pip install -e .` in an active
-environment. Existing project commands still accept `--harness-root`.
+```bash
+npm exec --yes --package=https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-0.2.0.tgz -- ever-research
+```
+
+Choose an agent explicitly with `--agent codex`, or install the complete skill
+set with the Skills CLI:
+
+```bash
+npx --yes skills add https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin --all -y
+```
+
+Then ask the agent to inspect your research project's directory structure and
+tell you what it verified. File-only environments can review available files.
+Automated checks run where the project and Python are accessible.
+
+For development, use `uv pip install -e .` in an active environment. See the
+[build and verification guide](src/harness/utils/release/README.md) for source
+builds, the BirdStudy example, and optional MCP access.
 
 ### One Skill to Coordinate Your Research
 
-**`maintain-project` is the central coordinator of ResearchHarness.**
+**`maintain-project` is the central coordinator of EverResearch.**
 
 It guides your coding agent through the entire project, coordinating specialized skills for each component:
 
@@ -104,19 +132,19 @@ As your research evolves, the same workflows help keep your code organized and y
 
 The managed section of each connected project's `AGENTS.md` links to [14 operation guides](src/harness/projects/operations.md). Each guide explains how to choose the right destination, carry out the change, and check the result. Run `rh projects apply <project-id>` again to refresh an existing connection.
 
-For repeat structure checks, use `rh projects maintenance <project-root>`. It records changes and previous checks in the local ResearchHarness workspace. Unchanged files reuse cached findings, so subsequent checks can focus on changes.
+For repeat structure checks, use `rh projects maintenance <project-root>`. It records changes and previous checks in the local EverResearch workspace. Unchanged files reuse cached findings, so subsequent checks can focus on changes.
 
 Enable lightweight follow-up checks for a connected project with `rh projects apply <project-id> --lightweight-checks on`.
 
 ## Built for Everyday Research
 
-Whether you're starting a new experiment, adding a dataset, switching models, or returning to an old project, ResearchHarness gives you a consistent way to keep your research code under control.
+Whether you're starting a new experiment, adding a dataset, switching models, or returning to an old project, EverResearch gives you a consistent way to keep your research code under control.
 
 **Your research keeps moving. Your codebase should keep up.**
 
 ## Achievements
 
-The release ships the CUB-200 example. ResearchHarness has also used the following public projects to illustrate the same structure for configuration, datasets, models, and tasks.
+The release ships the CUB-200 example. EverResearch has also used the following public projects to illustrate the same structure for configuration, datasets, models, and tasks.
 
 | Template | Files | Publication checks passed |
 | --- | ---: | ---: |

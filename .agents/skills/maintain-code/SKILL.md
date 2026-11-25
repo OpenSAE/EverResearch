@@ -1,6 +1,6 @@
 ---
 name: maintain-code
-description: Review and maintain the selected code and its upstream/downstream, determine whether the core functionality meets the target from the real-use scene, position, repair and rescale as mandated, and confirm that the official access points will be able to recreate the results and clean up the temporary documents..
+description: Review, fix, or refactor research code and its callers. Trace a normal invocation through its dependencies and verify that it still delivers the requested behavior.
 ---
 
 # Review and maintain project code

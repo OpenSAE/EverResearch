@@ -1,6 +1,6 @@
 ---
 name: maintain-dataset
-description: Add, modify or remove data sets, configuration presets and data options for scientific projects, and read and process actual dependency along sample preparation, registration and tasks.
+description: Add, update, or remove a research dataset. Use for dataset registration, loaders, preprocessing, splits, dataset choices, and verifying that a task reads the intended samples.
 ---
 
 # Data set maintenance

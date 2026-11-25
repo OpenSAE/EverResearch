@@ -1,9 +1,23 @@
 ---
 name: maintain-task
-description: Add, modify or remove research tasks, models and results interfaces, with actual dependency on official distribution, data model combinations, precheck, task computing and product reading and processing.
+description: Add, change, or remove a research task such as training or evaluation. Use for task registration, prechecks, dataset and model compatibility, execution, and result interfaces.
 ---
 
 # Maintenance of research tasks
+
+## Run bundled ResearchHarness commands
+
+When a step calls for an `rh` command, run this skill's `scripts/rh.py` with Python
+3.11 or 3.12 and pass the arguments after `rh`. For example, for a project check
+run `python3 <absolute-skill-path>/scripts/rh.py projects project check <project-path>`.
+Resolve the skill path from the current SKILL.md. On Claude Code and Cowork use
+`${CLAUDE_SKILL_DIR}` for that directory, and on Claude web use the script staged in
+the skill directory. Use an already available Python interpreter or let uv
+select one if the host provides uv. The launcher uses the bundled OpenSAE wheel
+and prepares a private Python environment automatically on first use. It may
+fetch Python dependencies from the package index. Continue with file review if
+the host cannot run Python or prepare the environment. State which automated
+checks were unavailable. Never install the similarly named PyPI package.
 
 ## Purpose
 

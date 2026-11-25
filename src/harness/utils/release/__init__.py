@@ -40,14 +40,14 @@ SKILLS = {
     "maintain-tmp": (),
 }
 CORE = (
-    "LICENSE", "README.md", "pyproject.toml",
+    "LICENSE", "README.md", "README.zh-CN.md", "pyproject.toml",
     "src/harness/*.py", "src/harness/core/*.py", "src/harness/core/README.md",
     "src/harness/projects/*.py", "src/harness/projects/*.md", "src/harness/projects/*.md.in",
     "src/harness/projects/standalone/*.py", "src/harness/projects/standalone/*.md",
     "src/harness/projects/standalone/offline/*.py", "src/harness/projects/standalone/offline/*.md",
     "src/harness/utils/*.py", "src/harness/utils/transfer/*.py", "src/harness/utils/transfer/README.md",
     "src/harness/utils/release/*.py", "src/harness/utils/release/install.mjs",
-    "src/harness/utils/release/plugins/*.mjs",
+    "src/harness/utils/release/plugins/*.mjs", "src/harness/utils/release/plugins/*.md",
 )
 CUB = "src/harness/projects/templates/cub"
 CUB_FILES = (
@@ -59,10 +59,25 @@ CUB_FILES = (
 )
 SHARED = ("src/harness/projects/README.md", "src/harness/projects/operations.md")
 ARTIFACT_GUIDE = "src/harness/utils/release/README.md"
+PLUGIN_RUNNER = "src/harness/utils/release/rh.py"
+CLI_COMMAND = re.compile(rb"\brh (?:projects|utils|guide|skills|doctor|mcp)\b")
 SECRETS = re.compile(
     rb"(?:gh[pousr]_|github_pat_|hf_)[A-Za-z0-9_]{25,}|"
     rb"-----BEGIN (?:[A-Z]+ )?PRIVATE KEY-----|/(?:workspace|home|root)/[^\s<>\"')]+"
 )
+PLUGIN_CLI_GUIDANCE = b"""## Run bundled ResearchHarness commands
+
+When a step calls for an `rh` command, run this skill's `scripts/rh.py` with Python
+3.11 or 3.12 and pass the arguments after `rh`. For example, for a project check
+run `python3 <absolute-skill-path>/scripts/rh.py projects project check <project-path>`.
+Resolve the skill path from the current SKILL.md. On Claude Code and Cowork use
+`${CLAUDE_SKILL_DIR}` for that directory, and on Claude web use the script staged in
+the skill directory. Use an already available Python interpreter or let uv
+select one if the host provides uv. The launcher uses the bundled OpenSAE wheel
+and prepares a private Python environment automatically on first use. It may
+fetch Python dependencies from the package index. Continue with file review if
+the host cannot run Python or prepare the environment. State which automated
+checks were unavailable. Never install the similarly named PyPI package."""
 LINK = re.compile(r"\[[^\]\n]+\]\((<[^>]+>|[^\s)]+)\)")
 
 
@@ -152,12 +167,12 @@ def package(root, output):
                         and not name.startswith(f"{CUB}/") and name.endswith(".py")}
             if not expected <= set(installed.namelist()):
                 raise ValueError(f"Missing wheel modules: {expected - set(installed.namelist())}")
-        archive(output / f"researchharness-{version}-source.zip", source)
-        archive(output / f"researchharness-{version}-example.zip", {f"BirdStudy/{k}": v for k, v in cub.items()})
-        build_plugins(output, Path(temporary), version, skills, source)
+        archive(output / f"ever-research-{version}-source.zip", source)
+        archive(output / f"ever-research-{version}-example.zip", {f"BirdStudy/{k}": v for k, v in cub.items()})
+        build_plugins(output, Path(temporary), version, skills, source, wheel)
         build_npm(Path(temporary), output, version, wheel, source)
     (output / "verify.py").write_bytes(source["src/harness/utils/release/verify.py"])
-    (output / "INSTALL.md").write_bytes(source[ARTIFACT_GUIDE])
+    (output / "INSTALL.md").write_bytes(platform_readme(source, "installer", version))
     inventory = {}
     for path in sorted(output.iterdir()):
         inventory[path.name] = sha256(path.read_bytes()).hexdigest()
@@ -170,25 +185,91 @@ def package(root, output):
     }))
 
 
-def build_plugins(output, work, version, skills, source):
-    name = "researchharness"
-    description = "Maintain and verify research projects using shared ResearchHarness skills and rh."
+def platform_readme(source, platform, version):
+    docs = "src/harness/utils/release/plugins"
+    repo = b"https://github.com/OpenSAE/EverResearch"
+    guide = b"\n".join((
+        f"# EverResearch for {PLATFORM_TITLES[platform]}\n".encode(),
+        b"## Purpose and main function\n",
+        b"Install OpenSAE's research project maintenance tools and run a first check.\n",
+        b"## Scope of application\n",
+        b"Use these steps for projects you can access from this environment.\n",
+        source[f"{docs}/{platform}.md"],
+        source[f"{docs}/usage.md"],
+    ))
+    downloads = b"https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer"
+    return (guide.replace(b"@REPO@", repo).replace(b"@DOWNLOAD@", downloads)
+            .replace(b"@VERSION@", version.encode()))
+
+
+PLATFORM_TITLES = {
+    "agent-plugin": "Copilot, Qwen and Skills CLI",
+    "claude-plugin": "Claude",
+    "codex-plugin": "Codex",
+    "cursor-plugin": "Cursor",
+    "gemini-extension": "Gemini CLI",
+    "opencode": "OpenCode",
+    "openclaw": "OpenClaw",
+    "deepseek": "DeepSeek Harness",
+    "installer": "the terminal",
+}
+
+
+def plugin_runtime(skills, runner, wheel, *, isolated=False):
+    """Supply the launcher and its wheel within an agent's installed skill set."""
+    additions = {}
+    cli_skills = {path.split("/")[0] for path, body in skills.items()
+                  if path.endswith(".md") and CLI_COMMAND.search(body)}
+    for skill in sorted(cli_skills):
+        additions[f"{skill}/scripts/rh.py"] = runner
+        key = f"{skill}/SKILL.md"
+        frontmatter, heading, body = skills[key].split(b"---", 2)
+        first, rest = body.strip().split(b"\n\n", 1)
+        additions[key] = (frontmatter + b"---" + heading + b"---\n\n" + first
+                        + b"\n\n" + PLUGIN_CLI_GUIDANCE + b"\n\n" + rest + b"\n")
+    wheel_data = wheel.read_bytes()
+    for skill in sorted(cli_skills if isolated else {"maintain-project"}):
+        additions[f"{skill}/scripts/{wheel.name}"] = wheel_data
+    return additions
+
+
+
+def build_plugins(output, work, version, skills, source, wheel):
+    name = "ever-research"
+    description = "Maintain and verify research projects with EverResearch."
     members = {f"skills/{path}": body for path, body in skills.items()}
     members.update({"LICENSE": source["LICENSE"], "README.md": source[ARTIFACT_GUIDE]})
+    runtime = plugin_runtime(skills, source[PLUGIN_RUNNER], wheel)
+    members.update({f"skills/{path}": body for path, body in runtime.items()})
     manifest = {"name": name, "version": version, "description": description}
     portable = {
         "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json", **manifest,
     }
+    interface = {
+        "displayName": "EverResearch", "shortDescription": "Maintain research projects",
+        "longDescription": ("Inspect and maintain research code, datasets, models, configurations, "
+                            "and experiment records. Automated checks require project files and a "
+                            "Python-capable agent workspace."),
+        "developerName": "OpenSAE", "category": "Developer Tools",
+        "capabilities": ["Project maintenance", "Project structure validation"],
+        "websiteURL": "https://github.com/OpenSAE/EverResearch",
+    }
     platform_manifests = {
         "agent-plugin": ("plugin.json", portable),
-        "codex-plugin": (".codex-plugin/plugin.json", {**manifest, "skills": "./skills/"}),
-        "cursor-plugin": (".cursor-plugin/plugin.json", {**manifest, "skills": "./skills/"}),
-        "claude-plugin": (".claude-plugin/plugin.json", {**manifest, "author": {"name": "OpenSAE"}}),
+        "codex-plugin": (".codex-plugin/plugin.json", {**manifest, "skills": "./skills/", "interface": interface}),
+        "cursor-plugin": (".cursor-plugin/plugin.json", {**manifest, "skills": "./skills/", "interface": interface}),
+        "claude-plugin": (".claude-plugin/plugin.json", {**manifest, "author": {"name": "OpenSAE"},
+                          "homepage": "https://github.com/OpenSAE/EverResearch"}),
         "gemini-extension": ("gemini-extension.json", manifest),
     }
     marketplace = {}
     for platform, (path, config) in platform_manifests.items():
-        plugin = {**members, path: json_bytes(config)}
+        plugin = {**members, path: json_bytes(config),
+                  "README.md": platform_readme(source, platform, version)}
+        if platform == "claude-plugin":
+            # Claude chat stages only the active skill directory in its Python sandbox.
+            runtime = plugin_runtime(skills, source[PLUGIN_RUNNER], wheel, isolated=True)
+            plugin.update({f"skills/{name}": body for name, body in runtime.items()})
         archive(output / f"{name}-{version}-{platform}.zip", plugin)
         marketplace.update({f"plugins/{platform}/{file}": contents for file, contents in plugin.items()})
 
@@ -201,10 +282,11 @@ def build_plugins(output, work, version, skills, source):
                             "description": metadata["description"], "path": f"./skills/{path}"})
     opencode = {
         **members,
-        "package.json": json_bytes({**manifest, "name": "@opensae/researchharness-opencode",
+        "package.json": json_bytes({**manifest, "name": "@opensae/ever-research-opencode",
                                     "type": "module", "exports": {"./server": "./index.mjs"}}),
         "index.mjs": source[f"{adapter}/opencode.mjs"],
         "skills.json": json_bytes(entries),
+        "README.md": platform_readme(source, "opencode", version),
     }
     archive(output / f"{name}-{version}-opencode-plugin.zip", opencode)
     openclaw = {
@@ -216,9 +298,10 @@ def build_plugins(output, work, version, skills, source):
             "configSchema": {"type": "object", "additionalProperties": False},
         }),
         "index.mjs": source[f"{adapter}/openclaw.mjs"],
+        "README.md": platform_readme(source, "openclaw", version),
     }
     archive(output / f"{name}-{version}-openclaw-plugin.zip", openclaw)
-    bundle_name = "@opensae/researchharness-dsh"
+    bundle_name = "@opensae/ever-research-dsh"
     dsh = {
         **members,
         "package.json": json_bytes({
@@ -228,9 +311,10 @@ def build_plugins(output, work, version, skills, source):
             "peerDependencies": {"@deepseek-ai/dsh-skill-filesystem": "0.2.2-rc.5"},
         }),
         "cordis.patch.yml": yaml.safe_dump([
-            {"insert": [{"id": "researchharness-skills", "name": bundle_name}]},
+            {"insert": [{"id": "ever-research-skills", "name": bundle_name}]},
         ]).encode(),
         "index.mjs": source[f"{adapter}/deepseek.mjs"],
+        "README.md": platform_readme(source, "deepseek", version),
     }
     dsh_work = work / "deepseek"
     for path, contents in dsh.items():
@@ -241,7 +325,7 @@ def build_plugins(output, work, version, skills, source):
     archive(output / f"{name}-{version}-skills.zip", members)
     for platform, plugin in (("opencode", opencode), ("openclaw", openclaw), ("deepseek", dsh)):
         marketplace.update({f"plugins/{platform}/{file}": contents for file, contents in plugin.items()})
-    catalog = {"name": "researchharness", "owner": {"name": "OpenSAE"}}
+    catalog = {"name": "ever-research", "owner": {"name": "OpenSAE"}}
     for path, platform in {
         ".claude-plugin/marketplace.json": "claude-plugin",
         ".cursor-plugin/marketplace.json": "cursor-plugin",
@@ -254,9 +338,10 @@ def build_plugins(output, work, version, skills, source):
         "name": catalog["name"], "plugins": [{
             "name": name, "source": {"source": "local", "path": "./plugins/codex-plugin"},
             "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+            "interface": {"displayName": "EverResearch"},
         }],
     })
-    marketplace["README.md"] = source[ARTIFACT_GUIDE]
+    marketplace["README.md"] = source["README.md"]
     marketplace["LICENSE"] = source["LICENSE"]
     archive(output / f"{name}-{version}-marketplace.zip", marketplace)
 
@@ -268,14 +353,15 @@ def build_npm(temporary, output, version, wheel, source):
     installer.write_bytes(source["src/harness/utils/release/install.mjs"])
     installer.chmod(0o755)
     shutil.copyfile(wheel, npm / wheel.name)
-    (npm / "README.md").write_bytes(source[ARTIFACT_GUIDE])
+    (npm / "README.md").write_bytes(platform_readme(source, "installer", version))
+    (npm / "rh.py").write_bytes(source[PLUGIN_RUNNER])
     (npm / "LICENSE").write_bytes(source["LICENSE"])
     (npm / "package.json").write_bytes(json_bytes({
-        "name": "@opensae/researchharness", "version": version,
+        "name": "@opensae/ever-research", "version": version,
         "description": "Install ResearchHarness tools and project skills",
-        "bin": {"researchharness": "install.mjs"},
+        "bin": {"ever-research": "install.mjs"},
         "engines": {"node": ">=18"}, "license": "Apache-2.0",
-        "files": ["install.mjs", wheel.name],
+        "files": ["install.mjs", "rh.py", wheel.name],
     }))
     subprocess.run(["npm", "pack", "--pack-destination", str(output)], cwd=npm, check=True)
 
