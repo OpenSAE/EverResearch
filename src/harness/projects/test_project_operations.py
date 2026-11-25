@@ -231,6 +231,8 @@ def test_project_mode_reads_central_originals_only_online(command, workspace):
 
 
 def test_standalone_setup_preserves_project_instructions(command, workspace):
+    from harness.projects.setup_backup import LARGE_FILE_BYTES
+
     _, project, central_skill = workspace
     agents = project / "AGENTS.md"
     original = "# Project instructions\n\nLocal working rules.\n"
@@ -244,6 +246,26 @@ def test_standalone_setup_preserves_project_instructions(command, workspace):
     legacy = project / ".agents/skills/example"
     legacy.parent.mkdir(parents=True)
     legacy.symlink_to(central_skill, target_is_directory=True)
+    project_files = {
+        "train.py": b"print('train')\n",
+        "eval.py": b"print('eval')\n",
+        "configs/default.yaml": b"batch_size: 4\n",
+        "src/model.py": b"class Probe: pass\n",
+        "utils/data.py": b"def load(): return []\n",
+        "doc/README.md": b"# Local research notes\n",
+        ".editorconfig": b"root = true\n",
+    }
+    skipped = (
+        ".git/config", ".scratch/private.py", "venv/train.py", "node_modules/example.js",
+        "__pycache__/model.pyc", "runtime/python_env/pyvenv.cfg", "runtime/python_env/train.py",
+    )
+    for name, content in {**project_files, **dict.fromkeys(skipped, b"skip")}.items():
+        path = project / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+    large = project / "checkpoint.bin"
+    with large.open("wb") as stream:
+        stream.truncate(LARGE_FILE_BYTES + 1)
     setup = command("setup-maintenance", str(project))
     assert setup["mode"] == "offline"
     archive = project / ".researchharness/backups/initial-setup.tar.gz"
@@ -253,6 +275,11 @@ def test_standalone_setup_preserves_project_instructions(command, workspace):
         assert bundle.extractfile("files/AGENTS.md").read().decode() == original
         assert bundle.extractfile("files/.gitignore").read() == b"# Existing ignore rules\n"
         manifest = json.load(bundle.extractfile("manifest.json"))
+        assert set(manifest["files"]) == {*project_files, "AGENTS.md", ".gitignore"}
+        for name, content in project_files.items():
+            assert bundle.extractfile(f"files/{name}").read() == content
+        assert manifest["large_files"] == [{"path": large.name, "size_bytes": LARGE_FILE_BYTES + 1}]
+        assert f"files/{large.name}" not in bundle.getnames()
         assert manifest["links"] == {".agents/skills/example": str(central_skill)}
         assert ".researchharness/mode.toml" in manifest["created_paths"]
     assert "/.researchharness/backups/" in ignore.read_text().splitlines()

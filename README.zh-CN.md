@@ -42,7 +42,7 @@ rh doctor
 
 运行 `rh projects project check ./MyProject --onboarding` 可查看只读接入预览。脚本和持续集成可用 `--strict` 判断是否通过，或用 `--json` 获取机器可读结果。
 
-整理已有项目时，在分支上操作，合并前用原有命令验证。
+从本仓库安装 EverResearch 时，首次接入会[在本地备份项目文件](src/harness/projects/README.md#online-and-offline-maintenance)。整理后，用项目原有的命令验证。
 
 ## 科研工作怎么用
 

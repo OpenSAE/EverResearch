@@ -62,10 +62,14 @@ rh projects --harness-root ./ResearchHarness status example
 
 `rh projects setup-maintenance <project-root>` installs a mode setting, a status and check command, and an offline guide. It also updates the managed section of the project's `AGENTS.md` and clears known legacy ResearchHarness links and generated guides. Project-owned skills stay in the project. A standalone project starts in offline mode. An existing project uses its current mode file or last applicable connection setting. To set up a new online connection, register the project first and then use `--online`.
 
-Before the first setup writes project files, it saves the originals affected by setup in
-`.researchharness/backups/initial-setup.tar.gz`. A retry reuses that archive. To recover, extract it
-into a separate directory and review `files/` for the originals and `manifest.json` for recorded links
-and paths created by setup before restoring anything.
+Run the authorized first setup before moving or editing project files. It saves project files,
+including code, configurations, and documentation, in `.researchharness/backups/initial-setup.tar.gz`.
+It skips hidden directories, caches, and virtual environments. Files over 20 MiB are listed by path
+and size. Setup always copies the originals it modifies. A retry reuses the first archive.
+
+To recover, extract the archive into a separate directory. Review the originals in `files/` and the
+recorded links and newly created paths in `manifest.json` before restoring anything. Large-file
+entries record where the file was and cannot restore its contents.
 
 The `enabled` value in `.researchharness/mode.toml` selects the maintenance source:
 

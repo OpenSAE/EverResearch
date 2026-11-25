@@ -53,7 +53,8 @@ Offline installers are available on [GitHub Releases](https://github.com/OpenSAE
 
 Run `rh projects project check ./MyProject --onboarding` for a read-only preview. Scripts and CI can use `--strict` for pass/fail or `--json` for machine-readable results.
 
-For existing projects, work on a branch and run the original commands before merging.
+When using EverResearch from this repository, first-time setup [backs up project files locally](src/harness/projects/README.md#online-and-offline-maintenance).
+Run the project's original commands after reorganizing it.
 
 ## Features
 

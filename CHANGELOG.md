@@ -5,7 +5,7 @@ This file records user-facing changes to EverResearch. See [GitHub Releases](htt
 ## Unreleased
 
 - Report project root naming as a suggestion, independently of structural acceptance.
-- Save the affected project files once before the first maintenance setup and reuse that backup on retries.
+- Back up project files once before first maintenance setup, record larger files by path and size, and reuse the first backup on retries.
 
 ## 0.3.1
 
