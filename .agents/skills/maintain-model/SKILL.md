@@ -15,6 +15,16 @@ Use this skill to add a model family or variant, change its architecture, inputs
 
 The [model procedures](references/procedures.md) cover model families, historical weights, and how to verify additions, changes, and removals.
 
+## Check project maintenance before editing
+
+Before changing an existing project, run `rh projects project status <project-root>`.
+With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
+repository's own rules unless the user asked to use EverResearch. For that request, use
+[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
+EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
+before applying those rules. Read-only inspection and planning can proceed in any state. When status
+cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
+
 ## Variable, weight or task output does not match the selected model
 
 Checks the model identification, physical construction parameters, version of weight, load results and output of task consumption along the official mission entry. The actual selection, construction or reading error is repaired. The Python that normally constructs the entry is used to load the name variant and the corresponding weight, to process a small input and check the output used by the task. Checks the cause of failure with clearly incompatible input. The model directory uses a central layout check. Report on the actual load, still available combination and the resulting impact.

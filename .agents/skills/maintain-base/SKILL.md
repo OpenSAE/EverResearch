@@ -21,6 +21,16 @@ From Item `AGENTS.md`,README Follow the command to the source of the configurati
 
 [Base level operating options](references/procedures.md)Description of who calls, under what conditions, and the order of implementation and conditions of completion when new, modified and removed.
 
+## Check project maintenance before editing
+
+Before changing an existing project, run `rh projects project status <project-root>`.
+With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
+repository's own rules unless the user asked to use EverResearch. For that request, use
+[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
+EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
+before applying those rules. Read-only inspection and planning can proceed in any state. When status
+cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
+
 ## Source code and path duties for the base layer
 
 `base/` Indicates project-level responsibilities. `base/<Open Package Name>/` , in package `runtime/`,`api/` or a specific function name organizational code. Move the internal realization of a duplicate one-level job name to the actual responsible module, where the public import continues to be used through a packaged map or thin compatible portal.

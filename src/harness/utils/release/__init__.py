@@ -42,6 +42,7 @@ SKILLS = {
 }
 CORE = (
     "LICENSE", "README.md", "README.zh-CN.md", "CHANGELOG.md", "CONTRIBUTING.md", "CITATION.cff",
+    "src/assets/pictures/banner.png",
     "pyproject.toml",
     "src/harness/*.py", "src/harness/core/*.py", "src/harness/core/README.md",
     "src/harness/projects/*.py", "src/harness/projects/*.md", "src/harness/projects/*.md.in",
@@ -365,6 +366,8 @@ def build_plugins(output, work, version, skills, source, wheel):
         }],
     })
     marketplace["README.md"] = source["README.md"]
+    if "src/assets/pictures/banner.png" in source:
+        marketplace["src/assets/pictures/banner.png"] = source["src/assets/pictures/banner.png"]
     marketplace["LICENSE"] = source["LICENSE"]
     archive(output / f"{name}-{version}-marketplace.zip", marketplace)
 

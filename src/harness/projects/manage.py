@@ -17,7 +17,7 @@ import tomllib
 
 import yaml
 
-from harness.central import ProjectError, identity, load_harness
+from harness.central import HarnessContext, ProjectError, identity, installed_resources, load_harness
 from harness.core.experiment import check_experiment
 from harness.core.layout import check_layout
 from harness.core.check import check_precheck
@@ -26,6 +26,7 @@ from harness.core.project import check_project
 from . import onboarding
 from harness.core.workspace import save, save_bytes, update_lock
 from . import maintenance, resources, structure
+from .standalone.maintain import online_guide as check_online_guide, require_file
 
 START = "<!-- researchharness:projects -->"
 END = "<!-- /researchharness:projects -->"
@@ -442,6 +443,61 @@ def status(harness, project_id):
     }
 
 
+def status_by_path(source, harness_root=None):
+    """Report maintenance readiness without writing to or running code from the project."""
+    root = Path(source).expanduser().resolve(strict=True)
+    if not root.is_dir():
+        raise ProjectError(f"Expected a project directory: {root}")
+
+    report = {"path": str(root), "state": "unmanaged", "mode": None, "guide": None}
+    directory = root / ".researchharness"
+    try:
+        mode = project_maintenance_mode(root)
+        if mode is False:
+            report["mode"] = "offline"
+            require_file(directory / "maintain.py")
+            require_file(directory / "offline/check.py")
+            guide = require_file(directory / "offline/operations.md")
+        elif mode is True:
+            report["mode"] = "online"
+            require_file(directory / "maintain.py")
+            connection = json.loads(require_file(directory / "online/connection.json").read_text(
+                encoding="utf-8"
+            ))
+            central = (root / connection["root"]).resolve(strict=True)
+            if connection.get("installed") is True:
+                harness = HarnessContext(installed_resources(), central)
+            else:
+                require_file(central / "src/harness/cli.py")
+                require_file(central / "src/harness/projects/operations.md")
+                harness = load_harness(central)
+            guide = check_online_guide(root, status(harness, connection["project_id"]), central)
+        else:
+            agents = root / "AGENTS.md"
+            text = agents.read_text(encoding="utf-8") if agents.is_file() and not agents.is_symlink() else ""
+            if MODE_START in text or MODE_END in text or (directory / "maintain.py").exists():
+                raise ProjectError("Project maintenance files are present, but .researchharness/mode.toml is missing.")
+            if START not in text and END not in text:
+                return report
+            if text.count(START) != 1 or text.count(END) != 1 or text.index(START) > text.index(END):
+                raise ProjectError("The EverResearch section in AGENTS.md is incomplete.")
+            report["mode"] = "legacy"
+            harness = load_harness(harness_root)
+            project_id = next((name for name, path in harness.bindings().items()
+                               if harness.bound_path(path).resolve() == root), None)
+            if project_id is None:
+                raise ProjectError("The project uses an older EverResearch setup without a matching local registration.")
+            binding = status(harness, project_id)
+            if not binding["settings"]["skills"]:
+                return {**report, "reason": "Shared skills are disabled for this project."}
+            if not binding["skills"] or not binding["maintenance_guide"]:
+                raise ProjectError("The registered EverResearch skills or project guide are unavailable.")
+            guide = agents
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, yaml.YAMLError) as error:
+        return {**report, "state": "unavailable", "reason": str(error)}
+    return {**report, "state": "managed", "guide": str(guide)}
+
+
 def apply(harness, project_id, changes=None):
     with update_lock(state_path(harness, identity(project_id))):
         return apply_skills(harness, project_id, changes)
@@ -553,6 +609,10 @@ def main(argv=None):
     maintenance_check.add_argument("--record", metavar="JSON", help="Maintenance of access, problems and validation records")
     project_check = commands.add_parser("project", help="Inspect or check a research project")
     project_commands = project_check.add_subparsers(dest="project_operation", required=True)
+    project_status = project_commands.add_parser(
+        "status", help="Report maintenance readiness by path without running project code",
+    )
+    project_status.add_argument("path")
     project_checker = project_commands.add_parser("check", help="Preview onboarding or check project structure")
     project_checker.add_argument("path")
     mode = project_checker.add_mutually_exclusive_group()
@@ -592,6 +652,9 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.action == "project":
+            if args.project_operation == "status":
+                print(json.dumps(status_by_path(args.path, args.harness_root), ensure_ascii=False, indent=2))
+                return 0
             root = Path(args.path).resolve(strict=True)
             configured = (root / ".researchharness/mode.toml").is_file()
             if args.onboarding or not (configured or args.strict or args.json):

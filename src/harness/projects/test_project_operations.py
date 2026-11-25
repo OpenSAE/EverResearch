@@ -59,6 +59,8 @@ def test_shared_skills_preserve_project_content(command, workspace):
     client.write_text("# Existing client settings\n")
     linked = command("apply", "example")
     assert linked["skills"] == {"example": True}
+    assert command("project", "status", str(project))["mode"] == "legacy"
+    assert command("project", "status", str(project))["state"] == "managed"
     assert Path(linked["shared_skill_directory"]) == central_skill.parent
     assert not legacy_link.is_symlink()
     assert not legacy_guide.exists()
@@ -69,6 +71,7 @@ def test_shared_skills_preserve_project_content(command, workspace):
     assert agents.read_text().startswith("# Project instructions\n")
     disabled = command("set", "example", "--skills", "off")
     assert disabled["skills"] == {}
+    assert command("project", "status", str(project))["state"] == "unmanaged"
     assert disabled["maintenance_guide"] is None
     assert disabled["shared_skill_directory"] is None
     assert "../central" not in agents.read_text()
@@ -182,6 +185,9 @@ def test_project_mode_reads_central_originals_only_online(command, workspace):
     result = status()
     assert result.returncode == 0, result.stderr
     selected, guide_path = result.stdout.splitlines()
+    assert command("project", "status", str(project)) == {
+        "path": str(project), "state": "managed", "mode": "online", "guide": guide_path,
+    }
     guide = Path(guide_path)
     assert selected == "online"
     assert guide.is_relative_to(root)
@@ -210,6 +216,7 @@ def test_project_mode_reads_central_originals_only_online(command, workspace):
     assert {"path": "data", "rule": "root_directory"} in json.loads(report.stdout)["violations"]
 
     mode.write_text(original)
+    assert command("project", "status", str(project))["state"] == "unavailable"
     result = status()
     assert result.returncode == 2
     assert "Online maintenance is unavailable" in result.stderr
@@ -227,12 +234,24 @@ def test_standalone_setup_preserves_project_instructions(command, workspace):
     agents = project / "AGENTS.md"
     original = "# Project instructions\n\nLocal working rules.\n"
     agents.write_text(original)
+    assert command("project", "status", str(project)) == {
+        "path": str(project), "state": "unmanaged", "mode": None, "guide": None,
+    }
+    assert list(project.iterdir()) == [agents]
     assert command("setup-maintenance", str(project))["mode"] == "offline"
     generated = agents.read_text()
+    launcher = project / ".researchharness/maintain.py"
+    launcher.write_text("raise AssertionError('status must not run project code')\n")
+    report = command("project", "status", str(project))
+    assert report["state"] == "managed"
+    assert report["mode"] == "offline"
+    assert report["guide"] == str(launcher.parent / "offline/operations.md")
     assert generated.startswith(original)
     assert generated.count(SEARCH_PARAGRAPH) == 1
     command("setup-maintenance", str(project))
     assert agents.read_text() == generated
+    (launcher.parent / "offline/operations.md").unlink()
+    assert command("project", "status", str(project))["state"] == "unavailable"
 
 
 def test_run_uses_bound_python_data_and_project(command, workspace, tmp_path):

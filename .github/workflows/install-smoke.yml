@@ -45,6 +45,20 @@ jobs:
       - run: rh utils quick-demo .smoke-demo
       - run: rh projects project check .smoke-demo/MixedStudy
       - run: rh projects project check --json .smoke-demo/SignalStudy
+      - name: Check maintenance routing on the installed CLI
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+
+          project = ".smoke-demo/MixedStudy"
+          command = ["rh", "projects", "project", "status", project]
+          assert json.loads(subprocess.check_output(command))["state"] == "unmanaged"
+          subprocess.run(["rh", "projects", "setup-maintenance", project], check=True)
+          status = json.loads(subprocess.check_output(command))
+          assert (status["state"], status["mode"]) == ("managed", "offline")
+          PY
       - name: Verify the released wheel and marketplace pins
         if: runner.os == 'Linux'
         shell: bash

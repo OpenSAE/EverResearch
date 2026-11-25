@@ -2,6 +2,11 @@
 
 This file records user-facing changes to EverResearch. See [GitHub Releases](https://github.com/OpenSAE/EverResearch/releases) for published installers and checksums.
 
+## 0.3.1
+
+- Add `rh projects project status <path>` to report whether EverResearch maintenance is active and ready to use.
+- Check the project's maintenance status before applying EverResearch rules to edits. Keep read-only inspection and onboarding plans available before setup.
+
 ## 0.3.0
 
 - Show a read-only onboarding report for a first project check and keep showing onboarding progress while a configured project still has layout fixes. The report identifies likely model and dataset code.

@@ -17,6 +17,16 @@ For removals, check all users of the dataset or preset and verify the remaining 
 
 The [dataset procedures](references/procedures.md) explain file ownership and how to carry out and verify additions, changes, and removals.
 
+## Check project maintenance before editing
+
+Before changing an existing project, run `rh projects project status <project-root>`.
+With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
+repository's own rules unless the user asked to use EverResearch. For that request, use
+[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
+EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
+before applying those rules. Read-only inspection and planning can proceed in any state. When status
+cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
+
 ## Place preprocessed inputs under assets
 
 Keep downloaded or original datasets under the workspace data root. Store project-produced inputs that are prepared for later use under `assets/prepared_data/<input-purpose>/files/`. This includes split manifests, processed feature stores, derived labels, and reusable preprocessing caches. Keep preparation code under `datasets/`. Put provenance in the asset's README or manifest, including the source, selection or split, effective preparation settings, and the names and identities of the generated files.

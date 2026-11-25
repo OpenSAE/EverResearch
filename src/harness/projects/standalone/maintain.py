@@ -42,6 +42,18 @@ def offline(action):
     return subprocess.run([sys.executable, "-IS", str(checker)], cwd=PROJECT).returncode
 
 
+def online_guide(project, binding, root):
+    """Verify that the central record and guide belong to this project."""
+    if (Path(binding["path"]) != project or not binding["settings"]["skills"]
+            or not binding["skills"] or binding["skill_entry"] != "central-guide"
+            or not binding["maintenance_guide"]):
+        raise ValueError("The central registration, shared skills, or online guide is unavailable for this project.")
+    guide = Path(binding["maintenance_guide"])
+    if not guide.resolve().is_relative_to(root):
+        raise ValueError("The online guide must be inside the EverResearch workspace.")
+    return require_file(guide)
+
+
 def online(action):
     connection = json.loads(require_file(ONLINE / "connection.json").read_text(encoding="utf-8"))
     root = (PROJECT / connection["root"]).resolve(strict=True)
@@ -69,15 +81,7 @@ def online(action):
         [*command, "status", connection["project_id"]],
         cwd=PROJECT, env=environment, check=True, stdout=subprocess.PIPE, text=True, encoding="utf-8",
     )
-    binding = json.loads(state.stdout)
-    if (Path(binding["path"]) != PROJECT or not binding["settings"]["skills"]
-            or not binding["skills"] or binding["skill_entry"] != "central-guide"
-            or not binding["maintenance_guide"]):
-        raise ValueError("Central registration, original skills or online instructions are not available, please remount the item")
-    guide = Path(binding["maintenance_guide"])
-    if not guide.resolve().is_relative_to(root):
-        raise ValueError("Online notes must be located ResearchHarness Into the warehouse.")
-    require_file(guide)
+    guide = online_guide(PROJECT, json.loads(state.stdout), root)
     if action == "status":
         print(f"online\n{guide}")
         return 0

@@ -182,6 +182,8 @@ def check_release(release, work):
     run(rh, "projects", "project", "check", project, "--json")
     demo = work / "QuickDemo"
     run(rh, "utils", "quick-demo", demo)
+    if json.loads(run(rh, "projects", "project", "status", demo / "MixedStudy"))["state"] != "unmanaged":
+        raise ValueError("The installed CLI did not recognize the unconfigured project")
     preview = run(rh, "projects", "project", "check", demo / "MixedStudy")
     if "Paste into your agent" not in preview:
         raise ValueError("The installed CLI did not show the onboarding report")
@@ -190,6 +192,8 @@ def check_release(release, work):
     marker.write_text(marker.read_text(encoding="utf-8").replace(
         "enabled = false", "enabled = true"), encoding="utf-8")
     run(rh, "projects", "setup-maintenance", project, "--online")
+    if json.loads(run(rh, "projects", "project", "status", project))["state"] != "managed":
+        raise ValueError("The installed CLI did not recognize the configured project")
     run(python, "-IS", project / ".researchharness/maintain.py", "check")
     targets = ["--project", project, "--agent", "codex", "--agent", "claude-code"]
     install = json.loads(run(rh, "skills", "install", *targets))

@@ -13,6 +13,16 @@ Keep configuration parameters understandable and effective. Document their meani
 
 Use this skill when adding, removing, or changing a setting exposed through a file, command line, environment variable, or public interface. Use `maintain-experiment` to choose values for a particular run, and use `maintain-base` for shared configuration assembly and dispatch. Work with the component skill for settings that change a dataset, model, or task.
 
+## Check project maintenance before editing
+
+Before changing an existing project, run `rh projects project status <project-root>`.
+With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
+repository's own rules unless the user asked to use EverResearch. For that request, use
+[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
+EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
+before applying those rules. Read-only inspection and planning can proceed in any state. When status
+cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
+
 ## Trace each parameter to its consumer
 
 Read the project's README, documentation, presets, and commands. Identify each value's source and precedence, then verify what the consumer receives. Record the units, valid range, and conditions under which it takes effect. If several entry points read the same setting, locate the module that defines and documents it.

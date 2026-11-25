@@ -43,6 +43,13 @@ The following specific skills are used directly when handling a single job. `mai
 
 Use the project's README to install dependencies, configure data and the environment, and run its normal commands. The optional ResearchHarness connection gives the project access to shared skills, local resource bindings, and structure reviews. See the [workspace and resource guide](../core/README.md) for path resolution and workspace setup.
 
+Before applying EverResearch rules to project edits, run `rh projects project status <project-root>`.
+The JSON result reports `managed` with the active guide, `unmanaged` when maintenance is inactive, or
+`unavailable` with the reason an existing connection cannot be used. The command reads maintenance
+files without running the project's launcher. Read-only layout checks and adoption planning can run
+before setup. For an unmanaged project, follow its own instructions unless the user opts into
+EverResearch and authorizes setup.
+
 For a project in `example/`, run these commands from the shared workspace:
 
 ```bash
