@@ -112,13 +112,14 @@ EverResearch helps you maintain that continuity across the research project.
 
 | Capability | What you can do |
 | --- | --- |
-| **Research Project Management** | Start a new scientific project or reorganize existing research code around clear component responsibilities. |
-| **Dataset and Model Management** | Add datasets, preprocessing pipelines, model variants, and weights while keeping them reusable across experiments. |
+| **Project Management** | Start a new scientific project or reorganize existing research code around clear component responsibilities. |
+| **Component Management** | Add datasets, preprocessing pipelines, model variants, and weights while keeping them reusable across experiments. |
 | **Experiment Management** | Connect configurations, execution commands, results, and artifacts so previous experiments can be revisited. |
-| **Research Code Maintenance** | Let your agent understand component relationships, make coordinated changes, and preserve working entry points. |
-| **Paper and Code Understanding** | Explore scientific papers and code repositories through interactive structure maps. |
-| **Research Knowledge Management** | Organize reusable scientific knowledge, research notes, and insights for future work. |
-| **GitHub and Hugging Face Workflows** | Prepare project releases, manage repositories, and work with datasets and Spaces using your existing accounts. |
+| **Code Maintenance** | Let your agent understand component relationships, make coordinated changes, and preserve working entry points. |
+| **Structure Mapping** | Explore scientific papers and code repositories through interactive structure maps. |
+| **Knowledge Management** | Organize reusable scientific knowledge, research notes, and insights for future work. |
+| **GitHub Publishing** | Prepare project releases and publish updates to GitHub repositories. |
+| **Hugging Face** | Download and publish datasets, and manage Spaces using your Hugging Face account. |
 
 ## How It Works
 
