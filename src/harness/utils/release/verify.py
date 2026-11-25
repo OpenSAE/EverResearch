@@ -160,7 +160,7 @@ def check_release(release, work):
                    "RH_PLUGIN_CACHE_DIR": str(work / "plugin-cache")}
     for platform in ("claude-plugin", "agent-plugin"):
         runner = work / platform / "skills/maintain-project/scripts/rh.py"
-        subprocess.run([sys.executable, "-I", str(runner), "projects", "project", "check", str(project)],
+        subprocess.run([sys.executable, "-I", str(runner), "projects", "project", "check", str(project), "--json"],
                        cwd=work, env=environment, check=True, capture_output=True, text=True)
     venv = work / "venv"
     scripts = venv / ("Scripts" if os.name == "nt" else "bin")
@@ -179,7 +179,12 @@ def check_release(release, work):
     health = json.loads(run(rh, "doctor", "--json", "--project", project))
     if health["mode"] != "installed":
         raise ValueError("The release is using a source checkout")
-    run(rh, "projects", "project", "check", project)
+    run(rh, "projects", "project", "check", project, "--json")
+    demo = work / "QuickDemo"
+    run(rh, "utils", "quick-demo", demo)
+    preview = run(rh, "projects", "project", "check", demo / "MixedStudy")
+    if "Paste into your agent" not in preview:
+        raise ValueError("The installed CLI did not show the onboarding report")
     run(rh, "projects", "register", "bird-study", "--path", project)
     marker = project / ".researchharness/mode.toml"
     marker.write_text(marker.read_text(encoding="utf-8").replace(
@@ -197,7 +202,7 @@ def check_release(release, work):
     run(rh, "skills", "uninstall", *targets)
     if not (own / "SKILL.md").is_file():
         raise ValueError("Uninstall removed a project-owned skill")
-    run(rh, "projects", "project", "check", project)
+    run(rh, "projects", "project", "check", project, "--json")
     return {"checksums": len(files), "skills": len(install), "plugin_formats": plugins,
             "python": health["python"],
             "system": health["system"], "passed": True}

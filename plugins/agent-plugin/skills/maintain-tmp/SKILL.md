@@ -32,7 +32,7 @@ The skills' own work materials are kept in accordance with the skills catalogue.
 
 ## Central path check and project restoration
 
-ResearchHarness unified the maintenance of document path, directory attribution and naming. The assistant performing the scientific research project uses read-only ResearchHarness and its verification portals to restore the public entry point, logic and results of the target project to the extent permitted. When error is considered or the rules are too strict, the inspection orders, rules, pathways, reversible evidence and effects are included in the human-oriented report and the independently completed project is maintained.
+EverResearch unified the maintenance of document path, directory attribution and naming. The assistant performing the scientific research project uses read-only EverResearch and its verification portals to restore the public entry point, logic and results of the target project to the extent permitted. When error is considered or the rules are too strict, the inspection orders, rules, pathways, reversible evidence and effects are included in the human-oriented report and the independently completed project is maintained.
 
 ## Select Temporary Directory
 
@@ -53,8 +53,8 @@ When formal results have been read from or published using the temporary directo
 
 ## Documents processed by actual attribution
 
-- ** Environment. ** Project Custody Reliance List. `src/project/maintained/<project-id>/resources.json` for ResearchHarness saves Python binding. `rh projects install` Use bound Python to create this work directory under the center `.workspace/harness/projects/install/` to be recovered upon exit.
-- ** Structural results. ** Structure pages, sources and review records registered with ResearchHarness are kept at `src/project/maintained/<project-id>/structure/` for subsequent access by source version and analysis.
+- ** Environment. ** Project Custody Reliance List. `src/project/maintained/<project-id>/resources.json` for EverResearch saves Python binding. `rh projects install` Use bound Python to create this work directory under the center `.workspace/harness/projects/install/` to be recovered upon exit.
+- ** Structural results. ** Structure pages, sources and review records registered with EverResearch are kept at `src/project/maintained/<project-id>/structure/` for subsequent access by source version and analysis.
 - ** Data and models. ** Human Face downloads to `maintain-huggingface` to manage download locations and caches. Keep official input data under workspace `data/`. Store reusable project-generated preprocessing inputs as named assets following `maintain-dataset`. Place locks beside the resource they protect. Stage atomic replacements on the destination filesystem, using a temporary location near the data or asset being replaced.
 - ** Experiments and evidence. ** Rereviewable validity configurations, logs and indicators are run in the corresponding experiment. The document to be read in the step or session is stored directly at the appropriate official location.
 - The ** internal temporary file. ** tools are created anonymously, and short life-cycle files that are consumed and automatically recovered within the same process are processed by the tool.

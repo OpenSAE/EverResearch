@@ -230,7 +230,7 @@ def main(command, argv):
             if args.json:
                 print(json.dumps(report, indent=2))
             else:
-                print(f"ResearchHarness {report['version']} ({report['mode']}) on {report['system']}")
+                print(f"EverResearch {report['version']} ({report['mode']}) on {report['system']}")
                 print(f"State: {report['state_directory']}")
                 for name, available in report["resources"].items():
                     print(f"{'ok' if available else 'missing'}  {name}")

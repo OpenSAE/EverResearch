@@ -90,7 +90,7 @@ rh projects --harness-root ./ResearchHarness apply example --lightweight-checks 
 
 Select to save at the project 's home `project.yaml` , Available `status` View. Again. `apply` Follow saved settings, use `--lightweight-checks off` Closes. The old project defaults on a sequential authorization. The project guide is suspended when the shared skills are closed, and the saved option is restored when the skills are re-enabled. The command is synchronized, and the light check is performed by the assistant on a specific skill basis after the subsequent changes have been completed..
 
-Use `rh projects layout check` for local structural or name changes. The result is repeated in the same tree state using `rh projects project check`, which already contains layout rules. Experiments and pre-test reviews are subject to the corresponding central read-only command. Behavior changes give priority to obtaining evidence from existing tests, configuration previews or pre-screens of the project.
+Use `rh projects layout check` for local structural or name changes. The result is repeated in the same tree state using `rh projects project check --strict`, which already contains layout rules. Experiments and pre-test reviews are subject to the corresponding central read-only command. Behavior changes give priority to obtaining evidence from existing tests, configuration previews or pre-screens of the project.
 
 ### Inner data, Python and structural results
 
@@ -112,7 +112,7 @@ The binding record is kept at `src/project/maintained/<project>/resources.json` 
 
 Use [maintain-project](../../../.agents/skills/maintain-project/SKILL.md) to inspect an unfamiliar project, check it as a whole, or coordinate changes across components. Start from its documented commands and follow the code and files those commands use.
 
-A project needs real directories named `base/`, `datasets/`, `models/`, `tasks/`, and `conf/` at its root. Run `rh projects project check <project-root>` for the complete structure check, which includes the layout rules. Run `rh projects layout check <project-root>` to check path placement and names on their own.
+A project needs real directories named `base/`, `datasets/`, `models/`, `tasks/`, and `conf/` at its root. Run `rh projects project check --strict <project-root>` for the complete structure check, which includes the layout rules. Run `rh projects layout check <project-root>` to check path placement and names on their own.
 
 Each finding gives the path, a rule identifier, and an explanation in `expected`.
 The JSON report distinguishes required fixes in `violations` from advisory findings
@@ -272,7 +272,7 @@ The data sets and models in the experimental path are functional. When the proje
 
 `experiment/` The results of the joint analysis are assigned to the public entry point of the analysis, the path is determined by the actual master data or registered joint input, and the members and sources are kept on the list. `maintain-experiment`.Source data using a registration number can be identified by Queue Name, the list retains the original number and normally writes the same correspondence to read.
 
-`rh projects experiment check <project-root>` Checks the list, configuration, routing and matching of documents to the list in `artifacts/` and `reports/` for formal experiments. The whole project is maintained simultaneously at `rh projects project check <project-root>`. The results include the number of implementations and specific non-compliance paths. The official reading back of the project continues to verify the actual results.
+`rh projects experiment check <project-root>` Checks the list, configuration, routing and matching of documents to the list in `artifacts/` and `reports/` for formal experiments. The whole project is maintained simultaneously at `rh projects project check --strict <project-root>`. The results include the number of implementations and specific non-compliance paths. The official reading back of the project continues to verify the actual results.
 
 The project's dependency list is placed in the official position, and the interpreter binds and installs the entrance ResearchHarness.Hugging Face Downloads and General Caches By Local Client or `maintain-huggingface` task directory processing. Data conversion results and reusable caches are attributed to the corresponding data root.
 
@@ -332,7 +332,7 @@ The inspection is carried out on the basis of actual risk and project authorizat
 
 ### precheck, timing and bottlenecks analysis
 
-The whole project goes through the center. `rh projects project check`.Project root has an entity `base/`,`datasets/`,`models/`,`tasks/`,`conf/`,Use normal commands to review the actual splitting of the main function and to retain the original function and result to read evidence..
+The whole project goes through the center. `rh projects project check --strict`.Project root has an entity `base/`,`datasets/`,`models/`,`tasks/`,`conf/`,Use normal commands to review the actual splitting of the main function and to retain the original function and result to read evidence..
 
 The project provides `precheck`, which can be independently called under `tasks/`. Each official scientific mission is automatically called before the calculation is made and is then formally calculated after adoption. Pre-test and the official mission share the current configuration, actual data and model selection and formal execution logic. The dependencies, equipment, input, minimum calculation, result path, format and official reading are quickly validated with a very small number of samples and steps. The official mission saves the pre-check evidence.
 

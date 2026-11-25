@@ -24,7 +24,7 @@ Use when moving files, merging entry points, or resolving directory and dependen
 
 ## Reconciliation of document attribution and duplication of responsibilities
 
-When organizing, moving or accepting the document layout of a scientific project, run `rh projects project check <project-root>` before changes are made and before delivery. Processes the returned violation and the catalogue review item in `directory_reviews`. The exit status `0` indicates that the mandatory machine rules have been passed, and `1` indicates that the violation or inspection has failed; the catalogue pile must still be inspected in accordance with actual duties.
+When organizing, moving or accepting the document layout of a scientific project, run `rh projects project check --json <project-root>` before changes are made and before delivery. Processes the returned violation and the catalogue review item in `directory_reviews`. The exit status `0` indicates that the mandatory machine rules have been passed, and `1` indicates that the violation or inspection has failed; the catalogue pile must still be inspected in accordance with actual duties.
 
 The machine inspects the path, hierarchy, file type and rereadable component identifier. The real call is then used to check the functions that should be shared within the project and the behaviour that needs to be verified separately.
 

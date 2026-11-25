@@ -8,9 +8,13 @@ import sys
 
 def main(argv):
     if not argv or argv == ["--help"]:
-        print("Usage: rh utils {archive,transfer,probe,compare,release} --help")
+        print("Usage: rh utils {archive,transfer,probe,compare,quick-demo,release} --help")
         return 0
     command, *args = argv
+    if command == "quick-demo":
+        from .quick_demo import main as quick_demo
+
+        return quick_demo(args)
     if command == "release":
         from .release import main as release_main
 

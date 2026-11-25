@@ -23,7 +23,7 @@ description: Compare selected local files with a GitHub repository, prepare a pu
 
 ## 必须遵守的书写与交流规则
 
-以下原文复制自 ResearchHarness 根目录 AGENTS.md 的“书写、解释与对话原则”，作为本技能内必须遵守的规则。使用本技能起草、修改或翻译 README、其他 Markdown、合并请求说明和版本说明，以及向人类解释和汇报时，均遵循这些原则。英文和中文采用相同的表达要求。
+以下原文复制自 EverResearch 根目录 AGENTS.md 的“书写、解释与对话原则”，作为本技能内必须遵守的规则。使用本技能起草、修改或翻译 README、其他 Markdown、合并请求说明和版本说明，以及向人类解释和汇报时，均遵循这些原则。英文和中文采用相同的表达要求。
 
 ### 7. 书写、解释与对话原则
 
@@ -79,9 +79,9 @@ description: Compare selected local files with a GitHub repository, prepare a pu
 
 根据选定内容，说明建议带上的文件和准备略过的内容。运行结果、临时资料和本机配置是否纳入，以用户确定的范围为准。程序会略过 Git 自身资料，并在选择父目录时略过本技能的运行产物，防止把正在生成的副本再次复制进去；明确选择某份已有产物时可单独纳入。
 
-### ResearchHarness 的发布筛选规则
+### EverResearch 的发布筛选规则
 
-发布或扫描 ResearchHarness 时，对 `.agents/skills/` 和 `src/` 使用同一套判断。根据文件的实际用途、内容和调用关系决定范围。
+发布或扫描 EverResearch 时，对 `.agents/skills/` 和 `src/` 使用同一套判断。根据文件的实际用途、内容和调用关系决定范围。
 
 - 保留通用原则、项目管理方法、共享代码、通用配置、模板、测试及其可复用的样例和素材。
 - 排除实际运行结果、导出件、发布副本、会话和操作日志、缓存、草稿及其他临时文件。排除具体项目的登记、绑定、数据与模型路径、运行记录、结构审查结果和项目专用说明。

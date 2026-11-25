@@ -24,9 +24,23 @@ def main(argv=None):
         from .mcp import main as mcp_main
 
         return mcp_main(arguments[1:])
-    stream = sys.stdout if not arguments or arguments == ["--help"] else sys.stderr
-    print("Usage: rh {projects,utils,doctor,guide,skills,mcp} --help", file=stream)
-    return 0 if stream is sys.stdout else 2
+    if not arguments or arguments in (["--help"], ["-h"]):
+        print("""EverResearch — organize, check, and reproduce research projects.
+
+Usage: rh <command> [options]
+
+  projects  Preview onboarding, check layout, and manage project resources.
+  utils     Run the sample project, transfer files, or build release packages.
+  doctor    Verify the local installation and bundled resources.
+  guide     Open the project agreement, example, or a shared skill.
+  skills    Install or remove project-local agent skills.
+  mcp       Serve read-only project checks over MCP.
+
+Start with: rh projects project check <project-path>
+Use rh <command> --help for command options.""")
+        return 0
+    print(f"Unknown rh command: {arguments[0]}. Run rh --help.", file=sys.stderr)
+    return 2
 
 
 if __name__ == "__main__":

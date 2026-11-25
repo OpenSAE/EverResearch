@@ -81,7 +81,7 @@ def online(action):
     if action == "status":
         print(f"online\n{guide}")
         return 0
-    return subprocess.run([*command, "project", "check", str(PROJECT)], cwd=PROJECT, env=environment).returncode
+    return subprocess.run([*command, "project", "check", str(PROJECT), "--json"], cwd=PROJECT, env=environment).returncode
 
 
 def main():

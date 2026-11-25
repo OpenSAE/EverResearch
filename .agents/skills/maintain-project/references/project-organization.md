@@ -40,7 +40,7 @@ If the sketches need to be kept for subsequent reference, export a stand-alone H
 
 ## Review and consolidate duplication of responsibilities
 
-Five Level I directories `base/`,`datasets/`,`models/`,`tasks/`,`conf/` Data, models, and official tasks are performed in at least one actual case each; precheck has an independent function. The primary functions in the original master package and in the duplicate script are split according to this table, with the original command and evidence of behaviour being retained and then repeated at the same entry point. `rh projects project check` Validate disk structure and number of files.
+Five Level I directories `base/`,`datasets/`,`models/`,`tasks/`,`conf/` Data, models, and official tasks are performed in at least one actual case each; precheck has an independent function. The primary functions in the original master package and in the duplicate script are split according to this table, with the original command and evidence of behaviour being retained and then repeated at the same entry point. `rh projects project check --json` Validate disk structure and number of files.
 
 ### Categorized and merged by actual commonality
 

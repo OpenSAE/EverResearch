@@ -40,4 +40,4 @@ Use for code review, bug fixes, refactors, shared implementation, and source pla
 ## Read details when needed
 
 - [Code review](references/code-review.md) covers functional gaps, evidence, trade-offs, and reporting. Read it for a functional review or when judging whether a change is needed.
-- [Code placement](references/code-placement.md) covers ownership, directory limits, duplicate logic, compatibility, and result paths. Read it for a move, consolidation, layout repair, or downstream compatibility check. Use `rh projects project check <project-root>` for layout changes.
+- [Code placement](references/code-placement.md) covers ownership, directory limits, duplicate logic, compatibility, and result paths. Read it for a move, consolidation, layout repair, or downstream compatibility check. Use `rh projects project check --json <project-root>` for layout changes.

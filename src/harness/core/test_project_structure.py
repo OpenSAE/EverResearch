@@ -29,7 +29,7 @@ def test_project_check_requires_real_components_and_counts_deep_files(tmp_path, 
     for number in range(16):
         write(root, f"scripts/analysis/summary/{number}.md", "")
 
-    assert main(["projects", "project", "check", str(root)]) == 1
+    assert main(["projects", "project", "check", str(root), "--json"]) == 1
     result = json.loads(capsys.readouterr().out)
     reported = {(item["path"], item["rule"]) for item in result["violations"]}
     assert {
@@ -51,7 +51,7 @@ def test_reference_component_split_passes_project_check(tmp_path, capsys):
     )
     assert main(["projects", "layout", "check", str(root)]) == 0
     baseline = json.loads(capsys.readouterr().out)
-    assert main(["projects", "project", "check", str(root)]) == 0
+    assert main(["projects", "project", "check", str(root), "--json"]) == 0
     result = json.loads(capsys.readouterr().out)
     assert result["violations"] == baseline["violations"]
     assert result["components"] == {
@@ -67,25 +67,25 @@ def test_project_check_accepts_structured_project(tmp_path, capsys):
     write(root, "tasks/embedding/task.py", "def evaluate(data, model):\n    return model(data)\n")
     write(root, "tasks/precheck/task.py", "def precheck(task):\n    return task()\n")
     write(root, "conf/config.yaml", "task: embedding\n")
-    assert main(["projects", "project", "check", str(root)]) == 1
+    assert main(["projects", "project", "check", str(root), "--json"]) == 1
     result = json.loads(capsys.readouterr().out)
     assert {entry["rule"] for entry in result["violations"]} == {
         "environment_documentation", "environment_navigation",
     }
     write(root, "doc/environment/README.md", "# Environment\n")
     write(root, "doc/README.md", "[Environment](environment/README.md)\n")
-    assert main(["projects", "project", "check", str(root)]) == 1
+    assert main(["projects", "project", "check", str(root), "--json"]) == 1
     result = json.loads(capsys.readouterr().out)
     assert [entry["rule"] for entry in result["violations"]] == ["environment_documentation"]
     write(root, "doc/environment/README.md", "# Environment\n\nUse the chosen interpreter.\n")
-    assert main(["projects", "project", "check", str(root)]) == 0
+    assert main(["projects", "project", "check", str(root), "--json"]) == 0
     assert json.loads(capsys.readouterr().out)["passed"]
 
     for name in ("alpha", "beta", "gamma", "delta", "epsilon", "zeta",
                  "eta", "theta", "iota", "kappa", "lambda", "mu", "nu",
                  "xi", "omicron", "pi"):
         (root / "scripts" / name).mkdir(parents=True, exist_ok=True)
-    assert main(["projects", "project", "check", str(root)]) == 0
+    assert main(["projects", "project", "check", str(root), "--json"]) == 0
     result = json.loads(capsys.readouterr().out)
     assert result["violations"] == []
     assert [(item["path"], item["files"], item["directories"])
@@ -95,7 +95,7 @@ def test_project_check_accepts_structured_project(tmp_path, capsys):
     example.mkdir()
     for name in ("alpha", "beta"):
         (root / "scripts" / name).rename(example / name)
-    assert main(["projects", "project", "check", str(root)]) == 0
+    assert main(["projects", "project", "check", str(root), "--json"]) == 0
     assert json.loads(capsys.readouterr().out)["directory_reviews"] == []
 
 
@@ -104,7 +104,7 @@ def test_project_count_checks_legacy_python_package(tmp_path, capsys):
     write(root, "memory/__init__.py", "")
     for number in range(16):
         write(root, f"memory/runtime/module_{number}.py", "")
-    assert main(["projects", "project", "check", str(root)]) == 1
+    assert main(["projects", "project", "check", str(root), "--json"]) == 1
     reported = {(item["path"], item["rule"])
                 for item in json.loads(capsys.readouterr().out)["violations"]}
     assert ("memory", "root_directory") in reported
@@ -120,7 +120,7 @@ def test_project_count_exempts_data_and_model_subtrees(tmp_path, capsys):
             write(root, f"{component}/support_{number}.py", "")
             (root / component / f"group_{number}").mkdir()
 
-    assert main(["projects", "project", "check", str(root)]) == 1
+    assert main(["projects", "project", "check", str(root), "--json"]) == 1
     result = json.loads(capsys.readouterr().out)
     assert result["components"]["dataset"] == ["corpus"]
     assert result["components"]["model"] == ["encoder"]
@@ -130,7 +130,7 @@ def test_project_count_exempts_data_and_model_subtrees(tmp_path, capsys):
 
     (root / "scripts/analysis/support_15.py").unlink()
     (root / "scripts/analysis/group_15").rmdir()
-    assert main(["projects", "project", "check", str(root)]) == 1
+    assert main(["projects", "project", "check", str(root), "--json"]) == 1
     result = json.loads(capsys.readouterr().out)
     assert all(item["rule"] != "directory_file_count" for item in result["violations"])
     assert result["directory_reviews"] == []
@@ -146,3 +146,34 @@ def test_experiment_paths_use_catalogs_from_supported_configuration_formats(tmp_
         (root / "experiment/sample_corpus").mkdir(parents=True)
         assert main(["projects", "layout", "check", str(root)]) == 0
         assert json.loads(capsys.readouterr().out)["passed"]
+
+
+def test_unconfigured_project_defaults_to_a_read_only_onboarding_report(tmp_path, capsys):
+    root = tmp_path / "MixedResearch"
+    for name in ("train.py", "eval.py", "train_v2_final.py", "configs/first.yaml",
+                 "configs/second.toml", "outputs/run_0412/metrics.json",
+                 "data/input.csv", "checkpoints/model.pt", "notebooks/analysis.ipynb"):
+        write(root, name, "")
+    before = {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+
+    command = ["projects", "project", "check", str(root)]
+    assert main(command) == 0
+    summary = capsys.readouterr().out
+    for text in ("What I found", "Entry point: train.py", "Entry point: eval.py",
+                 "configs/ (2:", "outputs/run_0412", "Possible variant of train.py",
+                 "Paste into your agent", "Ask before editing any files"):
+        assert text in summary
+
+    assert main([*command, "--onboarding", "--json"]) == 0
+    report = json.loads(capsys.readouterr().out)
+    assert report["mode"] == "onboarding"
+    assert {item["path"] for item in report["entry_points"]} == {
+        "train.py", "eval.py", "train_v2_final.py",
+    }
+    assert main([*command, "--json"]) == 1
+    assert json.loads(capsys.readouterr().out)["passed"] is False
+    assert {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()} == before
+
+    write(root, ".researchharness/mode.toml", "enabled = false\n")
+    assert main(command) == 1
+    assert "Project check found" in capsys.readouterr().out

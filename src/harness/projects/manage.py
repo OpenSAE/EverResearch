@@ -22,6 +22,8 @@ from harness.core.experiment import check_experiment
 from harness.core.layout import check_layout
 from harness.core.check import check_precheck
 from harness.core.project import check_project
+
+from . import onboarding
 from harness.core.workspace import save, save_bytes, update_lock
 from . import maintenance, resources, structure
 
@@ -34,35 +36,35 @@ SEARCH_END = "<!-- /researchharness:search -->"
 SEARCH_GUIDANCE = '## Locate projects and files\n\nStart with known registrations and explicit paths when locating a project, command, or configuration. When you need a broader search, list the immediate directories first and pick specific paths. Limit routine recursive searches to active source material. Search local workspace output, historical snapshots, experiment results, or caches by explicitly naming the required files or directories and limiting the output.'
 ONLINE_IGNORE = "/.researchharness/online/"
 MAINTENANCE_SKILLS = {
-    "maintain-project": "Project-wide access, inspection or cross-component maintenance",
-    "maintain-base": "Access, configuration synthesis, distribution of components or common operation",
-    "maintain-dataset": "Dataset, sample reading, labeling, sorting or cache",
-    "maintain-model": "Model, variant, construction or weight load",
-    "maintain-task": "Task calculation, pre-check, indicator or outcome interface",
-    "maintain-conf": "Open Parameters, Defaults, Configure Presets or Overwrite Orders",
-    "maintain-experiment": "Configure, run, restore or read the results of a single experiment",
-    "maintain-optional": "Independent script, test, document or external file",
-    "maintain-code": "Code review, duplicate realization or functional gap",
-    "maintain-tmp": "One-time clean-up and temporary engineering work",
-    "maintain-skill": "Assessment and maintenance skills per se",
-    "maintain-knowledge": "Collating and preserving research knowledge and thinking",
+    "maintain-project": "Project setup, inspection, and changes across components",
+    "maintain-base": "Shared commands, resource selection, and component wiring",
+    "maintain-dataset": "Data loading, preprocessing, splits, and caches",
+    "maintain-model": "Model variants, initialization, and weights",
+    "maintain-task": "Training, evaluation, prechecks, and metrics",
+    "maintain-conf": "Configuration defaults, presets, and overrides",
+    "maintain-experiment": "Experiment setup, execution, reproduction, and results",
+    "maintain-optional": "Standalone scripts, tests, documentation, and assets",
+    "maintain-code": "Code changes and their callers",
+    "maintain-tmp": "Disposable files and one-off diagnostics",
+    "maintain-skill": "Maintenance workflow review and updates",
+    "maintain-knowledge": "Research notes and reusable findings",
 }
 
 PROJECT_ACTIONS = (
-    ("Reading, research, planning", "read", "Existing access, configuration and records"),
-    ("Maintenance of public access and operation", "base", "`base/` and existing root entrances"),
-    ("Modify datasets achieved", "datasets", "`datasets/`"),
-    ("Modified model realization", "models", "`models/`"),
-    ("Modify Task or Precheck", "tasks", "`tasks/`"),
-    ("Modify Open Configuration", "conf", "`conf/`"),
-    ("Run experiments or read back results", "experiment", "public entry point and `experiment/`"),
-    ("Prepare test or assistive scripts", "tests-scripts", "`tests/`,`scripts/` or responsible for its realization"),
-    ("Create a one-time file or code", "tmp", "`tmp/<Purpose>/`"),
-    ("Update the operating environment", "environment", "already bound environment and `doc/environment/`"),
-    ("Download and prepare data", "data", "Workspace `data/<Data Set>/<Version>/`"),
-    ("Retention of reusable resources", "assets", "`assets/<Type>/<Resources>/` Or the original cache root"),
-    ("Maintenance of third-party source code", "third-party", "`third_party/<Upstream>/`"),
-    ("Update Document", "doc", "`doc/` and current navigation"),
+    ("Read and plan", "read", "Existing commands, configurations, and records"),
+    ("Change a shared command", "base", "`base/` and existing entry points"),
+    ("Change a dataset", "datasets", "`datasets/`"),
+    ("Change a model", "models", "`models/`"),
+    ("Change a task or precheck", "tasks", "`tasks/`"),
+    ("Change a configuration", "conf", "`conf/`"),
+    ("Run an experiment or read its results", "experiment", "Existing entry point and `experiment/`"),
+    ("Add a test or standalone script", "tests-scripts", "`tests/`, `scripts/`, or the component it supports"),
+    ("Create disposable work", "tmp", "`tmp/<purpose>/`"),
+    ("Update the Python environment", "environment", "Project Python and `doc/environment/`"),
+    ("Download and prepare data", "data", "Workspace `data/<dataset>/<version>/`"),
+    ("Store reusable resources", "assets", "`assets/<type>/<resource>/` or the existing cache"),
+    ("Maintain third-party code", "third-party", "`third_party/<upstream>/`"),
+    ("Update documentation", "doc", "`doc/` and its navigation"),
 )
 
 
@@ -146,40 +148,37 @@ def maintenance_guidance(skill_path, operations_path, desired, lightweight_check
     lines = [
         "### Daily maintenance and lightweight checks",
         "",
-        "**Choose the operation before making changes.** Before editing, moving files, installing, downloading, or running a command, "
-        "Puts the action under one of the functions in the following table, opens the corresponding guidance and implements the section ’ s judgement, implementation and end steps."
-        "Cross-component requests multiple actions and separate categories. Each class reads the corresponding guidelines and applies prior to the first operation. `SKILL.md`."
-        "The path in the guidance is broken down by the root of the item, and the parent area resources are based on the actual position attached.",
+        "**Choose the operation before making changes.** Find the matching entry in the table "
+        "and read its guidance. For changes across components, consult each affected skill. "
+        "Resolve project paths from the project root and use the configured locations for shared data.",
         "",
         "**When asked to implement a feature, follow these steps.**",
         "",
-        "1. Write out which entry the user will provide, what results to see, and select a small sample to complete the judgement."
-        "Along README Nearest current command, trace to configuration, responsible for realization and result reading position.",
-        "2. Identify the kind of change. If an existing parameter supports the request, use the current recipe or command-line option. "
-        "Change in existing components when it is achieved; when independent input, behaviour or selection,"
-        "Adds a named component to the corresponding existing level I directory..",
-        "3. Change responsibility to achieve first, then connect to registration, configuration, distribution and readback that requires change. Sync defaults and documents when new public options are available;"
-        "Use the existing results to write to the entry when changing the task output, register the product and keep the old field in use."
-        "The code that needs to be checked first, put in the existing one. `tmp/<Purpose>/`,Relocation after completion by return, tool or official function.",
-        "4. Validate target behaviour with a minimum input from the same entry, check the actual generation path and read back."
-        "Perform approved structural checks when the path changes and update user-accessible notes.",
+        "1. Identify the public command, the expected result, and a small input that can verify it. "
+        "Trace the command through configuration, implementation, and the normal result reader.",
+        "2. If an existing parameter supports the request, use it. Extend the responsible component for a "
+        "behavior change. Add a named component for independently selectable data, models, or tasks.",
+        "3. Update the responsible implementation and its callers. Keep documented defaults, "
+        "previous result formats, and existing public commands usable. Use tmp/ for one-off diagnostics.",
+        "4. Run a small authorized check through the same public command. Inspect the actual output "
+        "path and read the result through its normal reader. Update the relevant documentation.",
         "",
-        "For example, to add per-class accuracy to an existing classification task, start with its evaluation and report. "
-        "Calculate indicators in the final mission assessment and maintain them through an existing experimental recorder; check the indicators with a fixed sample and read them back through the normal entrance."
-        "Increase configuration only if the user needs an independent switch.",
+        "For example, to add per-class accuracy to an existing classification task, start with its evaluation and report. Calculate the metric "
+        "in the evaluation task, record it through the existing writer, and check it with a fixed sample. "
+        "Expose a setting when users need to control the behavior.",
         "",
-        "| Operational guidance | Main position |",
+        "| What you want to do | Where to work |",
         "| --- | --- |",
         *(f"| [{action}](<{operations_path.as_posix()}#{section}>) | {destination} |"
           for action, section, destination in PROJECT_ACTIONS),
         "",
-        "**Use the established layout.** For daily tasks, keep the existing top-level directories and use their designated paths. "
-        "Keep intermediate output out of the project root. Before running a command, confirm its working directory, output paths, and cache location. "
-        "Read only the survey when the classification is not clear, and write when applicable duties and compliance points are identified."
-        "A clear project access or restructuring authorization is required for the first time when a standard catalogue or a restructuring of the overall structure is required.",
+        "**Use the established layout.** For regular maintenance, keep the existing top-level directories. "
+        "Before running a command, confirm its working directory, output paths, and cache location. "
+        "Put each file in the directory that owns its purpose. "
+        "Agree on the plan before reorganizing an existing project.",
         "",
-        "**Review the paths after each batch.** Inspect new, moved, and generated files, and correct any misplaced output before continuing. "
-        "The change was found to result in the non-adoption of the structure, which was repaired and delivered.",
+        "**Review the paths after each batch.** Check newly created, moved, and generated files "
+        "before continuing.",
     ]
     rows = [
         f"| {purpose} | [`{name}`]({(skill_path / name / 'SKILL.md').as_posix()}) |"
@@ -191,20 +190,21 @@ def maintenance_guidance(skill_path, operations_path, desired, lightweight_check
         for name in sorted(desired.keys() - MAINTENANCE_SKILLS.keys())
     )
     if rows:
-        lines.extend(("", "| Maintain content | First-reading skills |", "| --- | --- |", *rows))
+        lines.extend(("", "| What you are maintaining | Skill to read |", "| --- | --- |", *rows))
     if lightweight_checks:
         lines.extend((
             "",
-            "**Lightweight follow-up checks are enabled.** After the change, run the smallest relevant check through the normal entry point. "
-            "Use when adding, deleting, moving, changing name or changing output path `rh projects layout check`."
-            "For the whole project `rh projects project check`,Available when central index is approved for writing `rh projects maintenance` Reuse Structure Results."
-            "Run one structure check for each state of the project tree. "
-            "Experimental records and precheck evidence as required `rh projects experiment check` and `rh projects precheck check`."
-            "Prioritize existing light testing, configuration preview or pre-check for behavioural change, using available resources and peer input."
-            "Downloads, installations, official scientific operations and large-scale calculations carried out on a mission basis.",
+            "**Lightweight follow-up checks are enabled.** Run the smallest relevant check "
+            "through the normal entry point. Use `rh projects layout check` for path changes "
+            "and `rh projects project check --json` for the full project check. Run one "
+            "structure check for each state of the project tree. Use `rh projects maintenance` "
+            "when authorized to update the maintenance index.",
             "",
-            "When delivered, describe the entry point, the behaviour covered and the results.,"
-            "Complete the check that can be done and indicate which part of the behavior is still lacking operational evidence..",
+            "Use `rh projects experiment check` for run records and `rh projects precheck check` "
+            "for precheck evidence. Start with existing small tests, configuration previews, or "
+            "prechecks. Follow the task authorization for downloads, installation, and scientific runs.",
+            "",
+            "Report the command, behavior tested, observed result, and any evidence still needed.",
         ))
     else:
         lines.extend(("", "**Lightweight follow-up checks follow the task authorization.** When authorized, use central read-only checks and existing project checks."))
@@ -221,10 +221,10 @@ def relative_or_absolute(path, directory):
 def guidance(harness, project_id, value, desired, guide):
     if not value["skills"]:
         return f"""{START}
-## ResearchHarness Optional access
+## EverResearch project resources
 
-The project itself. README Provides installation, configuration and running access..
-Our own resources are available. `rh projects resources {project_id}` Question.
+Use this project's README to install dependencies, choose a configuration, and run the project.
+Run `rh projects resources {project_id}` to see the Python interpreter and data paths bound on this machine.
 {END}"""
     operations_path = relative_or_absolute(harness.root / "src/harness/projects/operations.md", guide.parent)
     skill_path = relative_or_absolute(harness.root / ".agents/skills", guide.parent)
@@ -232,17 +232,17 @@ Our own resources are available. `rh projects resources {project_id}` Question.
     notes_path = relative_or_absolute(notes, guide.parent)
     workflow = maintenance_guidance(skill_path, operations_path, desired, value["lightweight_checks"])
     return f"""{START}
-## ResearchHarness Online maintenance
+## EverResearch online maintenance
 
-### Purpose
+### Purpose and main function
 
-Provision of projects `{project_id}` Central Operations Guidance, Original Skills Entry and Light Validation Options.
+Provides shared maintenance guidance and checks for the registered project `{project_id}`.
 
-### Scope
+### Scope of application
 
-For this item to select an online maintenance item. README Provide independent means of installation, configuration and operation.
-Project maintenance follows the physical access and call relationships of the project. GitHub Process & Current Session Authorization.
-Central engineering experience records, if maintained `{notes_path}` View. This machine data is linked to Python Select with `rh projects resources {project_id}` Query. Skills links point directly at ResearchHarness Original in warehouse.{workflow}
+Use this guide in online mode. Follow the project's README for installation, configuration, and public commands. Use the requested scope for changes and verification.
+
+Run `rh projects resources {project_id}` to see the Python interpreter and data paths bound on this machine. Project-specific maintenance notes, when available, are at `{notes_path}`. The skill links below open the shared instructions.{workflow}
 {END}"""
 
 
@@ -545,10 +545,15 @@ def main(argv=None):
     maintenance_check.add_argument("--fresh", action="store_true", help="Recheck all structural conditions")
     maintenance_check.add_argument("--limit", type=int, default=20, help="Maximum number of bars per group in summary")
     maintenance_check.add_argument("--record", metavar="JSON", help="Maintenance of access, problems and validation records")
-    project_check = commands.add_parser("project", help="Check project responsibilities and document structure")
-    project_check.add_subparsers(dest="project_operation", required=True).add_parser(
-        "check", help="Check five essential catalogues, real components, component position, number of files and tree-wide path",
-    ).add_argument("path")
+    project_check = commands.add_parser("project", help="Inspect or check a research project")
+    project_commands = project_check.add_subparsers(dest="project_operation", required=True)
+    project_checker = project_commands.add_parser("check", help="Preview onboarding or check project structure")
+    project_checker.add_argument("path")
+    mode = project_checker.add_mutually_exclusive_group()
+    mode.add_argument("--onboarding", action="store_true", help="Show a read-only onboarding plan")
+    mode.add_argument("--strict", action="store_true", help="Check the project's required structure")
+    project_checker.add_argument("--json", action="store_true",
+                                 help="Return the strict JSON report, or an onboarding report with --onboarding")
     layout = commands.add_parser("layout", help="Examination of the layout of scientific projects")
     layout_commands = layout.add_subparsers(dest="layout_operation", required=True)
     layout_commands.add_parser("check", help="Run a read-only tree-based check by project path").add_argument("path")
@@ -580,7 +585,19 @@ def main(argv=None):
             command.add_argument("--note", default="")
     args = parser.parse_args(argv)
     try:
-        checks = {"project": check_project, "layout": check_layout, "experiment": check_experiment}
+        if args.action == "project":
+            root = Path(args.path).resolve(strict=True)
+            configured = (root / ".researchharness/mode.toml").is_file()
+            if args.onboarding or (not configured and not args.strict and not args.json):
+                result = onboarding.preview(root)
+                print(json.dumps(result, ensure_ascii=False, indent=2) if args.json
+                      else onboarding.format_preview(result))
+                return 0
+            result = check_project(root)
+            print(json.dumps(result, ensure_ascii=False, indent=2) if args.json
+                  else onboarding.format_check(result))
+            return 0 if result["passed"] else 1
+        checks = {"layout": check_layout, "experiment": check_experiment}
         if args.action in checks:
             result = checks[args.action](args.path)
             print(json.dumps(result, ensure_ascii=False, indent=2))
