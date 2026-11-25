@@ -110,16 +110,16 @@ Research is a continuous process. New experiments build on old results, models e
 
 EverResearch helps you maintain that continuity across the research project.
 
-| Capability | What you can do |
+| Capability&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | What you can do |
 | --- | --- |
-| **Project Management** | Start a new scientific project or reorganize existing research code around clear component responsibilities. |
-| **Component Management** | Add datasets, preprocessing pipelines, model variants, and weights while keeping them reusable across experiments. |
-| **Experiment Management** | Connect configurations, execution commands, results, and artifacts so previous experiments can be revisited. |
-| **Code Maintenance** | Let your agent understand component relationships, make coordinated changes, and preserve working entry points. |
-| **Structure Mapping** | Explore scientific papers and code repositories through interactive structure maps. |
-| **Knowledge Management** | Organize reusable scientific knowledge, research notes, and insights for future work. |
-| **GitHub Publishing** | Prepare project releases and publish updates to GitHub repositories. |
-| **Hugging Face** | Download and publish datasets, and manage Spaces using your Hugging Face account. |
+| **Project&nbsp;Management** | Start a new scientific project or reorganize existing research code around clear component responsibilities. |
+| **Component&nbsp;Management** | Add datasets, preprocessing pipelines, model variants, and weights while keeping them reusable across experiments. |
+| **Experiment&nbsp;Management** | Connect configurations, execution commands, results, and artifacts so previous experiments can be revisited. |
+| **Code&nbsp;Maintenance** | Let your agent understand component relationships, make coordinated changes, and preserve working entry points. |
+| **Structure&nbsp;Mapping** | Explore scientific papers and code repositories through interactive structure maps. |
+| **Knowledge&nbsp;Management** | Organize reusable scientific knowledge, research notes, and insights for future work. |
+| **GitHub&nbsp;Publishing** | Prepare project releases and publish updates to GitHub repositories. |
+| **Hugging&nbsp;Face** | Download and publish datasets, and manage Spaces using your Hugging Face account. |
 
 ## How It Works
 
