@@ -21,13 +21,14 @@ import zipfile
 
 sys.dont_write_bytecode = True
 SKILL = Path(__file__).resolve().parents[1]
-RESULTS = SKILL / 'results'
+WORK = Path(os.environ.get('RH_SKILL_WORK_DIR') or SKILL).expanduser().resolve()
+RESULTS = WORK / 'results'
 ACTIVE_RUN = None
 
 
 def internal(path):
     path = Path(path).resolve()
-    path.relative_to(SKILL)
+    path.relative_to(WORK)
     return path
 
 
@@ -101,7 +102,7 @@ class Run:
         path = internal(self.path / name)
         with (self.path / 'log_updates.jsonl').open('a', encoding='utf-8') as stream:
             stream.write(json.dumps({'time': datetime.now(timezone.utc).isoformat(),
-                'path': path.relative_to(SKILL).as_posix(), 'content': content,
+                'path': path.relative_to(WORK).as_posix(), 'content': content,
                 'source': 'scripts/publish.py'}, ensure_ascii=False) + '\n')
 
     def env(self, *, auth=False):
@@ -502,7 +503,7 @@ def main():
             except OSError:
                 pass
             message += '\n任务资料：' + str(ACTIVE_RUN.path)
-        parser.exit(2, 'GitHub Publish: ' + message + '\n')
+        parser.exit(2, 'Maintain GitHub: ' + message + '\n')
 
 
 if __name__ == '__main__':

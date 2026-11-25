@@ -10,14 +10,15 @@ import tomllib
 
 import yaml
 
-from .naming import is_configuration_file, path_name_violations, project_name_valid
+from .naming import experiment_name_violation, is_configuration_file, path_name_violations, project_name_valid
 
 
 NAME = r"[a-z][a-z0-9]*(?:_[a-z0-9]+)*"
 PLAIN_NAME = r"[a-z]+(?:_[a-z]+)*"
 PURPOSE = (r"(?!(?:run|trial|experiment|default|output|test|job|untitled)(?:_?\d+)?(?:/|$))"
            r"[a-z]+(?:_[a-z]+){0,2}")
-EXECUTION = r"[0-9]{8}T[0-9]{6}(?:\.[0-9]+)?Z?-[a-z0-9-]+"
+EXECUTION_NAME = (r"(?!(?:run|trial|experiment|default|output|test|job|untitled|"
+                  r"artifacts|reports|logs|metadata|tmp|executions)(?:/|$))" + PLAIN_NAME)
 CODE = rf"(?:{NAME}|__[a-z]+__)\.(?:py|pyi|sh|R|r|jl|rs|c|cc|cpp|h|hpp|cu|cuh|js|ts|m|ipynb)"
 SCRIPT = rf"{NAME}\.(?:py|sh|R|r|jl|js|ts|m|ipynb|sbatch)"
 CONFIG = rf"{NAME}\.(?:yaml|yml|toml|json)"
@@ -178,7 +179,7 @@ def experiment_rules(root, *, remember=None):
         task = f"{prefix}/{alternatives(tasks)}"
         study = rf"{task}/{PURPOSE}"
         role = rf"{study}(?:/(?!(?:artifacts|logs|reports|metadata|tmp|executions)(?:/|$)){PURPOSE})?"
-        execution = rf"{role}/(?:executions/)?{EXECUTION}"
+        execution = rf"{role}/(?:executions/)?{EXECUTION_NAME}"
         run = rf"(?:{role}|{execution})"
         output = rf"{run}/(?:artifacts|logs|reports|metadata|tmp)"
         directories.update((task, study, role, rf"{role}/executions", execution, output,
@@ -201,9 +202,7 @@ def checkable_name(parts, is_directory):
     if parts[:2] == ["tests", "fixtures"]:
         return is_directory
     if top == "experiment":
-        return (is_directory and len(parts) >= 2
-                and not any(part in {"artifacts", "reports", "logs", "metadata", "tmp", "executions"}
-                            or re.fullmatch(EXECUTION, part) for part in parts[1:]))
+        return False
     return True
 
 
@@ -247,7 +246,8 @@ def check_layout(root, *, remember=None):
         nonlocal inspected
         config_files = []
         for entry in directory.iterdir():
-            if entry.name.startswith(".") or entry.name == "__pycache__":
+            in_experiment = parent == "experiment" or parent.startswith("experiment/")
+            if not in_experiment and (entry.name.startswith(".") or entry.name == "__pycache__"):
                 continue
             relative = f"{parent}/{entry.name}" if parent else entry.name
             top = relative.split("/", 1)[0]
@@ -257,6 +257,8 @@ def check_layout(root, *, remember=None):
                 if not re.fullmatch(ROOT_FILES, entry.name):
                     fail(relative, "root_file", "Root directory maintains open access, project description and build statement")
                 continue
+            if in_experiment and (violation := experiment_name_violation(entry, is_directory)):
+                fail(relative, *violation)
             selected = rules.get(top)
             if not selected or not selected.matches(relative, is_directory):
                 rule = "root_directory" if not parent and is_directory else top
@@ -266,6 +268,8 @@ def check_layout(root, *, remember=None):
                     else EXPECTED.get(top, f"Press {top}/ Responsibilities, tiers and document titles")
                 )
                 fail(relative, rule, expected)
+                if in_experiment and is_directory and not entry.is_symlink():
+                    visit(entry, relative)
                 continue
             parts = relative.split("/")
             fixed_file = (not is_directory and (entry.name == "config.py" or is_configuration_file(entry)
@@ -273,7 +277,7 @@ def check_layout(root, *, remember=None):
             if checkable_name(parts, is_directory) and not fixed_file:
                 component = top in {"datasets", "models"} and len(parts) <= 3
                 component_config = top == "conf" and parts[1] in {"datasets", "models"}
-                allow_digits = top == "experiment" or (
+                allow_digits = (
                     is_directory and (component or component_config)
                 ) or (top in {"datasets", "models"} and entry.stem in parts[1:-1])
                 for rule, expected in path_name_violations(entry, is_directory, allow_digits=allow_digits):

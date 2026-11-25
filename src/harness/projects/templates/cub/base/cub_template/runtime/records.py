@@ -5,6 +5,7 @@ Scope of application: Operational inventory and reporting for training, precheck
 
 from datetime import datetime, timezone
 import hashlib
+from itertools import count
 import json
 from pathlib import Path
 import re
@@ -13,6 +14,13 @@ from uuid import uuid4
 from omegaconf import OmegaConf
 
 from .environment import snapshot
+
+
+MODEL_PATHS = {
+    "resnet18_mlp": "residual_classifier",
+    "resnet18_mlp_small": "residual_classifier_small",
+}
+DIGIT_WORDS = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
 
 
 def now():
@@ -42,21 +50,29 @@ def experiment_root():
     checkout = Path(__file__).resolve().parents[3]
     cwd = Path.cwd().resolve()
     for parent in (checkout, cwd, *cwd.parents):
-        if (parent / "pyproject.toml").is_file() and (parent / "base/cub_template/cli.py").is_file():
+        if (parent / "pyproject.toml").is_file() and (parent / "base/cub_template/command.py").is_file():
             return parent / "experiment"
     raise ValueError("From CUB Template project directories run to locate project level I directories experiment/")
 
 
 class Run:
-    def __init__(self, operation, config_path, subname, *, components=None):
-        name = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid4().hex[:8]
-        groups = components if components is not None else ("unresolved",)
+    def __init__(self, operation, config_path, subname, *, components):
+        dataset, model, task = components
+        model_path = MODEL_PATHS.get(model, model)
         output = experiment_root()
         subname = normalize_subname(subname)
-        self.root = output.joinpath(*groups, subname, name)
-        if self.root.resolve() != self.root:
-            raise ValueError(f"The experimental catalogue must be located within the actual path of the project:{self.root}")
-        self.root.mkdir(parents=True, exist_ok=False)
+        folder = output / dataset / model_path / task / subname
+        if folder.resolve() != folder:
+            raise ValueError(f"The experiment directory must be a real path within the project: {folder}")
+        for number in count(1):
+            sequence = "_".join(DIGIT_WORDS[int(digit)] for digit in str(number))
+            execution_name = f"{operation}_execution_{sequence}"
+            self.root = folder / execution_name
+            try:
+                self.root.mkdir(parents=True)
+                break
+            except FileExistsError:
+                continue
         from .. import datasets, models, tasks
 
         package = Path(__file__).resolve().parents[1]
@@ -77,9 +93,10 @@ class Run:
         self.manifest = {
             "schema_version": 1,
             "project_id": "cub_reference",
-            "run_id": name,
+            "run_id": uuid4().hex,
+            "execution_name": execution_name,
             "subname": subname,
-            "task": components[-1] if components else None,
+            "task": task,
             "operation": operation,
             "status": "running",
             "inputs": {},
@@ -99,6 +116,9 @@ class Run:
         write_json(self.root / "metadata/manifest.json", self.manifest)
 
     def record_configuration(self, config):
+        model = config["model"]["name"]
+        if model in MODEL_PATHS:
+            config.setdefault("component_paths", {})["model"] = MODEL_PATHS[model]
         relative = "config.yaml"
         header = (
             "# Purpose and main function: to save the configuration actually used for this operation.\n"

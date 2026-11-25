@@ -23,10 +23,10 @@ cub/
 │       └── offline_samples.py            CUB Offline check input for classification
 ├── models/
 │   ├── plugins.py,build.py               Registered from series, shared build
-│   ├── resnet/resnet18/
+│   ├── residual/residual18/
 │   │   ├── specs.py                      Two. ResNet18 + MLP Variables
 │   │   └── model.py                      Achieving a common set of two variants
-│   └── cnn/small_cnn/
+│   └── convolution/small_cnn/
 │       ├── specs.py
 │       └── model.py
 ├── tasks/
@@ -41,7 +41,7 @@ cub/
 │       └── performance.py                 Baseline bottlenecks and candidate comparison
 ├── base/                                 Base Layer
 │   └── cub_template/                      Command entrance and common running codes
-│       ├── cli.py,__main__.py             Command entrance
+│       ├── command.py,__main__.py             Command entrance
 │       ├── registry.py,contracts.py       Registration of queries, data and task results interface
 │       └── runtime/
 │           ├── config.py,environment.py   Configure Grouping, Operating Environment
@@ -66,7 +66,12 @@ cub/
 
 `datasets/`,`models/`,`tasks/` It is a mandatory catalogue, each maintaining the registration of components. and SAEBase Similarly, the normal entry configuration, the operating layer calculates and returns the structured results based on the configuration selected task. Prechecks can be selected independently and are called from the operational level before formal training. Runlist logs precheck, task results and product path.
 
-The data root is specified by the formula or `--data-root`. Run the root is fixed to the project level 1 directory `experiment/` and is positioned from the root of the project. Normal running is saved by `<dataset>/<model>/<task>/<subname>/<run-id>/`. Use `--subname` to use one or three words for the experiment to describe the purpose, such as `scratch_baseline` or `imagenet_finetune`. Use the same name when running the same experiment again, and the program creates a separate running directory. The list of configuration or component selection failures is `unresolved/<subname>/`. The official result is located by `metadata/manifest.json`.
+Use the configuration or `--data-root` to select the data directory. Runs are saved under
+`experiment/<dataset>/<model-path>/<task>/<subname>/<execution-name>/`. Give the
+experiment a descriptive `--subname` such as `scratch_baseline`. Repeating it
+creates a separate execution directory. The manifest records the unique ID,
+actual configuration and timestamps. Configuration errors before component
+selection are printed to the terminal.
 
 [Examples of template layouts](doc/code/development/layout.md)Description of what the directories are responsible for and when they are extended to be used in replicating templates, adding components and adjusting project layouts.
 
@@ -79,14 +84,19 @@ Item `AGENTS.md` Description of the basis `.researchharness/mode.toml` Select a 
 To mount from the ResearchHarness that is available on this machine, the user sets `enabled` to `true`. The following commands are run on the project directory, starting directly with `apply` when already registered. Example by ResearchHarness in the project equivalent directory.
 
 ```bash
-rh projects --harness-root ../ResearchHarness register cub --path .
-rh projects --harness-root ../ResearchHarness apply cub
+rh projects register cub --path .
+rh projects setup-maintenance . --online
 python -IS .researchharness/maintain.py status
 ```
 
 Mount the generated online information at `.researchharness/online/`. The online mode fails to report when central is not available, switching to user-decided. The next section of the "offline exercise" refers to a scientific mission that runs with synthetic data and is independent of the project maintenance switch.
 
 ## Offline Exercise
+
+Install the project before running it. To keep build files outside the project
+being checked, build the wheel from a disposable copy. Install that wheel in a
+Python environment with the project's declared dependencies, then run the
+commands below from your original project directory.
 
 Executes in the project directory. Runs to read the default value from `conf/config.yaml`, `--set` to select components or overwhelm parameters.
 

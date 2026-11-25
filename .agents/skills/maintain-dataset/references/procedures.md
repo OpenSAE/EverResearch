@@ -34,6 +34,8 @@ Each document is enabled in accordance with the duties assigned to it.
 3. Synchronizes the reader when the sample format is revised. Enables the reader to identify new and old identities when impacting the cache content and to re-use, rebuild or report missing items in accordance with the established rules of the project.
 4. Updates the data source, disaggregation and compatibility statements.
 
+When independent producers generate inputs that a reader joins by position, identify the shared sample, feature, or partition identifiers. At the actual producer and consuming reader, compare the ordered identity mapping or its digest on both sides. Length and shape checks establish dimensions. Identity and order checks establish which values are joined. For a positional join, validate a same-size input with incorrect order and verify that the reader rejects it or uses its declared identity-based alignment.
+
 ## Remove
 
 1. Determines the range as a source, preset, aliases, mission support, or the entire data set.

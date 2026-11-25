@@ -71,7 +71,7 @@ def settings(harness, project_id):
     project_id = identity(project_id)
     path = harness.project_record(project_id, "project.yaml")
     root = harness.project_root(project_id)
-    value = yaml.safe_load(path.read_text()) if path.exists() else {"skills": True}
+    value = yaml.safe_load(path.read_text(encoding="utf-8")) if path.exists() else {"skills": True}
     if (
         not isinstance(value, dict)
         or value.get("project_id", project_id) != project_id
@@ -92,7 +92,7 @@ def updated_settings(path, project_id, changes):
             "# Scope of application: rh projects Query and Sync Project Access.\n"
             + yaml.safe_dump({"project_id": project_id, "skills": True, **changes}, sort_keys=False)
         )
-    original = path.read_text()
+    original = path.read_text(encoding="utf-8")
     expected = {**yaml.safe_load(original), **changes}
     text = original
     for key, enabled in changes.items():
@@ -211,6 +211,13 @@ def maintenance_guidance(skill_path, operations_path, desired, lightweight_check
     return "\n\n" + "\n".join(lines)
 
 
+def relative_or_absolute(path, directory):
+    try:
+        return Path(os.path.relpath(path, directory))
+    except ValueError:
+        return path
+
+
 def guidance(harness, project_id, value, desired, guide):
     if not value["skills"]:
         return f"""{START}
@@ -219,12 +226,10 @@ def guidance(harness, project_id, value, desired, guide):
 The project itself. README Provides installation, configuration and running access..
 Our own resources are available. `rh projects resources {project_id}` Question.
 {END}"""
-    operations_path = Path(os.path.relpath(
-        harness.root / "src/harness/projects/operations.md", guide.parent,
-    ))
-    skill_path = Path(os.path.relpath(harness.root / ".agents/skills", guide.parent))
+    operations_path = relative_or_absolute(harness.root / "src/harness/projects/operations.md", guide.parent)
+    skill_path = relative_or_absolute(harness.root / ".agents/skills", guide.parent)
     notes = harness.project_record(project_id) / "README.md"
-    notes_path = Path(os.path.relpath(notes, guide.parent))
+    notes_path = relative_or_absolute(notes, guide.parent)
     workflow = maintenance_guidance(skill_path, operations_path, desired, value["lightweight_checks"])
     return f"""{START}
 ## ResearchHarness Online maintenance
@@ -333,7 +338,7 @@ def setup_maintenance(harness, source, *, online=False):
     if online and project_id is None:
         raise ProjectError("Online access requires the registration of projects before running. setup-maintenance --online")
     state = state_path(harness, project_id) if project_id else None
-    installed = json.loads(state.read_text()) if state and state.exists() else {}
+    installed = json.loads(state.read_text(encoding="utf-8")) if state and state.exists() else {}
     selected = current_mode
     if selected is None:
         selected = online or bool(project_id and installed.get("settings", {}).get("skills"))
@@ -374,8 +379,11 @@ def setup_maintenance(harness, source, *, online=False):
             if not path.is_file():
                 raise ProjectError(f"Maintenance of entrance requires normal files:{path}")
             # Upgrade only the released launcher that still expects project-local skills.
-            old_launcher = "a8b2e1c7dd3d636bad4c4434a82a6863e0d002ff4f3ba9ff8d4a430a580086ce"
-            if name != "maintain.py" or sha256(path.read_bytes()).hexdigest() != old_launcher:
+            old_launchers = {
+                "a8b2e1c7dd3d636bad4c4434a82a6863e0d002ff4f3ba9ff8d4a430a580086ce",
+                "35765f8ea768e47d73ef78b15a53725026851d05c30bd736f084cd26d51d690c",
+            }
+            if name != "maintain.py" or sha256(path.read_bytes()).hexdigest() not in old_launchers:
                 preserved.append(name)
                 continue
         created[path] = (bundle / name).read_bytes()
@@ -411,7 +419,7 @@ def status(harness, project_id):
         value["skills"] = project_mode
     expected = catalogue(harness) if value["skills"] else {}
     state = state_path(harness, project_id)
-    applied = json.loads(state.read_text()) if state.exists() else None
+    applied = json.loads(state.read_text(encoding="utf-8")) if state.exists() else None
     guide = online_guide(harness, project_id) if project_mode else root / "AGENTS.md"
     return {
         "project_id": project_id,
@@ -444,12 +452,12 @@ def apply_skills(harness, project_id, changes):
     if project_mode is True:
         value["skills"] = True
     state = state_path(harness, project_id)
-    installed = json.loads(state.read_text()) if state.exists() else {}
+    installed = json.loads(state.read_text(encoding="utf-8")) if state.exists() else {}
     desired = catalogue(harness) if value["skills"] else {}
     root_agent = root / "AGENTS.md"
     if root_agent.is_symlink():
         raise ProjectError(f"Access requires normal files of the project itself:{root_agent}")
-    root_text = root_agent.read_text() if root_agent.exists() else ""
+    root_text = root_agent.read_text(encoding="utf-8") if root_agent.exists() else ""
     guide = root_agent
     connection = None
     if project_mode:
@@ -479,7 +487,8 @@ def apply_skills(harness, project_id, changes):
         save(connection, {
             "purpose": "Central working area for online maintenance of positioning projects.",
             "scope": "Only for project maintenance switches to read on.",
-            "root": os.path.relpath(harness.root, root),
+            "root": str(relative_or_absolute(harness.state_root, root)),
+            **({"installed": True} if harness.state is not None else {}),
             "project_id": project_id,
         }, source=__file__)
     if settings_text is not None:

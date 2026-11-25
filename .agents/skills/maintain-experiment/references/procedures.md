@@ -16,7 +16,7 @@ The root of the experiment is the project-level catalogue `experiment/`, which i
 | `conf/config.yaml` or default entry for items | Organize a default set of configurations, select data, models, tasks, workload, equipment and input root |
 | Project packages `runtime/config.py`, `runner.py`, `environment.py`, `records.py` or equivalent modules | Synthetic configuration, distribution of tasks, collection of physical environment, preservation status and product reference |
 | `tasks/precheck/task.py`、`gate.py`、`timing.py`、`performance.py` | Independent precheck entrance, official job call, stage timer and candidate comparison |
-| Item root `experiment/` | Select or group as necessary. The name of the executive layer describes the purpose or the control role. The duplicate execution of the same use is distinguished by the running list. Seeds, dates and other operational parameters are entered into the valid configuration or execution record. |
+| Item root `experiment/` | Select or group as necessary. Every directory segment and output filename stem follows the descriptive naming rule in SKILL.md. The run manifest keeps dates, times, seeds, and machine identities as fields. Each retained execution has a descriptive relative path that is distinct from other retained executions. |
 | `experiment/<dataset>/<task>/<experiment-name>/` | Direct analysis of the scientific products of the data. Joint analysis locates its actual master data or the joint input statement of the public entry point, and the list registers the actual sources on a case-by-case basis |
 | Operation records used for the project movement entrance | Keeps the members of the movement, their progress, and their identity. |
 | Project entrance for inspection | Explains the evidence needed for the experiment and repeats it as it is operational. |
@@ -54,6 +54,14 @@ The current running index only indicates the current selection, and progress is 
 | Missing evidence or path failure | Continue positioning from the operational directory, log and registered input. |
 
 The current session is monitored on an ongoing basis as mandated.
+
+Before cleanup, migration, or a recovery change, identify the capabilities the project needs to retain. Check each applicable capability through its ordinary entry point:
+
+- **Read saved results.** Locate the manifest and the existing artifacts or reports and verify that the normal reader can still open them.
+- **Resume an interrupted run.** Identify the checkpoints, run state, indexes, shards, and cache records the resume logic actually reads. Verify that completed work is recognized and pending work can continue.
+- **Recompute results.** Trace back to the original inputs, effective configuration, executable version and any required intermediate artifacts. Verify that the normal computation can reconstruct the requested outputs from the retained material.
+
+Record the supporting files and checks for each capability. Use a representative authorized check and identify evidence gaps separately. An existing result can remain readable while resume or recomputation needs additional files.
 
 ## Debug and Performance
 

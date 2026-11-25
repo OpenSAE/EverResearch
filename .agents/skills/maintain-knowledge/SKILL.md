@@ -11,7 +11,7 @@ The exchange preserves knowledge worth long-term use. The `note` function is cur
 
 ## Scope
 
-Knowledge documents are kept in this skill. `note/` Folder, path is determined according to the location of the skill, and the entire skill is saved and read in relative position after moving.
+Use the skill directory for local notes in a source checkout. In an installed release, use the directory printed by `rh guide skill-state maintain-knowledge`. Keep `note/` and its approved Markdown records under that directory.
 
 ## Note: Recording knowledge
 

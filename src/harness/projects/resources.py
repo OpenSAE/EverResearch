@@ -11,7 +11,7 @@ import subprocess
 import tempfile
 
 from ..central import ProjectError, identity
-from ..core.workspace import save
+from ..core.workspace import save, update_lock
 
 
 DATA_REFERENCE = re.compile(r"\{data:([a-z0-9][a-z0-9_-]{0,79})\}")
@@ -23,7 +23,7 @@ def binding_path(harness, project_id):
 
 def stored_bindings(harness, project_id):
     path = binding_path(harness, project_id)
-    return json.loads(path.read_text()) if path.exists() else {"data": {}, "python": None}
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {"data": {}, "python": None}
 
 
 def read(harness, project_id):
@@ -39,7 +39,7 @@ def data_directory(harness, root, value):
     path = (root / Path(value).expanduser()).resolve(strict=True)
     if not path.is_dir():
         raise ProjectError(f"Data path should point to directory:{path}")
-    shared_data = harness.workspace / "data"
+    shared_data = harness.data_root
     if shared_data.is_symlink() or not path.is_relative_to(shared_data):
         raise ProjectError(f"Data directory must be within the workspace data root {shared_data}: {path}")
     return str(path)
@@ -56,6 +56,11 @@ def interpreter(root, value):
 def update(harness, project_id, *, data=(), remove_data=(), python=None, clear_python=False):
     root = harness.project_root(project_id)
     target = binding_path(harness, project_id)
+    with update_lock(target):
+        return update_bindings(harness, project_id, root, target, data, remove_data, python, clear_python)
+
+
+def update_bindings(harness, project_id, root, target, data, remove_data, python, clear_python):
     bindings = stored_bindings(harness, project_id)
     for entry in data:
         name, separator, path = entry.partition("=")

@@ -53,7 +53,7 @@ For example, direct preview list files are uploaded:
 
 ```bash
 python -m harness.utils.transfer.b2 push --file \
-  --local /path/to/workspace/ResearchHarness.tar.zst \
+  --local /path/to/ResearchHarness.tar.zst \
   --remote 'b2:example-bucket/ResearchHarness.tar.zst'
 ```
 
@@ -70,16 +70,15 @@ When linking items, set the array to a central directory and the actual item to 
 
 ```bash
 rh_transfer_context=(
-  --harness-root /path/to/workspace/ResearchHarness
+  --harness-root /path/to/ResearchHarness
   --project YOUR_REGISTERED_PROJECT
 )
 ```
 
 Python calls can be used directly at `b2.Engine()` or `archive.Engine()`. You need to upload `project_id` to the associated item on your reply.
 
-The rcline is located at `/usr/bin/rclone`; the private connection configuration is usually
-Use the caller’s rclone configuration. In the examples, `b2:` is the name of a configured B2 remote.
-Other machines use their own configuration. The key is managed by the rclone private connection configuration, the code and the receipt are used to connect aliases and results.
+Use `rclone config file` to find the private configuration for the current user.
+The examples use `b2:` as a placeholder for your own configured remote alias.
 
 ## Download directory by specified range
 
@@ -88,9 +87,9 @@ Matches an existing file that skips; errors are reported and the original docume
 
 ```bash
 python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
-  pull --remote b2:example-bucket/projects/example-project \
-  --local /path/to/workspace/example-project \
-  --exclude '/experiment/**' --exclude '/extract_embedding/**' \
+  pull --remote b2:example-bucket/projects/BirdStudy \
+  --local /path/to/BirdStudy \
+  --exclude '/experiment/**' --exclude '/tmp/**' \
   --exclude '/old_project/**'
 ```
 
@@ -99,9 +98,9 @@ rclone's filter rules begin with `/` as opposed to the transfer root directory. 
 
 ```bash
 python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
-  pull --remote b2:example-bucket/projects/example-project/experiment \
-  --local /path/to/workspace/example-project/experiment \
-  --execute --receipt /path/to/workspace/receipts/experiment-copy-001.json
+  pull --remote b2:example-bucket/projects/BirdStudy/experiment \
+  --local /path/to/BirdStudy/experiment \
+  --execute --receipt /path/to/receipts/experiment-copy-001.json
 ```
 
 `push` Exchanges local and remote directions. Remote addresses must be located in a specific directory or file in a storage drum.
@@ -118,8 +117,8 @@ Add `--file` to select a file, `--local` must be the full target file name:
 ```bash
 python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
   pull --file --remote b2:example-bucket/zipped/data.tar.zst \
-  --local /path/to/workspace/data.tar.zst --streams 8 \
-  --execute --receipt /path/to/workspace/receipts/data-copy-001.json
+  --local /path/to/data.tar.zst --streams 8 \
+  --execute --receipt /path/to/receipts/data-copy-001.json
 ```
 
 Single file executes a transmission preview first using rclone to determine whether an existing target is in conflict; returns in conflict and retains the target.
@@ -141,9 +140,9 @@ Additional verification defaults remain unexecuted.
 
 ```bash
 python -m harness.utils.transfer.b2 "${rh_transfer_context[@]}" \
-  verify --local /path/to/workspace/example-project/experiment \
-  --remote b2:example-bucket/projects/example-project/experiment \
-  --execute --receipt /path/to/workspace/receipts/experiment-check-001.json
+  verify --local /path/to/BirdStudy/experiment \
+  --remote b2:example-bucket/projects/BirdStudy/experiment \
+  --execute --receipt /path/to/receipts/experiment-check-001.json
 ```
 
 `verify` is a one-way `rclone check` , requiring local selected files to be available and matched remotely; remotes can save additional files.
@@ -157,8 +156,8 @@ The transmission results, additional verification results and scientific finding
 
 ```bash
 python -m harness.utils.transfer.archive "${rh_transfer_context[@]}" \
-  list --archive /path/to/workspace/data.tar.zst \
-  --include data/example-dataset --execute
+  list --archive /path/to/data.tar.zst \
+  --include data/example_dataset --execute
 ```
 
 `list --execute` lists the selected content in read-only format, and the process requires a sequentially decompressed scan of the tar compression stream.
@@ -168,22 +167,22 @@ The default preview is only printed parameters; the actual existence of the targ
 
 ```bash
 python -m harness.utils.transfer.archive "${rh_transfer_context[@]}" \
-  extract --archive /path/to/workspace/data.tar.zst \
-  --destination /path/to/workspace/data/example-dataset \
-  --include data/example-dataset --strip-components 2 \
-  --execute --receipt /path/to/workspace/receipts/dataset-extract-001.json
+  extract --archive /path/to/data.tar.zst \
+  --destination /path/to/data/example_dataset \
+  --include data/example_dataset --strip-components 2 \
+  --execute --receipt /path/to/receipts/dataset-extract-001.json
 ```
 
-Here. `--strip-components 2` Get rid of it. `data/example-dataset/`:
-`data/example-dataset/sample/example.h5ad` will write
-`/path/to/workspace/data/example-dataset/sample/example.h5ad`。
+Here. `--strip-components 2` Get rid of it. `data/example_dataset/`:
+`data/example_dataset/sample/example.h5ad` will write
+`/path/to/data/example_dataset/sample/example.h5ad`.
 The target must use a new directory path; when the target path is occupied, the tool rejects the extraction and retains the existing directory.
 
 Other options:
 
 ```bash
 # One document: adopted include Specify Target
---include data/example-dataset/sample/example.h5ad
+--include data/example_dataset/sample/example.h5ad
 
 # Multiple directories or files
 --include data/project_a --include data/project_b

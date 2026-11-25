@@ -32,7 +32,7 @@ When checking the template as a whole, you follow the configuration, component, 
 | Operation | Where to start in the template | How do you judge the process is complete? |
 | --- | --- | --- |
 | Add a source of data | `datasets/cub200/dataset.py`, offline samples from the same directory and `conf/config.yaml` | Once a new source has been selected, the official pre-test can use a representative sample and record the actual source |
-| Modify a model variant | `models/resnet/resnet18/specs.py`, `conf/config.yaml` and actual use of the preset formulation | Check changes from effective configuration and precheck output and check with the series to keep the changes as needed |
+| Modify a model variant | `models/residual/residual18/specs.py`, `conf/config.yaml` and actual use of the preset formulation | Check changes from effective configuration and precheck output and check with the series to keep the changes as needed |
 | Indicators for the revision of classification tasks | `tasks/classification/task.py` with `operation.py`,Then track the result to write and `inspect` | Reports and inventories locate indicators that run at the same time and record meaning and historical comparability |
 | Remove an option or component | Default configuration, aliases, formulae and direct call from the corresponding register | Updates the call and removes the selection. Discharges, descriptions and checks are processed when the entire component is removed |
 | A diagnostic experiment. | Read the runlist from `inspect` and locate input, task or public run layer following the failure phase | Obtaining a basis for treatment from an independent pre-test or small-scale operation, and then locating the actual product from the inventory |
@@ -47,7 +47,7 @@ When checking the template as a whole, you follow the configuration, component, 
 | tasks/precheck/task.py, gate.py and saebase/runner.py | tasks/precheck/task.py, gate.py and base/cub_template/runtime/runner.py | You can select a precheck on your own and train to leave an automatic precheck check back on the same path. |
 | saebase/results.py and runtime/experiment_results.py | base/cub_template/contracts.py with runtime/records.py | Task returns EvaluationResult, Run Layer Saves Results and Lists |
 
-Adds new variables to the same series only models/resnet/resnet18/specs.py and conf/config.yaml. Select renet18_mlp_small from the default configuration, run prechecking and training, and read the options and reports in the list. The two variants share model.py, the same registration and classification tasks. Use your own directory when adding the official data set and update the preset for dataset registration and configuration.
+Adds new variables to the same series only models/residual/residual18/specs.py and conf/config.yaml. Select renet18_mlp_small from the default configuration, run prechecking and training, and read the options and reports in the list. The two variants share model.py, the same registration and classification tasks. Use your own directory when adding the official data set and update the preset for dataset registration and configuration.
 
 The prechecking of this template is carried out in the same process, using a sample of training in the field, to check the formal steps, and to isolate the random state before starting the training.
 

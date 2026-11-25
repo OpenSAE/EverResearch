@@ -22,11 +22,11 @@ The models receive RGB image batches, output 200 categories are not classified f
 
 Default whole chart classification model. ResNet18 takes the RGB image into a feature vector, then converts it from a multilayer sensor with a width of 256 to 200 class fractions. The current source code starts with random initialization and can be formally trained using CUB data and can be used to check the entry with synthetic images.
 
-Select with `--set model=resnet18_mlp`. Hidden width determines the parameter shape of the header. History ImageNet fine-tunes the current source code and configuration. [formulation specification](../models/resnet/resnet18/specs.py)] [training record](experiment.md) (for comparison results and limitations based on a real running check, check for random initialization and fine-tuning conditions)
+Select with `--set model=resnet18_mlp`. Hidden width determines the parameter shape of the header. History ImageNet fine-tunes the current source code and configuration. [formulation specification](../models/residual/residual18/specs.py)] [training record](experiment.md) (for comparison results and limitations based on a real running check, check for random initialization and fine-tuning conditions)
 
 ### `resnet18_mlp_small`
 
-Follow the same ResNet18 image feature extracter and change the width of the header to 16. It lowers the amount of parameters and expression capacity of the header, and the output remains the 200-class fraction of the same group. Use `--set model=resnet18_mlp_small` to select the header check point of the original width to be different from the shape of the option. Offline precheck records that this variant has been used. [Proposition specification](../models/resnet/resnet18/specs.py)] [Exline log](experiment.md)]
+Follow the same ResNet18 image feature extracter and change the width of the header to 16. It lowers the amount of parameters and expression capacity of the header, and the output remains the 200-class fraction of the same group. Use `--set model=resnet18_mlp_small` to select the header check point of the original width to be different from the shape of the option. Offline precheck records that this variant has been used. [Proposition specification](../models/residual/residual18/specs.py)] [Exline log](experiment.md)]
 
 ### `small_cnn`
 
@@ -34,4 +34,4 @@ Follow the same ResNet18 image feature extracter and change the width of the hea
 - **select method**. `--set model=small_cnn`, randomly initialized by model.
 - **Enter and produce**. The RGB batch is quenched by volume and global average and output 200 class fractions.
 - **proprietary parameter**. `model.channels` determines the number of volume output channels, default 16.
-- **Validation basis**. [Variance statement](../models/cnn/small_cnn/specs.py) and [model achieved](../models/cnn/small_cnn/model.py)].
+- **Validation basis**. [Variance statement](../models/convolution/small_cnn/specs.py) and [model achieved](../models/convolution/small_cnn/model.py)].

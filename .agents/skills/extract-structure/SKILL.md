@@ -158,6 +158,9 @@ Folder inventory and Python file details use Python syntax to locate classes and
 
 ## Working files and delivery selection
 
+
+For an installed release, keep working files and results under the directory returned by `rh guide skill-state extract-structure`. Set `RH_SKILL_WORK_DIR` to that path when starting this skill's scripts.
+
 Save extracted text, page extracts, drafts and any task-specific working files inside `results/tasks/<task-id>/` in this skill. Use a descriptive task identifier. Record created or updated artifacts in that directory's `log_updates.jsonl`, with a timezone-aware timestamp, skill-relative path, brief content and actual source tool or script. Saved graph commands and exports maintain their own result logs. Original documents and analyzed code retain their content.
 
 Choose an accessible delivery after saving. A local service suits environments with user access to its printed address or a supported forwarded address. Independent HTML suits file attachments and static hosting: export the chosen graph, its available descendants and ancestor navigation using the shared viewer. The exported file contains its required graph data, styles, scripts and background computation resources. A hosting platform supplies the publication URL; use available host tools within the user's requested delivery scope. When interactive hosting is unavailable, provide the exported file through the host's file attachment or download facility. State the actual delivery status when access remains unresolved.

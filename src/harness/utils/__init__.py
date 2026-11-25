@@ -8,9 +8,13 @@ import sys
 
 def main(argv):
     if not argv or argv == ["--help"]:
-        print("Usage: rh utils {archive,transfer,probe,compare} --help")
+        print("Usage: rh utils {archive,transfer,probe,compare,release} --help")
         return 0
     command, *args = argv
+    if command == "release":
+        from .release import main as release_main
+
+        return release_main(args)
     if command == "archive":
         from .transfer import module_main
         from .transfer.archive import Engine

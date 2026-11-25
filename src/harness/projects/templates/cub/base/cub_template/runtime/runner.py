@@ -121,13 +121,8 @@ def execute(operation, path, subname, *, data_root=None, candidate_workers=None,
         return 0
     except (OSError, ValueError, KeyError, TypeError, RuntimeError, KeyboardInterrupt) as exc:
         if run is None:
-            try:
-                run = records.Run(operation, path, subname)
-            except (OSError, ValueError) as location_error:
-                print(f"experiment: {location_error}", file=sys.stderr)
-                return 1
-            run.manifest["configuration"] = cfg
-            print(run.root, flush=True)
+            print(f"{stage}: {type(exc).__name__}: {exc}", file=sys.stderr)
+            return 130 if isinstance(exc, KeyboardInterrupt) else 1
         missing_data = stage == "inputs" and isinstance(exc, FileNotFoundError)
         missing_cuda = (
             stage == "environment"
@@ -142,9 +137,11 @@ def execute(operation, path, subname, *, data_root=None, candidate_workers=None,
         if cfg is not None and "effective_config" not in run.manifest:
             run.record_configuration(cfg)
         run.manifest["diagnostics"].append(diagnostic)
-        status = "blocked" if missing_data or missing_cuda else "failed"
+        status = "failed"
+        if missing_data or missing_cuda:
+            run.manifest["result_state"] = "blocked"
         if isinstance(exc, KeyboardInterrupt):
-            status = "partial"
+            status = "interrupted"
         run.save(status)
         print(f"{stage}: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 130 if isinstance(exc, KeyboardInterrupt) else 1

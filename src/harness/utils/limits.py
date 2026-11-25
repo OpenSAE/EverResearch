@@ -9,6 +9,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 import re
+import sys
 
 
 def _read(path: Path) -> tuple[str | None, str | None]:
@@ -93,7 +94,10 @@ def observe(cgroup_root: Path | None = None) -> dict:
         affinity_count = len(os.sched_getaffinity(0))
     except (AttributeError, OSError) as error:
         errors["cpu_affinity"] = f"{type(error).__name__}: affinity query unavailable"
-    if cgroup_root is None:
+    if cgroup_root is None and sys.platform != "linux":
+        current = boundary = None
+        location_error = "cgroups are available on Linux"
+    elif cgroup_root is None:
         current, boundary, location_error = _locate()
     else:
         current = boundary = Path(cgroup_root)
@@ -143,14 +147,16 @@ def observe(cgroup_root: Path | None = None) -> dict:
         result[status_key] = "observed" if numbers else "unbounded_visible" if complete else "unknown"
         result[field + "_complete"] = complete
 
-    status, error = _read(Path("/proc/self/status"))
+    status, error = (_read(Path("/proc/self/status")) if sys.platform == "linux"
+                     else (None, "process status fields are available on Linux"))
     if error:
         errors["identity_status"] = error
     fields = dict(line.split(":", 1) for line in (status or "").splitlines() if ":" in line)
+    uid = getattr(os, "geteuid", lambda: None)()
     result["identity"] = {
-        "uid": os.geteuid(),
-        "gid": os.getegid(),
-        "administrator": os.geteuid() == 0,
+        "uid": uid,
+        "gid": getattr(os, "getegid", lambda: None)(),
+        "administrator": uid == 0 if uid is not None else None,
         "no_new_privileges": fields.get("NoNewPrivs", "").strip() == "1"
         if "NoNewPrivs" in fields
         else None,

@@ -21,7 +21,11 @@ The actual commands, components and configurations are found from the `AGENTS.md
 
 [Data Set Operating Scheme](references/procedures.md)Lists the document attributions, the sequence of implementation of the three types of changes and the conditions for their completion..
 
-First determine the working area actually read by the task `data/` The decompression and indexing file of the directly supported data version follows the root of the data. `assets/` Resources. Locks and temporary storage follow actual writing positions, atoms write in the same file system. Hugging Face Original download and universal cache button `maintain-huggingface` processing of download instructions.
+## Place preprocessed inputs under assets
+
+Keep downloaded or original datasets under the workspace data root. Store project-produced inputs that are prepared for later use under `assets/prepared_data/<input-purpose>/files/`. This includes split manifests, processed feature stores, derived labels, and reusable preprocessing caches. Keep preparation code under `datasets/`. Put provenance in the asset's README or manifest, including the source, selection or split, effective preparation settings, and the names and identities of the generated files.
+
+Follow the real producer and readers, including training, evaluation, comparison, and figure entry points. A prepared input shared by those consumers belongs to the named asset even when the first copy was produced by a training command. Give materially different source selections or partitions distinct descriptive names. Preserve the recorded input identity of past experiments while updating current defaults, producers, and readers to the revised location. Compare actual membership or file digests before and after the move. Keep disposable intermediate files with the temporary operation that creates them.
 
 ## Samples, labels, partitions or caches do not match configuration
 

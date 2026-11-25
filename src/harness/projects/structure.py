@@ -17,7 +17,7 @@ def folder(harness, project_id):
     project_id = identity(project_id)
     if project_id not in harness.bindings():
         raise ProjectError(f"Projects not yet registered:{project_id}")
-    return (harness.project_record(project_id) / "structure").relative_to(harness.root).as_posix()
+    return (harness.project_record(project_id) / "structure").relative_to(harness.state_root).as_posix()
 
 
 def register(harness, project_id, html, revision, scope):
@@ -47,12 +47,12 @@ def register(harness, project_id, html, revision, scope):
 def show(harness, project_id, key, *, verify=True):
     base = f"{folder(harness, project_id)}/{identity(key)}"
     path = harness.resolve(f"{base}/artifact.json", exists=True)
-    record = json.loads(path.read_text())
+    record = json.loads(path.read_text(encoding="utf-8"))
     page = harness.resolve(f"{base}/index.html", exists=True)
     if verify and hashlib.sha256(page.read_bytes()).hexdigest() != record["sha256"]:
         raise ProjectError(f"Structure page inconsistent with registered version:{page}")
     decision = harness.resolve(f"{base}/decision.json")
-    review = json.loads(decision.read_text()) if decision.exists() else None
+    review = json.loads(decision.read_text(encoding="utf-8")) if decision.exists() else None
     if review and review["sha256"] != record["sha256"]:
         raise ProjectError(f"Review the records to refer to different structured pages:{page}")
     return {**record, "page": str(page), "review": review}

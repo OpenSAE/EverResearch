@@ -4,9 +4,17 @@ For project access, resource selection and structural results search. Path bindi
 """
 
 from dataclasses import dataclass
+from hashlib import sha256
+from importlib.resources import files
+from io import BytesIO
 import json
+import os
 from pathlib import Path
 import re
+from tempfile import TemporaryDirectory
+from zipfile import ZipFile
+
+from platformdirs import user_cache_path, user_data_path, user_state_path
 
 from .core.workspace import save, update_lock
 
@@ -24,10 +32,22 @@ def identity(value: str) -> str:
 @dataclass(frozen=True)
 class HarnessContext:
     root: Path
+    state: Path | None = None
 
     @property
     def workspace(self) -> Path:
-        return self.root.parent
+        return self.root.parent if self.state is None else self.state
+
+    @property
+    def state_root(self) -> Path:
+        return self.root if self.state is None else self.state
+
+    @property
+    def data_root(self) -> Path:
+        if self.state is None:
+            return self.workspace / "data"
+        override = os.environ.get("RH_DATA_ROOT")
+        return Path(override).expanduser().absolute() if override else user_data_path("researchharness") / "data"
 
     def store_path(self, path: Path) -> str:
         workspace = self.workspace
@@ -44,8 +64,11 @@ class HarnessContext:
         return self.workspace / path
 
     def resolve(self, relative: str, *, exists: bool = False) -> Path:
-        path = (self.root / relative).resolve()
-        if Path(relative).is_absolute() or not path.is_relative_to(self.root):
+        requested = Path(relative)
+        writable = requested.parts[:1] == (".workspace",) or requested.parts[:2] == ("src", "project")
+        base = self.state_root if writable else self.root
+        path = (base / requested).resolve()
+        if requested.is_absolute() or ".." in requested.parts or not path.is_relative_to(base):
             raise ProjectError(f"The path goes beyond the central working area.:{relative}")
         if exists and not path.exists():
             raise ProjectError(f"Central file not found:{relative}")
@@ -53,7 +76,7 @@ class HarnessContext:
 
     def bindings(self) -> dict:
         path = self.resolve(".workspace/harness/core/central/project_roots.json")
-        return json.loads(path.read_text()) if path.exists() else {}
+        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
 
     def project_root(self, project_id: str) -> Path:
         raw = self.bindings().get(identity(project_id))
@@ -71,7 +94,7 @@ class HarnessContext:
                 current = legacy
         if filename is None:
             return current
-        return self.resolve((current / filename).relative_to(self.root).as_posix())
+        return self.resolve((current / filename).relative_to(self.state_root).as_posix())
 
     def source_directory(self, value: str | Path) -> Path:
         path = Path(value).expanduser().resolve(strict=True)
@@ -95,9 +118,31 @@ class HarnessContext:
 
 def load_harness(root: str | Path | None = None) -> HarnessContext:
     if root is None:
-        root = Path(__file__).resolve().parents[2]
-        if not (root / ".agents/skills").is_dir():
-            raise ProjectError("Please. --harness-root Assign ResearchHarness Source Directory")
+        checkout = Path(__file__).resolve().parents[2]
+        if not (checkout / ".agents/skills").is_dir():
+            state = Path(os.environ.get("RH_STATE_DIR") or user_state_path("researchharness"))
+            return HarnessContext(installed_resources(), state.expanduser().resolve())
+        root = checkout
     context = HarnessContext(Path(root).expanduser().resolve(strict=True))
     context.resolve(".agents/skills", exists=True)
     return context
+
+
+def installed_resources() -> Path:
+    """Materialize versioned resources so tools and agents can open real file paths."""
+    archive = files("harness").joinpath("public_resources.zip")
+    if not archive.is_file():
+        raise ProjectError("Install a ResearchHarness release wheel or supply --harness-root")
+    content = archive.read_bytes()
+    cache = user_cache_path("researchharness").resolve()
+    root = cache / ("resources-" + sha256(content).hexdigest())
+    if root.is_dir():
+        return root
+    with update_lock(root):
+        if not root.is_dir():
+            with TemporaryDirectory(dir=cache) as temporary:
+                destination = Path(temporary) / "resources"
+                with ZipFile(BytesIO(content)) as bundle:
+                    bundle.extractall(destination)
+                destination.replace(root)
+    return root

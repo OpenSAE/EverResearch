@@ -1,3 +1,5 @@
+[English](README.md) | [中文](README.zh-CN.md)
+
 # ResearchHarness
 
 **Less time managing research code. More time doing research.**
@@ -61,19 +63,21 @@ As your project evolves, shared maintenance workflows help keep its structure, c
 
 ## Get Started
 
-Connect an existing research project in a few commands.
+Install the release wheel, check a project, and connect the skills to your agent:
 
 ```bash
-pip install -e ./ResearchHarness
-rh projects --harness-root ./ResearchHarness register myproject --path ./MyProject
-rh projects --harness-root ./ResearchHarness apply myproject
+uv tool install ./researchharness-0.2.0-py3-none-any.whl
+rh doctor --json
+rh projects project check ./MyProject
+rh skills install --project ./MyProject --agent codex
 ```
 
-Then ask your coding agent:
+Then ask your agent to inspect the project's existing entry points and files
+before proposing a maintenance change. The [installation and verification guide](src/harness/utils/release/README.md)
+covers terminal-only use, supported host entry points, the example project, and MCP.
 
-> Review and maintain this research project using ResearchHarness.
-
-The [project templates](src/harness/projects/templates/README.md) include the default CUB classification example and additional references for inference, retrieval, evaluation, and computer vision.
+For source development, install with `uv pip install -e .` in an active
+environment. Existing project commands still accept `--harness-root`.
 
 ### One Skill to Coordinate Your Research
 
@@ -110,7 +114,7 @@ Whether you're starting a new experiment, adding a dataset, switching models, or
 
 ## Achievements
 
-ResearchHarness organizes nine research projects into reusable templates with a common structure for configuration, datasets, models, and tasks.
+The release ships the CUB-200 example. ResearchHarness has also used the following public projects to illustrate the same structure for configuration, datasets, models, and tasks.
 
 | Template | Files | Publication checks passed |
 | --- | ---: | ---: |

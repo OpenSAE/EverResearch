@@ -53,3 +53,29 @@ def path_name_violations(entry, is_directory, *, allow_digits=False):
 
 def is_configuration_file(path):
     return path.stem == "config" and path.suffix in {".json", ".yaml", ".yml", ".toml"}
+
+
+_EXPERIMENT_TIME = re.compile(
+    r"(?<!\d)(?:(?:19|20)\d{2}(?:[-_.]?\d{2}){0,2})(?!\d)"
+    r"|(?<!\d)(?:[01]\d|2[0-3])[:_.-][0-5]\d(?:[:_.-][0-5]\d)?(?!\d)"
+    r"|(?<!\d)(?:[01]\d|2[0-3])[0-5]\d[0-5]\d(?:z|utc)(?![a-z])",
+    re.IGNORECASE,
+)
+_EXPERIMENT_OPAQUE = re.compile(
+    r"(?<![a-z0-9])(?:[0-9a-f]{7,}|[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})(?![a-z0-9])",
+    re.IGNORECASE,
+)
+
+
+def experiment_name_violation(path, is_directory):
+    """Validate a directory name or filename stem inside the experiment tree."""
+    name = path.name if is_directory else path.stem
+    if (is_directory and name == "tmp") or (not is_directory and (path.name == "README.md" or is_configuration_file(path))):
+        return None
+    if _EXPERIMENT_TIME.search(path.name):
+        return "experiment_name", "Keep calendar dates and times in the run record"
+    if _EXPERIMENT_OPAQUE.search(path.name):
+        return "experiment_name", "Keep opaque execution identifiers in the run record"
+    if not contains_english_word(name):
+        return "name_english_word", "Use at least one complete English word in each experiment path segment"
+    return None

@@ -10,8 +10,8 @@ import tomllib
 
 import yaml
 
-from .layout import EXECUTION, NAME, PLAIN_NAME, PURPOSE, experiment_rules
-from .naming import contains_english_word, is_configuration_file
+from .layout import EXECUTION_NAME, NAME, PLAIN_NAME, PURPOSE, experiment_rules
+from .naming import contains_english_word, experiment_name_violation, is_configuration_file
 
 
 RESULT_DIRS = {"artifacts", "reports"}
@@ -55,8 +55,11 @@ def expected_run(manifest, config, relative):
     subname = manifest.get("subname")
     role = manifest.get("role")
     run_id = manifest.get("run_id")
+    execution_name = manifest.get("execution_name")
+    if not isinstance(run_id, str) or not run_id.strip():
+        return None
     if not all(isinstance(value, str) and re.fullmatch(pattern, value) for value, pattern in (
-        (dataset, rf"{NAME}(?:/{NAME})?"), (task, NAME), (subname, PURPOSE), (run_id, EXECUTION),
+        (dataset, rf"{NAME}(?:/{NAME})?"), (task, NAME), (subname, PURPOSE),
     )):
         return None
     if model is not None and (not isinstance(model, str) or not re.fullmatch(rf"{NAME}(?:/{NAME})?", model)):
@@ -66,9 +69,14 @@ def expected_run(manifest, config, relative):
     if manifest.get("task", task) != task:
         return None
     parts = ["experiment", dataset, model, task, subname, role]
-    if relative.parent.name == "executions":
-        parts.append("executions")
-    return PurePosixPath(*(part for part in [*parts, run_id] if part))
+    if execution_name is not None:
+        if (not isinstance(execution_name, str) or not re.fullmatch(EXECUTION_NAME, execution_name)
+                or execution_name in RUN_DIRS | {"executions"}):
+            return None
+        if relative.parent.name == "executions":
+            parts.append("executions")
+        parts.append(execution_name)
+    return PurePosixPath(*(part for part in parts if part))
 
 
 def check_run(directory, relative, rules, fail):
@@ -142,8 +150,8 @@ def check_experiment(root):
     def visit(directory):
         nonlocal checked
         relative = PurePosixPath(directory.relative_to(root).as_posix())
-        entries = [p for p in directory.iterdir() if not p.name.startswith(".") and p.name != "__pycache__"]
-        if (re.fullmatch(EXECUTION, directory.name)
+        entries = list(directory.iterdir())
+        if (directory.parent.name == "executions"
                 or any(entry.name in RUN_DIRS | {"manifest.json"} for entry in entries)):
             checked += 1
             check_run(directory, relative, rules, fail)
@@ -158,6 +166,15 @@ def check_experiment(root):
     experiments = root / "experiment"
     if experiments.is_dir():
         rules = experiment_rules(root)
+        def check_names(directory):
+            for entry in directory.iterdir():
+                is_directory = entry.is_dir()
+                if violation := experiment_name_violation(entry, is_directory):
+                    fail(entry.relative_to(root).as_posix(), *violation)
+                if is_directory and not entry.is_symlink():
+                    check_names(entry)
+
+        check_names(experiments)
         visit(experiments)
     violations.sort(key=lambda item: (item["path"], item["rule"], item["expected"]))
     return {"project": str(root), "passed": not violations, "runs": checked, "violations": violations}

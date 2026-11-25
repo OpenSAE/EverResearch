@@ -42,18 +42,18 @@ def test_project_check_requires_real_components_and_counts_deep_files(tmp_path, 
     } <= reported
 
 
-def test_reference_component_split_has_only_existing_path_violations(tmp_path, capsys):
+def test_reference_component_split_passes_project_check(tmp_path, capsys):
     root = tmp_path / "ImageClassification"
     shutil.copytree(
         TEMPLATE, root, ignore=shutil.ignore_patterns(".*", "__pycache__", "experiment")
     )
-    assert main(["projects", "layout", "check", str(root)]) == 1
+    assert main(["projects", "layout", "check", str(root)]) == 0
     baseline = json.loads(capsys.readouterr().out)
-    assert main(["projects", "project", "check", str(root)]) == 1
+    assert main(["projects", "project", "check", str(root)]) == 0
     result = json.loads(capsys.readouterr().out)
     assert result["violations"] == baseline["violations"]
     assert result["components"] == {
-        "dataset": ["cub200"], "model": ["cnn", "resnet"], "task": ["classification"],
+        "dataset": ["cub200"], "model": ["convolution", "residual"], "task": ["classification"],
     }
 
 

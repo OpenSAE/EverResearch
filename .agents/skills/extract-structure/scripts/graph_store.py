@@ -15,6 +15,7 @@ from urllib.parse import quote
 from layout import square_layout, validate_display
 
 SKILL = Path(__file__).resolve().parents[1]
+WORK = Path(os.environ.get('RH_SKILL_WORK_DIR') or SKILL).expanduser().resolve()
 PREFIX = '/extract-structure/'
 
 
@@ -49,7 +50,7 @@ def log_update(directory, path, content, source):
     directory.mkdir(parents=True, exist_ok=True)
     with (directory / 'log_updates.jsonl').open('a', encoding='utf-8') as stream:
         stream.write(json.dumps({'time': datetime.now(timezone.utc).isoformat(),
-            'path': path.relative_to(SKILL).as_posix(), 'content': content,
+            'path': path.relative_to(WORK).as_posix(), 'content': content,
             'source': source}, ensure_ascii=False) + '\n')
 
 
@@ -63,8 +64,8 @@ class Store:
         safe_relative(self.id)
         if '/' in self.id:
             raise ValueError('Project result identity must be one directory name')
-        self.directory = (SKILL / 'results' / self.id).resolve()
-        self.directory.relative_to(SKILL / 'results')
+        self.directory = (WORK / 'results' / self.id).resolve()
+        self.directory.relative_to(WORK / 'results')
         self.graphs = self.directory / 'graphs'
 
     @classmethod
@@ -72,8 +73,8 @@ class Store:
         safe_relative(result_id)
         if '/' in result_id:
             raise ValueError('Select one project result directory')
-        path = (SKILL / 'results' / result_id / 'project.json').resolve()
-        path.relative_to(SKILL / 'results')
+        path = (WORK / 'results' / result_id / 'project.json').resolve()
+        path.relative_to(WORK / 'results')
         record = json.loads(path.read_text(encoding='utf-8'))
         return cls(record['source_root'], result_id=result_id)
 
@@ -81,7 +82,7 @@ class Store:
         path = Path(value).expanduser()
         path = (path if path.is_absolute() else self.project / path).resolve(strict=True)
         path.relative_to(self.project)
-        if path.is_relative_to(SKILL):
+        if path.is_relative_to(SKILL) or path.is_relative_to(WORK / 'results'):
             raise ValueError('The Skill and its generated results are outside the analysis scope')
         return path
 

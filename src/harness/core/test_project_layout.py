@@ -73,11 +73,11 @@ def test_layout_preserves_original_paths_inside_historical_runs(capsys, tmp_path
     }
 
 
-def test_real_template_reports_only_legacy_names(capsys, monkeypatch, tmp_path):
+def test_template_checkout_requires_project_name(capsys, monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
     report = check(TEMPLATE, capsys, 1)
     assert report["checked"] > 70
-    assert {item["rule"] for item in report["violations"]} == {"project_name", "name_english_word"}
+    assert {item["rule"] for item in report["violations"]} == {"project_name"}
 
 
 def test_layout_rejects_and_recovers_at_each_level(capsys, tmp_path):
@@ -91,8 +91,8 @@ def test_layout_rejects_and_recovers_at_each_level(capsys, tmp_path):
     (bundle / "scripts/show_fields.py").write_text(
         "from pathlib import Path\nprint(Path(__file__).parents[1].joinpath('files/fields.json').read_text())\n"
     )
-    baseline = check(root, capsys, 1)["violations"]
-    assert all(item["rule"] == "name_english_word" for item in baseline)
+    baseline = check(root, capsys, 0)["violations"]
+    assert not baseline
 
     directories = {
         "data": "root_directory",
@@ -101,7 +101,7 @@ def test_layout_rejects_and_recovers_at_each_level(capsys, tmp_path):
         "conf/tasks/unregistered": "configuration_owner",
         "conf/tasks/classification/extra": "conf",
         "experiment/unknown_dataset": "experiment",
-        "experiment/cub200/resnet18_mlp/classification/run_01": "experiment",
+        "experiment/cub200/residual_classifier/classification/run_01": "experiment",
     }
     files = {
         "orphan.py": "root_file",
@@ -127,7 +127,7 @@ def test_layout_rejects_and_recovers_at_each_level(capsys, tmp_path):
         (root / relative).unlink()
     for relative in directories:
         (root / relative).rmdir()
-    assert check(root, capsys, 1)["violations"] == baseline
+    assert check(root, capsys, 0)["violations"] == baseline
 
 
 def test_layout_uses_base_for_declared_packages(capsys, tmp_path):

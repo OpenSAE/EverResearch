@@ -15,6 +15,8 @@ The input includes the target skills and the project or environment in which the
 
 ## Record or analyze a project conversation
 
+Use the source skill directory for local work in a checkout. In an installed release, `rh guide skill-state maintain-skill` gives the local directory for `agent_log/` and newly generated exams. Read the exam rule and references from the skill itself.
+
 When invoked with **记录**, create or update the Markdown log for the selected project conversation in this skill's `agent_log/` directory. Save the user's exact requests in order, a factual summary of what the assistant did for each request, and the paths of new, modified, moved, or generated files. Recording is complete when the file has been written and read back.
 
 When invoked with **分析**, open the selected conversation log and audit how the assistant handled file placement, naming, and subsequent reading and writing. Send the user the findings with the current path, correct path, applicable rule, cause, and evidence. Analysis stops at the findings until the user gives a correction, accepts a finding, or otherwise directs a skill change. When either command is invoked on its own, use the current project and conversation if they uniquely identify the intended log.
@@ -22,6 +24,10 @@ When invoked with **分析**, open the selected conversation log and audit how t
 When the user responds, use only the findings and corrections they authorize as the basis for changes. Improve the relevant skill rules so they cover other projects and comparable cases. A repair may change one skill file or several skills and their companion files. By default, show the changed locations and what each change is expected to catch after editing and before the independent test. The user can turn off this preview with `preview_after_edit=false`. A preview is a review point. If the user has already authorized the test, continue after showing it unless they have asked to review first.
 
 Follow [Conversation logs and independent review](references/conversation-review.md) for the exact log format, audit output, feedback handling, and test handoff. The reference applies to the 记录 and 分析 entry points and to follow-up skill changes based on those logs.
+
+## Evaluate maintenance plans with project questions
+
+Use [Project maintenance exam rules](exam/exam_rule.md) to design and review plan-only questions based on each project's real capabilities. The rules define coverage, candidate-visible prompts, and evidence for scoring. Apply them when testing whether a subagent can independently route a maintenance request and propose changes through read-only inspection.
 
 ## Run Options
 

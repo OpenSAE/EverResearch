@@ -7,12 +7,13 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from datetime import datetime, timezone
-import fcntl
 import json
 import os
 import stat
 import uuid
 from pathlib import Path
+
+from filelock import FileLock
 
 
 def record_files(paths, *, source, summary):
@@ -41,12 +42,9 @@ def record_files(paths, *, source, summary):
         log = bucket / "log_updates.jsonl"
         if log.is_symlink():
             raise ValueError("Workspace log must not be a symlink")
-        with log.open("a", encoding="utf-8") as stream:
-            fcntl.flock(stream, fcntl.LOCK_EX)
+        with update_lock(log), log.open("a", encoding="utf-8") as stream:
             for event in events:
                 stream.write(json.dumps(event, ensure_ascii=False) + "\n")
-            stream.flush()
-            fcntl.flock(stream, fcntl.LOCK_UN)
 
 
 @contextmanager
@@ -54,8 +52,9 @@ def update_lock(path):
     """Serialize read-modify-write operations on a local binding file."""
     lock = path.with_suffix(".lock")
     lock.parent.mkdir(parents=True, exist_ok=True)
-    with lock.open("a") as stream:
-        fcntl.flock(stream, fcntl.LOCK_EX)
+    if lock.is_symlink():
+        raise ValueError("Workspace lock must not be a symlink")
+    with FileLock(str(lock)):
         yield
 
 
@@ -68,7 +67,7 @@ def save_bytes(path, content, *, source="src/harness/core/workspace.py"):
         temporary.write_bytes(content)
         if path.exists():
             previous = path.stat()
-            if os.geteuid() == 0:
+            if getattr(os, "geteuid", lambda: None)() == 0 and hasattr(os, "chown"):
                 os.chown(temporary, previous.st_uid, previous.st_gid)
             temporary.chmod(stat.S_IMODE(previous.st_mode))
         temporary.replace(path)

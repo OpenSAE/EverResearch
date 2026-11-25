@@ -12,10 +12,10 @@ requires-python = ">=3.11"
 dependencies = ["torch>=2.2", "torchvision>=0.17", "Pillow>=10", "hydra-core>=1.3,<2"]
 
 [project.scripts]
-cub-template = "cub_template.cli:main"
+cub-template = "cub_template.command:main"
 
 [tool.setuptools]
-packages = ["cub_template", "cub_template.runtime", "cub_template.datasets", "cub_template.datasets.cub200", "cub_template.models", "cub_template.models.resnet", "cub_template.models.resnet.resnet18", "cub_template.models.cnn", "cub_template.models.cnn.small_cnn", "cub_template.tasks", "cub_template.tasks.classification", "cub_template.tasks.precheck"]
+packages = ["cub_template", "cub_template.runtime", "cub_template.datasets", "cub_template.datasets.cub200", "cub_template.models", "cub_template.models.residual", "cub_template.models.residual.residual18", "cub_template.models.convolution", "cub_template.models.convolution.small_cnn", "cub_template.tasks", "cub_template.tasks.classification", "cub_template.tasks.precheck"]
 
 [tool.setuptools.package-dir]
 cub_template = "base/cub_template"

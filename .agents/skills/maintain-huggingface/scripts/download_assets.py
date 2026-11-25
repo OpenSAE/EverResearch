@@ -12,6 +12,7 @@ import shutil
 import sys
 
 SKILL = Path(__file__).resolve().parents[1]
+WORK = Path(os.environ.get('RH_SKILL_WORK_DIR') or SKILL).expanduser().resolve()
 sys.dont_write_bytecode = True
 
 
@@ -31,7 +32,7 @@ def save(task, path, value, content):
 def log(task, path, content):
     with (task / 'log_updates.jsonl').open('a', encoding='utf-8') as stream:
         stream.write(json.dumps({'time': datetime.now(timezone.utc).isoformat(),
-            'path': path.relative_to(SKILL).as_posix(), 'content': content,
+            'path': path.relative_to(WORK).as_posix(), 'content': content,
             'source': 'scripts/download_assets.py; huggingface_hub'}, ensure_ascii=False) + '\n')
 
 
@@ -39,8 +40,8 @@ def download(task_name, repositories, *, resume=False):
     relative(task_name)
     if '/' in task_name:
         raise ValueError('Task name must be one directory name')
-    task = (SKILL / 'results' / task_name).resolve()
-    task.relative_to((SKILL / 'results').resolve())
+    task = (WORK / 'results' / task_name).resolve()
+    task.relative_to((WORK / 'results').resolve())
     task.mkdir(parents=True, exist_ok=resume)
     cache = task / 'cache' / 'hub'
     # Keep authentication at its existing location and isolate downloaded content.

@@ -3,8 +3,8 @@
 Scope of application: Find a series of statements and their official build entrances when configures the selected model.
 """
 
-from .cnn.small_cnn import specs as small_cnn
-from .resnet.resnet18 import specs as resnet18
+from .convolution.small_cnn import specs as small_cnn
+from .residual.residual18 import specs as resnet18
 
 MODELS = {}
 for series in (resnet18, small_cnn):

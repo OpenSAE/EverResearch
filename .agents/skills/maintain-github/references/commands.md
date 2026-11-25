@@ -20,6 +20,8 @@
 
 命令中的 `<Skill目录>` 替换为当前 `SKILL.md` 所在目录的完整绝对路径。下文是结构示例，来源、仓库、分支和作者按真实任务填写。
 
+对于已安装版本，用 `rh guide skill-state maintain-github` 定位可写目录，在该目录保存下文的本地产物。启动本技能的脚本时，对该进程设置 `RH_SKILL_WORK_DIR` 为这个路径。
+
 ## 对照检查的操作方式
 
 先按 `SKILL.md` 确定每个项目的本地绝对路径、文件范围、GitHub 仓库、版本、仓库子目录与路径对应关系。使用当前任务新建的 `results/<任务标识>/`，在内部保存：
@@ -136,7 +138,7 @@ python <Skill目录>/scripts/publish.py publish \
   --run <任务标识> \
   --message "Publish selected environment tools" \
   --pr --title "Add environment tools" \
-  --body-file <Skill目录>/results/<任务标识>/pr_description.md
+  --body-file <可写技能目录>/results/<任务标识>/pr_description.md
 ```
 
 先将准确的说明写到技能内部，`--body-file` 使用完整路径。需要草稿 PR 时增加 `--draft`。程序先推送，再查找该来源分支到目标基础分支的开放 PR；已有时返回其链接，缺少时创建。新仓库首次发布以及直接更新基础分支的任务使用提交链接。
@@ -159,7 +161,7 @@ ZIP 的内容为选定内部副本中的文件，路径采用映射后的目标�
 python <Skill目录>/scripts/publish.py release \
   --run <任务标识> \
   --tag v0.1.0 --title "ExtractStructure 0.1.0" \
-  --notes-file <Skill目录>/results/<任务标识>/version_notes.md
+  --notes-file <可写技能目录>/results/<任务标识>/version_notes.md
 ```
 
 需要草稿 Release 时增加 `--draft`。程序为本次真实发布的提交创建 Release 并上传选定文件的 ZIP；已有版本标签须指向同一提交。已有 Release 或附件冲突会停止，先查看实际状态再决定是否继续。

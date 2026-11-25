@@ -259,7 +259,7 @@ The script directory is organized according to the user's operating organization
 | `.researchharness/project.yaml`、`.researchharness/central.json` | When using the respective access function | The project is subject to a central project order. |
 | `.agents/skills/<skill-name>/` | When there's a project with skills, | The project maintains its own skills, each of which provides `SKILL.md`. |
 
-Component identification, catalog and Python files are used in lowcase English to describe their use, and multiple words are underlined. Formal interfaces and upstream original names are used in original form. Time and attempt numbers are used to run identity and archive. The new directory indicates the conditions under which they are enabled, the actual caller and the corresponding entry, and is synchronized with the protocol [the example of the layout of the reference item](templates/cub/doc/code/development/layout.md) to compare the changes to the project catalogue and additions.
+Component identification, catalog and Python files are used in lowcase English to describe their use, and multiple words are underlined. Formal interfaces and upstream original names are used in original form. Keep dates, times, hashes, and execution identifiers in the run record. Every experiment directory segment and output filename stem uses at least one complete English word. Optional named execution directories use the descriptive `execution_name` from the manifest. The machine `run_id` may contain a timestamp or UUID as metadata. The new directory indicates the conditions under which they are enabled, the actual caller and the corresponding entry, and is synchronized with the protocol [the example of the layout of the reference item](templates/cub/doc/code/development/layout.md) to compare the changes to the project catalogue and additions.
 
 The project allows a stable match between the public component identifier and the disk spelling. Read the corresponding rules for writing the statement of the oral re-entry project, and run the list to save the actual component identifier. Select the same path from the same component for acceptance.
 
@@ -362,7 +362,8 @@ The list refers to the file. The list of recommendations for a single run is `me
 | Fields required for central summary | A promise. |
 | --- | --- |
 | `schema_version` | List format version, by project record field or map |
-| `project_id`、`run_id`、`task` | Project and running identity |
+| `project_id`, `run_id`, `task` | Project, execution, and task identifiers stored in the record |
+| `execution_name` | Descriptive directory name when the execution has its own directory |
 | `status`、`updated_at` | Current status and time-time, commonly running, subcredged, failed, blocked, partial |
 | `inputs`、`configuration`、`source` | Data, models or other input identities, actual configuration and source version |
 | `environment` | Current environmental record or references to it |

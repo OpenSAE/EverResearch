@@ -15,10 +15,11 @@ readme = "README.md"
 requires-python = ">=3.11,<3.13"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
-dependencies = ["PyYAML>=6,<7", "pyspellchecker>=0.9,<1"]
+dependencies = ["PyYAML>=6,<7", "pyspellchecker>=0.9,<1", "filelock>=3.16,<4", "platformdirs>=4,<5"]
 
 [project.optional-dependencies]
 dev = ["pytest>=7", "build>=1.2", "ruff==0.15.22"]
+mcp = ["mcp>=1.9,<2"]
 
 [project.scripts]
 rh = "harness.cli:main"
@@ -30,6 +31,7 @@ namespaces = false
 
 [tool.setuptools.package-data]
 harness = [
+    "public_resources.zip",
     "projects/*.yaml",
     "projects/*.md",
     "projects/*.md.in",

@@ -20,6 +20,10 @@ catalogs:
       name: resnet18_mlp
     resnet18_mlp_small:
       name: resnet18_mlp_small
+    residual_classifier:
+      name: resnet18_mlp
+    residual_classifier_small:
+      name: resnet18_mlp_small
     small_cnn:
       name: small_cnn
   task:

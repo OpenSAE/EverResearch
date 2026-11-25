@@ -168,15 +168,12 @@ class Engine:
         """Reject an observed target conflict, then preserve existing destinations."""
         preview = cmd.copy()
         preview.remove("--ignore-existing")
-        preview.extend(("--dry-run", "--differ", "-"))
+        preview.append("--dry-run")
         result = subprocess.run(preview, capture_output=True, text=True, check=False)
         if result.stderr:
             print(result.stderr, end="", file=sys.stderr)
         if result.returncode:
             return result.returncode, result.stderr[-8000:]
-        if result.stdout.strip():
-            print("Source and destination differ; existing target preserved", file=sys.stderr)
-            return 6, "Source and destination differ; existing target preserved"
         return self._run_command(cmd)
 
     def _utc(self) -> str:
@@ -285,7 +282,7 @@ class Engine:
                 category = "MISSING_TOOL"
                 analysis = "The transfer program has not been started and this file transfer cannot be executed."
                 next_steps = ["Install rclone or amendment PATH,Enables the current environment to find the command and retry using original parameters."]
-            elif "Source and destination differ; existing target preserved" in detail:
+            elif "immutable file modified" in detail.lower():
                 category = "TARGET_CONFLICT"
                 analysis = "The source is different from the existing target content, this copy has been stopped and the target document remains as it is."
                 next_steps = ["Confirm what should be retained and try again after selecting a new target filename or directory for this transfer."]

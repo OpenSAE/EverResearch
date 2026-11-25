@@ -6,7 +6,9 @@ Using a mounted central program on startup, which failed to return when not avai
 
 import argparse
 import json
+import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tomllib
@@ -43,17 +45,25 @@ def offline(action):
 def online(action):
     connection = json.loads(require_file(ONLINE / "connection.json").read_text(encoding="utf-8"))
     root = (PROJECT / connection["root"]).resolve(strict=True)
-    require_file(root / "src/harness/cli.py")
-    require_file(root / "src/harness/projects/operations.md")
-    launcher = (
-        "import sys; from pathlib import Path; root = Path(sys.argv.pop(1)); "
-        "sys.path.insert(0, str(root / 'src')); from harness.cli import main; "
-        "raise SystemExit(main(sys.argv[1:]))"
-    )
-    command = [sys.executable, "-I", "-c", launcher, str(root), "projects", "--harness-root", str(root)]
+    environment = os.environ.copy()
+    if connection.get("installed") is True:
+        executable = shutil.which("rh")
+        if executable is None:
+            raise ValueError("Install ResearchHarness and put rh on PATH")
+        command = [executable, "projects"]
+        environment["RH_STATE_DIR"] = str(root)
+    else:
+        require_file(root / "src/harness/cli.py")
+        require_file(root / "src/harness/projects/operations.md")
+        launcher = (
+            "import sys; from pathlib import Path; root = Path(sys.argv.pop(1)); "
+            "sys.path.insert(0, str(root / 'src')); from harness.cli import main; "
+            "raise SystemExit(main(sys.argv[1:]))"
+        )
+        command = [sys.executable, "-I", "-c", launcher, str(root), "projects", "--harness-root", str(root)]
     state = subprocess.run(
         [*command, "status", connection["project_id"]],
-        cwd=PROJECT, check=True, stdout=subprocess.PIPE, text=True,
+        cwd=PROJECT, env=environment, check=True, stdout=subprocess.PIPE, text=True, encoding="utf-8",
     )
     binding = json.loads(state.stdout)
     if (Path(binding["path"]) != PROJECT or not binding["settings"]["skills"]
@@ -67,7 +77,7 @@ def online(action):
     if action == "status":
         print(f"online\n{guide}")
         return 0
-    return subprocess.run([*command, "project", "check", str(PROJECT)], cwd=PROJECT).returncode
+    return subprocess.run([*command, "project", "check", str(PROJECT)], cwd=PROJECT, env=environment).returncode
 
 
 def main():

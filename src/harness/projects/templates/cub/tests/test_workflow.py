@@ -141,7 +141,7 @@ class WorkflowTest(unittest.TestCase):
                     manifest["task"],
                     "precheck" if operation == "precheck" else "classification",
                 )
-                self.assertEqual(path.parents[2].name, "resnet18_mlp_small")
+                self.assertEqual(path.parents[2].name, "residual_classifier_small")
                 role = "precheck" if operation == "precheck" else "evaluation"
                 report = json.loads((path / manifest["outputs"][role]).read_text())
                 metrics = report["evaluation_step"] if operation == "precheck" else report
@@ -178,7 +178,8 @@ class WorkflowTest(unittest.TestCase):
             extra=("--data-root", str(self.checkout / "missing_cub")),
         )
         self.assertEqual(result.returncode, 1)
-        self.assertEqual(manifest["status"], "blocked")
+        self.assertEqual(manifest["status"], "failed")
+        self.assertEqual(manifest["result_state"], "blocked")
         self.assertEqual(manifest["diagnostics"][0]["stage"], "inputs")
         self.assertIn("next_action", manifest["diagnostics"][0])
         self.assertFalse(manifest["outputs"])

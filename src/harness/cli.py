@@ -16,8 +16,16 @@ def main(argv=None):
         from .utils import main as utils_main
 
         return utils_main(arguments[1:])
+    if arguments and arguments[0] in {"doctor", "guide", "skills"}:
+        from .distribution import main as distribution_main
+
+        return distribution_main(arguments[0], arguments[1:])
+    if arguments[:1] == ["mcp"]:
+        from .mcp import main as mcp_main
+
+        return mcp_main(arguments[1:])
     stream = sys.stdout if not arguments or arguments == ["--help"] else sys.stderr
-    print("Usage: rh projects --help | rh utils --help", file=stream)
+    print("Usage: rh {projects,utils,doctor,guide,skills,mcp} --help", file=stream)
     return 0 if stream is sys.stdout else 2
 
 
