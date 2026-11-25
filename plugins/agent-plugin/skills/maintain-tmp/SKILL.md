@@ -30,6 +30,16 @@ Provide a centralized location for a one-time check, a trial script and a tempor
 
 The skills' own work materials are kept in accordance with the skills catalogue.
 
+## Check project maintenance before editing
+
+Before changing an existing project, run `rh projects project status <project-root>`.
+With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
+repository's own rules unless the user asked to use EverResearch. For that request, use
+[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
+EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
+before applying those rules. Read-only inspection and planning can proceed in any state. When status
+cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
+
 ## Central path check and project restoration
 
 EverResearch unified the maintenance of document path, directory attribution and naming. The assistant performing the scientific research project uses read-only EverResearch and its verification portals to restore the public entry point, logic and results of the target project to the extent permitted. When error is considered or the rules are too strict, the inspection orders, rules, pathways, reversible evidence and effects are included in the human-oriented report and the independently completed project is maintained.

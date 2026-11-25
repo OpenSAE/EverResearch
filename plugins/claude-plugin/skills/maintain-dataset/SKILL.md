@@ -5,6 +5,23 @@ description: Add, update, or remove a research dataset. Use for dataset registra
 
 # Maintain research datasets
 
+## Run the EverResearch CLI
+
+Use Python 3.11, 3.12, or 3.13 to run `scripts/rh.py` from the current skill,
+followed by the arguments after `rh`. For example, pass `projects project check <project-path>` to check a
+project. Use `${CLAUDE_SKILL_DIR}` in Claude Code or Cowork and the staged skill
+directory in Claude web.
+
+The launcher uses the packaged runtime when available. GitHub marketplace
+installs download the pinned wheel once and verify its checksum before use.
+The launcher creates a private environment and may fetch Python dependencies.
+With no Python execution available, review the files you can
+access and tell the user which automated checks you could not run.
+
+For a separate terminal installation, the official PyPI package is
+`ever-research` from OpenSAE. The PyPI project named `researchharness` is
+maintained separately.
+
 ## Purpose and main function
 
 Keep dataset sources, labels, splits, presets, and caches consistent with what tasks read through the project's `datasets/` components.
@@ -16,6 +33,16 @@ Use this skill to add a dataset, source, or preset, change how a dataset is read
 For removals, check all users of the dataset or preset and verify the remaining selections. Preserve original inputs, shared caches, and historical results according to the project's requirements.
 
 The [dataset procedures](references/procedures.md) explain file ownership and how to carry out and verify additions, changes, and removals.
+
+## Check project maintenance before editing
+
+Before changing an existing project, run `rh projects project status <project-root>`.
+With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
+repository's own rules unless the user asked to use EverResearch. For that request, use
+[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
+EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
+before applying those rules. Read-only inspection and planning can proceed in any state. When status
+cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
 
 ## Place preprocessed inputs under assets
 

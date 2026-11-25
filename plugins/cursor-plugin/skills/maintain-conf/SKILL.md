@@ -5,6 +5,23 @@ description: Add, remove, or change research configuration parameters. Use for d
 
 # Maintain research configuration
 
+## Run the EverResearch CLI
+
+Use Python 3.11, 3.12, or 3.13 to run `scripts/rh.py` from the current skill,
+followed by the arguments after `rh`. For example, pass `projects project check <project-path>` to check a
+project. Use `${CLAUDE_SKILL_DIR}` in Claude Code or Cowork and the staged skill
+directory in Claude web.
+
+The launcher uses the packaged runtime when available. GitHub marketplace
+installs download the pinned wheel once and verify its checksum before use.
+The launcher creates a private environment and may fetch Python dependencies.
+With no Python execution available, review the files you can
+access and tell the user which automated checks you could not run.
+
+For a separate terminal installation, the official PyPI package is
+`ever-research` from OpenSAE. The PyPI project named `researchharness` is
+maintained separately.
+
 ## Purpose and main function
 
 Keep configuration parameters understandable and effective. Document their meaning, defaults, precedence, and effect on existing recipes and results.
@@ -12,6 +29,16 @@ Keep configuration parameters understandable and effective. Document their meani
 ## Scope of application
 
 Use this skill when adding, removing, or changing a setting exposed through a file, command line, environment variable, or public interface. Use `maintain-experiment` to choose values for a particular run, and use `maintain-base` for shared configuration assembly and dispatch. Work with the component skill for settings that change a dataset, model, or task.
+
+## Check project maintenance before editing
+
+Before changing an existing project, run `rh projects project status <project-root>`.
+With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
+repository's own rules unless the user asked to use EverResearch. For that request, use
+[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
+EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
+before applying those rules. Read-only inspection and planning can proceed in any state. When status
+cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
 
 ## Trace each parameter to its consumer
 

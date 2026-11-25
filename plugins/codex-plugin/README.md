@@ -23,7 +23,7 @@ app, open Plugins and enable EverResearch from the added marketplace. Open the
 project as a workspace or make it available to the environment running Codex.
 Ask “Inspect this research project's directory structure.”
 
-The [Codex plugin ZIP](https://github.com/OpenSAE/EverResearch/releases/download/v0.3.0/ever-research-0.3.0-codex-plugin.zip)
+The [Codex plugin ZIP](https://github.com/OpenSAE/EverResearch/releases/download/v0.3.1/ever-research-0.3.1-codex-plugin.zip)
 contains the Codex plugin directory. The public OpenAI Plugins Directory and
 the installable GitHub marketplace are separate channels.
 

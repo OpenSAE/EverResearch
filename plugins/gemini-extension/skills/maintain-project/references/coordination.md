@@ -20,6 +20,17 @@ Maintain each rule or procedure in the skill or companion file that owns the wor
 
 ## Connect an existing project
 
+Use `rh projects project status <project-root>` to check maintenance readiness without running project
+code. A `managed` result includes the active guide. An `unavailable` result identifies an incomplete or
+broken setup. An `unmanaged` result means EverResearch maintenance is inactive for this project.
+Structural checks are separate and can be run before setup.
+
+For a read-only request, inspect the repository and explain what an adoption plan would change. Before
+using EverResearch to edit an unmanaged project, confirm the target root, existing user work, proposed
+setup changes, and verification steps. Obtain approval for setup or use authorization already given for
+that scope. After setup, recheck the status and return to the original task. For a broken connection,
+identify what needs repair and preserve the selected mode until the user authorizes a switch.
+
 For an authorized online connection, check `rh projects list`, register the actual project root if needed, and run `rh projects setup-maintenance <project-root> --online`. Reuse the registered identity and applicable mode when taking over an existing connection. Bind the actual local interpreter and data resources as needed, then check `rh projects status <project-id>` and the project's own `python -IS .researchharness/maintain.py status`. For an authorized new standalone setup, use `rh projects setup-maintenance <project-root>` with the project's intended mode.
 
 Use the project’s installation and operating instructions to confirm its normal entry. Check structure and use a representative precheck or configuration preview within authorization. Deliver the connection status and separately identify unavailable scientific inputs or checks.

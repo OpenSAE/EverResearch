@@ -5,6 +5,23 @@ description: Add, change, or remove a research model or variant. Use for model c
 
 # Maintain research models
 
+## Run the EverResearch CLI
+
+Use Python 3.11, 3.12, or 3.13 to run `scripts/rh.py` from the current skill,
+followed by the arguments after `rh`. For example, pass `projects project check <project-path>` to check a
+project. Use `${CLAUDE_SKILL_DIR}` in Claude Code or Cowork and the staged skill
+directory in Claude web.
+
+The launcher uses the packaged runtime when available. GitHub marketplace
+installs download the pinned wheel once and verify its checksum before use.
+The launcher creates a private environment and may fetch Python dependencies.
+With no Python execution available, review the files you can
+access and tell the user which automated checks you could not run.
+
+For a separate terminal installation, the official PyPI package is
+`ever-research` from OpenSAE. The PyPI project named `researchharness` is
+maintained separately.
+
 ## Purpose and main function
 
 Keep model construction, weight selection, and task-facing outputs consistent with the model selected through the project's public entry point.
@@ -14,6 +31,16 @@ Keep model construction, weight selection, and task-facing outputs consistent wi
 Use this skill to add a model family or variant, change its architecture, inputs or weights, or remove a preset, variant, or supported combination. Identify the selected model and trace the output used by the task back through construction and weight loading. Check direct model callers where the project exposes them.
 
 The [model procedures](references/procedures.md) cover model families, historical weights, and how to verify additions, changes, and removals.
+
+## Check project maintenance before editing
+
+Before changing an existing project, run `rh projects project status <project-root>`.
+With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
+repository's own rules unless the user asked to use EverResearch. For that request, use
+[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
+EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
+before applying those rules. Read-only inspection and planning can proceed in any state. When status
+cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
 
 ## Variable, weight or task output does not match the selected model
 

@@ -5,6 +5,23 @@ description: Maintain the shared launchers and infrastructure of a research proj
 
 # Maintenance of the research project base level
 
+## Run the EverResearch CLI
+
+Use Python 3.11, 3.12, or 3.13 to run `scripts/rh.py` from the current skill,
+followed by the arguments after `rh`. For example, pass `projects project check <project-path>` to check a
+project. Use `${CLAUDE_SKILL_DIR}` in Claude Code or Cowork and the staged skill
+directory in Claude web.
+
+The launcher uses the packaged runtime when available. GitHub marketplace
+installs download the pinned wheel once and verify its checksum before use.
+The launcher creates a private environment and may fetch Python dependencies.
+With no Python execution available, review the files you can
+access and tell the user which automated checks you could not run.
+
+For a separate terminal installation, the official PyPI package is
+`ever-research` from OpenSAE. The PyPI project named `researchharness` is
+maintained separately.
+
 ## Purpose
 
 The root directory `base/` is responsible for the open access, configuration synthesis, component selection, task distribution and common operation capacity. The original master package of the project is to be split according to actual duties, and the data sets, models and official tasks are to be assigned to the corresponding level I directory. The original public package is to be compatible with the map or thin access.
@@ -20,6 +37,16 @@ From Item `AGENTS.md`,README Follow the command to the source of the configurati
 - **Remove.** Remove the specified distribution options, run support or result interface, first to process those who are still reading with its entry and historical results.
 
 [Base level operating options](references/procedures.md)Description of who calls, under what conditions, and the order of implementation and conditions of completion when new, modified and removed.
+
+## Check project maintenance before editing
+
+Before changing an existing project, run `rh projects project status <project-root>`.
+With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
+repository's own rules unless the user asked to use EverResearch. For that request, use
+[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
+EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
+before applying those rules. Read-only inspection and planning can proceed in any state. When status
+cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
 
 ## Source code and path duties for the base layer
 

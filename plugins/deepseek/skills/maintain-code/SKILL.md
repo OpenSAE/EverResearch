@@ -30,6 +30,16 @@ Trace a research project's real entry points, fix confirmed problems in the resp
 
 Use for code review, bug fixes, refactors, shared implementation, and source placement. Start from the user's request and the project's documented commands. Use `maintain-project` for whole-project coordination and `maintain-optional` for standalone scripts, tests, and documentation.
 
+## Check project maintenance before editing
+
+Before changing an existing project, run `rh projects project status <project-root>`.
+With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
+repository's own rules unless the user asked to use EverResearch. For that request, use
+[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
+EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
+before applying those rules. Read-only inspection and planning can proceed in any state. When status
+cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
+
 ## Follow the actual call
 
 1. Identify the entry point, intended result, actual callers, and behavior to preserve. Read the selected code, its tests, and the project instructions.

@@ -32,6 +32,16 @@ Use this skill to add a task, change its algorithm, parameters, checks, metrics,
 
 The [task procedures](references/procedures.md) explain task structure and the workflow for each kind of change.
 
+## Check project maintenance before editing
+
+Before changing an existing project, run `rh projects project status <project-root>`.
+With `managed`, use the reported guide and follow the authorized request. With `unmanaged`, follow the
+repository's own rules unless the user asked to use EverResearch. For that request, use
+[maintain-project](../maintain-project/SKILL.md) to plan and complete authorized setup before applying
+EverResearch rules to project changes. With `unavailable`, resolve the reported connection issue
+before applying those rules. Read-only inspection and planning can proceed in any state. When status
+cannot be verified, keep EverResearch work to inspection and planning and explain the gap.
+
 ## Automatic precheck before running a formal task
 
 The project must provide a precheck capability called `precheck` under `tasks/` to accept any registered data set, model and task selection and to indicate the specific reasons for incompatibility.
