@@ -35,10 +35,10 @@ rh projects project check ./MyProject
 ```
 
 EverResearch 从 0.2.1 起支持 Python 3.13。也可以直接安装
-[GitHub 上的同一版本](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.3-py3-none-any.whl)。
+[GitHub 上的同一版本](https://github.com/OpenSAE/EverResearch/releases/download/v0.2.3/ever_research-0.2.3-py3-none-any.whl)。
 
 ```sh
-uv tool install --python 3.13 https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.3-py3-none-any.whl
+uv tool install --python 3.13 https://github.com/OpenSAE/EverResearch/releases/download/v0.2.3/ever_research-0.2.3-py3-none-any.whl
 ```
 
 在源码目录运行 `python -m pip install .` 也会安装技能和项目指南。
@@ -47,7 +47,7 @@ uv tool install --python 3.13 https://raw.githubusercontent.com/OpenSAE/EverRese
 如果你想同时安装 CLI 和技能，在项目目录运行以下命令。
 
 ```sh
-npm exec --yes --package=https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-0.2.3.tgz -- ever-research
+npm exec --yes --package=https://github.com/OpenSAE/EverResearch/releases/download/v0.2.3/opensae-ever-research-0.2.3.tgz -- ever-research
 ```
 
 安装后，在代理里打开项目，问它“检查这个科研项目的目录结构，告诉我有哪些问题，以及你实际验证了什么”。

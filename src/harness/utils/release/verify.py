@@ -133,8 +133,11 @@ def verify_runtime_download(work, wheel_data, metadata):
                 raise ValueError("The launcher accepted a corrupted download")
         with patch.object(launcher, "urlopen", return_value=BytesIO(wheel_data)) as download:
             cached = launcher.runtime_wheel()
-            if cached.read_bytes() != wheel_data or not download.call_args.args[0].endswith(metadata["filename"]):
-                raise ValueError("The launcher did not cache the pinned wheel")
+            version = metadata["filename"].split("-")[1]
+            url = (f"https://github.com/OpenSAE/EverResearch/releases/download/v{version}/"
+                   f"{metadata['filename']}")
+            if cached.read_bytes() != wheel_data or download.call_args.args[0] != url:
+                raise ValueError("The launcher did not cache the pinned Release wheel")
         with patch.object(launcher, "urlopen", side_effect=AssertionError("Unexpected download")):
             if launcher.runtime_wheel() != cached:
                 raise ValueError("The launcher did not reuse its verified cache")

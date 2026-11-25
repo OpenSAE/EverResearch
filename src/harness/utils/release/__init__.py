@@ -211,7 +211,7 @@ def platform_readme(source, platform, version):
         source[f"{docs}/{platform}.md"],
         source[f"{docs}/usage.md"],
     ))
-    downloads = b"https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer"
+    downloads = b"https://github.com/OpenSAE/EverResearch/releases/download/v@VERSION@"
     return (guide.replace(b"@REPO@", repo).replace(b"@DOWNLOAD@", downloads)
             .replace(b"@VERSION@", version.encode()))
 

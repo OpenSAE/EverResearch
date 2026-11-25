@@ -1,5 +1,5 @@
-# Purpose: publish verified installer files as versioned GitHub Release assets.
-# Scope: migrate the published installers on setup and build new releases on request.
+# Purpose: publish verified installers as versioned GitHub Release assets.
+# Scope: guard committed plugin files on main and publish new releases on request.
 name: Publish installers
 
 on:
@@ -7,42 +7,69 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/release-installers.yml'
+      - 'plugins/**'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: everresearch-installer-release
   cancel-in-progress: false
 
 jobs:
-  publish:
+  check-committed-downloads:
     if: github.repository == 'OpenSAE/EverResearch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Check installer paths
+        run: |
+          python3 - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path, PurePosixPath
+          import subprocess
+
+          legacy = "plugins/installer/ever_research-0.2.3-py3-none-any.whl"
+          checksum = "b25c0ed60abc4482cc71f3b4c0bf99ff42cf26257bb098c82784b55c3b713987"
+          if sha256(Path(legacy).read_bytes()).hexdigest() != checksum:
+              raise SystemExit("The compatibility wheel must match the previously deployed runtime")
+          tracked = subprocess.check_output(["git", "ls-files", "-z", "plugins"])
+          unexpected = []
+          for path in filter(None, tracked.decode().split("\0")):
+              suffix = PurePosixPath(path).suffix
+              if path != legacy and (
+                  suffix == ".whl" or
+                  (path.startswith("plugins/installer/") and suffix in {".zip", ".tgz", ".gz"})
+              ):
+                  unexpected.append(path)
+          if unexpected:
+              raise SystemExit("Move these generated files to GitHub Release assets:\n" + "\n".join(unexpected))
+          PY
+  publish:
+    if: github.event_name == 'workflow_dispatch'
+    needs: check-committed-downloads
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          fetch-depth: 0
           persist-credentials: false
-      - name: Migrate historical installers
-        if: github.event_name == 'push'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python3 src/harness/utils/release/publish_installers.py --migrate
       - name: Build and verify installers
-        if: github.event_name == 'workflow_dispatch'
         run: |
           set -euo pipefail
-          pipx install uv
+          command -v uv >/dev/null || pipx install uv
+          export SOURCE_DATE_EPOCH=$(git show -s --format=%ct "$GITHUB_SHA")
           uv run --no-project --python 3.12 --with PyYAML --with filelock --with platformdirs \
             env PYTHONPATH=src python -m harness.cli utils release \
             --source . --output "$RUNNER_TEMP/everresearch"
           uv run --no-project --python 3.12 python "$RUNNER_TEMP/everresearch/verify.py" \
             "$RUNNER_TEMP/everresearch"
       - name: Publish the verified build
-        if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

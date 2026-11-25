@@ -13,14 +13,6 @@ import subprocess
 from tempfile import TemporaryDirectory
 
 
-LEGACY = {
-    "0.2.0": "cfea7a7c923e82667e4423a354099755e11b5db4",
-    "0.2.1": "022f7b323577cb43589a82807fc30fe5e451c77c",
-    "0.2.2": "ce47336a61fc87a79667d9a3101d0d590fcd3dc9",
-    "0.2.3": "014084ef0fa1d4a345912646742b8bf87cfcbfd0",
-}
-INSTALLER_PATH = "plugins/installer/"
-PUBLIC_SUFFIXES = (".whl", ".tgz", ".zip")
 RELEASE_FIELDS = "isDraft,targetCommitish,assets"
 
 
@@ -44,23 +36,6 @@ def verify_files(directory):
     if not expected:
         raise ValueError("The release checksum file is empty")
     return expected
-
-
-def legacy_files(version, target, directory):
-    filenames = output("git", "ls-tree", "-r", "--name-only", target, "--", INSTALLER_PATH)
-    checksums = []
-    for path in filenames.splitlines():
-        name = path.removeprefix(INSTALLER_PATH)
-        if not name.endswith(PUBLIC_SUFFIXES) or not re.search(rf"-{re.escape(version)}[-.]", name):
-            continue
-        if not re.fullmatch(r"[A-Za-z0-9_.-]+", name):
-            raise ValueError(f"Invalid filename: {name}")
-        payload = subprocess.check_output(["git", "show", f"{target}:{path}"])
-        (directory / name).write_bytes(payload)
-        checksums.append(f"{sha256(payload).hexdigest()}  {name}\n")
-    if not checksums:
-        raise ValueError(f"No installer assets found at {target}")
-    (directory / "SHA256SUMS").write_text("".join(sorted(checksums)), encoding="ascii")
 
 
 def release_info(tag):
@@ -112,20 +87,10 @@ def publish(version, target, directory):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--migrate", action="store_true")
-    parser.add_argument("--source", type=Path)
-    parser.add_argument("--version")
-    parser.add_argument("--target")
+    parser.add_argument("--source", type=Path, required=True)
+    parser.add_argument("--version", required=True)
+    parser.add_argument("--target", required=True)
     args = parser.parse_args()
-    if args.migrate:
-        for version, target in LEGACY.items():
-            with TemporaryDirectory(prefix=f"everresearch-{version}-") as temporary:
-                directory = Path(temporary)
-                legacy_files(version, target, directory)
-                publish(version, target, directory)
-        return
-    if not args.source or not args.version or not args.target:
-        parser.error("Specify --source, --version, and --target")
     if not re.fullmatch(r"[0-9]+(?:\.[0-9]+){2}", args.version):
         parser.error("Use a three-part release version")
     if not re.fullmatch(r"[a-f0-9]{40}", args.target):

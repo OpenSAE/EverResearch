@@ -34,8 +34,8 @@ def runtime_wheel():
 def pinned_wheel(lock, local_directories):
     metadata = json.loads(lock.read_text(encoding="utf-8"))
     filename, digest, size = (metadata[key] for key in ("filename", "sha256", "size"))
-    if (not re.fullmatch(r"ever_research-[0-9]+(?:\.[0-9]+)+-py3-none-any\.whl", filename)
-            or not re.fullmatch(r"[a-f0-9]{64}", digest)
+    wheel_name = re.fullmatch(r"ever_research-([0-9]+(?:\.[0-9]+)+)-py3-none-any\.whl", filename)
+    if (wheel_name is None or not re.fullmatch(r"[a-f0-9]{64}", digest)
             or type(size) is not int or size <= 0):
         raise RuntimeError("Invalid EverResearch runtime metadata.")
     cache = cache_directory() / "wheels" / digest
@@ -45,8 +45,9 @@ def pinned_wheel(lock, local_directories):
                 and hashlib.sha256(wheel.read_bytes()).hexdigest() == digest):
             return wheel
 
-    url = "https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/"
-    with urlopen(url + filename, timeout=20) as response:
+    version = wheel_name.group(1)
+    url = f"https://github.com/OpenSAE/EverResearch/releases/download/v{version}/{filename}"
+    with urlopen(url, timeout=20) as response:
         contents = response.read(size + 1)
     if len(contents) != size or hashlib.sha256(contents).hexdigest() != digest:
         raise RuntimeError("The downloaded wheel does not match the plugin's runtime checksum.")
