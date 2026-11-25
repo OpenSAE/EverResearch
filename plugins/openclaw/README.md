@@ -10,7 +10,7 @@ Use these steps for projects you can access from this environment.
 
 ## Install in OpenClaw
 
-Extract the [OpenClaw plugin ZIP](https://github.com/OpenSAE/EverResearch/releases/download/v0.2.3/ever-research-0.2.3-openclaw-plugin.zip)
+Extract the [OpenClaw plugin ZIP](https://github.com/OpenSAE/EverResearch/releases/download/v0.3.0/ever-research-0.3.0-openclaw-plugin.zip)
 into `openclaw`, or use `plugins/openclaw` from a local
 [EverResearch checkout](https://github.com/OpenSAE/EverResearch).
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ever-research",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Maintain and verify research projects with EverResearch."
 }

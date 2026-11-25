@@ -10,11 +10,6 @@ Use these steps for projects you can access from this environment.
 
 ## Install from a terminal
 
-The [GitHub Releases](https://github.com/OpenSAE/EverResearch/releases) page
-lists the installers and checksums for each version. The local wheel here
-serves marketplace plugins installed before the Release migration.
-
-
 Install the OpenSAE CLI from [PyPI](https://pypi.org/project/ever-research/).
 
 ```sh
@@ -26,10 +21,10 @@ If uv reports that its tool directory is missing from PATH, run
 `uv tool update-shell` and open a new terminal.
 
 EverResearch 0.2.1 adds Python 3.13 support. You can also install the
-[same wheel from GitHub](https://github.com/OpenSAE/EverResearch/releases/download/v0.2.3/ever_research-0.2.3-py3-none-any.whl).
+[same wheel from GitHub](https://github.com/OpenSAE/EverResearch/releases/download/v0.3.0/ever_research-0.3.0-py3-none-any.whl).
 
 ```sh
-uv tool install --python 3.13 https://github.com/OpenSAE/EverResearch/releases/download/v0.2.3/ever_research-0.2.3-py3-none-any.whl
+uv tool install --python 3.13 https://github.com/OpenSAE/EverResearch/releases/download/v0.3.0/ever_research-0.3.0-py3-none-any.whl
 ```
 
 In an active Python environment, install with `python -m pip install ever-research`
@@ -40,7 +35,7 @@ Use `uv tool uninstall ever-research` to remove the uv installation.
 From a project directory, install the CLI and skills together from the npm archive:
 
 ```sh
-npm exec --yes --package=https://github.com/OpenSAE/EverResearch/releases/download/v0.2.3/opensae-ever-research-0.2.3.tgz -- ever-research
+npm exec --yes --package=https://github.com/OpenSAE/EverResearch/releases/download/v0.3.0/opensae-ever-research-0.3.0.tgz -- ever-research
 ```
 
 Node.js 18 or newer is required for this installer. It defaults to the current
