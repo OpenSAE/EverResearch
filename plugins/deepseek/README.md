@@ -10,22 +10,23 @@ Use these steps for projects you can access from this environment.
 
 ## Install in DeepSeek Harness
 
-In the following command, replace `YOUR_PROFILE` with the profile where you want
-the skills, such as the one you use to run your research agent:
+From a terminal with Node.js, replace `YOUR_PROFILE` with your DeepSeek
+Harness profile. This command supplies both the compatible DSH CLI and its
+package manager.
 
 ```sh
-dsh plugin --profile YOUR_PROFILE add https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-dsh-0.2.0.tgz
+npx --yes --package=pnpm --package=@deepseek-ai/dsh@0.2.2-rc.5 -- dsh plugin --profile YOUR_PROFILE add https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-dsh-0.2.0.tgz
 ```
 
-If the installed DSH version requires a local archive, download
-[the bundle](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-dsh-0.2.0.tgz), then run
-`dsh plugin --profile YOUR_PROFILE add file:/absolute/path/to/opensae-ever-research-dsh-0.2.0.tgz`.
-Use a DSH version compatible with the bundle's `engines.dsh` field and start
-the agent with the same profile. Ask it for a research project structure check.
+If you already use DSH and have `pnpm` on your PATH, run the same command
+starting at `dsh plugin`. To install from a file, download
+[the bundle](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-dsh-0.2.0.tgz) and use
+`file:/absolute/path/to/opensae-ever-research-dsh-0.2.0.tgz` in place of
+the URL. Review any package approval prompt before continuing.
 
-After the npm bundle is published, the registry install target will be
-`@opensae/ever-research-dsh`. The archive works independently of registry
-or marketplace listing status.
+Start your agent with the same profile and ask it for a research project
+structure check. Once the npm bundle is published, the registry install
+target will be `@opensae/ever-research-dsh`.
 
 ## Use EverResearch
 

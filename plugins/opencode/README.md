@@ -11,13 +11,23 @@ Use these steps for projects you can access from this environment.
 ## Install in OpenCode
 
 Extract the [OpenCode plugin ZIP](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.0-opencode-plugin.zip)
-into the project's `.opencode/plugins/ever-research/` directory. Keep
-`package.json`, `index.mjs`, and `skills/` together. You can also copy the
+into the project's `.opencode/plugins/ever-research/` directory, or copy the
 `plugins/opencode` directory from an [EverResearch checkout](https://github.com/OpenSAE/EverResearch).
 
-For explicit configuration, add `"./.opencode/plugins/ever-research"` to
-the `plugins` array in `opencode.json`. OpenCode V1 uses `plugin` for the
-same array. Restart OpenCode and ask for a project structure check.
+Add the skill directory to your project’s `opencode.json`. Merge the path
+into your existing settings if the file is already present:
+
+```json
+{
+  "skills": {
+    "paths": ["./.opencode/plugins/ever-research/skills"]
+  }
+}
+```
+
+This skill configuration works in OpenCode V1 and V2. Run
+`opencode debug skill` to check that `maintain-project` appears. Open your
+project in OpenCode and ask for a project structure check.
 
 ## Use EverResearch
 

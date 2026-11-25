@@ -9,5 +9,6 @@ gemini extensions install ./gemini-extension
 gemini extensions list
 ```
 
+If Gemini asks, confirm trust for the extracted folder after checking its source.
 Open a trusted project workspace in Gemini CLI and ask “Inspect this research
 project's directory structure.”

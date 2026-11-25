@@ -17,6 +17,9 @@ uv tool install https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plug
 rh doctor --json
 ```
 
+If uv reports that its tool directory is missing from PATH, run
+`uv tool update-shell` and open a new terminal.
+
 With Python 3.11 or 3.12 in an activated virtual environment, use
 `python -m pip install https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.0-py3-none-any.whl`.
 Use `uv tool uninstall ever-research` to remove a CLI installed with uv.

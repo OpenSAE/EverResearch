@@ -308,12 +308,12 @@ def build_plugins(output, work, version, skills, source, wheel):
             **manifest, "name": bundle_name, "type": "module", "main": "index.mjs",
             "dsh": {"bundle": {"patch": "./cordis.patch.yml"}},
             "engines": {"dsh": ">=0.2.2-rc.5 <0.3.0"},
-            "peerDependencies": {"@deepseek-ai/dsh-skill-filesystem": "0.2.2-rc.5"},
         }),
         "cordis.patch.yml": yaml.safe_dump([
             {"insert": [{"id": "ever-research-skills", "name": bundle_name}]},
         ]).encode(),
         "index.mjs": source[f"{adapter}/deepseek.mjs"],
+        "skills.json": json_bytes(entries),
         "README.md": platform_readme(source, "deepseek", version),
     }
     dsh_work = work / "deepseek"

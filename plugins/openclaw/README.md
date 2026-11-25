@@ -15,11 +15,11 @@ into `openclaw`, or use `plugins/openclaw` from a local
 [EverResearch checkout](https://github.com/OpenSAE/EverResearch).
 
 ```sh
-openclaw plugins install ./openclaw
+openclaw plugins install ./openclaw --accept-capabilities
 openclaw plugins list
 ```
 
-Enable `ever-research` if your instance requires explicit activation, restart
+Confirm the local source when prompted. Enable `ever-research` if your instance requires explicit activation, restart
 the gateway and ask the agent for a check of an accessible research project.
 
 ## Use EverResearch

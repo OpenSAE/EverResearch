@@ -7,6 +7,9 @@ uv tool install @DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl
 rh doctor --json
 ```
 
+If uv reports that its tool directory is missing from PATH, run
+`uv tool update-shell` and open a new terminal.
+
 With Python 3.11 or 3.12 in an activated virtual environment, use
 `python -m pip install @DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl`.
 Use `uv tool uninstall ever-research` to remove a CLI installed with uv.

@@ -11,8 +11,5 @@
   },
   "engines": {
     "dsh": ">=0.2.2-rc.5 <0.3.0"
-  },
-  "peerDependencies": {
-    "@deepseek-ai/dsh-skill-filesystem": "0.2.2-rc.5"
   }
 }
