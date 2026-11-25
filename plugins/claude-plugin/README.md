@@ -22,7 +22,7 @@ For an extracted copy of this folder, start Claude Code with
 `claude --plugin-dir ./claude-plugin`.
 
 **Claude web and Cowork.** Open **Customize → Plugins** and upload the
-[Claude plugin ZIP](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.2-claude-plugin.zip)
+[Claude plugin ZIP](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.3-claude-plugin.zip)
 where custom uploads are available. In web chat, add the project files to the
 conversation and enable file creation and code execution where available.
 In Cowork, give the task access to the project folder. The plugin includes a
@@ -38,10 +38,11 @@ listing are separate install channels.
 
 Share the project folder with your agent, then ask “Inspect this research
 project’s layout and tell me what you verified.” Local terminal hosts use
-Python 3.11, 3.12, or 3.13. The plugin supplies the `rh` program and the agent starts
-it from the skill on first use. It prepares an isolated environment in the
-user cache and may download Python dependencies from the configured package
-index. You can use the supported interpreter already available to the host.
+Python 3.11, 3.12, or 3.13. The agent starts `rh` from the skill. GitHub
+marketplace installs download EverResearch's pinned wheel from OpenSAE's
+repository and verify its checksum. Downloadable plugin ZIPs carry the wheel.
+The launcher caches the runtime and may fetch Python dependencies from the
+configured package index. You can use the supported interpreter already available to the host.
 
 In an environment with file access only, the agent can review the available
 files and produce a plan. It reports any automated checks the environment

@@ -68,14 +68,15 @@ SECRETS = re.compile(
 )
 PLUGIN_CLI_GUIDANCE = b"""## Run the EverResearch CLI
 
-This plugin includes EverResearch's `rh` command. Use Python 3.11, 3.12, or 3.13
-to run `scripts/rh.py` from the current skill, followed by the arguments after
-`rh`. For example, pass `projects project check <project-path>` to check a
+Use Python 3.11, 3.12, or 3.13 to run `scripts/rh.py` from the current skill,
+followed by the arguments after `rh`. For example, pass `projects project check <project-path>` to check a
 project. Use `${CLAUDE_SKILL_DIR}` in Claude Code or Cowork and the staged skill
 directory in Claude web.
 
-The launcher creates an isolated Python environment on first use and may fetch
-dependencies. With no Python execution available, review the files you can
+The launcher uses the packaged runtime when available. GitHub marketplace
+installs download the pinned wheel once and verify its checksum before use.
+The launcher creates a private environment and may fetch Python dependencies.
+With no Python execution available, review the files you can
 access and tell the user which automated checks you could not run.
 
 For a separate terminal installation, the official PyPI package is
@@ -228,21 +229,25 @@ PLATFORM_TITLES = {
 }
 
 
-def plugin_runtime(skills, runner, wheel, *, isolated=False):
+def plugin_runtime(skills, runner, wheel, *, isolated=False, include_wheel=True):
     """Supply the launcher and its wheel within an agent's installed skill set."""
     additions = {}
     cli_skills = {path.split("/")[0] for path, body in skills.items()
                   if path.endswith(".md") and CLI_COMMAND.search(body)}
+    wheel_data = wheel.read_bytes()
+    lock = json_bytes({"filename": wheel.name, "sha256": sha256(wheel_data).hexdigest(),
+                       "size": len(wheel_data)})
     for skill in sorted(cli_skills):
         additions[f"{skill}/scripts/rh.py"] = runner
+        additions[f"{skill}/scripts/rh-runtime.json"] = lock
         key = f"{skill}/SKILL.md"
         frontmatter, heading, body = skills[key].split(b"---", 2)
         first, rest = body.strip().split(b"\n\n", 1)
         additions[key] = (frontmatter + b"---" + heading + b"---\n\n" + first
                         + b"\n\n" + PLUGIN_CLI_GUIDANCE + b"\n\n" + rest + b"\n")
-    wheel_data = wheel.read_bytes()
-    for skill in sorted(cli_skills if isolated else {"maintain-project"}):
-        additions[f"{skill}/scripts/{wheel.name}"] = wheel_data
+    if include_wheel:
+        for skill in sorted(cli_skills if isolated else {"maintain-project"}):
+            additions[f"{skill}/scripts/{wheel.name}"] = wheel_data
     return additions
 
 
@@ -252,8 +257,9 @@ def build_plugins(output, work, version, skills, source, wheel):
     description = "Maintain and verify research projects with EverResearch."
     members = {f"skills/{path}": body for path, body in skills.items()}
     members.update({"LICENSE": source["LICENSE"], "README.md": source[ARTIFACT_GUIDE]})
-    runtime = plugin_runtime(skills, source[PLUGIN_RUNNER], wheel)
+    runtime = plugin_runtime(skills, source[PLUGIN_RUNNER], wheel, include_wheel=False)
     members.update({f"skills/{path}": body for path, body in runtime.items()})
+    shared_wheel = {f"skills/maintain-project/scripts/{wheel.name}": wheel.read_bytes()}
     manifest = {"name": name, "version": version, "description": description}
     portable = {
         "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json", **manifest,
@@ -279,12 +285,14 @@ def build_plugins(output, work, version, skills, source, wheel):
     for platform, (path, config) in platform_manifests.items():
         plugin = {**members, path: json_bytes(config),
                   "README.md": platform_readme(source, platform, version)}
+        marketplace.update({f"plugins/{platform}/{file}": contents for file, contents in plugin.items()})
+        local_wheels = shared_wheel
         if platform == "claude-plugin":
             # Claude chat stages only the active skill directory in its Python sandbox.
             runtime = plugin_runtime(skills, source[PLUGIN_RUNNER], wheel, isolated=True)
-            plugin.update({f"skills/{name}": body for name, body in runtime.items()})
-        archive(output / f"{name}-{version}-{platform}.zip", plugin)
-        marketplace.update({f"plugins/{platform}/{file}": contents for file, contents in plugin.items()})
+            local_wheels = {f"skills/{key}": body for key, body in runtime.items()
+                            if key.endswith(".whl")}
+        archive(output / f"{name}-{version}-{platform}.zip", {**plugin, **local_wheels})
 
     adapter = "src/harness/utils/release/plugins"
     entries = []
@@ -301,7 +309,7 @@ def build_plugins(output, work, version, skills, source, wheel):
         "skills.json": json_bytes(entries),
         "README.md": platform_readme(source, "opencode", version),
     }
-    archive(output / f"{name}-{version}-opencode-plugin.zip", opencode)
+    archive(output / f"{name}-{version}-opencode-plugin.zip", {**opencode, **shared_wheel})
     openclaw = {
         **members,
         "package.json": json_bytes({**manifest, "type": "module",
@@ -313,7 +321,7 @@ def build_plugins(output, work, version, skills, source, wheel):
         "index.mjs": source[f"{adapter}/openclaw.mjs"],
         "README.md": platform_readme(source, "openclaw", version),
     }
-    archive(output / f"{name}-{version}-openclaw-plugin.zip", openclaw)
+    archive(output / f"{name}-{version}-openclaw-plugin.zip", {**openclaw, **shared_wheel})
     bundle_name = "@opensae/ever-research-dsh"
     dsh = {
         **members,
@@ -330,12 +338,12 @@ def build_plugins(output, work, version, skills, source, wheel):
         "README.md": platform_readme(source, "deepseek", version),
     }
     dsh_work = work / "deepseek"
-    for path, contents in dsh.items():
+    for path, contents in {**dsh, **shared_wheel}.items():
         target = dsh_work / path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(contents)
     subprocess.run(["npm", "pack", "--pack-destination", str(output)], cwd=dsh_work, check=True)
-    archive(output / f"{name}-{version}-skills.zip", members)
+    archive(output / f"{name}-{version}-skills.zip", {**members, **shared_wheel})
     for platform, plugin in (("opencode", opencode), ("openclaw", openclaw), ("deepseek", dsh)):
         marketplace.update({f"plugins/{platform}/{file}": contents for file, contents in plugin.items()})
     catalog = {"name": "ever-research", "owner": {"name": "OpenSAE"}}

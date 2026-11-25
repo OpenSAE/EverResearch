@@ -7,6 +7,7 @@ access to resolve dependencies unless they are already cached.
 import argparse
 from hashlib import sha256
 from io import BytesIO
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -14,6 +15,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+from unittest.mock import patch
 from zipfile import ZipFile
 
 
@@ -42,21 +44,32 @@ def verify_plugins(release, wheel, work):
                 for name in resources.namelist() if name.startswith(".agents/skills/")
             }
 
-    def compare(actual, label):
+    runtime_lock = {"filename": wheel.name, "sha256": sha256(wheel_data).hexdigest(),
+                    "size": len(wheel_data)}
+
+    rendered_skills = {}
+
+    def compare(actual, label, *, bundled=True):
         for name, body in expected.items():
             runner = name.removesuffix("/SKILL.md") + "/scripts/rh.py"
             if name.endswith("/SKILL.md") and runner in actual:
                 _, frontmatter, _ = body.split(b"---", 2)
                 if actual[name].split(b"---", 2)[1] != frontmatter:
                     raise ValueError(f"Unexpected skill metadata in {label}: {name}")
+                if rendered_skills.setdefault(name, actual[name]) != actual[name]:
+                    raise ValueError(f"Different skill instructions in {label}: {name}")
             elif actual.get(name) != body:
                 raise ValueError(f"Unexpected skill file in {label}: {name}")
         for name in actual.keys() - expected.keys():
-            if name.endswith(".whl") and actual[name] == wheel_data:
+            if name.endswith(".whl") and bundled and actual[name] == wheel_data:
+                continue
+            if name.endswith("/scripts/rh-runtime.json") and json.loads(actual[name]) == runtime_lock:
                 continue
             if not name.endswith("/scripts/rh.py"):
                 raise ValueError(f"Unexpected plugin addition in {label}: {name}")
-        if actual.get(f"skills/maintain-project/scripts/{wheel.name}") != wheel_data:
+            if name.removesuffix("/rh.py") + "/rh-runtime.json" not in actual:
+                raise ValueError(f"Missing runtime metadata in {label}: {name}")
+        if bundled and actual.get(f"skills/maintain-project/scripts/{wheel.name}") != wheel_data:
             raise ValueError(f"Missing bundled runtime in {label}")
 
     readmes = set()
@@ -88,7 +101,43 @@ def verify_plugins(release, wheel, work):
                   for entry in archive.getmembers()
                   if entry.isfile() and entry.name.startswith("package/skills/")}
         compare(actual, "DeepSeek")
+    with ZipFile(release / f"ever-research-{version}-marketplace.zip") as archive:
+        platforms = ("agent-plugin", "claude-plugin", "codex-plugin", "cursor-plugin",
+                     "gemini-extension", "opencode", "openclaw", "deepseek")
+        for platform in platforms:
+            prefix = f"plugins/{platform}/"
+            files = {name.removeprefix(prefix): archive.read(name) for name in archive.namelist()
+                     if name.startswith(prefix + "skills/")}
+            compare(files, platform + " marketplace", bundled=False)
+        files = [name for name in archive.namelist()
+                 if name.startswith("plugins/agent-plugin/skills/maintain-project/scripts/")]
+        archive.extractall(work / "marketplace", files)
+    verify_runtime_download(work, wheel_data, runtime_lock)
     return len(PLUGIN_ENTRIES) + 1
+
+
+def verify_runtime_download(work, wheel_data, metadata):
+    script = work / "marketplace/plugins/agent-plugin/skills/maintain-project/scripts/rh.py"
+    spec = importlib.util.spec_from_file_location("test_plugin_runtime", script)
+    launcher = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(launcher)
+    cache = work / "download-cache"
+    with patch.object(launcher, "cache_directory", return_value=cache):
+        with patch.object(launcher, "urlopen", return_value=BytesIO(b"corrupt")):
+            try:
+                launcher.runtime_wheel()
+            except RuntimeError as error:
+                if "checksum" not in str(error):
+                    raise
+            else:
+                raise ValueError("The launcher accepted a corrupted download")
+        with patch.object(launcher, "urlopen", return_value=BytesIO(wheel_data)) as download:
+            cached = launcher.runtime_wheel()
+            if cached.read_bytes() != wheel_data or not download.call_args.args[0].endswith(metadata["filename"]):
+                raise ValueError("The launcher did not cache the pinned wheel")
+        with patch.object(launcher, "urlopen", side_effect=AssertionError("Unexpected download")):
+            if launcher.runtime_wheel() != cached:
+                raise ValueError("The launcher did not reuse its verified cache")
 
 
 def check_release(release, work):

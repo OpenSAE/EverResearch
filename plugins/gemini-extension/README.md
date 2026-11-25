@@ -10,7 +10,7 @@ Use these steps for projects you can access from this environment.
 
 ## Install in Gemini CLI
 
-Extract the [Gemini extension ZIP](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.2-gemini-extension.zip)
+Extract the [Gemini extension ZIP](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.3-gemini-extension.zip)
 into a directory named `gemini-extension`, or use `plugins/gemini-extension`
 from a local [EverResearch checkout](https://github.com/OpenSAE/EverResearch).
 
@@ -27,10 +27,11 @@ project's directory structure.”
 
 Share the project folder with your agent, then ask “Inspect this research
 project’s layout and tell me what you verified.” Local terminal hosts use
-Python 3.11, 3.12, or 3.13. The plugin supplies the `rh` program and the agent starts
-it from the skill on first use. It prepares an isolated environment in the
-user cache and may download Python dependencies from the configured package
-index. You can use the supported interpreter already available to the host.
+Python 3.11, 3.12, or 3.13. The agent starts `rh` from the skill. GitHub
+marketplace installs download EverResearch's pinned wheel from OpenSAE's
+repository and verify its checksum. Downloadable plugin ZIPs carry the wheel.
+The launcher caches the runtime and may fetch Python dependencies from the
+configured package index. You can use the supported interpreter already available to the host.
 
 In an environment with file access only, the agent can review the available
 files and produce a plan. It reports any automated checks the environment

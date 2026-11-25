@@ -7,14 +7,15 @@ description: Compare selected local files with a GitHub repository, prepare a pu
 
 ## Run the EverResearch CLI
 
-This plugin includes EverResearch's `rh` command. Use Python 3.11, 3.12, or 3.13
-to run `scripts/rh.py` from the current skill, followed by the arguments after
-`rh`. For example, pass `projects project check <project-path>` to check a
+Use Python 3.11, 3.12, or 3.13 to run `scripts/rh.py` from the current skill,
+followed by the arguments after `rh`. For example, pass `projects project check <project-path>` to check a
 project. Use `${CLAUDE_SKILL_DIR}` in Claude Code or Cowork and the staged skill
 directory in Claude web.
 
-The launcher creates an isolated Python environment on first use and may fetch
-dependencies. With no Python execution available, review the files you can
+The launcher uses the packaged runtime when available. GitHub marketplace
+installs download the pinned wheel once and verify its checksum before use.
+The launcher creates a private environment and may fetch Python dependencies.
+With no Python execution available, review the files you can
 access and tell the user which automated checks you could not run.
 
 For a separate terminal installation, the official PyPI package is

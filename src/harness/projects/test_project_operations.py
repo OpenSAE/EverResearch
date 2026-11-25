@@ -191,6 +191,7 @@ def test_project_mode_reads_central_originals_only_online(command, workspace):
     assert not (project / ".agents").exists()
 
     original = mode.read_text()
+    original_connection = connection.read_text()
     mode.write_text("enabled = false\n")
     connection.write_text("unreadable connection")
     result = status()
@@ -213,6 +214,12 @@ def test_project_mode_reads_central_originals_only_online(command, workspace):
     assert result.returncode == 2
     assert "Online maintenance is unavailable" in result.stderr
     assert not result.stdout
+
+    connection.write_text(original_connection)
+    result = status()
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.splitlines() == ["online", str(guide)]
+    assert (project / "AGENTS.md").read_text() == instructions
 
 
 def test_standalone_setup_preserves_project_instructions(command, workspace):

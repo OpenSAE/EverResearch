@@ -74,7 +74,7 @@ Run the following command from your research project directory to install the co
 npx --yes skills add https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin --all -y
 ```
 
-The packaged skills include the runtime resources needed to use EverResearch's local tools. Hosts that execute these tools need Python 3.11, 3.12, or 3.13; the plugin prepares an isolated Python environment on first use.
+Hosts that execute the tools need Python 3.11, 3.12, or 3.13. On first use, skills installed from GitHub download and verify EverResearch's pinned Python package, then cache it. Downloadable plugin ZIPs include the runtime.
 
 ### Install from the terminal
 
@@ -85,10 +85,10 @@ uv tool install ever-research
 ```
 
 EverResearch 0.2.1 adds Python 3.13 support. You can also install the
-[same build from GitHub](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.2-py3-none-any.whl):
+[same build from GitHub](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.3-py3-none-any.whl):
 
 ```bash
-uv tool install --python 3.13 https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.2-py3-none-any.whl
+uv tool install --python 3.13 https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.3-py3-none-any.whl
 ```
 
 From a source checkout, install with `python -m pip install .` and run
@@ -97,7 +97,7 @@ From a source checkout, install with `python -m pip install .` and run
 Or install the CLI and project-local skills together using the [npm installer](plugins/installer/). It detects installed agent commands automatically:
 
 ```bash
-npm exec --yes --package=https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-0.2.2.tgz -- ever-research
+npm exec --yes --package=https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-0.2.3.tgz -- ever-research
 ```
 
 ### Start with your own research project
@@ -199,7 +199,7 @@ EverResearch has applied its project organization approach to nine scientific pr
 | [SAM2](https://github.com/facebookresearch/sam2) | Image and video segmentation |
 | [VGGT](https://github.com/facebookresearch/vggt) | 3D visual geometry |
 
-The CUB-200 template is included as a runnable example. Download the [BirdStudy example](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.2-example.zip) or explore the [research project templates](src/harness/projects/templates/).
+The CUB-200 template is included as a runnable example. Download the [BirdStudy example](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.3-example.zip) or explore the [research project templates](src/harness/projects/templates/).
 
 These projects illustrate the application of a common organizational approach to different research tasks. The original projects belong to their respective authors.
 

@@ -114,7 +114,10 @@ Use [maintain-project](../../../.agents/skills/maintain-project/SKILL.md) to ins
 
 A project needs real directories named `base/`, `datasets/`, `models/`, `tasks/`, and `conf/` at its root. Run `rh projects project check <project-root>` for the complete structure check, which includes the layout rules. Run `rh projects layout check <project-root>` to check path placement and names on their own.
 
-Each finding gives the path, a rule identifier, and an explanation in `expected`. For example, `Missing required directory: base/` tells you that the checker could not find the required top-level directory. A successful check exits with status `0`. The checks are implemented in [layout.py](../core/layout.py) and [project.py](../core/project.py).
+Each finding gives the path, a rule identifier, and an explanation in `expected`.
+The JSON report distinguishes required fixes in `violations` from advisory findings
+in `directory_reviews`. Advisory findings can guide cleanup when onboarding an
+existing project. The check's exit status reflects required fixes. For example, `Missing required directory: base/` tells you that the checker could not find the required top-level directory. A successful check exits with status `0`. The checks are implemented in [layout.py](../core/layout.py) and [project.py](../core/project.py).
 
 | Location | When required | What belongs there |
 | --- | --- | --- |

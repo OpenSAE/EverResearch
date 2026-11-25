@@ -24,6 +24,14 @@ installer, DeepSeek npm bundle, separate host ZIPs, a GitHub marketplace archive
 the BirdStudy example, checksums and an inventory. Each host receives its own
 installation guide. Verify the pack's files against `SHA256SUMS`.
 
+The GitHub marketplace tree contains the host manifests and skill files. Runtime
+launchers share one wheel from `plugins/installer/`, pinned by filename and
+SHA-256. Platform ZIPs include a local wheel for environments that restrict
+GitHub downloads. The Claude ZIP also includes local runtime copies for skills
+that may run in separate sandboxes. The verifier checks skill consistency across
+hosts, confirms that the marketplace tree has no embedded wheels, and tests
+download integrity and reuse of the local cache.
+
 ## Verify a project
 
 Extract the example ZIP. Ask an agent to check the BirdStudy directory, or run

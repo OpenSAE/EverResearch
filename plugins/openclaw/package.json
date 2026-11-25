@@ -1,6 +1,6 @@
 {
   "name": "ever-research",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Maintain and verify research projects with EverResearch.",
   "type": "module",
   "openclaw": {
