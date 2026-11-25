@@ -1,0 +1,5 @@
+# Purpose: keep concrete exam papers and review material local.
+# Scope: this skill's exam directory. Track the shared rules.
+*
+!.gitignore
+!exam_rule.md

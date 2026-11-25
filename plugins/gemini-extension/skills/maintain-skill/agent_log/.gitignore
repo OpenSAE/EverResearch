@@ -1,0 +1,4 @@
+# Purpose: keep local conversation logs out of version control.
+# Scope: this skill's recorded conversations.
+*
+!.gitignore

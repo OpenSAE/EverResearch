@@ -1,0 +1,92 @@
+[
+  {
+    "id": "extract-structure",
+    "name": "extract-structure",
+    "description": "ExtractStructure has two modes: read Markdown, TeX, or PDF in depth and visualize an article's overall structure, or summarize an engineering project's structure and explore its files and subfolders. Use the selected object and scope; offer the two modes and visible entry points when the user is choosing. Instructions, drawing programs, and results reside inside this skill.",
+    "path": "./skills/extract-structure/SKILL.md"
+  },
+  {
+    "id": "maintain-base",
+    "name": "maintain-base",
+    "description": "Maintains the base coordination layer of the scientific project. This is used to connect commands, configurations, data sets, models and tasks, adjust component selection, task distribution, shared operating environment, inspection points or reading and writing results.",
+    "path": "./skills/maintain-base/SKILL.md"
+  },
+  {
+    "id": "maintain-code",
+    "name": "maintain-code",
+    "description": "Review and maintain the selected code and its upstream/downstream, determine whether the core functionality meets the target from the real-use scene, position, repair and rescale as mandated, and confirm that the official access points will be able to recreate the results and clean up the temporary documents..",
+    "path": "./skills/maintain-code/SKILL.md"
+  },
+  {
+    "id": "maintain-conf",
+    "name": "maintain-conf",
+    "description": "Add, remove or modify the open configuration parameters of the scientific project, deal with parameters meaning, default values, fixed regression behaviour, the order of coverage and the old formulation, and verify the effects of the parameters from actual consumers.",
+    "path": "./skills/maintain-conf/SKILL.md"
+  },
+  {
+    "id": "maintain-dataset",
+    "name": "maintain-dataset",
+    "description": "Add, modify or remove data sets, configuration presets and data options for scientific projects, and read and process actual dependency along sample preparation, registration and tasks.",
+    "path": "./skills/maintain-dataset/SKILL.md"
+  },
+  {
+    "id": "maintain-experiment",
+    "name": "maintain-experiment",
+    "description": "Use of existing parameters, operation, monitoring, recovery and debugging experiments for scientific projects to read valid configurations and results and to maintain laboratory reports based on actual evidence.",
+    "path": "./skills/maintain-experiment/SKILL.md"
+  },
+  {
+    "id": "maintain-github",
+    "name": "maintain-github",
+    "description": "将用户选定的项目、目录或文件复制到本技能内，查看实际变化后发布到 GitHub；也可明确本地路径与范围，对照 GitHub 项目和本地技能，说明差异并请用户决定是否对齐。原目录始终只读；说明、程序和所有本地准备文件均在本技能内。",
+    "path": "./skills/maintain-github/SKILL.md"
+  },
+  {
+    "id": "maintain-huggingface",
+    "name": "maintain-huggingface",
+    "description": "访问和维护 Hugging Face 账号、Spaces 与数据集仓库。用于查看登录身份和仓库、上传或更新数据集与 Space 文件、维护说明、查看运行状态、重启或暂停 Space，以及配置环境变量和密钥。",
+    "path": "./skills/maintain-huggingface/SKILL.md"
+  },
+  {
+    "id": "maintain-knowledge",
+    "name": "maintain-knowledge",
+    "description": "It helps people to document their precious knowledge and thoughts., AI Collapse and display the complete contents, save them immediately after approval or no objection has been made note/;Support for reading existing knowledge and updating follow-up comments.",
+    "path": "./skills/maintain-knowledge/SKILL.md"
+  },
+  {
+    "id": "maintain-model",
+    "name": "maintain-model",
+    "description": "Add, modify or remove models, serial variants, configurations and weights of scientific projects, reading and processing actual dependence along specification statements, configurations, mission compatibility and inspection points.",
+    "path": "./skills/maintain-model/SKILL.md"
+  },
+  {
+    "id": "maintain-optional",
+    "name": "maintain-optional",
+    "description": "Maintenance of independent scripts, tests, project files, valuable resources and imported external documents for research projects, including projects doc Navigation, components, parameters, experiments and environmental description, and access to official access for long-term use.",
+    "path": "./skills/maintain-optional/SKILL.md"
+  },
+  {
+    "id": "maintain-project",
+    "name": "maintain-project",
+    "description": "Connect a scientific project to ResearchHarness, coordinate maintenance across component owners, and verify the project through its public entry points.",
+    "path": "./skills/maintain-project/SKILL.md"
+  },
+  {
+    "id": "maintain-skill",
+    "name": "maintain-skill",
+    "description": "Record project conversations, analyze file placement and naming from recorded work, and improve or independently evaluate the skills responsible.",
+    "path": "./skills/maintain-skill/SKILL.md"
+  },
+  {
+    "id": "maintain-task",
+    "name": "maintain-task",
+    "description": "Add, modify or remove research tasks, models and results interfaces, with actual dependency on official distribution, data model combinations, precheck, task computing and product reading and processing.",
+    "path": "./skills/maintain-task/SKILL.md"
+  },
+  {
+    "id": "maintain-tmp",
+    "name": "maintain-tmp",
+    "description": "One-time scripts and temporary documents to organize and close a scientific project. tmp Work catalogues, clearing of temporary content or access to official directories for continuous use.",
+    "path": "./skills/maintain-tmp/SKILL.md"
+  }
+]

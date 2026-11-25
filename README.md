@@ -63,7 +63,7 @@ As your project evolves, shared maintenance workflows help keep its structure, c
 
 ## Get Started
 
-The [plugin directory](https://github.com/OpenSAE/ResearchHarness/tree/plugins) contains the current host plugins and installers.
+The [plugin directory](plugins/) contains the current host plugins and installers.
 
 Install the release wheel, check a project, and connect the skills to your agent:
 

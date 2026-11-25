@@ -1,0 +1,16 @@
+{
+  "name": "researchharness",
+  "plugins": [
+    {
+      "name": "researchharness",
+      "source": {
+        "source": "local",
+        "path": "./codex-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
+    }
+  ]
+}

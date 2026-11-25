@@ -1,0 +1,3 @@
+- insert:
+  - id: researchharness-skills
+    name: '@opensae/researchharness-dsh'

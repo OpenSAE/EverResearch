@@ -1,0 +1,13 @@
+{
+  "name": "researchharness",
+  "version": "0.2.0",
+  "description": "Maintain and verify research projects using shared ResearchHarness skills and rh.",
+  "id": "researchharness",
+  "skills": [
+    "./skills"
+  ],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false
+  }
+}
