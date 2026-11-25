@@ -34,19 +34,60 @@ def redirect(monkeypatch, root, membership="/job"):
     monkeypatch.setattr(Path, "read_text", read)
 
 
-def test_live_observation_and_identity(tmp_path):
+def test_live_identity_and_affinity():
     result = limits.observe()
-    assert result["cpu_affinity_count"] == len(limits.os.sched_getaffinity(0))
-    assert result["identity"]["uid"] == limits.os.geteuid()
-    assert result["identity"]["gid"] == limits.os.getegid()
+    if hasattr(limits.os, "sched_getaffinity"):
+        assert result["cpu_affinity_count"] == len(limits.os.sched_getaffinity(0))
+    assert result["identity"]["uid"] == getattr(limits.os, "geteuid", lambda: None)()
+    assert result["identity"]["gid"] == getattr(limits.os, "getegid", lambda: None)()
     assert result["identity"]["sandbox_acceptance"] == "not tested"
-    raw = {name: Path("/sys/fs/cgroup", name).read_text().strip()
-           for name in ("cpu.max", "memory.max", "memory.current")}
-    cpu = raw["cpu.max"].split()
-    assert result["cpu_quota_cores"] == int(cpu[0]) / int(cpu[1])
-    assert result["memory_limit_bytes"] == int(raw["memory.max"])
-    save(tmp_path, "live_observation.json", {"membership": Path("/proc/self/cgroup").read_text(),
-                                  "raw": raw, "observed": result})
+
+
+def test_live_cgroup_v2_observation(tmp_path):
+    current, boundary, error = limits._locate()
+    if error:
+        pytest.skip(error)
+
+    def available(directory, name):
+        try:
+            return (directory / name).read_text().strip()
+        except OSError:
+            return None
+
+    visible_groups = (current, *(p for p in current.parents if p.is_relative_to(boundary)))
+    cpu = [value.split() for group in visible_groups if (value := available(group, "cpu.max"))]
+    memory = [value for group in visible_groups if (value := available(group, "memory.max"))]
+    if not cpu and not memory:
+        pytest.skip("No visible cgroup v2 CPU or memory limits")
+
+    result = limits.observe()
+    quotas = [int(quota) / int(period) for quota, period in cpu if quota != "max"]
+    memory_limits = [int(value) for value in memory if value != "max"]
+    if cpu:
+        assert result["cpu_quota_cores"] == min(quotas, default=None)
+    if memory:
+        assert result["memory_limit_bytes"] == min(memory_limits, default=None)
+    save(tmp_path, "live_observation.json", {
+        "membership": Path("/proc/self/cgroup").read_text(),
+        "cpu_limits": cpu, "memory_limits": memory, "observed": result,
+    })
+
+
+def test_cgroup_v1_keeps_identity_and_reports_unknown_limits(monkeypatch):
+    def read(path):
+        if path == Path("/proc/self/cgroup"):
+            return "2:cpu,cpuacct:/job\n3:memory:/job", None
+        if path == Path("/proc/self/status"):
+            return "NoNewPrivs: 0", None
+        raise AssertionError(f"Unexpected cgroup read: {path}")
+
+    monkeypatch.setattr(limits, "_read", read)
+    monkeypatch.setattr(limits.sys, "platform", "linux")
+    result = limits.observe()
+    assert result["errors"]["cgroup"] == "cgroup v2 membership unavailable"
+    assert result["cpu_quota_status"] == result["memory_limit_status"] == "unknown"
+    assert result["cpu_quota_cores"] is result["memory_limit_bytes"] is None
+    assert result["identity"]["uid"] == getattr(limits.os, "geteuid", lambda: None)()
 
 
 @pytest.mark.parametrize("cpu,memory,expected_cpu,expected_memory,status", [
