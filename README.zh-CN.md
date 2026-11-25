@@ -2,7 +2,9 @@
 
 # EverResearch
 
-EverResearch 让你的 AI 代理理解和维护科研项目。它能自动整理代码，使其易于复用，并随项目进展持续维护。你可以把更多精力用来探索科研想法。
+EverResearch 让你的 AI 代理理解和维护科研项目。它能自动整理代码，使其易于复用，并持续维护。你可以把更多精力用来探索科研想法。
+
+![EverResearch 将科研项目整理为可复用的组件](src/assets/pictures/banner.png)
 
 <a id="install"></a>
 

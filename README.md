@@ -13,7 +13,9 @@
 
 </div>
 
-EverResearch gives your AI agent the tools to understand and maintain a research project. It automatically organizes your code for reuse and keeps it organized as the project evolves, so you can spend more time exploring research ideas.
+EverResearch gives your AI agent the tools to understand and maintain a research project. It automatically organizes your code for reuse and keeps it organized, so you can spend more time exploring research ideas.
+
+![EverResearch organizes a research project into reusable components](src/assets/pictures/banner.png)
 
 <a id="install"></a>
 
