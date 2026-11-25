@@ -26,3 +26,16 @@ jobs:
       - run: rh utils quick-demo .smoke-demo
       - run: rh projects project check .smoke-demo/MixedStudy
       - run: rh projects project check --json .smoke-demo/SignalStudy
+      - name: Install the native Codex plugin
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          npx --yes --package @openai/codex@0.171.0 codex plugin marketplace add OpenSAE/EverResearch
+          npx --yes --package @openai/codex@0.171.0 codex plugin add ever-research@ever-research
+      - name: Install and run the portable skills for Cursor
+        if: runner.os == 'Linux'
+        shell: bash
+        working-directory: .smoke-demo/MixedStudy
+        run: |
+          npx --yes skills@1.9.0 add https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin --agent cursor --all -y
+          python -I .agents/skills/maintain-project/scripts/rh.py doctor --json
