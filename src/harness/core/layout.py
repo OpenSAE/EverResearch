@@ -224,6 +224,21 @@ def saebase_package(declaration):
     return isinstance(project, dict) and project.get("name") == "opensae-saebase"
 
 
+def project_name_suggestions(root, *, remember=None):
+    """Suggest a project root name without making it a condition of acceptance."""
+    if project_name_valid(root.name):
+        return []
+    if root.name == "SAEBase":
+        declaration = root / "pyproject.toml"
+        if (remember(declaration, saebase_package) if remember else saebase_package(declaration)):
+            return []
+    return [{
+        "path": ".",
+        "rule": "project_name",
+        "expected": "For a new project, consider two or three PascalCase words, including a complete English word, such as ContrastiveProbe.",
+    }]
+
+
 def check_layout(root, *, remember=None):
     """Return concrete path failures for an absolute or relative project root."""
     root = Path(root).resolve(strict=True)
@@ -238,15 +253,6 @@ def check_layout(root, *, remember=None):
 
     def fail(path, rule, expected):
         violations.append({"path": path, "rule": rule, "expected": expected})
-
-    if not project_name_valid(root.name):
-        allowed = False
-        if root.name == "SAEBase":
-            declaration = root / "pyproject.toml"
-            allowed = (remember(declaration, saebase_package) if remember
-                       else saebase_package(declaration))
-        if not allowed:
-            fail(".", "project_name", "Use two or three PascalCase words for the project root name, including at least one complete English word.")
 
     def visit(directory, parent=""):
         nonlocal inspected
@@ -308,4 +314,5 @@ def check_layout(root, *, remember=None):
 
     visit(root)
     violations.sort(key=lambda item: (item["path"], item["rule"]))
-    return {"project": str(root), "passed": not violations, "checked": inspected, "violations": violations}
+    return {"project": str(root), "passed": not violations, "checked": inspected,
+            "violations": violations, "suggestions": project_name_suggestions(root, remember=remember)}

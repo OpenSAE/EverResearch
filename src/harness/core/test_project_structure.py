@@ -57,6 +57,9 @@ def test_reference_component_split_passes_project_check(tmp_path, capsys):
     assert result["components"] == {
         "dataset": ["cub200"], "model": ["convolution", "residual"], "task": ["classification"],
     }
+    root = root.rename(root.with_name("bird-study"))
+    assert main(["projects", "project", "check", str(root), "--strict"]) == 0
+    assert "Optional: For a new project" in capsys.readouterr().out
 
 
 def test_project_check_accepts_structured_project(tmp_path, capsys):
@@ -149,7 +152,7 @@ def test_experiment_paths_use_catalogs_from_supported_configuration_formats(tmp_
 
 
 def test_unconfigured_project_defaults_to_a_read_only_onboarding_report(tmp_path, capsys):
-    root = tmp_path / "MixedResearch"
+    root = tmp_path / "mixed-research"
     for name in ("train.py", "eval.py", "train_v2_final.py", "configs/first.yaml",
                  "configs/second.toml", "outputs/run_0412/metrics.json",
                  "data/input.csv", "notebooks/analysis.ipynb"):
@@ -165,22 +168,26 @@ def test_unconfigured_project_defaults_to_a_read_only_onboarding_report(tmp_path
     for text in ("What I found", "Entry point: train.py", "Entry point: eval.py",
                  "configs/ (2:", "outputs/run_0412", "Possible variant of train.py",
                  "Paste into your agent", "Ask before editing any files",
-                 "checkpoints/ (empty)", "src/model.py (classes: Probe)", "utils/data.py"):
+                 "checkpoints/ (empty)", "src/model.py (classes: Probe)", "utils/data.py",
+                 "Optional: For a new project"):
         assert text in summary
 
     assert main([*command, "--onboarding", "--json"]) == 0
     report = json.loads(capsys.readouterr().out)
     assert report["mode"] == "onboarding"
+    assert [item["rule"] for item in report["suggestions"]] == ["project_name"]
     assert {item["path"] for item in report["entry_points"]} == {
         "train.py", "eval.py", "train_v2_final.py",
     }
     assert {item["path"] for item in report["code_candidates"]} == {"src/model.py", "utils/data.py"}
     assert main([*command, "--json"]) == 1
-    assert json.loads(capsys.readouterr().out)["passed"] is False
+    strict = json.loads(capsys.readouterr().out)
+    assert strict["passed"] is False
+    assert all(item["rule"] != "project_name" for item in strict["violations"])
     assert {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()} == before
 
     write(root, ".researchharness/mode.toml", "enabled = false\n")
     assert main(command) == 0
-    assert "Maintenance is set up. Remaining structure fixes:" in capsys.readouterr().out
+    assert f"Remaining structure fixes: {len(strict['violations'])}." in capsys.readouterr().out
     assert main([*command, "--strict"]) == 1
     assert "Project check found" in capsys.readouterr().out

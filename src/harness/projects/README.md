@@ -62,6 +62,11 @@ rh projects --harness-root ./ResearchHarness status example
 
 `rh projects setup-maintenance <project-root>` installs a mode setting, a status and check command, and an offline guide. It also updates the managed section of the project's `AGENTS.md` and clears known legacy ResearchHarness links and generated guides. Project-owned skills stay in the project. A standalone project starts in offline mode. An existing project uses its current mode file or last applicable connection setting. To set up a new online connection, register the project first and then use `--online`.
 
+Before the first setup writes project files, it saves the originals affected by setup in
+`.researchharness/backups/initial-setup.tar.gz`. A retry reuses that archive. To recover, extract it
+into a separate directory and review `files/` for the originals and `manifest.json` for recorded links
+and paths created by setup before restoring anything.
+
 The `enabled` value in `.researchharness/mode.toml` selects the maintenance source:
 
 - With `enabled = true`, run `python -IS .researchharness/maintain.py status` to locate the online guide in the ResearchHarness workspace. It links to the central operations guide and original shared skills. The project's `.researchharness/online/` holds local connection records. Use `rh projects apply <project-id>` to refresh the guide after configuring or restoring a connection. An unavailable online connection returns an error so the user can restore it or choose to work offline.
@@ -144,7 +149,7 @@ existing project. The check's exit status reflects required fixes. For example, 
 
 Keep navigation, installation, and entry-point files at the root. Place implementation files, settings, documentation, and run outputs in the directories responsible for them. Add subdirectories when files serve distinct purposes.
 
-Name the project root with two or three PascalCase words, such as `ContextMemory`. At least one must be a complete English word. Use descriptive words separated by underscores for project-defined paths. Recognized dataset and model names may include version numbers. Public interfaces, upstream files, and run metadata follow the conventions for their respective locations.
+For a new project, consider two or three PascalCase words, such as `ContextMemory`, with at least one complete English word. The project root name is a suggestion and has no effect on acceptance. Rename an existing project root only when the user requests it. Use descriptive words separated by underscores for project-defined paths. Recognized dataset and model names may include version numbers. Public interfaces, upstream files, and run metadata follow the conventions for their respective locations.
 
 The layout check inspects visible project paths. Outside `experiment/`, it skips hidden entries and Python bytecode caches. It uses component directories and the `catalogs` mapping in the main configuration to recognize experiment paths. It also checks that configuration branches correspond to the source directories that own them. Verify the project's actual behavior through its documented entry points.
 

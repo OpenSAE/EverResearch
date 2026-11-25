@@ -9,6 +9,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tarfile
 
 import pytest
 
@@ -230,7 +231,7 @@ def test_project_mode_reads_central_originals_only_online(command, workspace):
 
 
 def test_standalone_setup_preserves_project_instructions(command, workspace):
-    _, project, _ = workspace
+    _, project, central_skill = workspace
     agents = project / "AGENTS.md"
     original = "# Project instructions\n\nLocal working rules.\n"
     agents.write_text(original)
@@ -238,7 +239,24 @@ def test_standalone_setup_preserves_project_instructions(command, workspace):
         "path": str(project), "state": "unmanaged", "mode": None, "guide": None,
     }
     assert list(project.iterdir()) == [agents]
-    assert command("setup-maintenance", str(project))["mode"] == "offline"
+    ignore = project / ".gitignore"
+    ignore.write_text("# Existing ignore rules\n")
+    legacy = project / ".agents/skills/example"
+    legacy.parent.mkdir(parents=True)
+    legacy.symlink_to(central_skill, target_is_directory=True)
+    setup = command("setup-maintenance", str(project))
+    assert setup["mode"] == "offline"
+    archive = project / ".researchharness/backups/initial-setup.tar.gz"
+    assert Path(setup["backup"]) == archive
+    original_backup = archive.read_bytes()
+    with tarfile.open(archive) as bundle:
+        assert bundle.extractfile("files/AGENTS.md").read().decode() == original
+        assert bundle.extractfile("files/.gitignore").read() == b"# Existing ignore rules\n"
+        manifest = json.load(bundle.extractfile("manifest.json"))
+        assert manifest["links"] == {".agents/skills/example": str(central_skill)}
+        assert ".researchharness/mode.toml" in manifest["created_paths"]
+    assert "/.researchharness/backups/" in ignore.read_text().splitlines()
+    assert not legacy.is_symlink()
     generated = agents.read_text()
     launcher = project / ".researchharness/maintain.py"
     launcher.write_text("raise AssertionError('status must not run project code')\n")
@@ -248,10 +266,36 @@ def test_standalone_setup_preserves_project_instructions(command, workspace):
     assert report["guide"] == str(launcher.parent / "offline/operations.md")
     assert generated.startswith(original)
     assert generated.count(SEARCH_PARAGRAPH) == 1
-    command("setup-maintenance", str(project))
+    assert command("setup-maintenance", str(project))["backup"] is None
+    assert archive.read_bytes() == original_backup
     assert agents.read_text() == generated
     (launcher.parent / "offline/operations.md").unlink()
     assert command("project", "status", str(project))["state"] == "unavailable"
+
+
+def test_retried_setup_keeps_the_original_backup(command, workspace, monkeypatch):
+    from harness.projects import manage
+
+    _, project, _ = workspace
+    agents = project / "AGENTS.md"
+    agents.write_bytes(b"# Original\n")
+    save_bytes = manage.save_bytes
+
+    def interrupt(path, *args, **kwargs):
+        if path == agents:
+            raise OSError("Interrupted setup")
+        return save_bytes(path, *args, **kwargs)
+
+    with monkeypatch.context() as patch:
+        patch.setattr(manage, "save_bytes", interrupt)
+        assert "Interrupted setup" in command("setup-maintenance", str(project), expected=1)
+    archive = project / ".researchharness/backups/initial-setup.tar.gz"
+    before_retry = archive.read_bytes()
+    assert not (project / ".researchharness/mode.toml").exists()
+    agents.write_bytes(b"# Edited before retry\n")
+    assert Path(command("setup-maintenance", str(project))["backup"]) == archive
+    assert archive.read_bytes() == before_retry
+    assert agents.read_bytes().startswith(b"# Edited before retry\n")
 
 
 def test_run_uses_bound_python_data_and_project(command, workspace, tmp_path):

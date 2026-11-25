@@ -37,6 +37,8 @@ Use for project connection, first inspection, whole-project maintenance, or work
 3. Trace an actual invocation from configuration through the selected data, model, task, and result reader. Assign each affected part to its owner. Use the [coordination guide](references/coordination.md) for connection, mode handling, responsibility routing, and cross-component evidence.
 4. Verify the changes through the affected project commands. Share which components you covered, the actual paths changed, and what the checks showed. Preserve existing user work, supported commands and imports, and historical result access.
 
+Rename an existing project root only when the user requests a rename.
+
 <a id="shared-project-guidelines"></a>
 
 ## Shared project guidelines

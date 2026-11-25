@@ -147,6 +147,7 @@ def check(harness, path, *, fresh=False, limit=20, record=None):
         "project_check": {
             "passed": report["passed"], "reused": reused, "checked_at": checked_at,
             "checked": report["checked"], "violations": summary(report["violations"]),
+            "suggestions": summary(report["suggestions"]),
             "components": {key: summary(items) for key, items in report["components"].items()},
             "directory_reviews": summary(report["directory_reviews"]),
         },

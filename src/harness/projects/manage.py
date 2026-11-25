@@ -26,6 +26,7 @@ from harness.core.project import check_project
 from . import onboarding
 from harness.core.workspace import save, save_bytes, update_lock
 from . import maintenance, resources, structure
+from .setup_backup import BACKUP_IGNORE, save_initial_backup
 from .standalone.maintain import online_guide as check_online_guide, require_file
 
 START = "<!-- researchharness:projects -->"
@@ -277,44 +278,54 @@ def with_search_guidance(text):
     return text.rstrip() + separator + block + "\n"
 
 
-def remove_legacy_skill_files(harness, root, installed):
-    """Remove central-generated aliases and guides, preserving project-owned content."""
+def legacy_skill_changes(harness, root, installed):
+    """Plan changes to central-generated aliases and guides."""
     known = catalogue(harness)
     previous = {name: harness.root / target for name, target in installed.get("links", {}).items()}
+    changes = {}
+    cleanup = set()
     for relative in (".agents/skills", ".agents/researchharness-skills",
                      ".researchharness/online/skills"):
         directory = root / relative
         if (directory.is_symlink() or not directory.resolve().is_relative_to(root)
                 or not directory.is_dir()):
             continue
-        removed = False
         for name in known.keys() | previous.keys():
             link = directory / name
             if link.is_symlink() and link.resolve() in {known.get(name), previous.get(name)}:
-                link.unlink()
-                removed = True
+                changes[link] = None
+                cleanup.add(directory)
         entry = directory / "researchharness/SKILL.md"
-        if remove_legacy_skill_guide(root, entry):
-            removed = True
-            if not any(entry.parent.iterdir()):
-                entry.parent.rmdir()
-        if removed and not any(directory.iterdir()):
-            directory.rmdir()
+        if is_legacy_skill_guide(root, entry):
+            changes[entry] = None
+            cleanup.update((entry.parent, directory))
 
-    remove_legacy_skill_guide(root, root / ".researchharness/legacy/connection_guide.md")
+    entry = root / ".researchharness/legacy/connection_guide.md"
+    if is_legacy_skill_guide(root, entry):
+        changes[entry] = None
     guide = root / ".researchharness/online/README.md"
     if (guide.is_file() and not guide.is_symlink() and not guide.parent.is_symlink()
             and guide.resolve().is_relative_to(root)):
         original = guide.read_text(encoding="utf-8")
         if START in original:
             remaining = agent_text(original, "")
-            if remaining.strip():
-                save_bytes(guide, remaining.encode(), source=__file__)
-            else:
-                guide.unlink()
+            changes[guide] = remaining.encode() if remaining.strip() else None
+    return changes, cleanup
 
 
-def remove_legacy_skill_guide(root, path):
+def remove_legacy_skill_files(harness, root, installed, *, plan=None):
+    changes, cleanup = plan if plan is not None else legacy_skill_changes(harness, root, installed)
+    for path, content in changes.items():
+        if content is None:
+            path.unlink()
+        else:
+            save_bytes(path, content, source=__file__)
+    for directory in sorted(cleanup, key=lambda path: len(path.parts), reverse=True):
+        if not any(directory.iterdir()):
+            directory.rmdir()
+
+
+def is_legacy_skill_guide(root, path):
     if (path.is_symlink() or path.parent.is_symlink() or not path.is_file()
             or not path.resolve().is_relative_to(root)):
         return False
@@ -322,10 +333,7 @@ def remove_legacy_skill_guide(root, path):
     template = Path(__file__).with_name("researchharness.skill.md.in").read_bytes()
     # Recognize the previous distributed guide as well as the last template.
     older_guide = "e0adfe5c565832c410fc914bd4518d8878c594b82810f598d2a67751d57cdcb8"
-    if content == template or sha256(content).hexdigest() == older_guide:
-        path.unlink()
-        return True
-    return False
+    return content == template or sha256(content).hexdigest() == older_guide
 
 
 def setup_maintenance(harness, source, *, online=False):
@@ -388,8 +396,6 @@ def setup_maintenance(harness, source, *, online=False):
                 preserved.append(name)
                 continue
         created[path] = (bundle / name).read_bytes()
-    for path, content in created.items():
-        save_bytes(path, content, source=__file__)
     ignore_text = ignore.read_text(encoding="utf-8") if ignore.exists() else ""
     comment = "# EverResearch stores machine-specific connection records here."
     if ONLINE_IGNORE not in ignore_text.splitlines():
@@ -400,8 +406,20 @@ def setup_maintenance(harness, source, *, online=False):
             f"# Connection records maintained online on-line.\n{ONLINE_IGNORE}",
             f"{comment}\n{ONLINE_IGNORE}",
         )
+    backup = None
+    legacy_plan = None
+    if current_mode is None:
+        legacy_plan = legacy_skill_changes(harness, root, installed)
+        paths = {*created, *legacy_plan[0], agent, ignore, directory / "mode.toml"}
+        if selected and project_id:
+            paths.add(directory / "online/connection.json")
+        backup = save_initial_backup(root, paths)
+        if BACKUP_IGNORE not in updated_ignore.splitlines():
+            updated_ignore = updated_ignore.rstrip() + f"\n{BACKUP_IGNORE}\n"
     if updated_ignore != ignore_text:
         save_bytes(ignore, updated_ignore.encode(), source=__file__)
+    for path, content in created.items():
+        save_bytes(path, content, source=__file__)
     if not agent.exists() or text != agent.read_text(encoding="utf-8"):
         save_bytes(agent, text.encode(), source=__file__)
     if current_mode is None:
@@ -414,9 +432,9 @@ def setup_maintenance(harness, source, *, online=False):
         apply(harness, project_id)
         attached = True
     else:
-        remove_legacy_skill_files(harness, root, installed)
+        remove_legacy_skill_files(harness, root, installed, plan=legacy_plan)
     return {"project": str(root), "mode": "online" if selected else "offline",
-            "attached": attached, "preserved": preserved}
+            "attached": attached, "preserved": preserved, "backup": str(backup) if backup else None}
 
 
 def status(harness, project_id):

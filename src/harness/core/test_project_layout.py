@@ -73,11 +73,12 @@ def test_layout_preserves_original_paths_inside_historical_runs(capsys, tmp_path
     }
 
 
-def test_template_checkout_requires_project_name(capsys, monkeypatch, tmp_path):
+def test_template_checkout_suggests_a_project_name(capsys, monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
-    report = check(TEMPLATE, capsys, 1)
+    report = check(TEMPLATE, capsys, 0)
     assert report["checked"] > 70
-    assert {item["rule"] for item in report["violations"]} == {"project_name"}
+    assert report["violations"] == []
+    assert {item["rule"] for item in report["suggestions"]} == {"project_name"}
 
 
 def test_layout_rejects_and_recovers_at_each_level(capsys, tmp_path):
@@ -149,17 +150,17 @@ def test_layout_uses_base_for_declared_packages(capsys, tmp_path):
     assert {v["path"] for v in check(root, capsys, 1)["violations"]} == {"src", "notes_tool"}
 
 
-def test_layout_enforces_project_and_child_names(capsys, tmp_path):
+def test_layout_suggests_project_names_and_enforces_child_names(capsys, tmp_path):
     root = tmp_path / "CS769"
     for relative in ("tasks/ranking/ordering", "datasets/sample200", "models/classifier2"):
         (root / relative).mkdir(parents=True)
-    assert {v["rule"] for v in check(root, capsys, 1)["violations"]} == {"project_name"}
+    assert {v["rule"] for v in check(root, capsys, 0)["suggestions"]} == {"project_name"}
     for name in ("Context", "ContextMemoryOutputReport", "NLPGraph", "contextMemory"):
         root = root.rename(root.with_name(name))
-        assert {v["rule"] for v in check(root, capsys, 1)["violations"]} == {"project_name"}
+        assert {v["rule"] for v in check(root, capsys, 0)["suggestions"]} == {"project_name"}
 
     root = root.rename(root.with_name("ContextMemory"))
-    check(root, capsys, 0)
+    assert check(root, capsys, 0)["suggestions"] == []
 
     named_root = root.with_name("ContextMemoryProject")
     root.rename(named_root)

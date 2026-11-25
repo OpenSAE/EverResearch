@@ -9,6 +9,8 @@ from itertools import islice
 from pathlib import Path
 import re
 
+from harness.core.layout import project_name_suggestions
+
 
 ENTRY_STEMS = {"train", "eval", "evaluate", "predict", "infer", "inference", "main", "run"}
 ENTRY_SUFFIXES = {".py", ".sh", ".R", ".r", ".jl"}
@@ -125,6 +127,7 @@ def preview(project, *, remaining_fixes=None):
         "locations": locations,
         "code_candidates": list(islice(code_candidates(root), 20)),
         "remaining_fixes": remaining_fixes,
+        "suggestions": project_name_suggestions(root),
         "next_step": (
             "Use EverResearch to plan onboarding this project. Trace its current commands, "
             "configuration, data, and existing outputs. Show the current and proposed paths, "
@@ -161,6 +164,8 @@ def format_preview(report):
         lines.append("  Map the entry points and existing outputs before proposing changes.")
     lines.extend(("", "Paste into your agent", f"  {report['next_step']}",
                   "", "Read-only preview. Review the plan before making changes."))
+    for item in report["suggestions"]:
+        lines.append(f"Optional: {item['expected']}")
     return "\n".join(lines)
 
 
@@ -176,4 +181,6 @@ def format_check(report):
         lines.append("Advisory directory reviews")
         for item in report["directory_reviews"]:
             lines.append(f"  {item['path']}: {item['expected']}")
+    for item in report["suggestions"]:
+        lines.append(f"Optional: {item['expected']}")
     return "\n".join(lines)
