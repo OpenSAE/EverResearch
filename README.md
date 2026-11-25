@@ -2,28 +2,15 @@
 
 # EverResearch
 
-**Less time managing research code. More time doing research.**
-
-An open-source research harness for the AI agents you already use.
-Organize scientific code, understand research projects, and build on reproducible experiments.
-
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/ever-research?label=PyPI)](https://pypi.org/project/ever-research/)
+[![PyPI](https://img.shields.io/pypi/v/ever-research?label=PyPI&logo=python&logoColor=white)](https://pypi.org/project/ever-research/)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-Compatible-blue)](plugins/agent-plugin/)
-
-[Quick Start](#quick-start) · [Features](#features) · [Interactive Examples](#understand-papers-and-code) · [Research Projects](#research-projects) · [中文](README.zh-CN.md)
+[![Skills.sh](https://img.shields.io/badge/Skills.sh-15%20skills-171717?logo=vercel&logoColor=white)](https://skills.sh/opensae/everresearch)
+[![npm installer](https://img.shields.io/badge/npm-Installer-CB3837?logo=npm&logoColor=white)](plugins/installer/)
 
 </div>
 
-**Your agent. Your model. Your machine. Your research.**
-
-## Purpose and main function
-
-EverResearch brings reusable research workflows and executable tools into your existing AI agent.
-
-## Scope of application
-
-It works with your own research code, data, Python environments, and computing resources. No separate research platform or always-on server is required.
+EverResearch gives your AI agent the tools to understand and maintain a research project. It maps how datasets, models, and code fit together, runs project checks, and connects experiments to their configurations and results so you can reproduce past work and build on it. It works with your existing project files, Python environments, and compute.
 
 <a id="install"></a>
 
@@ -35,15 +22,16 @@ EverResearch is available as native plugins and portable Agent Skills for the fo
 
 | Agent | Installation |
 | --- | --- |
-| Codex | [Codex plugin](plugins/codex-plugin/) |
-| Claude Code, Claude Cowork and web | [Claude plugin](plugins/claude-plugin/) |
-| Cursor | [Cursor plugin](plugins/cursor-plugin/) |
-| GitHub Copilot CLI | [Agent Plugin](plugins/agent-plugin/) |
-| Gemini CLI | [Gemini extension](plugins/gemini-extension/) |
-| Qwen Code | [Agent Plugin](plugins/agent-plugin/) |
-| DeepSeek Harness | [DeepSeek plugin](plugins/deepseek/) |
-| OpenCode | [OpenCode plugin](plugins/opencode/) |
-| OpenClaw | [OpenClaw plugin](plugins/openclaw/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/codex-color.svg" alt="" width="18" height="18"> Codex | [Codex plugin](plugins/codex-plugin/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/claude-color.svg" alt="" width="18" height="18"> Claude Code, Claude Cowork and web | [Claude plugin](plugins/claude-plugin/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/cursor.svg" alt="" width="18" height="18"> Cursor | [Cursor plugin](plugins/cursor-plugin/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/githubcopilot.svg" alt="" width="18" height="18"> GitHub Copilot CLI | [Agent Plugin](plugins/agent-plugin/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/gemini-color.svg" alt="" width="18" height="18"> Gemini CLI | [Gemini extension](plugins/gemini-extension/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/qwen-color.svg" alt="" width="18" height="18"> Qwen Code | [Agent Plugin](plugins/agent-plugin/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/deepseek-color.svg" alt="" width="18" height="18"> DeepSeek Harness | [DeepSeek plugin](plugins/deepseek/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/opencode.svg" alt="" width="18" height="18"> OpenCode | [OpenCode plugin](plugins/opencode/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/openclaw-color.svg" alt="" width="18" height="18"> OpenClaw | [OpenClaw plugin](plugins/openclaw/) |
+| <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/vercel.svg" alt="" width="18" height="18"> Skills CLI | [Skills.sh](https://skills.sh/opensae/everresearch) |
 | Other agents | [Portable Skills](plugins/agent-plugin/) · [CLI and installer](plugins/installer/) |
 
 <details>
@@ -160,25 +148,6 @@ Here are a few things you can ask your agent to do:
 - Explain how a research repository works before making changes to it.
 
 The project remains yours. Its scientific code, execution commands, configurations, and experimental results stay within the project. EverResearch provides the shared maintenance workflows and tools.
-
-## Understand Papers and Code
-
-EverResearch includes [ExtractStructure](.agents/skills/extract-structure/README.md), a skill for turning research papers and code repositories into interactive structure maps.
-
-[![Interactive structure map of Attention Is All You Need](.agents/skills/extract-structure/assets/screenshots/attention-paper-structure.png)](https://atheavenma.github.io/ExtractStructure/examples/attention-is-all-you-need-paper-structure.html)
-
-Explore the interactive examples directly in your browser:
-
-| Example | Explore |
-| --- | --- |
-| Attention Is All You Need | [Paper structure map](https://atheavenma.github.io/ExtractStructure/examples/attention-is-all-you-need-paper-structure.html) |
-| GPT | [Code structure map](https://atheavenma.github.io/ExtractStructure/examples/gpt-code-structure.html) |
-
-ExtractStructure helps you navigate research questions, methods, evidence, and relationships within a paper. It also maps code components and explains how files work together. The generated maps can be saved as self-contained HTML pages for offline use or sharing.
-
-Try it on your own work:
-
-> Use ExtractStructure to visualize this paper and explain how its main method, theoretical claims, and experiments fit together.
 
 ## Research Skills
 
