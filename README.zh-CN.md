@@ -4,16 +4,6 @@
 
 EverResearch 让你现有的 AI 代理能维护科研项目。它帮助你弄清数据、模型、配置和代码怎样配合，把每次实验的配置与结果连在一起，并用项目自己的命令复现已有结果。你的代码、数据和计算环境可以继续照常使用。
 
-## 看一遍实际操作
-
-![从只读接入报告到实验复现的终端演示](src/harness/utils/release/assets/quick-demo.gif)
-
-安装后运行 `rh utils quick-demo ./QuickDemo`。命令会生成一个示例仓库，先给出整理计划，再在另一个已整理的示例里跑两次实验。第二次直接用第一次留下的配置，最后对比两次的指标。示例使用合成数据，只需要 Python。
-
-[![论文 Attention Is All You Need 的交互结构图](.agents/skills/extract-structure/assets/screenshots/attention-paper-structure.png)](https://atheavenma.github.io/ExtractStructure/examples/attention-is-all-you-need-paper-structure.html)
-
-打开截图可以浏览[交互论文结构图](https://atheavenma.github.io/ExtractStructure/examples/attention-is-all-you-need-paper-structure.html)，查看模型各部分的关系。结构图也适用于代码仓库。
-
 <a id="install"></a>
 
 ## 快速开始

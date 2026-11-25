@@ -15,16 +15,6 @@
 
 EverResearch gives your AI agent the tools to understand and maintain a research project. It maps how datasets, models, and code fit together, runs project checks, and connects experiments to their configurations and results so you can reproduce past work and build on it. It works with your existing project files, Python environments, and compute.
 
-## See it in action
-
-![Terminal demo showing a read-only onboarding report, the organized project, and two matching experiment results](src/harness/utils/release/assets/quick-demo.gif)
-
-Once installed, run `rh utils quick-demo ./QuickDemo`. The demo creates a sample project, previews its organization, and runs two experiments in a prepared organized copy. It reproduces the first run from its saved configuration and compares the metrics. The sample needs only Python and synthetic data.
-
-EverResearch can also map how a paper or codebase fits together. Open the [interactive paper map](https://atheavenma.github.io/ExtractStructure/examples/attention-is-all-you-need-paper-structure.html) to trace the components and their connections.
-
-[![An interactive structure map of Attention Is All You Need](.agents/skills/extract-structure/assets/screenshots/attention-paper-structure.png)](https://atheavenma.github.io/ExtractStructure/examples/attention-is-all-you-need-paper-structure.html)
-
 <a id="install"></a>
 
 ## Quick Start
