@@ -1,171 +1,245 @@
-[English](README.md) | [中文](README.zh-CN.md)
+<div align="center">
 
 # EverResearch
 
 **Less time managing research code. More time doing research.**
 
-Research projects grow messy. Scripts pile up, configurations drift, datasets move, and experiment results become hard to trace.
+An open-source research harness for the AI agents you already use.
+Organize scientific code, understand research projects, and build on reproducible experiments.
 
-EverResearch helps you and your coding agent keep research projects organized, maintainable, and reproducible.
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/ever-research?label=PyPI)](https://pypi.org/project/ever-research/)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-Compatible-blue)](plugins/agent-plugin/)
+
+[Quick Start](#quick-start) · [Features](#features) · [Interactive Examples](#understand-papers-and-code) · [Research Projects](#research-projects) · [中文](README.zh-CN.md)
+
+</div>
+
+**Your agent. Your model. Your machine. Your research.**
 
 ## Purpose and main function
 
-- **Organize your research.** Keep datasets, models, tasks, configurations, and experiments in a consistent structure.
-- **Maintain projects with AI.** Let your coding agent understand and maintain your project instead of fixing files one by one.
-- **Make experiments traceable.** Keep configurations, execution records, and results connected.
-- **Catch problems early.** Check project structure and experiment records before small inconsistencies become bigger problems.
-- **Reuse what works.** Apply the same research maintenance workflows across different projects.
+EverResearch brings reusable research workflows and executable tools into your existing AI agent.
 
 ## Scope of application
 
-**Start from scratch or bring your existing code.**
+It works with your own research code, data, Python environments, and computing resources. No separate research platform or always-on server is required.
 
-Whether you're building a new research project or cleaning up an existing codebase, EverResearch helps your coding agent organize it into a consistent structure.
+<a id="install"></a>
+
+## Quick Start
+
+### Install in your AI agent
+
+EverResearch is available as native plugins and portable Agent Skills for the following platforms. Choose the agent you already use.
+
+| Agent | Installation |
+| --- | --- |
+| Codex | [Codex plugin](plugins/codex-plugin/) |
+| Claude Code, Claude Cowork and web | [Claude plugin](plugins/claude-plugin/) |
+| Cursor | [Cursor plugin](plugins/cursor-plugin/) |
+| GitHub Copilot CLI | [Agent Plugin](plugins/agent-plugin/) |
+| Gemini CLI | [Gemini extension](plugins/gemini-extension/) |
+| Qwen Code | [Agent Plugin](plugins/agent-plugin/) |
+| DeepSeek Harness | [DeepSeek plugin](plugins/deepseek/) |
+| OpenCode | [OpenCode plugin](plugins/opencode/) |
+| OpenClaw | [OpenClaw plugin](plugins/openclaw/) |
+| Other agents | [Portable Skills](plugins/agent-plugin/) · [CLI and installer](plugins/installer/) |
+
+<details>
+<summary><b>Codex</b></summary>
+
+```bash
+codex plugin marketplace add OpenSAE/EverResearch
+codex plugin add ever-research@ever-research
+```
+
+</details>
+
+<details>
+<summary><b>Claude Code</b></summary>
+
+Run these commands in Claude Code:
 
 ```text
-YourProject/
-├── base/          # Shared code and execution
-├── datasets/      # Data loading and processing
-├── models/        # Model implementations
-├── tasks/         # Training, evaluation, and analysis
-├── conf/          # Experiment configurations
-├── experiment/    # Experiment records and results
-├── scripts/       # Standalone utilities
-├── tests/         # Tests and checks
-└── doc/           # Project documentation
+/plugin marketplace add OpenSAE/EverResearch
+/plugin install ever-research@ever-research
 ```
 
-Each component has a clear responsibility, making it easier for agents to understand, modify, and extend your research without losing track of how everything fits together.
+</details>
 
-**EverResearch keeps code and results reusable, readable, and traceable throughout agent-driven development.**
-
-As your project evolves, shared maintenance workflows help keep its structure, configurations, and experiment records consistent.
-
-## See It in Action
-
-**From scattered research code to an organized, maintainable project.**
-
-**Before EverResearch**
-
-- Scripts and configurations scattered across folders
-- Dataset paths tied to individual machines
-- Experiments difficult to track or revisit
-- Every new project requires another round of cleanup
-
-**With EverResearch**
-
-- Consistent project organization
-- Reusable workflows for your coding agent
-- Local data and environments connected to each project
-- Structured experiment records and checks
-
-*A real project walkthrough will show the workflow from project inspection to organized code and reviewable results.*
-
-## Install
-
-**Use an agent plugin.** Choose your platform and follow its installation
-entry. The plugin includes the `rh` command and prepares its own Python
-environment on first use.
-
-| Platform | Installation and first check |
-| --- | --- |
-| Codex | [Codex](https://github.com/OpenSAE/EverResearch/tree/main/plugins/codex-plugin) |
-| Claude | [Claude Code, Cowork and web](https://github.com/OpenSAE/EverResearch/tree/main/plugins/claude-plugin) |
-| Cursor | [Cursor](https://github.com/OpenSAE/EverResearch/tree/main/plugins/cursor-plugin) |
-| GitHub Copilot CLI, Qwen Code, Skills CLI | [Agent Plugin](https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin) |
-| Gemini CLI | [Gemini extension](https://github.com/OpenSAE/EverResearch/tree/main/plugins/gemini-extension) |
-| OpenCode | [OpenCode](https://github.com/OpenSAE/EverResearch/tree/main/plugins/opencode) |
-| OpenClaw | [OpenClaw](https://github.com/OpenSAE/EverResearch/tree/main/plugins/openclaw) |
-| DeepSeek Harness | [DeepSeek Harness](https://github.com/OpenSAE/EverResearch/tree/main/plugins/deepseek) |
-| Shell and other agents | [Terminal and npm installer](https://github.com/OpenSAE/EverResearch/tree/main/plugins/installer) |
-
-**Use the terminal.** Install OpenSAE’s CLI from [PyPI](https://pypi.org/project/ever-research/).
+<details>
+<summary><b>GitHub Copilot CLI</b></summary>
 
 ```bash
-uv tool install ever-research
-rh doctor --json
-rh projects project check ./MyProject
+copilot plugin marketplace add OpenSAE/EverResearch
+copilot plugin install ever-research@ever-research
 ```
 
-To install the CLI and add project-local skills in one step, run this from your
-project directory:
+</details>
 
-```bash
-npm exec --yes --package=https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-0.2.0.tgz -- ever-research
-```
+### Install with Agent Skills
 
-Choose an agent explicitly with `--agent codex`, or install the complete skill
-set with the Skills CLI:
+Run the following command from your research project directory to install the complete set of skills:
 
 ```bash
 npx --yes skills add https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin --all -y
 ```
 
-Then ask the agent to inspect your research project's directory structure and
-tell you what it verified. File-only environments can review available files.
-Automated checks run where the project and Python are accessible.
+The packaged skills include the runtime resources needed to use EverResearch's local tools. Hosts that execute these tools need Python 3.11 or 3.12; the plugin prepares an isolated Python environment on first use.
 
-For development, use `uv pip install -e .` in an active environment. See the
-[build and verification guide](src/harness/utils/release/README.md) for source
-builds, the BirdStudy example, and optional MCP access.
+### Install from the terminal
 
-### One Skill to Coordinate Your Research
+Install the standalone CLI from [PyPI](https://pypi.org/project/ever-research/):
 
-**`maintain-project` is the central coordinator of EverResearch.**
+```bash
+uv tool install ever-research
+```
 
-It guides your coding agent through the entire project, coordinating specialized skills for each component:
+Or install the CLI and project-local skills together using the [npm installer](plugins/installer/). It detects installed agent commands automatically:
 
-| Skill | What it manages |
+```bash
+npm exec --yes --package=https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-0.2.0.tgz -- ever-research
+```
+
+### Start with your own research project
+
+Open an existing research project in your agent and ask:
+
+> Use EverResearch to understand my research project. Map the existing datasets, models, tasks, configurations, and experiments. Identify improvements that would make the project easier to maintain and reproduce, and propose a plan before changing files.
+
+Or start directly from the terminal:
+
+```bash
+rh projects project check ./MyProject
+```
+
+EverResearch uses the model configured in your agent. Full project operations require an execution environment with access to the project files and its dependencies. Agents with file access alone can still inspect the available materials and propose changes.
+
+## Features
+
+Research is a continuous process. New experiments build on old results, models evolve, and research code needs to remain understandable to both humans and AI agents.
+
+EverResearch helps you maintain that continuity across the research project.
+
+| Capability | What you can do |
 | --- | --- |
+| **Research Project Management** | Start a new scientific project or reorganize existing research code around clear component responsibilities. |
+| **Dataset and Model Management** | Add datasets, preprocessing pipelines, model variants, and weights while keeping them reusable across experiments. |
+| **Experiment Management** | Connect configurations, execution commands, results, and artifacts so previous experiments can be revisited. |
+| **Research Code Maintenance** | Let your agent understand component relationships, make coordinated changes, and preserve working entry points. |
+| **Paper and Code Understanding** | Explore scientific papers and code repositories through interactive structure maps. |
+| **Research Knowledge Management** | Organize reusable scientific knowledge, research notes, and insights for future work. |
+| **GitHub and Hugging Face Workflows** | Prepare project releases, manage repositories, and work with datasets and Spaces using your existing accounts. |
+
+## How It Works
+
+EverResearch gives your agent a shared understanding of how a scientific project is organized. Each component has a clear responsibility, allowing new datasets, models, and experiments to fit into the same project as research progresses.
+
+```text
+YourProject/
+├── base/          # Shared code and execution entry points
+├── datasets/      # Data loading and preprocessing
+├── models/        # Model implementations and variants
+├── tasks/         # Training, evaluation, and analysis
+├── conf/          # Experiment configurations
+├── experiment/    # Experiment records and results
+├── scripts/       # Standalone utilities
+├── tests/         # Project tests
+└── doc/           # Research and project documentation
+```
+
+Start from scratch or bring an existing repository. EverResearch helps your agent understand the current project before reorganizing it, preserving useful code, supported commands, and existing results.
+
+Here are a few things you can ask your agent to do:
+
+- Add a new dataset and make it available to the existing training and evaluation tasks.
+- Integrate a new model without duplicating the existing experimental pipeline.
+- Reproduce a previous experiment using its recorded configuration.
+- Compare experimental results and trace each result back to its source configuration.
+- Explain how a research repository works before making changes to it.
+
+The project remains yours. Its scientific code, execution commands, configurations, and experimental results stay within the project. EverResearch provides the shared maintenance workflows and tools.
+
+## Understand Papers and Code
+
+EverResearch includes [ExtractStructure](.agents/skills/extract-structure/README.md), a skill for turning research papers and code repositories into interactive structure maps.
+
+[![Interactive structure map of Attention Is All You Need](.agents/skills/extract-structure/assets/screenshots/attention-paper-structure.png)](https://atheavenma.github.io/ExtractStructure/examples/attention-is-all-you-need-paper-structure.html)
+
+Explore the interactive examples directly in your browser:
+
+| Example | Explore |
+| --- | --- |
+| Attention Is All You Need | [Paper structure map](https://atheavenma.github.io/ExtractStructure/examples/attention-is-all-you-need-paper-structure.html) |
+| GPT | [Code structure map](https://atheavenma.github.io/ExtractStructure/examples/gpt-code-structure.html) |
+
+ExtractStructure helps you navigate research questions, methods, evidence, and relationships within a paper. It also maps code components and explains how files work together. The generated maps can be saved as self-contained HTML pages for offline use or sharing.
+
+Try it on your own work:
+
+> Use ExtractStructure to visualize this paper and explain how its main method, theoretical claims, and experiments fit together.
+
+## Research Skills
+
+The [`maintain-project`](.agents/skills/maintain-project/SKILL.md) skill coordinates research project maintenance. It directs the agent to specialized skills according to the task rather than asking the user to manage every component separately.
+
+| Skill | Responsibility |
+| --- | --- |
+| [`maintain-project`](.agents/skills/maintain-project/SKILL.md) | Whole-project understanding and maintenance |
 | [`maintain-dataset`](.agents/skills/maintain-dataset/SKILL.md) | Datasets, preprocessing, and data loading |
-| [`maintain-model`](.agents/skills/maintain-model/SKILL.md) | Model implementations and variants |
-| [`maintain-task`](.agents/skills/maintain-task/SKILL.md) | Training, evaluation, and research tasks |
-| [`maintain-conf`](.agents/skills/maintain-conf/SKILL.md) | Configurations and parameters |
-| [`maintain-experiment`](.agents/skills/maintain-experiment/SKILL.md) | Experiment execution and result records |
-| [`maintain-base`](.agents/skills/maintain-base/SKILL.md) | Shared code and execution workflows |
+| [`maintain-model`](.agents/skills/maintain-model/SKILL.md) | Model implementations, variants, and weights |
+| [`maintain-task`](.agents/skills/maintain-task/SKILL.md) | Training, evaluation, and scientific tasks |
+| [`maintain-conf`](.agents/skills/maintain-conf/SKILL.md) | Configurations and experiment parameters |
+| [`maintain-experiment`](.agents/skills/maintain-experiment/SKILL.md) | Experiment execution, records, and results |
+| [`maintain-base`](.agents/skills/maintain-base/SKILL.md) | Shared code, resources, and execution workflows |
+| [`maintain-code`](.agents/skills/maintain-code/SKILL.md) | Code dependencies and reusable implementations |
+| [`maintain-knowledge`](.agents/skills/maintain-knowledge/SKILL.md) | Research knowledge and reusable insights |
+| [`extract-structure`](.agents/skills/extract-structure/SKILL.md) | Interactive paper and code structure maps |
+| [`maintain-github`](.agents/skills/maintain-github/SKILL.md) | GitHub project and release workflows |
+| [`maintain-huggingface`](.agents/skills/maintain-huggingface/SKILL.md) | Hugging Face repositories, downloads, uploads, and Spaces |
 
-You don't need to manage every component separately. Start with [`maintain-project`](.agents/skills/maintain-project/SKILL.md) for project-wide work, or use a specialized skill when you want to focus on one part.
+See the [complete skill library](.agents/skills/) for additional maintenance workflows.
 
-As your research evolves, the same workflows help keep your code organized and your results traceable.
+All agent integrations share the same research skills and core tools, so the way your projects are organized does not depend on a particular model or agent.
 
-### Keep maintenance consistent
+## Research Projects
 
-The managed section of each connected project's `AGENTS.md` links to [14 operation guides](src/harness/projects/operations.md). Each guide explains how to choose the right destination, carry out the change, and check the result. Run `rh projects apply <project-id>` again to refresh an existing connection.
+EverResearch has applied its project organization approach to nine scientific project templates, covering computer vision, multimodal learning, retrieval, language model evaluation, and other machine learning tasks.
 
-For repeat structure checks, use `rh projects maintenance <project-root>`. It records changes and previous checks in the local EverResearch workspace. Unchanged files reuse cached findings, so subsequent checks can focus on changes.
+| Project | Research area |
+| --- | --- |
+| [CUB-200](src/harness/projects/templates/cub/) | Fine-grained image classification |
+| [Depth Anything 3](https://github.com/ByteDance-Seed/Depth-Anything-3) | Depth estimation |
+| [FastVLM](https://github.com/apple-aiml-research/ml-fastvlm) | Efficient vision-language modeling |
+| [FlagEmbedding](https://github.com/FlagOpen/FlagEmbedding) | Text embeddings and retrieval |
+| [LightEval](https://github.com/huggingface/lighteval) | Language model evaluation |
+| [LLMLingua](https://github.com/microsoft/LLMLingua) | Prompt compression and LLM efficiency |
+| [RF-DETR](https://github.com/roboflow/rf-detr) | Object detection |
+| [SAM2](https://github.com/facebookresearch/sam2) | Image and video segmentation |
+| [VGGT](https://github.com/facebookresearch/vggt) | 3D visual geometry |
 
-Enable lightweight follow-up checks for a connected project with `rh projects apply <project-id> --lightweight-checks on`.
+The CUB-200 template is included as a runnable example. Download the [BirdStudy example](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.0-example.zip) or explore the [research project templates](src/harness/projects/templates/).
 
-## Built for Everyday Research
+These projects illustrate the application of a common organizational approach to different research tasks. The original projects belong to their respective authors.
 
-Whether you're starting a new experiment, adding a dataset, switching models, or returning to an old project, EverResearch gives you a consistent way to keep your research code under control.
+## Roadmap
 
-**Your research keeps moving. Your codebase should keep up.**
+EverResearch is building toward a research environment in which both humans and AI agents can accumulate knowledge and make sustained scientific progress.
 
-## Achievements
+- **Long-Horizon Research:** Enable agents to plan, execute, and refine research over extended periods, building on previous experiments.
+- **Knowledge Interface:** Help agents connect scientific concepts, evidence, code, and results to contribute to research discussions and paper writing.
+- **Research RSI:** Explore how agents can improve their research capabilities through domain knowledge, experimental feedback, and human supervision.
 
-The release ships the CUB-200 example. EverResearch has also used the following public projects to illustrate the same structure for configuration, datasets, models, and tasks.
+## Documentation and Contributing
 
-| Template | Files | Publication checks passed |
-| --- | ---: | ---: |
-| CUB-200 | 60 | 100% |
-| [Depth Anything 3](https://github.com/ByteDance-Seed/Depth-Anything-3) | 144 | 100% |
-| [FastVLM](https://github.com/apple-aiml-research/ml-fastvlm) | 111 | 100% |
-| [FlagEmbedding](https://github.com/FlagOpen/FlagEmbedding) | 896 | 100% |
-| [LightEval](https://github.com/huggingface/lighteval) | 465 | 100% |
-| [LLMLingua](https://github.com/microsoft/LLMLingua) | 108 | 100% |
-| [RF-DETR](https://github.com/roboflow/rf-detr) | 604 | 100% |
-| [SAM2](https://github.com/facebookresearch/sam2) | 382 | 100% |
-| [VGGT](https://github.com/facebookresearch/vggt) | 137 | 100% |
+- [Agent plugins and installation](plugins/)
+- [Research project organization and workflows](src/harness/projects/README.md)
+- [CLI, npm installer and local usage](plugins/installer/)
+- [Build from source and optional MCP integration](src/harness/utils/release/README.md)
 
-Publication checks cover required directories, a README, file scope, Python syntax, and notebook outputs. File counts cover the published template contents.
-
-## Future Development
-
-- **Long-Horizon Research** — Set ambitious research goals and let AI agents autonomously plan, execute, and refine research workflows.
-- **Knowledge Interface** — Help AI agents understand scientific concepts, reason with domain knowledge, and actively contribute to research discussions and paper writing.
-- **Research RSI** — Enable AI agents to progressively improve their research capabilities through domain knowledge, experimental feedback, and human supervision.
+We welcome contributions from researchers and developers. Share a research workflow, propose a reusable skill, or help bring EverResearch to another agent ecosystem through [GitHub Issues](https://github.com/OpenSAE/EverResearch/issues) and pull requests.
 
 ## License
 
-[Apache 2.0](LICENSE)
+EverResearch is released under the [Apache 2.0 License](LICENSE). Included third-party components retain their respective licenses.
