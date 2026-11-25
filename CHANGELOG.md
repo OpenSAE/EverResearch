@@ -7,6 +7,7 @@ This file records user-facing changes to EverResearch. See [GitHub Releases](htt
 - Report project root naming as a suggestion, independently of structural acceptance.
 - Back up project files once before first maintenance setup. Prioritize source and documentation within 200 MB, inventory data and media without copying them, and reuse the first backup on retries.
 - Require the project maintenance mode file before specialist skills apply EverResearch rules to project edits.
+- Document how to uninstall EverResearch and remove it from a project.
 
 ## 0.3.1
 

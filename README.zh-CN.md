@@ -71,6 +71,19 @@ EverResearch 可以整理大多数开源 AI 项目。我们已在九个科研项
 
 完整训练示例 BirdStudy 可从 [GitHub Releases](https://github.com/OpenSAE/EverResearch/releases/latest) 下载。[英文 README 的 SAM2 对比](README.md#research-projects)展示了上游和整理后的目录用途。
 
+## 卸载
+
+1. 运行 `uv tool uninstall ever-research` 卸载终端工具。
+2. 在代理里移除插件。Claude Code 中运行 `/plugin uninstall ever-research@ever-research`，其他代理在各自的插件或扩展管理里移除。
+3. 删除默认缓存目录：
+   - Linux：`~/.cache/researchharness`
+   - macOS：`~/Library/Caches/researchharness`
+   - Windows：`%LOCALAPPDATA%\researchharness\researchharness\Cache` 和 `%LOCALAPPDATA%\researchharness\plugin-runtime`
+4. 对每个接入过的项目，完成下面三步：
+   - 在 `AGENTS.md` 中删除每个从 `<!-- researchharness:… -->` 到对应 `<!-- /researchharness:… -->` 的段落，保留你自己的内容。
+   - 在 `.gitignore` 中删除 EverResearch 添加的 `# EverResearch …` 注释和 `/.researchharness/…` 条目。
+   - 如果需要原始文件，先从 `.researchharness/backups/initial-setup.tar.gz` 中取出，再删除 `.researchharness/` 文件夹。
+
 ## 接下来
 
 我们会改进实验设置和结果的并排对比，收集更多真实仓库来改善接入报告，并持续验证各代理的安装路径。欢迎在 [GitHub Issues](https://github.com/OpenSAE/EverResearch/issues)分享实验室里最想解决的问题。

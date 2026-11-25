@@ -176,6 +176,19 @@ Tell us which workflow would help your lab in [GitHub Issues](https://github.com
 
 We welcome contributions from researchers and developers. Share a research workflow, propose a reusable skill, or help bring EverResearch to another agent ecosystem through [GitHub Issues](https://github.com/OpenSAE/EverResearch/issues) and pull requests.
 
+## Uninstall
+
+1. Remove the terminal tool with `uv tool uninstall ever-research`.
+2. Remove the plugin from your agent. In Claude Code, run `/plugin uninstall ever-research@ever-research`. In other agents, use the plugin or extension manager.
+3. Delete the default cache directories:
+   - Linux: `~/.cache/researchharness`
+   - macOS: `~/Library/Caches/researchharness`
+   - Windows: `%LOCALAPPDATA%\researchharness\researchharness\Cache` and `%LOCALAPPDATA%\researchharness\plugin-runtime`
+4. In each project you set up, do all three steps together:
+   - In `AGENTS.md`, delete each block from `<!-- researchharness:… -->` to its matching `<!-- /researchharness:… -->`. Keep your own text.
+   - In `.gitignore`, delete the `# EverResearch …` comment and the `/.researchharness/…` entries that EverResearch added.
+   - If you need any originals, extract them from `.researchharness/backups/initial-setup.tar.gz` first. Then delete the `.researchharness/` folder.
+
 ## License
 
 EverResearch is released under the [Apache 2.0 License](LICENSE). Included third-party components retain their respective licenses.
