@@ -17,12 +17,12 @@ Use Python 3.11 or 3.12 and install the wheel from this release. On a machine wi
 [uv](https://docs.astral.sh/uv/concepts/tools/), run:
 
 ```sh
-uv tool install ./researchharness-0.2.0-py3-none-any.whl
+uv tool install ./researchharness-0.2.1-py3-none-any.whl
 rh doctor --json
 ```
 
 With a Python virtual environment already activated, the alternative is
-`python -m pip install ./researchharness-0.2.0-py3-none-any.whl`. All example paths
+`python -m pip install ./researchharness-0.2.1-py3-none-any.whl`. All example paths
 are relative to the directory where you unpacked the release. Replace `./BirdStudy`
 with your own project's path to work on a different project.
 
@@ -45,21 +45,35 @@ With Node.js and uv, the npm archive can install the bundled wheel and skills
 together:
 
 ```sh
-npm exec --package=./opensae-researchharness-0.2.0.tgz -- researchharness --project ./BirdStudy --agent codex
+npm exec --package=./opensae-researchharness-0.2.1.tgz -- researchharness --project ./BirdStudy --agent codex
 ```
 
 Use `--dry-run` to print the proposed commands without installing.
 
 ### Host plugins and other environments
 
-| Host | Installable artifact or entry |
+All plugins package the same version of the shared skills. Install the Python
+wheel to make `rh` available in the environment where the host runs commands.
+
+| Host | Plugin format and install entry |
 | --- | --- |
-| Codex, Cursor, GitHub Copilot, Qwen Code | Unzip the standard Agent Plugin package for host surfaces that accept portable plugins, or use project-local skills. |
-| Claude Code | Unzip the Claude plugin package and load it with `claude --plugin-dir <directory>`, or use project-local skills. |
-| Gemini CLI | Unzip the Gemini extension and run `gemini extensions install <directory>`, or use project-local skills. |
-| OpenCode, OpenClaw, DeepSeek Harness | Install project-local skills with the matching host name. |
-| Other hosts with terminal access | Install the generic project skills or unpack the Skills archive. Ask the agent to read the file returned by `rh guide skill maintain-project` and follow the applicable references. |
-| Chat-only use | Share the relevant project files and agreement with your model, and run `rh projects project check` in your terminal. |
+| Codex | Codex plugin. Add the marketplace directory using `codex plugin marketplace add <catalog-dir>`, then `codex plugin add researchharness@researchharness`. |
+| Cursor | Cursor plugin. Import the extracted plugin directory in Customize. Managed installations use a team marketplace where enabled. |
+| GitHub Copilot CLI | Agent Plugin. Run `copilot plugin marketplace add <catalog-dir>`, then `copilot plugin install researchharness@researchharness`. |
+| Qwen Code | Agent Plugin. Run `qwen extensions install <extracted-agent-plugin-dir> --scope project`. |
+| Claude Code | Claude plugin. Run `claude --plugin-dir <extracted-claude-plugin-dir>` or add the marketplace from the catalog directory. |
+| Gemini CLI | Gemini extension. Run `gemini extensions install <extracted-gemini-extension-dir>` in a trusted workspace. |
+| OpenCode | OpenCode server plugin. Put the extracted plugin directory in `.opencode/plugins/`. For an explicit `opencode.json` entry, use `plugin` in OpenCode V1 and `plugins` in V2. |
+| OpenClaw | OpenClaw plugin. Run `openclaw plugins install <extracted-openclaw-plugin-dir>` and review the capabilities requested by the host. |
+| DeepSeek Harness | Cordis bundle. Run `dsh plugin --profile <profile> add file:<absolute-path-to-dsh-tgz>`. Use the profile in which you want ResearchHarness available. |
+| Other shell-enabled hosts | Use the project-local generic skill installer or load the packaged skills explicitly. |
+| Chat-only use | Share project files and the agreement with your model. Run `rh projects project check` in the terminal. |
+
+The marketplace archive includes Codex, Claude, Cursor, and Copilot catalogs
+alongside the host packages. For this private deployment you can use the
+marketplace directory from the repository's `plugins-v0.2.1` branch.
+Access to a private GitHub repository and permission to install local or team
+plugins depend on your account and host settings.
 
 Install the CLI in the same execution environment that can access the project.
 For a host with local MCP but without shell access, install the wheel with the

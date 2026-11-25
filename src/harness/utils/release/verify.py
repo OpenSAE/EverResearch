@@ -6,13 +6,53 @@ access to resolve dependencies unless they are already cached.
 
 import argparse
 from hashlib import sha256
+from io import BytesIO
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
+import tarfile
 import tempfile
 from zipfile import ZipFile
+
+
+PLUGIN_ENTRIES = {
+    "agent-plugin": "plugin.json",
+    "codex-plugin": ".codex-plugin/plugin.json",
+    "cursor-plugin": ".cursor-plugin/plugin.json",
+    "claude-plugin": ".claude-plugin/plugin.json",
+    "gemini-extension": "gemini-extension.json",
+    "opencode-plugin": "package.json",
+    "openclaw-plugin": "openclaw.plugin.json",
+}
+
+
+def verify_plugins(release, wheel):
+    """Compare each host bundle to the shared skill files in the wheel."""
+    version = wheel.name.split("-")[1]
+    with ZipFile(wheel) as installed:
+        with ZipFile(BytesIO(installed.read("harness/public_resources.zip"))) as resources:
+            expected = {
+                name.removeprefix(".agents/"): resources.read(name)
+                for name in resources.namelist() if name.startswith(".agents/skills/")
+            }
+    for platform, manifest in PLUGIN_ENTRIES.items():
+        with ZipFile(release / f"researchharness-{version}-{platform}.zip") as archive:
+            actual = {name: archive.read(name) for name in archive.namelist()
+                      if name.startswith("skills/")}
+            if manifest not in archive.namelist() or actual != expected:
+                raise ValueError(f"Incomplete {platform} manifest or skills")
+    with tarfile.open(release / f"opensae-researchharness-dsh-{version}.tgz") as archive:
+        manifest = json.load(archive.extractfile("package/package.json"))
+        if "bundle" not in manifest.get("dsh", {}):
+            raise ValueError("Missing DeepSeek Harness bundle manifest")
+        actual = {entry.name.removeprefix("package/"): archive.extractfile(entry).read()
+                  for entry in archive.getmembers()
+                  if entry.isfile() and entry.name.startswith("package/skills/")}
+        if actual != expected:
+            raise ValueError("Incomplete DeepSeek Harness skills")
+    return len(PLUGIN_ENTRIES) + 1
 
 
 def check_release(release, work):
@@ -23,6 +63,7 @@ def check_release(release, work):
             raise ValueError(f"Invalid release checksum for {name}")
         files.add(name)
     wheel, = (release / name for name in files if name.endswith(".whl"))
+    plugins = verify_plugins(release, wheel)
     example, = (release / name for name in files if name.endswith("-example.zip"))
     with ZipFile(example) as archive:
         archive.extractall(work)
@@ -64,7 +105,8 @@ def check_release(release, work):
     if not (own / "SKILL.md").is_file():
         raise ValueError("Uninstall removed a project-owned skill")
     run(rh, "projects", "project", "check", project)
-    return {"checksums": len(files), "skills": len(install), "python": health["python"],
+    return {"checksums": len(files), "skills": len(install), "plugin_formats": plugins,
+            "python": health["python"],
             "system": health["system"], "passed": True}
 
 

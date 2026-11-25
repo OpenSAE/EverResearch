@@ -47,6 +47,7 @@ CORE = (
     "src/harness/projects/standalone/offline/*.py", "src/harness/projects/standalone/offline/*.md",
     "src/harness/utils/*.py", "src/harness/utils/transfer/*.py", "src/harness/utils/transfer/README.md",
     "src/harness/utils/release/*.py", "src/harness/utils/release/install.mjs",
+    "src/harness/utils/release/plugins/*.mjs",
 )
 CUB = "src/harness/projects/templates/cub"
 CUB_FILES = (
@@ -153,7 +154,7 @@ def package(root, output):
                 raise ValueError(f"Missing wheel modules: {expected - set(installed.namelist())}")
         archive(output / f"researchharness-{version}-source.zip", source)
         archive(output / f"researchharness-{version}-example.zip", {f"BirdStudy/{k}": v for k, v in cub.items()})
-        build_plugins(output, version, skills, source["LICENSE"], source[ARTIFACT_GUIDE])
+        build_plugins(output, Path(temporary), version, skills, source)
         build_npm(Path(temporary), output, version, wheel, source)
     (output / "verify.py").write_bytes(source["src/harness/utils/release/verify.py"])
     (output / "INSTALL.md").write_bytes(source[ARTIFACT_GUIDE])
@@ -169,22 +170,95 @@ def package(root, output):
     }))
 
 
-def build_plugins(output, version, skills, license_text, guide):
+def build_plugins(output, work, version, skills, source):
     name = "researchharness"
     description = "Maintain and verify research projects using shared ResearchHarness skills and rh."
     members = {f"skills/{path}": body for path, body in skills.items()}
-    members.update({"LICENSE": license_text, "README.md": guide})
+    members.update({"LICENSE": source["LICENSE"], "README.md": source[ARTIFACT_GUIDE]})
     manifest = {"name": name, "version": version, "description": description}
+    portable = {
+        "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json", **manifest,
+    }
     platform_manifests = {
-        "agent-plugin": ("plugin.json", {
-            "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json", **manifest,
-        }),
+        "agent-plugin": ("plugin.json", portable),
+        "codex-plugin": (".codex-plugin/plugin.json", {**manifest, "skills": "./skills/"}),
+        "cursor-plugin": (".cursor-plugin/plugin.json", {**manifest, "skills": "./skills/"}),
         "claude-plugin": (".claude-plugin/plugin.json", {**manifest, "author": {"name": "OpenSAE"}}),
         "gemini-extension": ("gemini-extension.json", manifest),
     }
+    marketplace = {}
     for platform, (path, config) in platform_manifests.items():
-        archive(output / f"{name}-{version}-{platform}.zip", {**members, path: json_bytes(config)})
+        plugin = {**members, path: json_bytes(config)}
+        archive(output / f"{name}-{version}-{platform}.zip", plugin)
+        marketplace.update({f"plugins/{platform}/{file}": contents for file, contents in plugin.items()})
+
+    adapter = "src/harness/utils/release/plugins"
+    entries = []
+    for path, body in skills.items():
+        if path.endswith("/SKILL.md"):
+            metadata = yaml.safe_load(body.decode().split("---", 2)[1])
+            entries.append({"id": metadata["name"], "name": metadata["name"],
+                            "description": metadata["description"], "path": f"./skills/{path}"})
+    opencode = {
+        **members,
+        "package.json": json_bytes({**manifest, "name": "@opensae/researchharness-opencode",
+                                    "type": "module", "exports": {"./server": "./index.mjs"}}),
+        "index.mjs": source[f"{adapter}/opencode.mjs"],
+        "skills.json": json_bytes(entries),
+    }
+    archive(output / f"{name}-{version}-opencode-plugin.zip", opencode)
+    openclaw = {
+        **members,
+        "package.json": json_bytes({**manifest, "type": "module",
+                                    "openclaw": {"extensions": ["./index.mjs"]}}),
+        "openclaw.plugin.json": json_bytes({
+            **manifest, "id": name, "skills": ["./skills"],
+            "configSchema": {"type": "object", "additionalProperties": False},
+        }),
+        "index.mjs": source[f"{adapter}/openclaw.mjs"],
+    }
+    archive(output / f"{name}-{version}-openclaw-plugin.zip", openclaw)
+    bundle_name = "@opensae/researchharness-dsh"
+    dsh = {
+        **members,
+        "package.json": json_bytes({
+            **manifest, "name": bundle_name, "type": "module", "main": "index.mjs",
+            "dsh": {"bundle": {"patch": "./cordis.patch.yml"}},
+            "engines": {"dsh": ">=0.2.2-rc.5 <0.3.0"},
+            "peerDependencies": {"@deepseek-ai/dsh-skill-filesystem": "0.2.2-rc.5"},
+        }),
+        "cordis.patch.yml": yaml.safe_dump([
+            {"insert": [{"id": "researchharness-skills", "name": bundle_name}]},
+        ]).encode(),
+        "index.mjs": source[f"{adapter}/deepseek.mjs"],
+    }
+    dsh_work = work / "deepseek"
+    for path, contents in dsh.items():
+        target = dsh_work / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(contents)
+    subprocess.run(["npm", "pack", "--pack-destination", str(output)], cwd=dsh_work, check=True)
     archive(output / f"{name}-{version}-skills.zip", members)
+    for platform, plugin in (("opencode", opencode), ("openclaw", openclaw), ("deepseek", dsh)):
+        marketplace.update({f"plugins/{platform}/{file}": contents for file, contents in plugin.items()})
+    catalog = {"name": "researchharness", "owner": {"name": "OpenSAE"}}
+    for path, platform in {
+        ".claude-plugin/marketplace.json": "claude-plugin",
+        ".cursor-plugin/marketplace.json": "cursor-plugin",
+        ".github/plugin/marketplace.json": "agent-plugin",
+    }.items():
+        marketplace[path] = json_bytes({
+            **catalog, "plugins": [{**manifest, "source": f"./plugins/{platform}"}],
+        })
+    marketplace[".agents/plugins/marketplace.json"] = json_bytes({
+        "name": catalog["name"], "plugins": [{
+            "name": name, "source": {"source": "local", "path": "./plugins/codex-plugin"},
+            "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+        }],
+    })
+    marketplace["README.md"] = source[ARTIFACT_GUIDE]
+    marketplace["LICENSE"] = source["LICENSE"]
+    archive(output / f"{name}-{version}-marketplace.zip", marketplace)
 
 
 def build_npm(temporary, output, version, wheel, source):

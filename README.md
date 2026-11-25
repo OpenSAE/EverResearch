@@ -63,10 +63,12 @@ As your project evolves, shared maintenance workflows help keep its structure, c
 
 ## Get Started
 
+The [ResearchHarness 0.2.1 plugin marketplace](https://github.com/OpenSAE/ResearchHarness/tree/plugins-v0.2.1) contains the host plugins and version-matched installers.
+
 Install the release wheel, check a project, and connect the skills to your agent:
 
 ```bash
-uv tool install ./researchharness-0.2.0-py3-none-any.whl
+uv tool install ./researchharness-0.2.1-py3-none-any.whl
 rh doctor --json
 rh projects project check ./MyProject
 rh skills install --project ./MyProject --agent codex
