@@ -123,7 +123,7 @@ All agent integrations share the same research skills and core tools, so the way
 
 ## Research Projects
 
-EverResearch has applied its project organization approach to nine scientific project templates, covering computer vision, multimodal learning, retrieval, language model evaluation, and other machine learning tasks.
+EverResearch is designed to organize most open-source AI projects. We tested it on nine research project templates covering computer vision, multimodal learning, retrieval, language model evaluation, and other machine learning tasks.
 
 | Project | Research area |
 | --- | --- |
