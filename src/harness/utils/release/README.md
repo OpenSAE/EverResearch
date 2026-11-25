@@ -17,12 +17,12 @@ Use Python 3.11 or 3.12 and install the wheel from this release. On a machine wi
 [uv](https://docs.astral.sh/uv/concepts/tools/), run:
 
 ```sh
-uv tool install ./researchharness-0.2.1-py3-none-any.whl
+uv tool install ./researchharness-*.whl
 rh doctor --json
 ```
 
 With a Python virtual environment already activated, the alternative is
-`python -m pip install ./researchharness-0.2.1-py3-none-any.whl`. All example paths
+`python -m pip install ./researchharness-*.whl`. All example paths
 are relative to the directory where you unpacked the release. Replace `./BirdStudy`
 with your own project's path to work on a different project.
 
@@ -45,7 +45,7 @@ With Node.js and uv, the npm archive can install the bundled wheel and skills
 together:
 
 ```sh
-npm exec --package=./opensae-researchharness-0.2.1.tgz -- researchharness --project ./BirdStudy --agent codex
+npm exec --package=./opensae-researchharness-[0-9]*.tgz -- researchharness --project ./BirdStudy --agent codex
 ```
 
 Use `--dry-run` to print the proposed commands without installing.
@@ -71,7 +71,7 @@ wheel to make `rh` available in the environment where the host runs commands.
 
 The marketplace archive includes Codex, Claude, Cursor, and Copilot catalogs
 alongside the host packages. For this private deployment you can use the
-marketplace directory from the repository's `plugins-v0.2.1` branch.
+marketplace directory from the repository's `plugins` branch.
 Access to a private GitHub repository and permission to install local or team
 plugins depend on your account and host settings.
 

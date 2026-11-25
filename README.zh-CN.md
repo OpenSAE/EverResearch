@@ -16,13 +16,13 @@ ResearchHarness 为科研项目提供一组可移植的代理技能和项目检�
 
 ## 开始使用
 
-[0.2.1 插件市场目录](https://github.com/OpenSAE/ResearchHarness/tree/plugins-v0.2.1)包含各宿主插件和同版本安装工具。
+[插件目录](https://github.com/OpenSAE/ResearchHarness/tree/plugins)包含各宿主插件和安装工具。
 
 从插件市场目录的 `installer/` 获取 Python wheel 和 BirdStudy 示例。解压示例后，
 用 Python 3.11 或 3.12 安装工具，然后在代理中打开示例项目。
 
 ```sh
-uv tool install ./researchharness-0.2.1-py3-none-any.whl
+uv tool install ./researchharness-*.whl
 rh doctor --json
 rh projects project check ./BirdStudy
 rh skills install --project ./BirdStudy --agent codex
