@@ -14,7 +14,7 @@ import subprocess
 import sys
 import tempfile
 import venv
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 
 def runtime_wheel():
@@ -47,7 +47,8 @@ def pinned_wheel(lock, local_directories):
 
     version = wheel_name.group(1)
     url = f"https://github.com/OpenSAE/EverResearch/releases/download/v{version}/{filename}"
-    with urlopen(url, timeout=20) as response:
+    request = Request(url, headers={"Accept": "application/octet-stream"})
+    with urlopen(request, timeout=20) as response:
         contents = response.read(size + 1)
     if len(contents) != size or hashlib.sha256(contents).hexdigest() != digest:
         raise RuntimeError("The downloaded wheel does not match the plugin's runtime checksum.")
