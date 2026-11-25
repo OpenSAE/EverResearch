@@ -31,6 +31,9 @@ GitHub downloads. The Claude ZIP also includes local runtime copies for skills
 that may run in separate sandboxes. The verifier checks skill consistency across
 hosts, confirms that the marketplace tree has no embedded wheels, and tests
 download integrity and reuse of the local cache.
+Keep published wheels at their versioned installer URLs as long as a supported
+marketplace plugin refers to them. Each release adds at most one shared wheel.
+Numbered plugin ZIPs and the npm installer can also carry local runtime copies.
 
 ## Verify a project
 
