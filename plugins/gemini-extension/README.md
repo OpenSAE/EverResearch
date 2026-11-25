@@ -10,7 +10,7 @@ Use these steps for projects you can access from this environment.
 
 ## Install in Gemini CLI
 
-Extract the [Gemini extension ZIP](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.1-gemini-extension.zip)
+Extract the [Gemini extension ZIP](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.2-gemini-extension.zip)
 into a directory named `gemini-extension`, or use `plugins/gemini-extension`
 from a local [EverResearch checkout](https://github.com/OpenSAE/EverResearch).
 

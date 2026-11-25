@@ -101,14 +101,20 @@ RULES = {
 }
 
 EXPECTED = {
-    "assets": "use assets/<Resource type>/<Resources>/README.md,files/ or scripts/",
-    "conf": "use conf/config.<format> or conf/<Source Path Front Two Levels>/<Profile>",
-    "datasets": "use datasets/<Data set or family>/<Optional members>/ Save Data Achieved",
-    "doc": "Use a fixed description page or code,knowledge,environment,experiment Organizational theme",
-    "experiment": "use experiment/<Data Set>/<Optional Model>/<Tasks>/<Research use>/ Save Run",
-    "models": "use models/<Family>/<Optional Series>/ Save model realization",
-    "tasks": "use tasks/<Tasks>/<Optional subtasks>/ Save Research Calculator",
-    "tests": "use tests/test_<Behaviour>.py or tests/ It’s... product,integration,fixtures Branch",
+    "assets": ("Use assets/<type>/<name>/README.md to describe the asset. "
+               "Store resources in files/ and dedicated utilities in scripts/."),
+    "base": "Keep shared code and entry points under base/.",
+    "conf": ("Use conf/config.<format> for the main configuration. "
+             "Mirror the owning source directory for other configuration files."),
+    "datasets": "Place dataset code under datasets/<dataset-or-family>/<optional-member>/.",
+    "doc": "Use a standard page under doc/ or put it in code/, knowledge/, environment/, or experiment/.",
+    "experiment": "Use experiment/<dataset>/<optional-model>/<task>/<purpose>/ for run files.",
+    "models": "Place model code under models/<family>/<optional-variant>/.",
+    "scripts": "Place standalone scripts and their supporting files under scripts/.",
+    "tasks": "Place task code under tasks/<task>/<optional-subtask>/.",
+    "tests": "Use tests/test_<behavior>.py or organize tests under product/, integration/, or fixtures/.",
+    "third_party": "Place each upstream project in its own directory under third_party/.",
+    "tmp": "Put temporary files in a named working directory under tmp/.",
 }
 
 
@@ -222,7 +228,7 @@ def check_layout(root, *, remember=None):
     """Return concrete path failures for an absolute or relative project root."""
     root = Path(root).resolve(strict=True)
     if not root.is_dir():
-        raise ValueError(f"The project path should be a directory:{root}")
+        raise ValueError(f"Expected a project directory: {root}")
     configuration_owners = {"base", "scripts", *COMPONENTS.values()}
     rules = dict(RULES)
     if (root / "experiment").is_dir():
@@ -240,7 +246,7 @@ def check_layout(root, *, remember=None):
             allowed = (remember(declaration, saebase_package) if remember
                        else saebase_package(declaration))
         if not allowed:
-            fail(".", "project_name", "Project root name with two or three words PascalCase,It’s full English words, named for engineering purposes.")
+            fail(".", "project_name", "Use two or three PascalCase words for the project root name, including at least one complete English word.")
 
     def visit(directory, parent=""):
         nonlocal inspected
@@ -255,7 +261,7 @@ def check_layout(root, *, remember=None):
             inspected += 1
             if not parent and not is_directory:
                 if not re.fullmatch(ROOT_FILES, entry.name):
-                    fail(relative, "root_file", "Root directory maintains open access, project description and build statement")
+                    fail(relative, "root_file", "Keep project documentation, build files, and public entry points at the project root.")
                 continue
             if in_experiment and (violation := experiment_name_violation(entry, is_directory)):
                 fail(relative, *violation)
@@ -263,9 +269,9 @@ def check_layout(root, *, remember=None):
             if not selected or not selected.matches(relative, is_directory):
                 rule = "root_directory" if not parent and is_directory else top
                 expected = (
-                    "Level-I catalogues must be assigned to the norm, with the main package and the common operational code being integrated base/"
+                    "Unexpected top-level directory. Put the main package and shared code under base/, and place other files in the directory for their purpose."
                     if rule == "root_directory"
-                    else EXPECTED.get(top, f"Press {top}/ Responsibilities, tiers and document titles")
+                    else EXPECTED[top]
                 )
                 fail(relative, rule, expected)
                 if in_experiment and is_directory and not entry.is_symlink():
@@ -287,18 +293,18 @@ def check_layout(root, *, remember=None):
                     owner_name = relative.removeprefix("conf/")
                     if (owner_name.split("/")[0] not in configuration_owners
                             or not (root / owner_name).is_dir()):
-                        fail(relative, "configuration_owner", f"Exists responsible source directory {owner_name}")
+                        fail(relative, "configuration_owner", f"No matching source directory for this configuration: {owner_name}/")
                 elif not is_directory:
                     if parent == "conf" and entry.stem != "config":
-                        fail(relative, "configuration_root", "Unify Entry As conf/config.<format>")
+                        fail(relative, "configuration_root", "Name the main configuration file conf/config.<format>.")
                     config_files.append(relative)
             if is_directory and not entry.is_symlink():
                 visit(entry, relative)
         if len(config_files) > 1:
             for path in config_files:
-                fail(path, "configuration_branch", "Keep a file for each configuration branch")
+                fail(path, "configuration_branch", "Keep one configuration file per directory.")
         if re.fullmatch(rf"assets/{NAME}/{NAME}", parent) and not (directory / "README.md").is_file():
-            fail(f"{parent}/README.md", "asset_description", "Recording of the use, source and related scripts of known resources")
+            fail(f"{parent}/README.md", "asset_description", "Add a README that describes the asset, its source, and any related scripts.")
 
     visit(root)
     violations.sort(key=lambda item: (item["path"], item["rule"]))

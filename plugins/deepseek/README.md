@@ -15,13 +15,13 @@ Harness profile. This command supplies both the compatible DSH CLI and its
 package manager.
 
 ```sh
-npx --yes --package=pnpm --package=@deepseek-ai/dsh@0.2.2-rc.5 -- dsh plugin --profile YOUR_PROFILE add https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-dsh-0.2.1.tgz
+npx --yes --package=pnpm --package=@deepseek-ai/dsh@0.2.2-rc.5 -- dsh plugin --profile YOUR_PROFILE add https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-dsh-0.2.2.tgz
 ```
 
 If you already use DSH and have `pnpm` on your PATH, run the same command
 starting at `dsh plugin`. To install from a file, download
-[the bundle](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-dsh-0.2.1.tgz) and use
-`file:/absolute/path/to/opensae-ever-research-dsh-0.2.1.tgz` in place of
+[the bundle](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/opensae-ever-research-dsh-0.2.2.tgz) and use
+`file:/absolute/path/to/opensae-ever-research-dsh-0.2.2.tgz` in place of
 the URL. Review any package approval prompt before continuing.
 
 Start your agent with the same profile and ask it for a research project

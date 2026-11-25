@@ -133,18 +133,22 @@ def check_project(root, *, remember=None):
         return path.is_dir() and not path.is_symlink()
 
     for name in REQUIRED:
-        if not real_directory(root / name):
-            fail(name, "required_directory", f"The project must have an entity at its root {name}/ Contents")
+        directory = root / name
+        if not real_directory(directory):
+            message = (f"Expected a real directory at the project root: {name}/"
+                       if directory.exists() or directory.is_symlink()
+                       else f"Missing required directory: {name}/")
+            fail(name, "required_directory", message)
 
     base = root / "base"
     if real_directory(base):
         if not implementations(base, remember):
-            fail("base", "base_implementation", "Includes official access, distribution or shared operations")
+            fail("base", "base_implementation", "Add a working entry point, dispatcher, or shared implementation under base/.")
         for directory in directories(base):
             for path in visible(directory):
                 if path.is_dir() and path.name in COMPONENT_NAMES:
                     relative = path.relative_to(root).as_posix()
-                    fail(relative, "nested_component", "Component achieved at the end of the project datasets/,models/ or tasks/,Original import preserves through package map")
+                    fail(relative, "nested_component", "Move the component to datasets/, models/, or tasks/ and preserve public imports through the package mapping.")
 
     for role, name in COMPONENTS.items():
         directory = root / name
@@ -158,28 +162,28 @@ def check_project(root, *, remember=None):
         ]
         components[role] = members
         if not members:
-            expected = "At least one named component catalogue containing the actual implementable component source code"
+            expected = "Add at least one named component directory with a working implementation."
             if role == "task":
-                expected += ";precheck It’s a precheck, and the official research mission is carried out on its own."
+                expected += " The project needs a scientific task in addition to tasks/precheck/."
             fail(name, "component_implementation", expected)
         if role == "task":
             precheck = directory / "precheck"
             if not real_directory(precheck) or not implementations(precheck, remember):
-                fail("tasks/precheck", "precheck_implementation", "Provision of actual formal precheck")
+                fail("tasks/precheck", "precheck_implementation", "Add a working precheck under tasks/precheck/.")
 
     conf = root / "conf"
     if real_directory(conf) and not has_configuration(conf, remember):
-        fail("conf", "configuration_entry", "Provides a list of names and profiles conf/config.<format> Unified Configuration Entry")
+        fail("conf", "configuration_entry", "Add a nonempty main configuration file at conf/config.<format>.")
 
     environment = root / "doc/environment"
     environment_readme = environment / "README.md"
     if (not real_directory(root / "doc") or not real_directory(environment)
             or not remember(environment_readme, environment_documented)):
         fail("doc/environment/README.md", "environment_documentation",
-             "Provision of readable environmental statements, recording of installation, operational readiness, validation orders and physical environmental sources")
+             "Document dependencies, setup, resources, and verification commands in doc/environment/README.md.")
     index = root / "doc/README.md"
     if not remember(index, environment_linked):
-        fail("doc/README.md", "environment_navigation", "Presented to environment/README.md Local Markdown Link")
+        fail("doc/README.md", "environment_navigation", "Add a relative Markdown link to environment/README.md in doc/README.md.")
 
     code_roots = [root / name for name in ("base", "tasks", "scripts", "tests")]
     for violation in violations:
@@ -197,14 +201,14 @@ def check_project(root, *, remember=None):
                 relative = directory.relative_to(root).as_posix()
                 if files > FILE_LIMIT:
                     fail(relative, "directory_file_count",
-                         f"Up to direct files {FILE_LIMIT} - Yeah, actually. {files} individual;grouping by function and checking for duplicates")
+                         f"This directory has {files} files. The limit is {FILE_LIMIT}. Group related files and check for duplicates.")
                 if subdirs > DIRECTORY_REVIEW_THRESHOLD:
                     directory_reviews.append({
                         "path": relative,
                         "rule": "directory_child_count",
                         "files": files,
                         "directories": subdirs,
-                        "expected": "Reconcile the duties and calls of the direct subdirectories, merge and duplicate and group them according to actual commonality",
+                        "expected": "Review how the subdirectories are used and group related ones by purpose.",
                     })
 
     violations.sort(key=lambda item: (item["path"], item["rule"]))

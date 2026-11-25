@@ -12,7 +12,7 @@ Use these steps for projects you can access from this environment.
 
 Open Settings and find Plugins in Customize. Import the `plugins/cursor-plugin`
 folder from the [EverResearch repository](https://github.com/OpenSAE/EverResearch), or extract the
-[Cursor plugin ZIP](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.1-cursor-plugin.zip) and
+[Cursor plugin ZIP](https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever-research-0.2.2-cursor-plugin.zip) and
 import the extracted directory. For a team marketplace, select the repository
 and its root Cursor marketplace manifest in the team settings.
 

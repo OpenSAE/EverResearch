@@ -40,6 +40,8 @@ def test_project_check_requires_real_components_and_counts_deep_files(tmp_path, 
         ("base/memory/models", "nested_component"),
         ("scripts/analysis/summary", "directory_file_count"),
     } <= reported
+    assert next(item["expected"] for item in result["violations"]
+                if item["rule"] == "required_directory") == "Missing required directory: datasets/"
 
 
 def test_reference_component_split_passes_project_check(tmp_path, capsys):

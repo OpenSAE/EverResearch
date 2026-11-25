@@ -46,9 +46,9 @@ def path_name_violations(entry, is_directory, *, allow_digits=False):
     if not is_directory and name.startswith("test_"):
         name = name.removeprefix("test_")
     if not allow_digits and re.search(r"[0-9]", name):
-        yield "name_digits", "Duty words for custom catalogues and file names; version numbers for real models or data set identities"
+        yield "name_digits", "Use descriptive words without digits here. Registered dataset and model names may include version numbers."
     if not contains_english_word(name):
-        yield "name_english_word", "The name contains at least one full English word and separates words by underlineding"
+        yield "name_english_word", "Use at least one complete English word and separate words with underscores."
 
 
 def is_configuration_file(path):

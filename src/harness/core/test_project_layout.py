@@ -122,6 +122,8 @@ def test_layout_rejects_and_recovers_at_each_level(capsys, tmp_path):
         **directories, **files,
     }
     assert all(entry["expected"] for entry in report["violations"])
+    assert all(entry["expected"].startswith("Unexpected top-level directory.")
+               for entry in report["violations"] if entry["rule"] == "root_directory")
 
     for relative in files:
         (root / relative).unlink()

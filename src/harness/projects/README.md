@@ -1,19 +1,19 @@
 # Access and maintenance of scientific projects
 
-## Purpose
+## Purpose and main function
 
-Provides an operational portal for project access and sharing of skills, along with documentation, operational acceptance and documentation standards for scientific projects.
+This guide explains how to connect, organize, and check a scientific project with EverResearch. It also documents the layout and naming rules used by the project checker.
 
-## Scope
+## Scope of application
 
-The project operates independently on its own dependencies, configurations, and commands. The routing and central inspection report can be found in [Central Work Zone, in-house resources and project inspection](../core/README.md) for location registration, resource and verification.
+Use this guide for project setup, structural maintenance, and verification. Each project documents its own dependencies, configuration, and commands. The [workspace and resource guide](../core/README.md) covers central registration, local resource bindings, and inspection records.
 
-- [Access and Usage](#project-setup)Helping to register projects, synchronize skills, bind resources, initiate orders and manage structural results.
-- [Catalogues and documents attributed](#project-layout)For checking paths, layouts and naming.
-- [Run and accept](#project-execution)Description of precheck, experimental records and researcher review.
-- [Item documents](#project-documentation)Show me what you're supposed to write on the pages..
-- [CUB-200 Items for information](templates/cub/README.md)Show configuration, components, pre-check and results with a runable example of classification.
-- [Catalogue of scientific project templates](templates/README.md)Provide replicable project source code, configuration and operational access, applicable to mission-specific access items. CUB Default Reference.
+- [Project setup](#project-setup) covers registration, skills, and resource bindings.
+- [Project layout and naming](#project-layout) explains which files belong where and how to interpret checker findings.
+- [Run and accept](#project-execution) covers prechecks, experiment records, and verification.
+- [Project documentation](#project-documentation) explains what each project page should cover.
+- The [CUB-200 example](templates/cub/README.md) shows how configuration, components, prechecks, and results work together.
+- The [project templates](templates/README.md) provide additional examples of project layouts and entry points.
 
 <a id="project-setup"></a>
 
@@ -104,45 +104,47 @@ The binding record is kept at `src/project/maintained/<project>/resources.json` 
 
 <a id="project-layout"></a>
 
-## Catalogues and documents attributed
+<a id="catalogues-and-documents-attributed"></a>
 
-### Overall layout and necessity
+## Project layout and naming
 
-When accessing a strange project, a whole combo catalogue or reconnecting multiple components, use [maintain-project](../../../.agents/skills/maintain-project/SKILL.md) to identify responsibilities from the real entrance, organize specialized maintenance and check changed use links.
+### Required directories and how to check them
 
-The following table shows the functions of the root list of the project. Each scientific project has an entity-level catalogue `base/`, `datasets/`, `models/`, `tasks/`, `conf/`. The total acceptance is `rh projects project check <project-root>`, which contains a detailed tree-wide path check. `rh projects layout check <project-root>` is referred back to the physical tree and reports the path and non-compliance terms. The whole project acceptance is based on the withdrawal status `0`. The specific path and documentation rules are implemented by `src/harness/core/layout.py`.
+Use [maintain-project](../../../.agents/skills/maintain-project/SKILL.md) to inspect an unfamiliar project, check it as a whole, or coordinate changes across components. Start from its documented commands and follow the code and files those commands use.
 
-| Location | Required level of preparedness | For what? |
+A project needs real directories named `base/`, `datasets/`, `models/`, `tasks/`, and `conf/` at its root. Run `rh projects project check <project-root>` for the complete structure check, which includes the layout rules. Run `rh projects layout check <project-root>` to check path placement and names on their own.
+
+Each finding gives the path, a rule identifier, and an explanation in `expected`. For example, `Missing required directory: base/` tells you that the checker could not find the required top-level directory. A successful check exits with status `0`. The checks are implemented in [layout.py](../core/layout.py) and [project.py](../core/project.py).
+
+| Location | When required | What belongs there |
 | --- | --- | --- |
-| root directory `README.md`, `AGENTS.md` | Required | The former describes the purpose of the project, the entry point for normal operations and the location of the results, while the latter describes the maintenance of the rules within the project and locates the common agreement. |
-| `conf/` | Required | Provides `conf/config.<format>` for official access and effective formulations. |
-| `datasets/` | Required | At least one actual data set and its reading, preparation or disaggregation is achieved. |
-| `models/` | Required | At least one actual model and its construction, loading or call realization. |
-| `tasks/` | Required | There is at least one actual scientific mission, with an additional `precheck/` to provide an automatic precheck for a formal mission. |
-| Workspace Data Roots | Use when entering accordingly | Original scientific data sets, source-distributed labels and directly accompanying data files are placed in the working area at `data/` on the project level. The first-level list of directories of the project root excludes `data/`. |
-| `experiment/` | When there's a scientific operation. | A fixed list of experimental products under the root directory. The running entrance is located from the root of the project and automatically created when you write it first. |
-| `base/` | Required | Saves real open access, configuration synthesis, component selection, task distribution and common running support. |
-| `doc/` | Required | From README navigation to document index, provide a description of the actual level I directories and connect components, parameters, experiments, knowledge, implementation environment and source structure. |
-| `tests/`、`scripts/`、`third_party/` | Optional | Automatic regression, manual running tools and third-party source code are established on a practical basis. |
-| `assets/` | When resources are retained for a long period | Fixed presentations, stand-alone re-uses and other long-term resources maintained with the project are grouped by type and use, together with source descriptions and dedicated scripts. |
-| `tmp/` | When there's a one-time project | A list of names is used for each job and ends as intended. |
-| `.researchharness/`、`.agents/skills/` | Created when connected or self-skilled | The former preserves project statements, while the latter are used for project-owned skill discovery. |
+| Root `README.md` and `AGENTS.md` | Every project | Usage, normal entry points, result locations, and project maintenance instructions. |
+| `base/` | Every project | Public entry points, configuration assembly, component selection, task dispatch, and shared runtime code. |
+| `conf/` | Every project | The main configuration at `conf/config.<format>` and any component configuration files. |
+| `datasets/` | Every project | At least one dataset implementation, including loading, preparation, or splitting. |
+| `models/` | Every project | At least one model implementation, including construction, weight loading, or invocation. |
+| `tasks/` | Every project | At least one scientific task and a working `tasks/precheck/`. |
+| `doc/` | Every project | Project documentation. Link from `doc/README.md` to the environment guide and provide navigation to the relevant components, configuration, experiments, and code. |
+| Workspace `data/` | When the project uses source data | Original datasets, upstream labels, and accompanying files outside the project root. |
+| `experiment/` | When a run produces results | Experiment records and outputs. The project creates this directory on its first write. |
+| `tests/`, `scripts/`, and `third_party/` | As needed | Regression tests, standalone utilities, and upstream source code. |
+| `assets/` | When the project keeps reusable resources | Named resource groups, provenance, and dedicated scripts. |
+| `tmp/` | For one-off work | A named working directory for each temporary job. |
+| `.researchharness/` and `.agents/skills/` | When configured | Maintenance settings and project-owned skills, respectively. |
 
-The root directory is used primarily for navigation, installation and access; the component logic, configuration, documentation and running files are each assigned to them. The secondary directory is created only when the corresponding duties actually appear. A small number of files can be flat, the duties specified and then decoded into a generic directory. The project structure describes the actual command, the catalogue map and the open path available to help the assistant to take over by pressing the existing entrance.
+Keep navigation, installation, and entry-point files at the root. Place implementation files, settings, documentation, and run outputs in the directories responsible for them. Add subdirectories when files serve distinct purposes.
 
-The project root name uses two or three words, PascalCase, such as `ContextMemory`, which contains at least one full English word. The self-defined directory and file name contains at least one full English word, giving preference to a word named sub-task, with multiple words separated by underlined. Real models, data sets and their versions can be distinguished by numbers. The directory of these components in the configuration mirrors follows the same place. The file, the external resource content and the executing identity in the running records specified in the framework follow the same format. The tree-wide examination reports on the project root name, numbers and vocabulary problems.
+Name the project root with two or three PascalCase words, such as `ContextMemory`. At least one must be a complete English word. Use descriptive words separated by underscores for project-defined paths. Recognized dataset and model names may include version numbers. Public interfaces, upstream files, and run metadata follow the conventions for their respective locations.
 
-The code checks to overwrite the visible project content. The hidden path and Python byte-code caches are left to their respective tools. The checker reads the experimental identity from the actual project component directory and the component directory map of the main configuration `conf/config.<format>` and checks the configuration from the actual source directory. The function is whether the project is actually enabled, the path corresponding code is actually called, and whether the same functionality can be combined and validated along the normal entry.
+The layout check inspects visible project paths. Outside `experiment/`, it skips hidden entries and Python bytecode caches. It uses component directories and the `catalogs` mapping in the main configuration to recognize experiment paths. It also checks that configuration branches correspond to the source directories that own them. Verify the project's actual behavior through its documented entry points.
 
-### Base level and scientific components
+### Shared code and scientific components
 
-Command access, open interface, movement control, and general operating codes to enter `base/`, sample and classification to enter `datasets/`, model structure and reasoning to enter `models/`, and training, assessment, laboratory computing, and mission-specific indicators to enter `tasks/`. The installation name can still be maintained through a packaged map or thin entrance, and the original open import can point to the end of the split.
+Keep public commands, interfaces, dispatch, and common runtime code in `base/`. Put dataset loading and preparation in `datasets/`, model implementation in `models/`, and training, evaluation, and task-specific metrics in `tasks/`. Preserve existing public imports through the package mapping or a thin entry point when moving code.
 
-The central inspection requires five entity directories, `base/` portals or operational realizations, `conf/` configuration portals, and real source codes for data sets, models, official missions. Empty directories, placeholder realizations, registrations and precheck alone cannot serve as components. Check `base/` embedded component source trees, and limit direct documentation to 15 per layer at `base/`, `tasks/`, `scripts/`, `tests/` and recognizable old source roots. `datasets/` and `models/` subtrees exemption numbers are still subject to acceptance.
+The required directories must contain a working shared implementation, a nonempty main configuration, and real dataset, model, and task implementations. A registration or placeholder alone does not count as an implementation. The project needs a scientific task in addition to its precheck.
 
-When there are more than 15 direct subdirectories, `project check` reports the path, number of files and number of subdirectories by `directory_reviews` for functional inspection and repair. The independent functions in the existing directory are based on actual calls. The number of documents remains at the mandatory limit of 15.
-
-The central structure checks the disk and the actual call evidence that the components have been correctly connected.
+The checker flags misplaced component trees under `base/` and limits each inspected directory to 15 direct files under `base/`, `tasks/`, `scripts/`, `tests/`, and recognizable legacy source roots. When a directory has more than 15 direct subdirectories, `directory_reviews` reports its path and counts so you can review how its contents are used.
 
 | Level 2 directories or files | Enable Conditions | Documentation duties and access rules |
 | --- | --- | --- |
@@ -151,7 +153,7 @@ The central structure checks the disk and the actual call evidence that the comp
 | `base/` Medium `interfaces/` | When there's a steady external call | The entry indicates input, return value, failure condition and compatibility range. |
 | `plugins.py` and `registry.py` for the base level under each component directory | When multiple components need to be individually configured | The various components catalogues maintain a login to the entry point. |
 
-#### Standard catalogue for three types of components
+#### Example component layout
 
 ```text
 datasets/
@@ -259,7 +261,7 @@ The script directory is organized according to the user's operating organization
 | `.researchharness/project.yaml`、`.researchharness/central.json` | When using the respective access function | The project is subject to a central project order. |
 | `.agents/skills/<skill-name>/` | When there's a project with skills, | The project maintains its own skills, each of which provides `SKILL.md`. |
 
-Component identification, catalog and Python files are used in lowcase English to describe their use, and multiple words are underlined. Formal interfaces and upstream original names are used in original form. Keep dates, times, hashes, and execution identifiers in the run record. Every experiment directory segment and output filename stem uses at least one complete English word. Optional named execution directories use the descriptive `execution_name` from the manifest. The machine `run_id` may contain a timestamp or UUID as metadata. The new directory indicates the conditions under which they are enabled, the actual caller and the corresponding entry, and is synchronized with the protocol [the example of the layout of the reference item](templates/cub/doc/code/development/layout.md) to compare the changes to the project catalogue and additions.
+Use descriptive lowercase words separated by underscores for project-defined component names, directories, and Python files. Preserve upstream filenames and public interface names. Every experiment directory segment and output filename stem uses at least one complete English word. Keep dates, times, hashes, and execution identifiers in the run record. Use the descriptive `execution_name` for an optional run directory. The metadata field `run_id` may hold a timestamp or UUID. Use the [CUB layout example](templates/cub/doc/code/development/layout.md) to compare the proposed paths with the existing layout.
 
 The project allows a stable match between the public component identifier and the disk spelling. Read the corresponding rules for writing the statement of the oral re-entry project, and run the list to save the actual component identifier. Select the same path from the same component for acceptance.
 
