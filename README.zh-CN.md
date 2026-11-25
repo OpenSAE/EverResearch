@@ -26,10 +26,10 @@ EverResearch 帮助科研人员和代理维护数据集、模型、任务、配�
 | DeepSeek Harness | [DeepSeek Harness](https://github.com/OpenSAE/EverResearch/tree/main/plugins/deepseek) |
 | 终端及其他代理 | [Python 和 npm 安装入口](https://github.com/OpenSAE/EverResearch/tree/main/plugins/installer) |
 
-从终端安装 CLI，然后用自己的项目路径替换下面的 `./MyProject`。
+从 [PyPI](https://pypi.org/project/ever-research/) 安装 CLI，然后用自己的项目路径替换下面的 `./MyProject`。
 
 ```sh
-uv tool install https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.0-py3-none-any.whl
+uv tool install ever-research
 rh doctor --json
 rh projects project check ./MyProject
 ```

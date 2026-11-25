@@ -79,10 +79,10 @@ environment on first use.
 | DeepSeek Harness | [DeepSeek Harness](https://github.com/OpenSAE/EverResearch/tree/main/plugins/deepseek) |
 | Shell and other agents | [Terminal and npm installer](https://github.com/OpenSAE/EverResearch/tree/main/plugins/installer) |
 
-**Use the terminal.** Install OpenSAE's Python wheel directly from GitHub:
+**Use the terminal.** Install OpenSAE’s CLI from [PyPI](https://pypi.org/project/ever-research/).
 
 ```bash
-uv tool install https://raw.githubusercontent.com/OpenSAE/EverResearch/main/plugins/installer/ever_research-0.2.0-py3-none-any.whl
+uv tool install ever-research
 rh doctor --json
 rh projects project check ./MyProject
 ```

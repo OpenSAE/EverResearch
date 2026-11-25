@@ -1,9 +1,9 @@
 ## Install from a terminal
 
-Run the following to install the OpenSAE wheel directly from GitHub:
+Install the OpenSAE CLI from [PyPI](https://pypi.org/project/ever-research/).
 
 ```sh
-uv tool install @DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl
+uv tool install ever-research
 rh doctor --json
 ```
 
@@ -11,7 +11,7 @@ If uv reports that its tool directory is missing from PATH, run
 `uv tool update-shell` and open a new terminal.
 
 With Python 3.11 or 3.12 in an activated virtual environment, use
-`python -m pip install @DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl`.
+`python -m pip install ever-research`. The [GitHub wheel](@DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl) is also available for direct download.
 Use `uv tool uninstall ever-research` to remove a CLI installed with uv.
 
 From a project directory, install the CLI and skills together from the npm archive:
