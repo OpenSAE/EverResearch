@@ -13,7 +13,7 @@
 
 </div>
 
-EverResearch gives your AI agent the tools to understand and maintain a research project. It maps how datasets, models, and code fit together, runs project checks, and connects experiments to their configurations and results so you can reproduce past work and build on it. It works with your existing project files, Python environments, and compute.
+EverResearch gives your AI agent the tools to understand and maintain a research project. It automatically organizes your code for reuse and keeps it organized as the project evolves, so you can spend more time exploring research ideas.
 
 <a id="install"></a>
 
