@@ -10,7 +10,7 @@ Before starting a task listed below, read and follow the linked skill. A request
 
 | When the user asks to… | Read first |
 | --- | --- |
-| Set up an unfamiliar project with EverResearch, check a whole project, or coordinate changes across several components | [`maintain-project`](.agents/skills/maintain-project/SKILL.md) |
+| Set up or uninstall EverResearch for a project, check a whole project, or coordinate changes across several components | [`maintain-project`](.agents/skills/maintain-project/SKILL.md) |
 | Change a shared CLI command, launcher, component wiring, resource selection, or result I/O | [`maintain-base`](.agents/skills/maintain-base/SKILL.md) |
 | Add, change, or remove a dataset, loader, preprocessing, labels, or splits | [`maintain-dataset`](.agents/skills/maintain-dataset/SKILL.md) |
 | Add, change, or remove a model, variant, initialization, or checkpoint loading | [`maintain-model`](.agents/skills/maintain-model/SKILL.md) |

@@ -30,6 +30,10 @@ If the user gives a specific issue, emphasis, or requirement, use the material t
 
 Follow [Independent project testing and goal-driven repair](references/goal-testing.md) to resolve sources, prepare original project packages, run short-prompt tests, verify acceptance, and deliver templates. Use the same repair loop when a routine project fails or a confirmed goal remains unmet. Keep goal and test evidence in local `goal/<goal-name>/` directories under the skill's writable state path. The goal-testing guide defines the evidence to keep.
 
+For an uninstall goal, use the [uninstall test procedure](references/goal-testing.md#test-project-uninstallation) to preserve evidence, give a fresh agent a short uninstall request, and verify actual cleanup and retained resources.
+
+When the user specifies which projects should become templates, use [sequential uninstall with a template choice](references/goal-testing.md#test-sequential-uninstall-with-a-template-choice).
+
 ## Record or analyze a project conversation
 
 Use the source skill directory for local work in a checkout. In an installed release, `rh guide skill-state maintain-skill` gives the local directory for `agent_log/` and newly generated exams. Read the exam rule and references from the skill itself.

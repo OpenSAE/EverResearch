@@ -1,6 +1,6 @@
 ---
 name: maintain-project
-description: Connect, maintain, and verify research projects. Use for general requests to handle a project with EverResearch, first-time project setup, project-wide repairs, and changes spanning multiple components.
+description: Connect, maintain, verify, or uninstall EverResearch for a research project. Use for project setup, removal, project-wide repairs, and changes spanning multiple components.
 ---
 
 # Maintain a scientific project
@@ -14,6 +14,10 @@ Find how an unfamiliar project works, coordinate maintenance across its componen
 Use for project connection, first inspection, whole-project maintenance, or work that crosses areas. When the user asks to handle an identified project with EverResearch and gives no narrower task, run the default process through completion. For a new project, that request authorizes setup, routine behavior-preserving adaptations, and verification through its public entry points. A two-line invocation with `maintain-project` and a registered project name assigns the whole default local maintenance scope to the receiving agent. Proceed with the repairs in that registered checkout while preserving existing work. An explicit request to inspect, plan, or register defines a narrower scope. See [Default adoption and completion](references/coordination.md#complete-default-adoption) for the scope and decisions that require the user.
 
 For a request within one component of a managed project, go straight to its skill. Use `maintain-dataset` for data, `maintain-model` for models, `maintain-task` for tasks, `maintain-conf` for settings, `maintain-experiment` for runs, `maintain-base` for shared execution, and `maintain-optional` for standalone scripts, tests, and documentation.
+
+## Uninstall a project
+
+For a request to uninstall, disconnect, or clean up a project installation, follow [Project uninstallation](references/uninstallation.md). It defines how to trace ownership, remove the connection and project-only files, preserve other users' resources, and verify the result. An explicit uninstall request selects this workflow before any setup or project-wide repair.
 
 ## Check the project from its entry points
 

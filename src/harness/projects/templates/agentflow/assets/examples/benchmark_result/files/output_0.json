@@ -1,0 +1,9 @@
+{
+    "pid": "0",
+    "query": "Who was president of the United States in the year that Citibank was founded?When ready, output the final answer enclosed in <answer> and </answer> tags. Do not generate any content after the </answer> tag.",
+    "image": null,
+    "answer": [
+        "james madison"
+    ],
+    "base_response": "The President is: 1987-0236 \n  \n Answer this question based on what information given at least two places within your response ("
+}

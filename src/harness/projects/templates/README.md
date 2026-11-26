@@ -33,6 +33,7 @@ describes this section, the archived original source, and the checks for a copie
 | [LeRobot](lerobot/README.md) | Robot imitation learning, simulation, and policy serving | [Maintenance](lerobot/doc/maintenance.md) |
 | [Whisper](whisper/README.md) | Speech recognition, translation, and timestamps | [Maintenance](whisper/doc/maintenance.md) |
 | [NanoChat](nanochat/README.md) | Tokenizer training and language model pretraining | [Maintenance](nanochat/doc/maintenance.md) |
+| [AgentFlow](agentflow/README.md) | Tool-assisted inference, benchmark response replay, and Flow-GRPO training prechecks | [Maintenance](agentflow/doc/maintenance.md) |
 | [TRL](trl/README.md) | Language model fine-tuning, preference optimization, and reinforcement learning | [Maintenance](trl/doc/maintenance.md) |
 | [Reasoning Gym](reasoning_gym/README.md) | Verifiable reasoning tasks and language model evaluation | [Maintenance](reasoning_gym/doc/maintenance.md) |
 | [Ai2 Safety Eval](ai2_safety_eval/README.md) | Model safety classification and refusal evaluation | [Maintenance](ai2_safety_eval/doc/maintenance.md) |

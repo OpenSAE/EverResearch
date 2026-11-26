@@ -1,0 +1,105 @@
+[project]
+name = "agentflow"
+version = "0.1.2"
+description = "AgentFlow is a trainable, in-the-flow agentic framework."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "graphviz",
+  "requests",
+  "PyYAML",
+  "pydantic>=2",
+  "opentelemetry-sdk",
+  "python-dotenv",
+  "diskcache",
+  "platformdirs",
+  "tenacity",
+  "tqdm",
+  "httpx",
+  "openai",
+  "Pillow",
+  "beautifulsoup4",
+  "psutil",
+  "setproctitle",
+  "flask",
+  "agentops<=0.4.18",
+  "httpdbg",
+  "uvicorn",
+  "fastapi",
+  "aiohttp",
+]
+
+[project.scripts]
+agentflow = "agentflow.cli.project:main"
+
+[project.optional-dependencies]
+dev = [
+  "flake8",
+  "pytest",
+  "hatch",
+  "pytest-asyncio",
+  "pre-commit",
+  "pytest-rerunfailures",
+  "black",
+  "mkdocs",
+  "mkdocs-material",
+  "mkdocstrings[python]",
+  "mike",
+  "mkdocs-git-revision-date-localized-plugin",
+  "mkdocs-git-authors-plugin",
+  "mkdocs-macros-plugin",
+]
+experiment = [
+  "random-word",
+  "datasets",
+  "pandas",
+  "pyarrow",
+  "fire",
+]
+agent = [
+  "anthropic",
+  "dashscope",
+  "google-genai",
+  "numpy",
+  "ollama",
+  "sympy",
+  "together",
+  "wikipedia",
+  "autogen-agentchat",
+  "autogen-ext[openai]",
+  "litellm[proxy]",
+  "mcp",
+  "openai-agents",
+  "langgraph",
+  "langchain[openai]",
+  "langchain-community",
+  "langchain-text-splitters",
+  "sqlparse",
+  "nltk",
+  "uv",
+]
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-dir]
+agentflow = "base/agent_flow"
+"agentflow.agentflow" = "base/agent_flow/compatibility"
+"agentflow.cli" = "base/agent_flow/commands"
+"agentflow.engine" = "models/providers/engine"
+"agentflow.models" = "models/components/models"
+"agentflow.solver" = "tasks/inference/solver"
+"agentflow.training" = "tasks/training"
+"agentflow.training_data" = "datasets/training"
+"agentflow.benchmark_data" = "datasets/benchmarks"
+"agentflow.verl" = "tasks/training/reinforcement"
+"agentflow.benchmarks" = "tasks/benchmarks"
+"agentflow.precheck" = "tasks/precheck"
+
+[tool.setuptools.data-files]
+"share/agentflow" = ["conf/config.yaml"]
+"share/agentflow/tasks/training" = ["conf/tasks/training/config.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
