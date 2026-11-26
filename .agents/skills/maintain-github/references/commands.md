@@ -115,7 +115,7 @@ results/<任务标识>/
 
 ## 提交和推送
 
-在用户对具体范围已授权后调用：
+先按 SKILL.md 选择日常更新或正式发布。向主分支推送或合并 PR 前，按其中的人工审核规则展示实际差异并取得批准。获准推送后调用：
 
 ```bash
 python <Skill目录>/scripts/publish.py publish \
@@ -155,7 +155,7 @@ python <Skill目录>/scripts/publish.py pack --run <任务标识>
 
 ZIP 的内容为选定内部副本中的文件，路径采用映射后的目标路径。目标仓库中的其他文件和本任务记录分别保存在原有位置。文件保存在内部 `release/`，文件名带任务标识。
 
-用户要求 GitHub Release 时，先发布内容取得真实提交，再准备内部版本说明：
+GitHub Release 属于正式发布。先准备候选提交、版本说明、附件和渠道，按 SKILL.md 提交人工审核。获得批准后，使用已审核且实际推送的提交执行：
 
 ```bash
 python <Skill目录>/scripts/publish.py release \
