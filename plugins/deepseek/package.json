@@ -1,6 +1,6 @@
 {
   "name": "@opensae/ever-research-dsh",
-  "version": "0.3.1",
+  "version": "0.8.1",
   "description": "Maintain and verify research projects with EverResearch.",
   "type": "module",
   "main": "index.mjs",

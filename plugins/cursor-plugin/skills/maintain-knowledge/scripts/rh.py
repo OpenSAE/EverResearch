@@ -70,7 +70,9 @@ def cache_directory():
         base = Path.home() / "Library" / "Caches"
     else:
         base = Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache")
-    return (base / "researchharness" / "plugin-runtime").resolve()
+    current = base / "ever-research" / "plugin-runtime"
+    legacy = base / "researchharness" / "plugin-runtime"
+    return (legacy if not current.exists() and legacy.exists() else current).resolve()
 
 
 def executables(directory):

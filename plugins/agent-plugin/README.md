@@ -20,7 +20,7 @@ structure.”
 
 ## Install in Qwen Code
 
-Extract the [Agent Plugin ZIP](https://github.com/OpenSAE/EverResearch/releases/download/v0.3.1/ever-research-0.3.1-agent-plugin.zip)
+Extract the [Agent Plugin ZIP](https://github.com/OpenSAE/EverResearch/releases/download/v0.8.1/ever-research-0.8.1-agent-plugin.zip)
 into a folder called `agent-plugin`, then open Qwen Code in your project:
 
 ```sh

@@ -23,10 +23,10 @@ EverResearch 让你的 AI 代理理解和维护科研项目。它能自动整理
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/openclaw-color.svg" alt="" width="18" height="18"> OpenClaw | [OpenClaw 插件](plugins/openclaw/) |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/vercel.svg" alt="" width="18" height="18"> Skills CLI | [安装指南](plugins/agent-plugin/#install-with-the-skills-cli) · [Skills.sh](https://skills.sh/opensae/everresearch) |
 
-**终端。** 使用 Python 3.11–3.13 从 PyPI 安装。
+**终端。** 使用 Python 3.11–3.13，从 GitHub Releases 安装公开的 wheel。
 
 ```sh
-uv tool install --upgrade ever-research
+uv tool install --upgrade https://github.com/OpenSAE/EverResearch/releases/download/v0.8.1/ever_research-0.8.1-py3-none-any.whl
 rh --version
 rh doctor
 ```

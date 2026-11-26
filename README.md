@@ -34,10 +34,10 @@ EverResearch gives your AI agent the tools to understand and maintain a research
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/openclaw-color.svg" alt="" width="18" height="18"> OpenClaw | [OpenClaw plugin](plugins/openclaw/) |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/vercel.svg" alt="" width="18" height="18"> Skills CLI | [Install guide](plugins/agent-plugin/#install-with-the-skills-cli) · [Skills.sh](https://skills.sh/opensae/everresearch) |
 
-**Terminal.** Install from PyPI with Python 3.11–3.13.
+**Terminal.** Install the published wheel from GitHub Releases with Python 3.11–3.13.
 
 ```bash
-uv tool install --upgrade ever-research
+uv tool install --upgrade https://github.com/OpenSAE/EverResearch/releases/download/v0.8.1/ever_research-0.8.1-py3-none-any.whl
 rh --version
 rh doctor
 ```
