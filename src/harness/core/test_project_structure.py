@@ -191,3 +191,40 @@ def test_unconfigured_project_defaults_to_a_read_only_onboarding_report(tmp_path
     assert f"Remaining structure fixes: {len(strict['violations'])}." in capsys.readouterr().out
     assert main([*command, "--strict"]) == 1
     assert "Project check found" in capsys.readouterr().out
+
+
+def test_project_check_uses_git_source_scope(tmp_path, capsys):
+    import subprocess
+
+    root = tmp_path / "ImageClassification"
+    shutil.copytree(TEMPLATE, root, ignore=shutil.ignore_patterns(".*", "__pycache__", "experiment"))
+    subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+    write(root, ".gitignore", "/experiment/\n/data/\n/legacy/\n")
+    write(root, "experiment/MMLUPro/version_2/metrics/result.json", "{}")
+    write(root, "data/private.txt", "")
+    write(root, "legacy/kept.py", "")
+    write(root, "old_package/__pycache__/module.pyc", "")
+    write(root, "package.egg-info/SOURCES.txt", "")
+    assert main(["projects", "project", "check", str(root), "--json"]) == 0
+    assert json.loads(capsys.readouterr().out)["violations"] == []
+
+    subprocess.run(["git", "add", "-f", "legacy/kept.py"], cwd=root, check=True)
+    write(root, "unregistered/new.py", "")
+    assert main(["projects", "project", "check", str(root), "--json"]) == 1
+    result = json.loads(capsys.readouterr().out)
+    assert {item["path"] for item in result["violations"]} == {"legacy", "unregistered"}
+
+
+def test_registered_experiment_components_allow_research_identifiers(tmp_path, capsys):
+    root = tmp_path / "ImageClassification"
+    shutil.copytree(TEMPLATE, root, ignore=shutil.ignore_patterns(".*", "__pycache__", "experiment"))
+    write(root, "conf/config.yaml", "catalogs:\n  dataset: {GSM8K: {}}\n  model: {qwen3_1_7b: {}}\n")
+    study = "experiment/GSM8K/qwen3_1_7b/classification/reference"
+    write(root, f"{study}/reports/summary.json", "{}")
+    assert main(["projects", "layout", "check", str(root)]) == 0
+    capsys.readouterr()
+    write(root, "experiment/GSM8K/wrong_model/classification/reference/reports/summary.json", "{}")
+    assert main(["projects", "layout", "check", str(root)]) == 1
+    result = json.loads(capsys.readouterr().out)
+    assert any("Unrecognized experiment directory: experiment/GSM8K/wrong_model" in item["expected"]
+               for item in result["violations"])

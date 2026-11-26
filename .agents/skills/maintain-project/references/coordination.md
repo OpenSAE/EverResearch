@@ -35,7 +35,11 @@ setup changes, and verification steps. Obtain approval for setup or use authoriz
 that scope. After setup, recheck the status and return to the original task. For a broken connection,
 identify what needs repair and preserve the selected mode until the user authorizes a switch.
 
-For an authorized online connection, check `rh projects list`, register the actual project root if needed, and run `rh projects setup-maintenance <project-root> --online`. Reuse the registered identity and applicable mode when taking over an existing connection. Bind the actual local interpreter and data resources as needed, then check `rh projects status <project-id>` and the project's own `python -IS .researchharness/maintain.py status`. For an authorized new standalone setup, use `rh projects setup-maintenance <project-root>` with the project's intended mode.
+For an authorized online connection, run `rh projects setup-maintenance <project-root> --online` using the intended EverResearch CLI. It reuses an existing registration or creates one for this checkout. If that name belongs to a different checkout, register this path under a distinct name first. Verify that the project launcher reports online status when invoked from the project's usual Python. Use `rh --version` to identify the CLI and compare it with the agent's runtime when investigating a mismatch. Bind the project's Python and data only when the scientific work requires them.
+
+For a standalone checkout, run `rh projects setup-maintenance <project-root>`. Repository maintainers can publish the generated instructions and ignore rules once. Verify consumer setup from a fresh clone using `git status --short`; mode, connections, backups, and any locally generated bundle files belong in the repository's ignore scope.
+
+In a Git checkout, check structure against tracked files and new non-ignored files. Investigate ignored run outputs only when affected, using the project reader or `rh projects experiment check` for runs that declare the EverResearch format. Start with the relevant command and skill section for a focused request; use the operations manual as a lookup when responsibilities are unclear.
 
 Use the project’s installation and operating instructions to confirm its normal entry. Check structure and use a representative precheck or configuration preview within authorization. Deliver the connection status and separately identify unavailable scientific inputs or checks.
 

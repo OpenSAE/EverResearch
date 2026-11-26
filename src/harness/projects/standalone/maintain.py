@@ -1,7 +1,6 @@
-"""Select the maintenance source by the project switch and run the structural check of the source.
+"""Report maintenance status or run a structural check in the selected mode.
 
-Run from project status or check.Only offline checks within items are run when switches are closed;
-Using a mounted central program on startup, which failed to return when not available.
+Run this launcher from a project configured for online or offline maintenance.
 """
 
 import argparse
@@ -22,14 +21,14 @@ ONLINE = DIRECTORY / "online"
 
 def require_file(path):
     if path.parent.is_symlink() or path.is_symlink() or not path.is_file():
-        raise ValueError(f"The missing project maintenance file or file is not a local normal file:{path}")
+        raise ValueError(f"Expected a regular project maintenance file: {path}")
     return path
 
 
 def enabled():
     mode = tomllib.loads(require_file(DIRECTORY / "mode.toml").read_text(encoding="utf-8"))
     if set(mode) != {"enabled"} or type(mode["enabled"]) is not bool:
-        raise ValueError("mode.toml Need to be specified enabled = true or false")
+        raise ValueError("Set enabled = true or enabled = false in .researchharness/mode.toml.")
     return mode["enabled"]
 
 
@@ -59,13 +58,13 @@ def online(action):
     root = (PROJECT / connection["root"]).resolve(strict=True)
     environment = os.environ.copy()
     if connection.get("installed") is True:
-        executable = shutil.which("rh")
-        if executable is None and connection.get("plugin_cli"):
-            candidate = Path(connection["plugin_cli"])
-            if candidate.is_file():
-                executable = str(candidate)
+        executable = connection.get("plugin_cli") or connection.get("cli")
+        if executable and (not Path(executable).is_file() or not os.access(executable, os.X_OK)):
+            raise ValueError(f"EverResearch CLI moved or is unavailable: {executable}. Reapply the online connection using the intended installation.")
+        if not executable:
+            executable = shutil.which("rh")
         if executable is None:
-            raise ValueError("Open the ResearchHarness plugin in this environment or install the OpenSAE CLI")
+            raise ValueError("Open the EverResearch plugin or install the ever-research package from OpenSAE.")
         command = [executable, "projects"]
         environment["RH_STATE_DIR"] = str(root)
     else:
@@ -76,7 +75,10 @@ def online(action):
             "sys.path.insert(0, str(root / 'src')); from harness.cli import main; "
             "raise SystemExit(main(sys.argv[1:]))"
         )
-        command = [sys.executable, "-I", "-c", launcher, str(root), "projects", "--harness-root", str(root)]
+        interpreter = connection.get("python", sys.executable)
+        if not Path(interpreter).is_file():
+            raise ValueError(f"EverResearch Python moved or is unavailable: {interpreter}. Reapply the online connection using the intended environment.")
+        command = [interpreter, "-I", "-c", launcher, str(root), "projects", "--harness-root", str(root)]
     state = subprocess.run(
         [*command, "status", connection["project_id"]],
         cwd=PROJECT, env=environment, check=True, stdout=subprocess.PIPE, text=True, encoding="utf-8",
@@ -100,7 +102,7 @@ def main():
         mode = "Offline maintenance not available"
         return offline(args.action)
     except (OSError, ValueError, KeyError, TypeError, subprocess.CalledProcessError) as error:
-        print(f"{mode}:{error}", file=sys.stderr)
+        print(f"{mode}: {error}", file=sys.stderr)
         return 2
 
 

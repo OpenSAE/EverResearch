@@ -10,7 +10,7 @@ import tomllib
 
 import yaml
 
-from .layout import EXECUTION_NAME, NAME, PLAIN_NAME, PURPOSE, experiment_rules
+from .layout import COMPONENT_ID, EXECUTION_NAME, NAME, PLAIN_NAME, PURPOSE, experiment_rules
 from .naming import contains_english_word, experiment_name_violation, is_configuration_file
 
 
@@ -59,10 +59,10 @@ def expected_run(manifest, config, relative):
     if not isinstance(run_id, str) or not run_id.strip():
         return None
     if not all(isinstance(value, str) and re.fullmatch(pattern, value) for value, pattern in (
-        (dataset, rf"{NAME}(?:/{NAME})?"), (task, NAME), (subname, PURPOSE),
+        (dataset, rf"{COMPONENT_ID}(?:/{COMPONENT_ID})?"), (task, NAME), (subname, PURPOSE),
     )):
         return None
-    if model is not None and (not isinstance(model, str) or not re.fullmatch(rf"{NAME}(?:/{NAME})?", model)):
+    if model is not None and (not isinstance(model, str) or not re.fullmatch(rf"{COMPONENT_ID}(?:/{COMPONENT_ID})?", model)):
         return None
     if role is not None and (not isinstance(role, str) or not re.fullmatch(PURPOSE, role) or role in RUN_DIRS):
         return None
@@ -169,8 +169,10 @@ def check_experiment(root):
         def check_names(directory):
             for entry in directory.iterdir():
                 is_directory = entry.is_dir()
-                if violation := experiment_name_violation(entry, is_directory):
-                    fail(entry.relative_to(root).as_posix(), *violation)
+                relative = entry.relative_to(root).as_posix()
+                if not (is_directory and rules.is_experiment_component(relative)):
+                    if violation := experiment_name_violation(entry, is_directory):
+                        fail(relative, *violation)
                 if is_directory and not entry.is_symlink():
                     check_names(entry)
 

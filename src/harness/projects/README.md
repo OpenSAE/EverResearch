@@ -41,7 +41,7 @@ The following specific skills are used directly when handling a single job. `mai
 
 ### Connect a project
 
-Use the project's README to install dependencies, configure data and the environment, and run its normal commands. The optional ResearchHarness connection gives the project access to shared skills, local resource bindings, and structure reviews. See the [workspace and resource guide](../core/README.md) for path resolution and workspace setup.
+Use the project's README to install dependencies, configure data and the environment, and run its normal commands. The optional EverResearch connection gives the project access to shared skills, local resource bindings, and structure reviews. See the [workspace and resource guide](../core/README.md) for path resolution and workspace setup.
 
 Before applying EverResearch rules to project edits, run `rh projects project status <project-root>`.
 The JSON result reports `managed` with the active guide, `unmanaged` when maintenance is inactive, or
@@ -53,14 +53,13 @@ user authorizes EverResearch setup, including projects with legacy registrations
 For a project in `example/`, run these commands from the shared workspace:
 
 ```bash
-rh projects --harness-root ./ResearchHarness register example --path ./example
 rh projects --harness-root ./ResearchHarness setup-maintenance ./example --online
 rh projects --harness-root ./ResearchHarness status example
 ```
 
 ### Online and offline maintenance
 
-`rh projects setup-maintenance <project-root>` installs a mode setting, a status and check command, and an offline guide. It also updates the managed section of the project's `AGENTS.md` and clears known legacy ResearchHarness links and generated guides. Project-owned skills stay in the project. A standalone project starts in offline mode. An existing project uses its current mode file or last applicable connection setting. To set up a new online connection, register the project first and then use `--online`.
+`rh projects setup-maintenance <project-root>` installs a mode setting, a status and check command, and an offline guide. It also updates the managed section of the project's `AGENTS.md` and clears known legacy ResearchHarness links and generated guides. Project-owned skills stay in the project. A standalone project starts in offline mode. An existing project uses its current mode file or last applicable connection setting. Use `--online` to register and connect a new checkout. Reuse the existing registration when the path already matches. If the name belongs to a different checkout, register the new path under a distinct name.
 
 Run the authorized first setup before moving or editing project files. It saves project files,
 including code, configurations, and documentation, in `.researchharness/backups/initial-setup.tar.gz`.
@@ -75,12 +74,12 @@ entries record where the file was and cannot restore its contents.
 
 The `enabled` value in `.researchharness/mode.toml` selects the maintenance source:
 
-- With `enabled = true`, run `python -IS .researchharness/maintain.py status` to locate the online guide in the ResearchHarness workspace. It links to the central operations guide and original shared skills. The project's `.researchharness/online/` holds local connection records. Use `rh projects apply <project-id>` to refresh the guide after configuring or restoring a connection. An unavailable online connection returns an error so the user can restore it or choose to work offline.
+- With `enabled = true`, run `python -IS .researchharness/maintain.py status` to locate the online guide in the EverResearch workspace. It links to the central operations guide and original shared skills. The project's `.researchharness/online/` holds local connection records. Use `rh projects apply <project-id>` to refresh the guide after configuring or restoring a connection. An unavailable online connection returns an error so the user can restore it or choose to work offline.
 - With `enabled = false`, the maintenance launcher uses the project's offline guide and local checker.
 
-A project without a mode file can continue using `rh projects set <project-id> --skills on/off`. With skills enabled, the managed section in `AGENTS.md` links to the central originals. With skills disabled, it points to the project's own maintenance instructions. The project uses `.agents/skills/` for its own skills.
+A project without a mode file can continue using the older registration workflow with `rh projects set <project-id> --skills on/off`. With skills enabled, the managed section in `AGENTS.md` links to the central originals. With skills disabled, it points to the project's own maintenance instructions. The project uses `.agents/skills/` for its own skills.
 
-Setup and synchronization refresh the same search guidance in the project's `AGENTS.md` in either mode. The [CUB maintenance instructions](templates/cub/AGENTS.md) show how to choose the mode and run the status and check commands. The mode file, launcher, and offline materials travel with each project. Installation and research dependencies are described in the project's own documentation.
+Setup and synchronization refresh the same search guidance in the project's `AGENTS.md` in either mode. The [CUB maintenance instructions](templates/cub/AGENTS.md) show how to choose the mode and run the status and check commands. Projects can distribute the offline launcher and guide or generate them during setup. Keep machine-local mode files, connection records and backups out of Git. Installation and research dependencies are described in the project's own documentation.
 
 <a id="project-publishing"></a>
 
@@ -92,7 +91,7 @@ For projects using online maintenance, `maintain-github` handles release prepara
 
 ### Daily maintenance and light authentication
 
-Once the same item has been maintained several times, it will be available once the central index has been approved `rh projects maintenance <project root directory>` View the change and last check conclusion. Commands to keep the file ' s state, reusable structural judgement and existing maintenance records in the centre. `.workspace/harness/projects/maintenance/`.It judges changes by the file system properties, reading the source code or configuration body on demand. The whole structure report is used when neither the project nor the inspection rules change. `reused` and original check time,`--fresh` Force re-acquires. A directory link may point to content outside the index range and re-examining the structure check when such a link exists.
+Run `rh projects maintenance <project-path>` to read the structural findings and update the local maintenance index. The index stores the project snapshot, findings, and check time. When the relevant files and rules are unchanged, the command reports that it reused the previous result. Use `--fresh` to run the checks again.
 
 Use it. `--record <JSON File>` Writing maintenance records. JSON Organisation `entrypoints`,`issues` and `evidence` list, replace the previous record as a whole when saving. `--limit` Displays and attaches the total number. The running evidence is kept as a historical record and checked by command, valid configuration, data, weights and operating environment before reuse. `project check` Still available for independent read-only acceptance and inspection.
 

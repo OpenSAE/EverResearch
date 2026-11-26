@@ -42,7 +42,7 @@ rh doctor
 
 运行 `rh projects project check ./MyProject --onboarding` 可查看只读接入预览。脚本和持续集成可用 `--strict` 判断是否通过，或用 `--json` 获取机器可读结果。
 
-从本仓库安装 EverResearch 时，首次接入会[在本地备份项目文件](src/harness/projects/README.md#online-and-offline-maintenance)。整理后，用项目原有的命令验证。
+安装此仓库的源码版本后，用 `rh --version` 确认当前 CLI。运行 `rh projects setup-maintenance ./MyProject --online` 接入项目。首次接入会[在本地备份项目文件](src/harness/projects/README.md#online-and-offline-maintenance)。Git 工作区的结构检查覆盖已跟踪文件和未忽略的新文件。已有结果使用项目自己的读取入口，采用 EverResearch 格式的运行记录用 `rh projects experiment check ./MyProject` 检查。
 
 ## 科研工作怎么用
 

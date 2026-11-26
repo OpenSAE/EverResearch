@@ -12,7 +12,7 @@ from pathlib import Path
 import yaml
 
 from .experiment import read_record
-from .layout import CODE, COMPONENTS, CONFIG, NAME, check_layout
+from .layout import CODE, COMPONENTS, CONFIG, NAME, check_layout, project_paths
 
 
 REQUIRED = ("base", *COMPONENTS.values(), "conf")
@@ -21,18 +21,18 @@ DIRECTORY_REVIEW_THRESHOLD = 15
 COMPONENT_NAMES = {*COMPONENTS, *COMPONENTS.values()}
 
 
-def visible(directory):
+def visible(directory, paths):
     return sorted(
         entry for entry in directory.iterdir()
-        if not entry.name.startswith(".") and entry.name != "__pycache__"
+        if (paths is None or entry in paths) and not entry.name.startswith(".") and entry.name != "__pycache__"
     )
 
 
-def directories(root):
+def directories(root, paths):
     yield root
-    for entry in visible(root):
+    for entry in visible(root, paths):
         if entry.is_dir() and not entry.is_symlink():
-            yield from directories(entry)
+            yield from directories(entry, paths)
 
 
 def has_source(path):
@@ -76,8 +76,9 @@ def has_source(path):
                for line in source.splitlines())
 
 
-def implementations(directory, remember):
-    return any(remember(path, has_source) for subdir in directories(directory) for path in visible(subdir))
+def implementations(directory, remember, paths):
+    return any(remember(path, has_source) for subdir in directories(directory, paths)
+               for path in visible(subdir, paths))
 
 
 def populated_configuration(path):
@@ -87,8 +88,8 @@ def populated_configuration(path):
         return False
 
 
-def has_configuration(directory, remember):
-    for path in visible(directory):
+def has_configuration(directory, remember, paths):
+    for path in visible(directory, paths):
         if (path.is_symlink() or not path.is_file() or path.stem != "config"
                 or not re.fullmatch(CONFIG, path.name)):
             continue
@@ -117,7 +118,9 @@ def environment_linked(path):
 
 def check_project(root, *, remember=None):
     """Return the detailed layout report plus mandatory project-wide constraints."""
-    result = check_layout(root, remember=remember)
+    root = Path(root).resolve(strict=True)
+    paths = project_paths(root)
+    result = check_layout(root, remember=remember, paths=paths)
     if remember is None:
         def remember(path, inspect):
             return inspect(path)
@@ -130,7 +133,7 @@ def check_project(root, *, remember=None):
         violations.append({"path": path, "rule": rule, "expected": expected})
 
     def real_directory(path):
-        return path.is_dir() and not path.is_symlink()
+        return (paths is None or path in paths) and path.is_dir() and not path.is_symlink()
 
     for name in REQUIRED:
         directory = root / name
@@ -142,10 +145,10 @@ def check_project(root, *, remember=None):
 
     base = root / "base"
     if real_directory(base):
-        if not implementations(base, remember):
+        if not implementations(base, remember, paths):
             fail("base", "base_implementation", "Add a working entry point, dispatcher, or shared implementation under base/.")
-        for directory in directories(base):
-            for path in visible(directory):
+        for directory in directories(base, paths):
+            for path in visible(directory, paths):
                 if path.is_dir() and path.name in COMPONENT_NAMES:
                     relative = path.relative_to(root).as_posix()
                     fail(relative, "nested_component", "Move the component to datasets/, models/, or tasks/ and preserve public imports through the package mapping.")
@@ -156,9 +159,9 @@ def check_project(root, *, remember=None):
             components[role] = []
             continue
         members = [
-            entry.name for entry in visible(directory)
+            entry.name for entry in visible(directory, paths)
             if real_directory(entry) and re.fullmatch(NAME, entry.name)
-            and (role != "task" or entry.name != "precheck") and implementations(entry, remember)
+            and (role != "task" or entry.name != "precheck") and implementations(entry, remember, paths)
         ]
         components[role] = members
         if not members:
@@ -168,21 +171,22 @@ def check_project(root, *, remember=None):
             fail(name, "component_implementation", expected)
         if role == "task":
             precheck = directory / "precheck"
-            if not real_directory(precheck) or not implementations(precheck, remember):
+            if not real_directory(precheck) or not implementations(precheck, remember, paths):
                 fail("tasks/precheck", "precheck_implementation", "Add a working precheck under tasks/precheck/.")
 
     conf = root / "conf"
-    if real_directory(conf) and not has_configuration(conf, remember):
+    if real_directory(conf) and not has_configuration(conf, remember, paths):
         fail("conf", "configuration_entry", "Add a nonempty main configuration file at conf/config.<format>.")
 
     environment = root / "doc/environment"
     environment_readme = environment / "README.md"
     if (not real_directory(root / "doc") or not real_directory(environment)
+            or (paths is not None and environment_readme not in paths)
             or not remember(environment_readme, environment_documented)):
         fail("doc/environment/README.md", "environment_documentation",
              "Document dependencies, setup, resources, and verification commands in doc/environment/README.md.")
     index = root / "doc/README.md"
-    if not remember(index, environment_linked):
+    if (paths is not None and index not in paths) or not remember(index, environment_linked):
         fail("doc/README.md", "environment_navigation", "Add a relative Markdown link to environment/README.md in doc/README.md.")
 
     code_roots = [root / name for name in ("base", "tasks", "scripts", "tests")]
@@ -194,8 +198,8 @@ def check_project(root, *, remember=None):
 
     for start in code_roots:
         if real_directory(start):
-            for directory in directories(start):
-                entries = visible(directory)
+            for directory in directories(start, paths):
+                entries = visible(directory, paths)
                 subdirs = sum(real_directory(entry) for entry in entries)
                 files = len(entries) - subdirs
                 relative = directory.relative_to(root).as_posix()

@@ -1,17 +1,9 @@
-## Choose the maintenance mode
+## Maintain this checkout
 
-### Purpose and main functions
+Use the project instructions above for ordinary work and read-only inspection. EverResearch is an optional maintenance tool.
 
-Use the project setting to select its maintenance guide and structure checker.
+- **First use.** If `.researchharness/mode.toml` is missing and the user has authorized EverResearch setup, run `rh projects setup-maintenance . --online` for online maintenance or `rh projects setup-maintenance .` for a standalone checkout. An older `mode.json` requires a current mode selection as well.
+- **Offline maintenance.** With `enabled = false`, use the [offline guide](.researchharness/offline/operations.md).
+- **Online maintenance.** With `enabled = true`, run `python -IS .researchharness/maintain.py status` and follow the relevant section of the reported guide. If the connection fails, report the error and pause work that needs the central guide.
 
-### Scope
-
-Use this section for project maintenance, checking the online connection, or running an offline structure check.
-
-Start by reading `.researchharness/mode.toml`. Its `enabled` setting selects this project's maintenance mode. Follow the user's choice and obtain authorization before changing it.
-
-- **`enabled = false` selects offline maintenance.** Use the project's [offline operations guide](.researchharness/offline/operations.md). It explains how to plan, carry out, and finish maintenance using the project's files, commands, tests, and data.
-- **`enabled = true` selects online maintenance.** Run `python -IS .researchharness/maintain.py status` first. When it prints `online`, read the central guide at the reported path. Follow that guide to the operations manual, shared skills, and central checks in the EverResearch repository. If the status command fails, report the cause and pause work that requires central maintenance until the user restores the connection or selects offline mode.
-- **A missing or invalid setting blocks maintenance.** Report the problem and continue once the setting has been corrected or the user has chosen a mode.
-
-When a structure check is authorized, run `python -IS .researchharness/maintain.py check` from the project root. The command runs the checker for the selected mode. Follow the project README for installation, training, prechecks, and reading results.
+For an authorized structure check, run `python -IS .researchharness/maintain.py check` from the project root. Use the project's own entry points to install, run tasks, and read their results.

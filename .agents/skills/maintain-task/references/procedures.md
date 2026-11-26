@@ -22,12 +22,12 @@ Adds, modifies or removes items for research tasks, workflows and task outputs.
 
 When determining the attribution of the common code, look at whether it handles a sample, model, scientific mission or running process. The label is read with data, model construction and weighting with models, and the general check point status and file reading and writing with the operational layer. The results table with task-specific fields follows the task.
 
-## Increase
+## Add a task
 
-1. Read the scene from downstream to determine the meaning of input, mission steps, indicators, deliverables and partial completion.
-2. Reuse actual training, evaluation and record-keeping support when the catalogue is responsible for public interfaces and calculations. `tasks/` Down `precheck`,Allows the public entry point to run a precheck automatically in the current combination before each count. Using a very small sample, the formal computation, product path, writing format and reading, the precheck is followed by a formal calculation.
-3. Synchronize public commands, project descriptions and required result readers.
-4. If you are allowed to do so, enter a representative input and read the results from the normal entrance, confirming that the intended product can be obtained downstream.
+1. Trace a similar task from the normal command to the registry, configuration, automatic precheck, worker, output writer, and reader. Search for that task name in those direct callers and relevant tests to find any separate allowlists or task-specific behavior.
+2. Reuse the registry to discover tasks wherever callers need the same population. Keep task-specific preparation and evidence with the task or precheck branch that owns them. Keep assertions for actual behavior and count the registered tasks as a set when testing generic coverage.
+3. Validate the installed command from outside the checkout. Add or locate the new task after editable installation to verify discovery, and check wheel contents independently when the task ships. Use the project's documented development dependencies for contribution checks.
+4. Through the normal command, exercise a bounded precheck followed by the task and its result reader. When the gate changes, exercise a rejected input and verify it stops before formal execution.
 
 ## Modify
 

@@ -51,6 +51,10 @@ When guidance is repeated, reconcile its requirements in the owning file and rep
 2. When there is a gap in skills detection or operational guidance, amend the corresponding description, step, or associated resources. When there is a gap in public capacity, EverResearch revises the corresponding central accomplishment. Target project entry, script or task capability is not sufficient, and restores it as it is authorized. Project Implementation Assistant maintains a read-only reading of EverResearch and identifies the rules, pathways, and effects of the mid-pointing in the reporting when the central error is detected. Environmental issues are treated as if they are actually dependent on and configured.
 3. After each restoration, a new testing assistant is initiated to re-evaluate with the same skill, same object and comparable initial state. Compare the delivery and downstream use of the initial and secondary measurements.
 
+## Confirm a repair in a fresh and a used checkout
+
+When feedback spans setup, tooling, and project behavior, retain the reported versions and one reproducible observation for each issue. Check first use from a fresh clone, then repeat the normal entry point in a checkout with representative generated files. Verify which runtime the entry point actually invokes and how a downstream command reads its outputs. Keep the issue list and expected results in the evaluator's local evidence. Apply common fixes in the owning command or skill and project-specific fixes in the project.
+
 ## By an independent test assistant
 
 The evaluator selects the target, retains the benchmark, and reviews the results. For project file placement and naming evaluations, start a clean-context subagent with exactly these two lines:

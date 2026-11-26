@@ -10,10 +10,13 @@ import tomllib
 
 import yaml
 
+from harness.projects.standalone.offline.check import project_paths
+
 from .naming import experiment_name_violation, is_configuration_file, path_name_violations, project_name_valid
 
 
 NAME = r"[a-z][a-z0-9]*(?:_[a-z0-9]+)*"
+COMPONENT_ID = r"[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)*"
 PLAIN_NAME = r"[a-z]+(?:_[a-z]+)*"
 PURPOSE = (r"(?!(?:run|trial|experiment|default|output|test|job|untitled)(?:_?\d+)?(?:/|$))"
            r"[a-z]+(?:_[a-z]+){0,2}")
@@ -43,6 +46,16 @@ COMPONENTS = {"dataset": "datasets", "model": "models", "task": "tasks"}
 class Rules:
     directories: tuple[str, ...]
     files: tuple[str, ...]
+    datasets: frozenset[str] = frozenset()
+    models: frozenset[str] = frozenset()
+
+    def is_experiment_component(self, path):
+        parts = path.removeprefix("experiment/").split("/")
+        return any(
+            "/".join(parts[:depth]) in self.datasets
+            and (len(parts) == depth or "/".join(parts[depth:]) in self.models)
+            for depth in (1, 2)
+        )
 
     def matches(self, path, is_directory):
         patterns = self.directories if is_directory else self.files
@@ -147,7 +160,8 @@ def experiment_rules(root, *, remember=None):
         directory = root / COMPONENTS[role]
         names = set()
         pattern = NAME if nested else PLAIN_NAME
-        names.update(name for name in catalogs.get(role, ()) if re.fullmatch(pattern, name))
+        catalog_pattern = COMPONENT_ID if nested else pattern
+        names.update(name for name in catalogs.get(role, ()) if re.fullmatch(catalog_pattern, name))
         if directory.is_dir():
             for child in directory.iterdir():
                 if child.is_dir() and re.fullmatch(pattern, child.name):
@@ -168,6 +182,8 @@ def experiment_rules(root, *, remember=None):
     datasets = choices("dataset", True)
     models = choices("model", True)
     tasks = choices("task", False)
+    dataset_prefixes = frozenset(datasets | {name.split("/")[0] for name in datasets})
+    model_prefixes = frozenset(models | {name.split("/")[0] for name in models})
     if not datasets:
         return Rules(tuple(directories), tuple(files))
     for dataset in datasets:
@@ -192,7 +208,22 @@ def experiment_rules(root, *, remember=None):
                             rf"{output}(?:/{PAYLOAD})+"))
         files.update((rf"{run}/(?:README\.md|recipe\.toml|config\.(?:yaml|yml|toml|json)|manifest\.json)",
                       rf"{output}(?:/{PAYLOAD})*/{PAYLOAD}"))
-    return Rules(tuple(directories), tuple(files))
+    return Rules(tuple(directories), tuple(files), dataset_prefixes, model_prefixes)
+
+
+def experiment_path_expectation(path, rules):
+    """Identify the first path segment that cannot belong to a standard run."""
+    parts = path.split("/")
+    for end in range(2, len(parts)):
+        prefix = "/".join(parts[:end])
+        if not rules.matches(prefix, True):
+            return f"Unrecognized experiment directory: {prefix}. {EXPECTED['experiment']}"
+    parent = "/".join(parts[:-1])
+    if parent == "experiment":
+        return f"{parts[-1]!r} is not a registered dataset directory or an experiment index file."
+    return (f"{parts[-1]!r} is not valid under {parent}/. "
+            "Use a registered component and purpose before the run, and put outputs "
+            "in artifacts/, logs/, reports/, metadata/, or tmp/ under the run.")
 
 
 def checkable_name(parts, is_directory):
@@ -239,11 +270,13 @@ def project_name_suggestions(root, *, remember=None):
     }]
 
 
-def check_layout(root, *, remember=None):
+def check_layout(root, *, remember=None, paths=None):
     """Return concrete path failures for an absolute or relative project root."""
     root = Path(root).resolve(strict=True)
     if not root.is_dir():
         raise ValueError(f"Expected a project directory: {root}")
+    if paths is None:
+        paths = project_paths(root)
     configuration_owners = {"base", "scripts", *COMPONENTS.values()}
     rules = dict(RULES)
     if (root / "experiment").is_dir():
@@ -258,6 +291,8 @@ def check_layout(root, *, remember=None):
         nonlocal inspected
         config_files = []
         for entry in directory.iterdir():
+            if paths is not None and entry not in paths:
+                continue
             in_experiment = parent == "experiment" or parent.startswith("experiment/")
             if not in_experiment and (entry.name.startswith(".") or entry.name == "__pycache__"):
                 continue
@@ -269,14 +304,16 @@ def check_layout(root, *, remember=None):
                 if not re.fullmatch(ROOT_FILES, entry.name):
                     fail(relative, "root_file", "Keep project documentation, build files, and public entry points at the project root.")
                 continue
-            if in_experiment and (violation := experiment_name_violation(entry, is_directory)):
-                fail(relative, *violation)
             selected = rules.get(top)
+            if in_experiment and not (is_directory and selected.is_experiment_component(relative)):
+                if violation := experiment_name_violation(entry, is_directory):
+                    fail(relative, *violation)
             if not selected or not selected.matches(relative, is_directory):
                 rule = "root_directory" if not parent and is_directory else top
                 expected = (
                     "Unexpected top-level directory. Put the main package and shared code under base/, and place other files in the directory for their purpose."
                     if rule == "root_directory"
+                    else experiment_path_expectation(relative, selected) if in_experiment
                     else EXPECTED[top]
                 )
                 fail(relative, rule, expected)

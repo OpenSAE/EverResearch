@@ -53,7 +53,10 @@ Offline installers are available on [GitHub Releases](https://github.com/OpenSAE
 
 Run `rh projects project check ./MyProject --onboarding` for a read-only preview. Scripts and CI can use `--strict` for pass/fail or `--json` for machine-readable results.
 
-When using EverResearch from this repository, first-time setup [backs up project files locally](src/harness/projects/README.md#online-and-offline-maintenance).
+With the current source checkout installed, use `rh --version` to confirm the active CLI. To connect a checkout online, run `rh projects setup-maintenance ./MyProject --online`. The first setup
+[backs up project files locally](src/harness/projects/README.md#online-and-offline-maintenance).
+Structure checks in a Git checkout cover tracked and new non-ignored files. Use the project's result
+reader for its native outputs, or `rh projects experiment check ./MyProject` for EverResearch-format runs.
 Run the project's original commands after reorganizing it.
 
 ## Features

@@ -128,13 +128,7 @@ def test_apply_routes_maintenance_and_persists_check_authorization(
     assert not (project / ".agents/researchharness-skills").exists()
     assert "maintain-model" not in text
     assert "Lightweight follow-up checks follow the task authorization" in text
-    assert "Choose the operation before making changes" in text
-    assert "When asked to implement a feature" in text
-    assert "If an existing parameter supports the request" in text
-    assert "add per-class accuracy to an existing classification task" in text
-    assert "keep the existing top-level directories" in text
-    assert "Before running a command, confirm its working directory, output paths, and cache location" in text
-    assert "Review the paths after each batch" in text
+    assert "Start with the project command and the skill" in text
     sections = re.findall(r'\]\(<([^>]+/operations\.md)#([a-z-]+)>\)', text)
     assert len(sections) == 14
     for path, anchor in sections:
@@ -170,7 +164,7 @@ def test_project_mode_reads_central_originals_only_online(command, workspace):
     command("setup-maintenance", str(project), "--online")
     instructions = (project / "AGENTS.md").read_text()
     assert instructions.count(SEARCH_PARAGRAPH) == 1
-    assert instructions.index(SEARCH_PARAGRAPH) < instructions.index("## Choose the maintenance mode")
+    assert instructions.index(SEARCH_PARAGRAPH) < instructions.index("## Maintain this checkout")
     command("apply", "example")
     assert (project / "AGENTS.md").read_text() == instructions
     launcher = project / ".researchharness/maintain.py"
@@ -404,3 +398,24 @@ def test_review_pins_export_and_keeps_other_versions_selectable(command, tmp_pat
     assert [item["id"] for item in command("structure", "list", "example")] == [b["id"], a["id"]]
     Path(a["page"]).write_text("changed")
     assert "inconsistent" in command("structure", "show", "example", a["id"], expected=1)
+
+
+def test_first_online_setup_registers_checkout_and_identifies_legacy_mode(command, workspace):
+    root, project, _ = workspace
+    other = project.parent / "FreshCheckout"
+    old = other / ".researchharness/mode.json"
+    old.parent.mkdir(parents=True)
+    old.write_text('{"mode": "intensive"}\n')
+    assert "old .researchharness/mode.json" in command("project", "status", str(other))["reason"]
+    result = command("setup-maintenance", str(other), "--online")
+    assert result["attached"] and result["mode"] == "online"
+    connection = json.loads((old.parent / "online/connection.json").read_text())
+    assert connection["project_id"] == "freshcheckout"
+    assert connection["python"] == sys.executable
+    assert old.read_text() == '{"mode": "intensive"}\n'
+
+    collision = root.parent / "other" / other.name
+    collision.mkdir(parents=True)
+    error = command("setup-maintenance", str(collision), "--online", expected=1)
+    assert "already registered at a different path" in error
+    assert command("status", "freshcheckout")["path"] == str(other)

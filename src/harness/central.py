@@ -102,12 +102,15 @@ class HarnessContext:
             raise ProjectError(f"The project path should point to a separate source directory:{path}")
         return path
 
-    def register(self, project_id: str, source: str) -> Path:
+    def register(self, project_id: str, source: str, *, replace=True) -> Path:
         project_id = identity(project_id)
         path = self.source_directory(source)
         target = self.resolve(".workspace/harness/core/central/project_roots.json")
         with update_lock(target):
             bindings = self.bindings()
+            if (not replace and project_id in bindings
+                    and self.bound_path(bindings[project_id]).resolve() != path):
+                raise ProjectError(f"Project name {project_id!r} was registered at a different path.")
             for name, bound in bindings.items():
                 if name != project_id and self.bound_path(bound).resolve() == path:
                     raise ProjectError(f"This directory has been bound to the item. {name}")

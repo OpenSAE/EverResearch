@@ -3,14 +3,29 @@
 Local operation for visible selection of items and workspaces.
 """
 
+from pathlib import Path
 import sys
+import tomllib
 
-from .projects.manage import main as projects_main
 
 
 def main(argv=None):
     arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments == ["--version"]:
+        from .distribution import release_version
+
+        project = Path(__file__).resolve().parents[2] / "pyproject.toml"
+        if project.is_file() and (project.parent / ".agents/skills").is_dir():
+            with project.open("rb") as stream:
+                metadata = tomllib.load(stream)["project"]
+            if metadata.get("name") == "ever-research":
+                print(f"EverResearch {metadata['version']} (source: {project.parent})")
+                return 0
+        print(f"EverResearch {release_version()}")
+        return 0
     if arguments[:1] == ["projects"]:
+        from .projects.manage import main as projects_main
+
         return projects_main(arguments[1:])
     if arguments[:1] == ["utils"]:
         from .utils import main as utils_main

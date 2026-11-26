@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import sys
 import tomllib
 
@@ -136,7 +137,7 @@ def project_maintenance_mode(root):
         return None
     data = tomllib.loads(path.read_text(encoding="utf-8"))
     if set(data) != {"enabled"} or type(data["enabled"]) is not bool:
-        raise ProjectError(".researchharness/mode.toml Need to be specified enabled = true or false")
+        raise ProjectError("Set enabled = true or enabled = false in .researchharness/mode.toml.")
     return data["enabled"]
 
 
@@ -150,37 +151,13 @@ def maintenance_guidance(skill_path, operations_path, desired, lightweight_check
     lines = [
         "### Daily maintenance and lightweight checks",
         "",
-        "**Choose the operation before making changes.** Find the matching entry in the table "
-        "and read its guidance. For changes across components, consult each affected skill. "
-        "Resolve project paths from the project root and use the configured locations for shared data.",
+        "Start with the project command and the skill for the component you are changing. "
+        "Use the operations manual to resolve ownership or coordinate changes across components.",
         "",
-        "**When asked to implement a feature, follow these steps.**",
-        "",
-        "1. Identify the public command, the expected result, and a small input that can verify it. "
-        "Trace the command through configuration, implementation, and the normal result reader.",
-        "2. If an existing parameter supports the request, use it. Extend the responsible component for a "
-        "behavior change. Add a named component for independently selectable data, models, or tasks.",
-        "3. Update the responsible implementation and its callers. Keep documented defaults, "
-        "previous result formats, and existing public commands usable. Use tmp/ for one-off diagnostics.",
-        "4. Run a small authorized check through the same public command. Inspect the actual output "
-        "path and read the result through its normal reader. Update the relevant documentation.",
-        "",
-        "For example, to add per-class accuracy to an existing classification task, start with its evaluation and report. Calculate the metric "
-        "in the evaluation task, record it through the existing writer, and check it with a fixed sample. "
-        "Expose a setting when users need to control the behavior.",
-        "",
-        "| What you want to do | Where to work |",
+        "| Operation | Project location |",
         "| --- | --- |",
         *(f"| [{action}](<{operations_path.as_posix()}#{section}>) | {destination} |"
           for action, section, destination in PROJECT_ACTIONS),
-        "",
-        "**Use the established layout.** For regular maintenance, keep the existing top-level directories. "
-        "Before running a command, confirm its working directory, output paths, and cache location. "
-        "Put each file in the directory that owns its purpose. "
-        "Agree on the plan before reorganizing an existing project.",
-        "",
-        "**Review the paths after each batch.** Check newly created, moved, and generated files "
-        "before continuing.",
     ]
     rows = [
         f"| {purpose} | [`{name}`]({(skill_path / name / 'SKILL.md').as_posix()}) |"
@@ -342,10 +319,17 @@ def setup_maintenance(harness, source, *, online=False):
     if harness.root.is_relative_to(root):
         raise ProjectError("The project directory cannot contain the central working area")
     current_mode = project_maintenance_mode(root)
-    project_id = next((name for name, value in harness.bindings().items()
+    bindings = harness.bindings()
+    project_id = next((name for name, value in bindings.items()
                        if harness.bound_path(value).resolve() == root), None)
-    if online and project_id is None:
-        raise ProjectError("Online access requires the registration of projects before running. setup-maintenance --online")
+    new_registration = online and project_id is None and current_mode is not False
+    if new_registration:
+        project_id = identity(re.sub(r"[^a-z0-9]+", "-", root.name.lower()).strip("-"))
+        if project_id in bindings:
+            raise ProjectError(
+                f"Project name {project_id!r} is already registered at a different path. "
+                "Register this checkout with a distinct name, then run setup-maintenance --online."
+            )
     state = state_path(harness, project_id) if project_id else None
     installed = json.loads(state.read_text(encoding="utf-8")) if state and state.exists() else {}
     selected = current_mode
@@ -387,12 +371,18 @@ def setup_maintenance(harness, source, *, online=False):
         if path.exists():
             if not path.is_file():
                 raise ProjectError(f"Maintenance of entrance requires normal files:{path}")
-            # Upgrade only the released launcher that still expects project-local skills.
-            old_launchers = {
-                "a8b2e1c7dd3d636bad4c4434a82a6863e0d002ff4f3ba9ff8d4a430a580086ce",
-                "35765f8ea768e47d73ef78b15a53725026851d05c30bd736f084cd26d51d690c",
+            # Upgrade copies of previous bundled files while preserving project edits.
+            bundled_digests = {
+                "maintain.py": {
+                    "a8b2e1c7dd3d636bad4c4434a82a6863e0d002ff4f3ba9ff8d4a430a580086ce",
+                    "35765f8ea768e47d73ef78b15a53725026851d05c30bd736f084cd26d51d690c",
+                    "24ce82adfa5db609700b9180f235359cef1af76c9d99db6a7763011536da2907",
+                },
+                "offline/check.py": {
+                    "368ddb3cd5ddd6c80ee3cf523227f3f7c06f6cc486f7cf4d97bd7c516cade9b3",
+                },
             }
-            if name != "maintain.py" or sha256(path.read_bytes()).hexdigest() not in old_launchers:
+            if sha256(path.read_bytes()).hexdigest() not in bundled_digests.get(name, ()):
                 preserved.append(name)
                 continue
         created[path] = (bundle / name).read_bytes()
@@ -402,10 +392,7 @@ def setup_maintenance(harness, source, *, online=False):
         separator = "\n\n" if ignore_text.strip() else ""
         updated_ignore = ignore_text.rstrip() + f"{separator}{comment}\n{ONLINE_IGNORE}\n"
     else:
-        updated_ignore = ignore_text.replace(
-            f"# Connection records maintained online on-line.\n{ONLINE_IGNORE}",
-            f"{comment}\n{ONLINE_IGNORE}",
-        )
+        updated_ignore = ignore_text
     backup = None
     legacy_plan = None
     if current_mode is None:
@@ -417,6 +404,8 @@ def setup_maintenance(harness, source, *, online=False):
         for rule in (BACKUP_IGNORE, BACKUP_LOCK_IGNORE):
             if rule not in updated_ignore.splitlines():
                 updated_ignore = updated_ignore.rstrip() + f"\n{rule}\n"
+    if new_registration:
+        harness.register(project_id, str(root), replace=False)
     remove_legacy_backup_lock(root)
     if updated_ignore != ignore_text:
         save_bytes(ignore, updated_ignore.encode(), source=__file__)
@@ -427,7 +416,7 @@ def setup_maintenance(harness, source, *, online=False):
     if current_mode is None:
         save_bytes(directory / "mode.toml",
                    ("# Purpose and main function: Selection of the source of the project maintenance rules.\n"
-                    "# Scope of application: AGENTS.md,Project maintenance entrance and central mounted reading.\n"
+                    "# Scope: The project launcher and EverResearch read this setting to select online or offline maintenance.\n"
                     f"enabled = {str(selected).lower()}\n").encode(), source=__file__)
     attached = False
     if selected and project_id:
@@ -495,8 +484,17 @@ def status_by_path(source, harness_root=None):
         else:
             agents = root / "AGENTS.md"
             text = agents.read_text(encoding="utf-8") if agents.is_file() and not agents.is_symlink() else ""
+            if (directory / "mode.json").is_file():
+                raise ProjectError(
+                    "The old .researchharness/mode.json does not select a current mode. "
+                    "Choose a mode and run rh projects setup-maintenance <project-path> "
+                    "(add --online for online maintenance)."
+                )
             if MODE_START in text or MODE_END in text or (directory / "maintain.py").exists():
-                raise ProjectError("Project maintenance files are present, but .researchharness/mode.toml is missing.")
+                raise ProjectError(
+                    ".researchharness/mode.toml is missing. Choose a mode and run "
+                    "rh projects setup-maintenance <project-path> (add --online for online maintenance)."
+                )
             if START not in text and END not in text:
                 return report
             if text.count(START) != 1 or text.count(END) != 1 or text.index(START) > text.index(END):
@@ -566,12 +564,23 @@ def apply_skills(harness, project_id, changes):
     if updated_agent != root_text:
         save_bytes(root_agent, updated_agent.encode(), source=__file__)
     if connection is not None:
+        runtime = {"python": sys.executable}
+        if harness.state is not None:
+            runtime = {"installed": True}
+            plugin_cli = os.environ.get("RH_PLUGIN_CLI")
+            if plugin_cli:
+                runtime["plugin_cli"] = plugin_cli
+            else:
+                cli = Path(sys.executable).with_name("rh.exe" if os.name == "nt" else "rh")
+                if cli.is_file():
+                    runtime["cli"] = str(cli)
+                elif on_path := shutil.which("rh"):
+                    runtime["cli"] = on_path
         save(connection, {
             "purpose": "Central working area for online maintenance of positioning projects.",
             "scope": "Only for project maintenance switches to read on.",
             "root": str(relative_or_absolute(harness.state_root, root)),
-            **({"installed": True} if harness.state is not None else {}),
-            **({"plugin_cli": plugin_cli} if (plugin_cli := os.environ.get("RH_PLUGIN_CLI")) else {}),
+            **runtime,
             "project_id": project_id,
         }, source=__file__)
     if settings_text is not None:
@@ -621,7 +630,7 @@ def main(argv=None):
     commands.add_parser("list")
     setup_parser = commands.add_parser("setup-maintenance", help="Maintenance portals to be used independently for project delivery")
     setup_parser.add_argument("path")
-    setup_parser.add_argument("--online", action="store_true", help="Enable online access to registered items when first configured")
+    setup_parser.add_argument("--online", action="store_true", help="Register and enable online maintenance for this checkout")
     maintenance_check = commands.add_parser("maintenance", help="Increased acceptance and inspection items and updated central maintenance index")
     maintenance_check.add_argument("path")
     maintenance_check.add_argument("--fresh", action="store_true", help="Recheck all structural conditions")

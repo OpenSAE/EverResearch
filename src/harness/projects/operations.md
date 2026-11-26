@@ -56,10 +56,7 @@ Record the path that this round will touch and the user changes that already exi
 
 ## Add, modify or remove tasks and precheck
 
-1. From existing commands to task registration, computing, reporting and follow-up readers. Give priority to expanding a task when a task has been added to an indicator or result field; a task or sub-task can be created for a task that is selected individually and has an independent input output. Shared precheck follows `tasks/precheck/`.
-2. The new result is written into the list by the original recorder and registered in the list. The indicator changes the list, the denominator, the rules and the missing values. The procedure and the old results are still read before the output is removed.
-3. Checks the selected components, results and readbacks with a minimum of valid input from the regular mission entry. When pre-check access or failure is changed, verify a valid input and a clearly invalid input, confirming that the latter stopped before the official calculation. Direct references are made when the same condition is covered by the available running evidence.
-4. **Completion Conditions.** The public entry points are connected to the actual tasks, pre-checks, and the results are read, and the relevant documents describe how the products are run and explained. `maintain-task`.
+Use [maintain-task](../../../.agents/skills/maintain-task/SKILL.md) for the complete task workflow. Start with the project command and follow registration, configuration, automatic precheck, execution, and the result reader. Run the smallest check that covers the changed behavior through that entry point.
 
 <a id="conf"></a>
 
