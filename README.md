@@ -37,7 +37,8 @@ EverResearch gives your AI agent the tools to understand and maintain a research
 **Terminal.** Install from PyPI with Python 3.11–3.13.
 
 ```bash
-uv tool install ever-research
+uv tool install --upgrade ever-research
+rh --version
 rh doctor
 ```
 
@@ -189,8 +190,8 @@ We welcome contributions from researchers and developers. Share a research workf
    - Windows: `%LOCALAPPDATA%\researchharness\researchharness\Cache` and `%LOCALAPPDATA%\researchharness\plugin-runtime`
 4. In each project you set up, do all three steps together:
    - In `AGENTS.md`, delete each block from `<!-- researchharness:… -->` to its matching `<!-- /researchharness:… -->`. Keep your own text.
-   - In `.gitignore`, delete the `# EverResearch …` comment and the `/.researchharness/…` entries that EverResearch added.
-   - If you need any originals, extract them from `.researchharness/backups/initial-setup.tar.gz` first. Then delete the `.researchharness/` folder.
+   - In `.gitignore`, delete the `# EverResearch …` comment and the `/.everresearch/…` entries that EverResearch added.
+   - If you need any originals, extract them from `.everresearch/backups/initial-setup.tar.gz` first. Then delete the `.everresearch/` folder.
 
 ## License
 

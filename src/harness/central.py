@@ -44,10 +44,12 @@ class HarnessContext:
 
     @property
     def data_root(self) -> Path:
+        override = os.environ.get("RH_DATA_ROOT")
+        if override:
+            return Path(override).expanduser().absolute()
         if self.state is None:
             return self.workspace / "data"
-        override = os.environ.get("RH_DATA_ROOT")
-        return Path(override).expanduser().absolute() if override else user_data_path("researchharness") / "data"
+        return app_directory(user_data_path) / "data"
 
     def store_path(self, path: Path) -> str:
         workspace = self.workspace
@@ -123,7 +125,7 @@ def load_harness(root: str | Path | None = None) -> HarnessContext:
     if root is None:
         checkout = Path(__file__).resolve().parents[2]
         if not (checkout / ".agents/skills").is_dir():
-            state = Path(os.environ.get("RH_STATE_DIR") or user_state_path("researchharness"))
+            state = Path(os.environ.get("RH_STATE_DIR") or app_directory(user_state_path))
             return HarnessContext(installed_resources(), state.expanduser().resolve())
         root = checkout
     context = HarnessContext(Path(root).expanduser().resolve(strict=True))
@@ -137,7 +139,7 @@ def installed_resources() -> Path:
     if not archive.is_file():
         raise ProjectError("EverResearch resources are missing from this installation. Reinstall EverResearch or supply --harness-root pointing to its source directory.")
     content = archive.read_bytes()
-    cache = user_cache_path("researchharness").resolve()
+    cache = app_directory(user_cache_path).resolve()
     root = cache / ("resources-" + sha256(content).hexdigest())
     if root.is_dir():
         return root
@@ -149,3 +151,8 @@ def installed_resources() -> Path:
                     bundle.extractall(destination)
                 destination.replace(root)
     return root
+def app_directory(path_for):
+    """Give new installations the EverResearch path and retain existing local state."""
+    current = path_for("ever-research")
+    legacy = path_for("researchharness")
+    return legacy if not current.exists() and legacy.exists() else current

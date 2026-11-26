@@ -14,8 +14,8 @@ from tempfile import NamedTemporaryFile
 from harness.core.workspace import update_lock
 
 
-BACKUP_IGNORE = "/.researchharness/backups/"
-BACKUP_LOCK_IGNORE = "/.researchharness/.initial-setup.lock"
+BACKUP_IGNORE = "/.everresearch/backups/"
+BACKUP_LOCK_IGNORE = "/.everresearch/.initial-setup.lock"
 LARGE_FILE_BYTES = 20 * 1024 * 1024
 BACKUP_BUDGET_BYTES = 200_000_000
 SKIP_DIRECTORIES = {"__pycache__", "node_modules", "venv", "virtualenv"}
@@ -59,9 +59,9 @@ def project_files(root):
                     yield path
 
 
-def remove_legacy_backup_lock(root):
+def remove_legacy_backup_lock(root, directory_name=".researchharness"):
     """Remove the empty lock left by older setups after an archive exists."""
-    directory = root / ".researchharness/backups"
+    directory = root / directory_name / "backups"
     archive = directory / "initial-setup.tar.gz"
     lock = directory / "initial-setup.tar.lock"
     if directory.is_symlink() or not directory.resolve().is_relative_to(root):
@@ -78,7 +78,7 @@ def remove_legacy_backup_lock(root):
 
 def save_initial_backup(root, paths):
     """Write a complete archive once and reuse it if setup needs to be retried."""
-    directory = root / ".researchharness/backups"
+    directory = root / ".everresearch/backups"
     if directory.is_symlink() or not directory.resolve().is_relative_to(root):
         raise ValueError(f"Expected a backup directory inside the project: {directory}")
     archive = directory / "initial-setup.tar.gz"

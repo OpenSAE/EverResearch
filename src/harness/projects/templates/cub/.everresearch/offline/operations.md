@@ -6,7 +6,7 @@ Use this guide to turn a maintenance request into changes that fit the project's
 
 ## Scope
 
-Use this guide when `.researchharness/mode.toml` sets `enabled = false`. Work from the project's README, configuration, commands, tests, and run records, using resources available to the project.
+Use this guide when `.everresearch/mode.toml` sets `enabled = false`. Work from the project's README, configuration, commands, tests, and run records, using resources available to the project.
 
 ## Start with the project's public entry point
 
@@ -14,7 +14,7 @@ Find the normal command and its inputs in the README. Follow it through its conf
 
 Identify the user's desired input and result, then choose the relevant sections below. Use existing options for existing behavior, change the responsible component for changes to its behavior, and add a named component when the behavior has independent inputs, outputs, or callers. Trace remaining callers before removing a feature.
 
-Use the established top-level directories and existing authorized locations. Confirm working directories and output paths before writing. Workflow setup or changes to the whole structure require explicit authorization. Preserve existing experiments, data, and user edits. After changing paths or output locations, review the paths and, when authorized, run `python -IS .researchharness/maintain.py check` from the project root.
+Use the established top-level directories and existing authorized locations. Confirm working directories and output paths before writing. Workflow setup or changes to the whole structure require explicit authorization. Preserve existing experiments, data, and user edits. After changing paths or output locations, review the paths and, when authorized, run `python -IS .everresearch/maintain.py check` from the project root.
 
 <a id="read"></a>
 
