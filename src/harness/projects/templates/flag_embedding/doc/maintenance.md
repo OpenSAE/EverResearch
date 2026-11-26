@@ -1,5 +1,13 @@
 # Project maintenance record
 
+## Purpose and main function
+
+Record how retrieval, ranking and training code map to the published interfaces.
+
+## Scope of application
+
+Use when running a retrieval precheck or preparing benchmark data and embedding weights.
+
 ## Component layout
 
 The central project check first reported seven violations. The checkout now has separate directories for datasets, models, tasks, and defaults. Setuptools publishes these physical source directories at the existing `FlagEmbedding` imports and Python module commands.
@@ -82,3 +90,7 @@ The current task evidence covers the custom retrieval precheck and its rejection
 The independent experiment checker exited successfully with zero active runs. Historical archive validation covers the 64 archived files separately. The layout checker exited with status 1 after inspecting 529 paths. It reported 41 violations across public package spellings, including benchmark names and CamelCase modules, and the `docs/`, `examples/`, and `research/` roots. Those paths serve package imports, the configured Sphinx build, user-facing launch recipes, and published paper reproductions.
 
 In the bound Transformers 4.57.6 environment the offline suite passed 17 tests. It skipped the MTEB test because the optional `mteb` package was absent and the Transformers 5-only check because of the installed version.
+
+## Verify a copied template
+
+Follow the [environment and resource guide](environment/README.md). Run `python -IS .everresearch/maintain.py check` in the project root. Then use the documented entry point with a small representative input and read back its output. The evidence above describes the reference checks. Measure throughput on the intended model, inputs and hardware before estimating a complete run.

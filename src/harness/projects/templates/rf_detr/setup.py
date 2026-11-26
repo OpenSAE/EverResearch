@@ -30,4 +30,5 @@ class BuildPublicModules(build_py):
 
 
 if __name__ == "__main__":
+    (Path(__file__).resolve().parent / ".build_metadata").mkdir(exist_ok=True)
     setup(cmdclass={"build_py": BuildPublicModules})

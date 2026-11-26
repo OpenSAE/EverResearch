@@ -81,8 +81,9 @@ directory. An editable installation places named results under the checkout’s 
 With a wheel installation, invoke the command from the workspace where those results belong.
 
 The experiment path uses the input name, model name, task and experiment purpose. Each repeat
-creates `executions/<execution_id>/` inside that experiment. `da3 results` returns the manifests
-in start-time order. Open the listed `config.json` and artifact paths relative to the execution
+creates a directory such as `executions/inference_execution_one/` inside that experiment.
+The manifest retains the timestamp and unique run ID. `da3 results` returns existing and new
+manifests in start-time order. Open the listed `config.json` and artifact paths relative to the execution
 directory. The configuration records the original input and selected image order. A successful
 NPZ export retains the array order, with one depth array per selected image. `mini_npz` contains
 depth and the optional confidence, extrinsic and intrinsic arrays. `npz` also contains the

@@ -12,7 +12,7 @@ Use this page to select example inputs or supply a local dataset to the correspo
 
 Image prediction takes an RGB image and pixel prompts. The notebook example images include `assets/examples/notebook_images/files/truck.jpg`, whose demo prompt is a foreground click near `(500, 375)`. The image command takes an explicit image path and a dataset name such as `notebook_images` to record the source.
 
-The video notebook reads numbered JPEGs in `/path/to/workspace/data/sam2/notebook_videos/upstream/bedroom/`. The public video predictor accepts such a directory or an MP4 file. Its JPEG loader sorts by the integer filename stem. The demo gallery's own MP4 inputs live in `third_party/meta_web_demo/data/gallery/`.
+The video notebook reads numbered JPEGs in `../data/sam2/notebook_videos/upstream/bedroom/`. The public video predictor accepts such a directory or an MP4 file. Its JPEG loader sorts by the integer filename stem. The demo gallery's own MP4 inputs live in `third_party/meta_web_demo/data/gallery/`.
 
 ## SA-V, DAVIS-style datasets, and MOSE
 

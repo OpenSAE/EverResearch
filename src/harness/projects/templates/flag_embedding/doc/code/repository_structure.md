@@ -27,7 +27,7 @@ Use this guide to work on the installable FlagEmbedding package, its examples an
 | `experiment/` | Local results from the [BEIR launcher](../../scripts/examples/evaluation/beir_benchmark/evaluate.sh), the [custom experiment example](../../scripts/examples/evaluation/custom/eval_custom.sh), and the Quick Start acceptance run below. The directory is created on the first run and ignored by Git. |
 | [`tasks/precheck/`](../../tasks/precheck/) | Bounded local retrieval checks packaged as `FlagEmbedding.precheck` and invoked by the custom evaluation command. |
 | [project illustrations](../../assets/illustrations/project/README.md) and [.github/workflows](../../.github/workflows/) | Root README images and documentation build workflow. |
-| `AGENTS.md` and `.agents/skills/` | Local ResearchHarness entry and shared skills for an enrolled checkout. |
+| `AGENTS.md` and `.agents/skills/` | Local EverResearch entry and shared skills for an enrolled checkout. |
 | `README.md`, `doc/knowledge/readme_chinese.md`, `setup.py`, and `LICENSE` | Project navigation, package installation and distribution, and license. |
 
 ## Public workflows and their source paths

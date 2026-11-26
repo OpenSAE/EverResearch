@@ -202,13 +202,13 @@ def check_release(release, work):
     if json.loads(run(rh, "projects", "setup-maintenance", mixed))["backup"] is not None:
         raise ValueError("The installed CLI attempted a second initial backup")
     run(rh, "projects", "register", "bird-study", "--path", project)
-    marker = project / ".researchharness/mode.toml"
+    marker = project / ".everresearch/mode.toml"
     marker.write_text(marker.read_text(encoding="utf-8").replace(
         "enabled = false", "enabled = true"), encoding="utf-8")
     run(rh, "projects", "setup-maintenance", project, "--online")
     if json.loads(run(rh, "projects", "project", "status", project))["state"] != "managed":
         raise ValueError("The installed CLI did not recognize the configured project")
-    run(python, "-IS", project / ".researchharness/maintain.py", "check")
+    run(python, "-IS", project / ".everresearch/maintain.py", "check")
     targets = ["--project", project, "--agent", "codex", "--agent", "claude-code"]
     install = json.loads(run(rh, "skills", "install", *targets))
     repeat = json.loads(run(rh, "skills", "install", *targets))

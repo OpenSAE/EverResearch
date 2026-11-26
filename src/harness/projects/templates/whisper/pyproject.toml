@@ -1,0 +1,76 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+
+requires = [ "setuptools>=68" ]
+
+[project]
+name = "openai-whisper"
+description = "Robust Speech Recognition via Large-Scale Weak Supervision"
+readme.content-type = "text/markdown"
+readme.file = "README.md"
+license = { text = "MIT" }
+authors = [ { name = "OpenAI" } ]
+requires-python = ">=3.8"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dynamic = [ "version", "dependencies" ]
+optional-dependencies.dev = [ "black", "flake8", "isort", "pytest", "scipy" ]
+urls = { Homepage = "https://github.com/openai/whisper" }
+scripts.whisper = "whisper.commands:cli"
+
+[tool.setuptools]
+include-package-data = false
+packages = [
+  "whisper",
+  "whisper._configuration",
+  "whisper._precheck",
+  "whisper._resources",
+  "whisper.audio",
+  "whisper.decoding",
+  "whisper.model",
+  "whisper.normalizers",
+  "whisper.timing",
+  "whisper.tokenizer",
+  "whisper.transcribe",
+  "whisper.triton_ops",
+  "whisper.utils",
+]
+
+[tool.setuptools.package-dir]
+whisper = "base/whisper"
+"whisper._configuration" = "conf"
+"whisper._precheck" = "tasks/precheck"
+"whisper._resources" = "assets/model_inputs/whisper/files"
+"whisper.audio" = "datasets/audio"
+"whisper.decoding" = "tasks/speech/decoding"
+"whisper.model" = "models/whisper"
+"whisper.normalizers" = "tasks/evaluation/text"
+"whisper.timing" = "tasks/speech/timing"
+"whisper.tokenizer" = "models/whisper/tokenizer"
+"whisper.transcribe" = "tasks/speech/transcribe"
+"whisper.triton_ops" = "tasks/speech/accelerated"
+"whisper.utils" = "base/whisper/utilities"
+
+[tool.setuptools.package-data]
+"whisper._configuration" = ["config.json"]
+"whisper._resources" = ["*.json", "*.npz", "*.tiktoken"]
+
+[tool.setuptools.dynamic]
+version = { attr = "whisper.version.__version__" }
+dependencies = { file = ["requirements.txt"] }
+
+[tool.black]
+
+[tool.isort]
+profile = "black"
+known_first_party = ["whisper"]
+include_trailing_comma = true
+line_length = 88
+multi_line_output = 3

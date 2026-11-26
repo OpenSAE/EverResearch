@@ -1,0 +1,18 @@
+model_path: Qwen/Qwen2.5-0.5B-Instruct
+max_tokens: 40
+temperature: 0.0
+top_p: 1.0
+backend: transformers
+dtype: float32
+save_metadata: true
+save_full_results: true
+developer_prompt: default
+categories:
+  - category: arithmetic
+    datasets:
+      - dataset: chain_sum
+        size: 10
+        seed: 43
+        params:
+          min_digits: 2
+          allow_negation: true

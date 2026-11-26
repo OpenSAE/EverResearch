@@ -4,9 +4,30 @@
 
 This document describes the entire catalogue of ResearchHarness, when smart assistants are required to maintain ResearchHarness, and the seven management principles that must be followed in maintaining the document, and to guide the corresponding operations document to specific tasks.
 
-## GitHub Publishing
+## Choose the skill from the request
 
-Before starting any GitHub publishing task, read and follow [maintain-github](.agents/skills/maintain-github/SKILL.md). It defines how to confirm scope and authorization, prepare an independent copy, and verify the result. This requirement applies to every kind of GitHub publishing task, including pushes, pull requests, tags, releases, and updates that trigger publication or deployment.
+Before starting a task listed below, read and follow the linked skill. A request in ordinary language is enough to select it. The skill defines the workflow, required approvals, and completion checks. For a request with several actions, read the skills for the affected actions.
+
+| When the user asks to… | Read first |
+| --- | --- |
+| Set up an unfamiliar project with EverResearch, check a whole project, or coordinate changes across several components | [`maintain-project`](.agents/skills/maintain-project/SKILL.md) |
+| Change a shared CLI command, launcher, component wiring, resource selection, or result I/O | [`maintain-base`](.agents/skills/maintain-base/SKILL.md) |
+| Add, change, or remove a dataset, loader, preprocessing, labels, or splits | [`maintain-dataset`](.agents/skills/maintain-dataset/SKILL.md) |
+| Add, change, or remove a model, variant, initialization, or checkpoint loading | [`maintain-model`](.agents/skills/maintain-model/SKILL.md) |
+| Add, change, or remove training, evaluation, inference, a metric, or an automatic precheck | [`maintain-task`](.agents/skills/maintain-task/SKILL.md) |
+| Add, remove, or change a reusable configuration option, default, or preset | [`maintain-conf`](.agents/skills/maintain-conf/SKILL.md) |
+| Run, resume, reproduce, or inspect an experiment using the available tasks and settings | [`maintain-experiment`](.agents/skills/maintain-experiment/SKILL.md) |
+| Review, debug, or refactor code and trace the affected callers | [`maintain-code`](.agents/skills/maintain-code/SKILL.md) |
+| Write a reusable helper or plot, add a regression test, or update docs or assets | [`maintain-optional`](.agents/skills/maintain-optional/SKILL.md) |
+| Try an idea once or create a disposable script, plot, or note | [`maintain-tmp`](.agents/skills/maintain-tmp/SKILL.md) |
+| Compare with GitHub, push, open a PR, publish a release or tag, or update a GitHub deployment | [`maintain-github`](.agents/skills/maintain-github/SKILL.md) |
+| Get data or weights from Hugging Face, publish a Hub dataset, or check or update a Space | [`maintain-huggingface`](.agents/skills/maintain-huggingface/SKILL.md) |
+| Save a lesson, decision, or research idea from the conversation as a reusable note | [`maintain-knowledge`](.agents/skills/maintain-knowledge/SKILL.md) |
+| Test EverResearch on supplied projects, log or analyze maintenance decisions, or run a skills exam | [`maintain-skill`](.agents/skills/maintain-skill/SKILL.md) |
+| Explain the structure of a paper or codebase, or build a diagram or interactive map | [`extract-structure`](.agents/skills/extract-structure/SKILL.md) |
+| Check, submit, or update an EverResearch listing in an agent marketplace | Open the maintainer-only `.agents/skills/maintain-plugins/SKILL.md` when available in the local checkout. |
+
+For an identified project, follow its own `AGENTS.md` and its current maintenance mode. For a single component, start with its skill. For a whole project, start with `maintain-project` and follow its handoffs.
 
 ## Scope
 
@@ -20,13 +41,9 @@ Each project should be capable of being installed, configured and operated indep
 
 When a common methodology is developed, you can identify the problems, the conditions under which it is established and how the same facts are obtained in different organizational forms. Skills are written in terms of the applicable circumstances, the basis to be checked, the method of judgement and the conditions for its completion. A unique catalogue of the project, the order and the agreement are kept in the description of the corresponding project.
 
-### Overall and dedicated maintenance of the project
+### Project resources
 
-** Access to an unknown project, inspection or maintenance of the entire scientific project, first using [maintain-project](.agents/skills/maintain-project/SKILL.md). ** The skill follows the physical entrance to check the first-level catalogue and cross-component processes.
-
-**Direct use of tailor-made skills for individual maintenance.** Datasets, models and missions are used separately `maintain-dataset`,`maintain-model` and `maintain-task`.Cross-component movement and shared operational capability utilization `maintain-base`,Open Parameter Use `maintain-conf`,Single run configuration and experimental operation use `maintain-experiment`,Use of stand-alone scripts, tests, component documents and external files `maintain-optional`.Maintenance of the entire project by `maintain-project` Assignment of specific tasks according to these responsibilities.
-
-Use of one-time engineering work `maintain-tmp`.Access projects can be accessed through ResearchHarness Dependence on binding the interpreter and installing the project statement. Hugging Face The download location is managed by the client configuration of the machine, which is installed `maintain-huggingface` , you can use its download instructions, and the real data is stored in the parent's area. `data/` , preprocessing and reusable caches follow the corresponding data set..
+Use the project’s bound Python interpreter and documented dependency setup. Keep raw data in the workspace’s shared `data/` area and follow the dataset skill for preprocessing and reusable caches.
 
 ## 1. Main Directory of ResearchHarness
 
@@ -112,6 +129,14 @@ This principle applies to writing documents, explaining problems to and communic
 Within the current mandate, the assistant is responsible for obtaining the facts, completing the engineering judgement and continuing the task, and humans provide, inter alia, the purpose, actual use of feedback and input preferences. When a choice requires humans to provide new intent or a trade-off judgement, the assistant describes the circumstances, viable options, practical implications and recommendations; and technical issues with significant implications explain the conditions and consequences of the occurrence.
 
 **Select the content to communicate around the results of the mission.** The dialogue helps humans to understand actual changes, deal with problems and make decisions. Normal implementation, necessary checks and routine tailings are part of the process of completing the task, with a direct indication of the results obtained and their actual use. In case of problems that affect the completion of the task, the location and resolution of the problem are continuous; where human involvement is required, the circumstances, actual impact, identified reasons and viable options are stated. The examination process and its evidence are kept in the corresponding working information; human inquiries, or the results of the examination affect the current conclusion, what is observed and their impact by functional description. Progress indicates that new discoveries, important decisions and practical obstacles are built around new findings..
+
+**Report completion and remaining gaps without waiting for follow-up questions.** Pursue the user's intended outcome as far as the current authorization and available means allow. State what was achieved and verified. For each incomplete, partially completed, or unverified requirement, explain:
+
+- **Remaining gap and core cause.** State what the user still cannot do or verify, and name the condition that blocks or limits it.
+- **Attempts and evidence.** Describe the actions already tried and what happened. State when a step has yet to be attempted.
+- **Next action and exact obstacle.** Explain what would close the gap and why that step has yet to happen. Distinguish an unresolved choice by the assistant, unfinished work, a required user decision or authorization, and an external technical or environmental limitation. Name the missing decision, permission, resource, or observable failure where applicable.
+
+Explain the cause and its consequence in plain language so a reader unfamiliar with the implementation can follow why the next action matters. Continue with available in-scope work before reporting completion. When the user requests only an explanation or status, report the available evidence and the remaining steps.
 
 **Direct delivery of documents for download and external review.** Humans need to download documents and provide directly the results that can be downloaded during external review or analysis, by default containing the main information and necessary instructions to complete the use. Individual documents can be delivered directly and multiple documents that need to be handed over together can be compressed packages; humans will be required to deliver in their specified format or content range..
 

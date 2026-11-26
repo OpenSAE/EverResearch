@@ -1,0 +1,119 @@
+[project]
+name = "nanochat"
+version = "0.1.0"
+description = "the minimal full-stack ChatGPT clone"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "filelock>=3.19.0",
+    "kernels>=0.11.7",
+    "numpy>=1.26.0",
+    "psutil>=7.1.0",
+    "pyarrow>=21.0.0",
+    "rustbpe>=0.1.0",
+    "tiktoken>=0.11.0",
+    "torch==2.9.1",
+    "wandb>=0.21.3",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.1.0",
+    "matplotlib>=3.10.8",
+    "pytest>=8.0.0",
+    "python-dotenv>=1.2.1",
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# target torch to cuda 12.8 or CPU
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cpu", extra = "cpu" },
+    { index = "pytorch-cu128", extra = "gpu" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[project.optional-dependencies]
+cpu = [
+    "setuptools>=65.0.0",
+    "torch==2.9.1",
+]
+gpu = [
+    "torch==2.9.1",
+]
+
+[tool.uv]
+default-groups = []
+conflicts = [
+    [
+        { extra = "cpu" },
+        { extra = "gpu" },
+    ],
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = [
+    "nanochat",
+    "nanochat.climbmix",
+    "nanochat.conversations",
+    "nanochat.tokenization",
+    "nanochat.transformer",
+    "nanochat.dataloader",
+    "nanochat.fp8",
+    "nanochat.gpt",
+    "nanochat.optim",
+    "scripts",
+    "scripts.tok_eval",
+    "tasks",
+    "tasks.arc",
+    "tasks.common",
+    "tasks.conversation",
+    "tasks.evaluation",
+    "tasks.fine_tuning",
+    "tasks.gsm8k",
+    "tasks.humaneval",
+    "tasks.inference",
+    "tasks.mmlu",
+    "tasks.base_training",
+    "tasks.smoltalk",
+    "tasks.tokenization",
+    "tasks.precheck",
+]
+
+[tool.setuptools.package-dir]
+"scripts" = "base/commands"
+"nanochat.dataloader" = "base/compatibility/data_loading"
+"nanochat.fp8" = "base/compatibility/float_eight"
+"nanochat.gpt" = "base/compatibility/transformer_network"
+"nanochat.optim" = "base/compatibility/optimizer"
+"tasks.gsm8k" = "base/compatibility/grade_school_math"
+"tasks.humaneval" = "base/compatibility/human_evaluation"
+"tasks.mmlu" = "base/compatibility/knowledge_questions"
+"tasks.smoltalk" = "base/compatibility/small_talk"
+"nanochat" = "base/chat_runtime"
+"nanochat.climbmix" = "datasets/climbmix_corpus"
+"nanochat.conversations" = "datasets/conversations"
+"nanochat.tokenization" = "datasets/tokenization"
+"nanochat.transformer" = "models/transformer"
+"scripts.tok_eval" = "base/commands/tokenizer_evaluation"

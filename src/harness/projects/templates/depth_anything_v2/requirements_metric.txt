@@ -1,0 +1,5 @@
+# Libraries for metric training and point-cloud export. Also install the core inference libraries.
+-r requirements.txt
+h5py
+tensorboard
+open3d

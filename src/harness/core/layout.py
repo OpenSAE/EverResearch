@@ -48,6 +48,7 @@ class Rules:
     files: tuple[str, ...]
     datasets: frozenset[str] = frozenset()
     models: frozenset[str] = frozenset()
+    tasks: frozenset[str] = frozenset()
 
     def is_experiment_component(self, path):
         parts = path.removeprefix("experiment/").split("/")
@@ -131,13 +132,17 @@ EXPECTED = {
 }
 
 
-def catalog_names(path):
+def read_catalog(path):
     text = path.read_text(encoding="utf-8")
     try:
         config = tomllib.loads(text) if path.suffix == ".toml" else yaml.safe_load(text)
     except (ValueError, yaml.YAMLError):
         return {}
-    catalogs = config.get("catalogs") if isinstance(config, dict) else None
+    return config if isinstance(config, dict) else {}
+
+
+def catalog_names(path):
+    catalogs = read_catalog(path).get("catalogs")
     if not isinstance(catalogs, dict):
         return {}
     return {
@@ -147,14 +152,41 @@ def catalog_names(path):
     }
 
 
-def experiment_rules(root, *, remember=None):
+def preset_names(path, role):
+    config = read_catalog(path)
+    section = config.get(role, config)
+    presets = section.get("presets") if isinstance(section, dict) else None
+    if not isinstance(presets, dict):
+        return ()
+    return tuple(dict.fromkeys(
+        name
+        for key, preset in presets.items() if isinstance(preset, dict)
+        for name in (key, preset.get("name"))
+        if isinstance(name, str) and re.fullmatch(COMPONENT_ID, name)
+    ))
+
+
+def registered_catalogs(root, remember, paths=None):
     catalogs = {}
     for suffix in ("yaml", "yml", "json", "toml"):
         main_config = root / f"conf/config.{suffix}"
-        if main_config.is_file():
-            catalogs = (remember(main_config, catalog_names) if remember
+        if (paths is None or main_config in paths) and main_config.is_file():
+            declared = (remember(main_config, catalog_names) if remember
                         else catalog_names(main_config))
+            catalogs = {role: list(names) for role, names in declared.items()}
             break
+    for role in ("dataset", "model"):
+        for suffix in ("yaml", "yml", "json", "toml"):
+            catalog = root / "conf" / COMPONENTS[role] / f"catalog.{suffix}"
+            if (paths is None or catalog in paths) and catalog.is_file():
+                catalogs.setdefault(role, []).extend(preset_names(catalog, role))
+                break
+    return catalogs
+
+
+def experiment_rules(root, *, remember=None, catalogs=None):
+    if catalogs is None:
+        catalogs = registered_catalogs(root, remember)
 
     def choices(role, nested):
         directory = root / COMPONENTS[role]
@@ -208,7 +240,7 @@ def experiment_rules(root, *, remember=None):
                             rf"{output}(?:/{PAYLOAD})+"))
         files.update((rf"{run}/(?:README\.md|recipe\.toml|config\.(?:yaml|yml|toml|json)|manifest\.json)",
                       rf"{output}(?:/{PAYLOAD})*/{PAYLOAD}"))
-    return Rules(tuple(directories), tuple(files), dataset_prefixes, model_prefixes)
+    return Rules(tuple(directories), tuple(files), dataset_prefixes, model_prefixes, frozenset(tasks))
 
 
 def experiment_path_expectation(path, rules):
@@ -217,6 +249,13 @@ def experiment_path_expectation(path, rules):
     for end in range(2, len(parts)):
         prefix = "/".join(parts[:end])
         if not rules.matches(prefix, True):
+            parent = "/".join(parts[:end - 1])
+            if parent == "experiment":
+                return f"Unrecognized experiment directory: {prefix}. Register the dataset used in this segment."
+            if rules.is_experiment_component(parent) and parts[end] in rules.tasks:
+                return f"Unrecognized experiment directory: {prefix}. Register the model before the {parts[end]!r} task."
+            if rules.is_experiment_component(parent):
+                return f"Unrecognized experiment directory: {prefix}. Select a registered model or task for this segment."
             return f"Unrecognized experiment directory: {prefix}. {EXPECTED['experiment']}"
     parent = "/".join(parts[:-1])
     if parent == "experiment":
@@ -279,8 +318,13 @@ def check_layout(root, *, remember=None, paths=None):
         paths = project_paths(root)
     configuration_owners = {"base", "scripts", *COMPONENTS.values()}
     rules = dict(RULES)
+    catalogs = registered_catalogs(root, remember, paths)
+    proper_names = {
+        COMPONENTS[role]: {name.lower() for name in names} for role, names in catalogs.items()
+        if role in {"model", "dataset"}
+    }
     if (root / "experiment").is_dir():
-        rules["experiment"] = experiment_rules(root, remember=remember)
+        rules["experiment"] = experiment_rules(root, remember=remember, catalogs=catalogs)
     violations = []
     inspected = 0
 
@@ -323,9 +367,13 @@ def check_layout(root, *, remember=None, paths=None):
             parts = relative.split("/")
             fixed_file = (not is_directory and (entry.name == "config.py" or is_configuration_file(entry)
                                                 or relative == "doc/conf.md"))
-            if checkable_name(parts, is_directory) and not fixed_file:
-                component = top in {"datasets", "models"} and len(parts) <= 3
-                component_config = top == "conf" and parts[1] in {"datasets", "models"}
+            component = top in {"datasets", "models"} and len(parts) <= 3
+            component_config = top == "conf" and len(parts) > 2 and parts[1] in {"datasets", "models"}
+            owner = parts[1] if component_config else top
+            registered_name = (component or component_config) and (
+                entry.stem.lower() in proper_names.get(owner, ())
+            )
+            if checkable_name(parts, is_directory) and not (fixed_file or registered_name):
                 allow_digits = (
                     is_directory and (component or component_config)
                 ) or (top in {"datasets", "models"} and entry.stem in parts[1:-1])

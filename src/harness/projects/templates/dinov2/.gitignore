@@ -1,0 +1,23 @@
+build/
+dist/
+*.egg-info/
+**/__pycache__/
+
+**/.ipynb_checkpoints
+**/.ipynb_checkpoints/**
+
+*.swp
+
+.vscode/
+
+# EverResearch stores machine-specific connection records here.
+/.everresearch/online/
+/.everresearch/backups/
+/.everresearch/.initial-setup.lock
+
+# Local packaging work
+/.build/
+
+/experiment/
+
+/tmp/

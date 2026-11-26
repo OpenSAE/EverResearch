@@ -22,7 +22,10 @@ def read_depth(export_dir: str, export_format: str = "npz") -> np.ndarray:
     """Read the depth array from either standard NPZ export."""
     if export_format not in {"npz", "mini_npz"}:
         raise ValueError(f"Unsupported NPZ export format: {export_format}")
-    with np.load(os.path.join(export_dir, "exports", export_format, "results.npz")) as data:
+    output = os.path.join(export_dir, "exports", export_format, "results.npz")
+    if export_format == "npz" and not os.path.isfile(output):
+        output = os.path.join(export_dir, "exports", "numpy_archive", "results.npz")
+    with np.load(output) as data:
         return data["depth"]
 
 

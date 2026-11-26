@@ -28,7 +28,7 @@ Use this page when changing the checkout, choosing a command, or finding and rep
 | `doc/code/website/source/`, `assets/documentation/`, `scripts/documentation/` | MkDocs content, notebooks, assets, and published navigation. The root README, change history, license, citation, and contributor instructions provide repository-level context. |
 | `experiment/` | Generated execution records, metrics, and checkpoints from the checkout launcher. The launcher creates the directory when a training execution starts. |
 
-The package layout supports installed `rfdetr.*` imports. Example configurations remain in `conf/config.yaml`, where the public commands and configuration round-trip tests find them. Tests for a package component live in the corresponding test folder. Export formats and prediction, model, and training internals use their existing nested groups. The checkout can also contain optional `.agents/skills/` entries from ResearchHarness.
+The package layout supports installed `rfdetr.*` imports. Example configurations remain in `conf/config.yaml`, where the public commands and configuration round-trip tests find them. Tests for a package component live in the corresponding test folder. Export formats and prediction, model, and training internals use their existing nested groups. The checkout can also contain optional `.agents/skills/` entries from EverResearch.
 
 ## Preview a training experiment
 

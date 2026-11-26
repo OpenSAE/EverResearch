@@ -18,7 +18,7 @@ python main.py image \
   --dataset notebook_images --image assets/examples/notebook_images/files/truck.jpg --point 500 375 1
 ```
 
-The command uses the SAM 2.1 Hiera Large configuration and its local checkpoint at `/path/to/workspace/data/sam2/checkpoints/local/sam2.1_hiera_large.pt` by default. See the released model table for available weights. Prompts are pixel coordinates measured from the upper-left of the image. Repeat `--point X Y LABEL` for additional foreground (`1`) or background (`0`) points.
+The command uses the SAM 2.1 Hiera Large configuration and its local checkpoint at `../data/sam2/checkpoints/local/sam2.1_hiera_large.pt` by default. See the released model table for available weights. Prompts are pixel coordinates measured from the upper-left of the image. Repeat `--point X Y LABEL` for additional foreground (`1`) or background (`0`) points.
 
 Prediction prints the path to the saved `.npz`. Pass it to `python main.py image --read-result PATH` for its settings, scores and shapes. The [experiment guide](experiment.md) describes the saved arrays. To use boxes, refine prompts with previous logits or predict on a batch of images, see the [Python image predictor notebook](../scripts/examples/image_predictor_example.ipynb).
 

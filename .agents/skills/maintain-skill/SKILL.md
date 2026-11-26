@@ -1,17 +1,34 @@
 ---
 name: maintain-skill
-description: Record or analyze project maintenance conversations, improve maintenance skills, or evaluate how agents apply them. Use when asked to save a maintenance exchange, review its file-placement decisions, or run a skills exam.
+description: Test whether EverResearch can independently maintain supplied research projects. Run routine adoption by default, improve EverResearch against a confirmed goal, or follow an explicit request to record or analyze a conversation or run a skills exam.
 ---
 
 # Assessment and maintenance skills
 
-## Purpose
+## Purpose and main function
 
-When the result is found to be biased, the cause is located along the execution process, automatically repaired and re-evaluated within the current authorization, and adjusted on the basis of new evidence until the key scene meets the target or there is a clear impediment.
+Test EverResearch on real research projects, turn recurring failures into reusable improvements, and verify the outcome through an independent agent. Also record and review maintenance conversations or run a skills exam when requested.
 
-## Scope
+## Scope of application
 
-The input includes the target skills and the project or environment in which they are used, as well as the user's description of the purpose, true request or operational record. First, you fill the scene with the existing material; then you ask the user to be clear when the target skills, the use environment or the expected results are still uncertain and change the conclusions.
+Use for projects supplied directly or identified by articles, links, or other source material. An invocation with projects and no special emphasis starts routine independent adoption. Explicit requests to record, analyze, or run an exam use their respective workflows below.
+
+## Test maintenance on supplied projects
+
+With a short invocation and supplied projects, start the routine test directly and work through the projects in the supplied order.
+
+1. Locate the project's original repository or release. For a paper, follow the authors' code or artifact link. Download a new project into a directory created for the test. If the user supplies an existing checkout as the target, use that directory. Before any project edits, save an original package containing the starting state and record where it came from.
+2. Start a new subagent with no previous conversation. Set its working directory to the project directory from the previous step. Give it exactly two lines, `maintain-project` and the project name. The subagent uses the normal EverResearch workflow and reports what it changed, which public commands it ran, and where the results are. Wait for it to finish before reviewing the work.
+3. Check the project files and the evidence from the public commands. If a repair is needed, diagnose the cause and use the same project directory for follow-up rounds. For final acceptance after repairs, extract the saved original package into a fresh directory and put a new subagent there. This tests whether it can complete the work from the same starting files without inheriting the earlier repairs.
+4. After acceptance, remove any EverResearch connection created for the test. Add and verify a template copy for eligible projects. Then remove the files created solely for the test. Preserve existing user checkouts and shared resources.
+
+**Template exemption.** SAEBase, GeneReasoning, SpatialPheno, and any other project the user exempts use the same working-directory rules and acceptance checks. Keep their test evidence and skip adding them to the template catalog.
+
+Use [Template acceptance](references/template-acceptance.md) when adding or reviewing a template. It defines the portable maintenance files, original source archive, and standard origin and layout section in `AGENTS.md`.
+
+If the user gives a specific issue, emphasis, or requirement, use the material to propose a plain-language outcome that applies to comparable projects. Explain what users should be able to do and how the result will be verified. Confirm the goal and any changes to the routine acceptance scope with the user before starting the independent tests.
+
+Follow [Independent project testing and goal-driven repair](references/goal-testing.md) to resolve sources, prepare original project packages, run short-prompt tests, verify acceptance, and deliver templates. Use the same repair loop when a routine project fails or a confirmed goal remains unmet. Keep goal and test evidence in local `goal/<goal-name>/` directories under the skill's writable state path. The goal-testing guide defines the evidence to keep.
 
 ## Record or analyze a project conversation
 
@@ -36,7 +53,7 @@ The default is `report_before_fix` `true`. You can write in this request `report
 ## Watch the real use and judge the results
 
 1. Read the target skills and the material that it actually uses, and write out the detectable success terms in combination with the user’s intent. Selective access covers the actual target for this purpose, specifying where the user enters, provides what, can eventually see or continues to use. Select the range of retrospect based on the impact of the known failure on this result.
-2. Prefer to existing real-life requests, run records and deliverables. Preserve reviewable benchmarks before restoration and initiate the initial test as "by an independent testing assistant". Record the skill versions, object status, environment, operational and delivery.
+2. Prefer real requests, run records, and deliverables. Preserve a reviewable baseline before restoration and record versions, project state, environment, and observed outcomes. Preserve the original project packages for routine and focused project tests and follow the shared independent test sequence.
 3. Check the content of the delivery and downstream use on a successful basis. The successful loading of skills, the exit of scripts and the existence of the product will only indicate that the corresponding steps have been completed. The determination of whether or not the purpose of the delivery is achieved is based on the actual ability of the user to use the delivery results. Recording evidence comes from the real environment, the isolated recurrence or the static analysis; the latter two are used for positioning issues, and the true environment conclusions are based on actual observations.
 
 ## Keep each responsibility in its owning file
@@ -49,7 +66,7 @@ When guidance is repeated, reconcile its requirements in the owning file and rep
 
 1. Determines whether the skills were discovered and used, whether the then-directed guidance enabled the assistant to make the necessary judgement, whether the actual access and tools were capable of being consumed, and whether the results were consumed downstream.
 2. When there is a gap in skills detection or operational guidance, amend the corresponding description, step, or associated resources. When there is a gap in public capacity, EverResearch revises the corresponding central accomplishment. Target project entry, script or task capability is not sufficient, and restores it as it is authorized. Project Implementation Assistant maintains a read-only reading of EverResearch and identifies the rules, pathways, and effects of the mid-pointing in the reporting when the central error is detected. Environmental issues are treated as if they are actually dependent on and configured.
-3. After each restoration, a new testing assistant is initiated to re-evaluate with the same skill, same object and comparable initial state. Compare the delivery and downstream use of the initial and secondary measurements.
+3. After each restoration, start a new independent testing assistant. Compare the delivery and downstream use with the baseline. For an agreed goal, run follow-up repairs on the current test checkout and perform final acceptance from the original package as specified in the goal workflow.
 
 ## Confirm a repair in a fresh and a used checkout
 
@@ -67,6 +84,15 @@ maintain-project
 Fill in only the actual project name, for example the uniquely registered name. Select an environment in which that name resolves to the intended project. Supply no file paths, log contents, findings, proposed fixes, expected outcomes, or acceptance answers. Give the subagent a neutral task label and do not inherit conversation history or send hints. Establish project access and permissions in the execution environment before dispatch. For other skill evaluations, use the same clean-context procedure with the selected skill name and its target identifier. The subagent independently discovers, repairs within its authorization, and reports from the ordinary project entry points.
 
 Upon receipt of the response, the evaluators independently examine the actual documents, operational evidence and subsequent use to determine whether the report is reasonable and the results met the standard. Pre-test evidence and the necessary raw samples are retained to avoid the situation that has been processed to cover the original gap. Python can check the path, product and reading back; the assistant is right to judge and continue to process on the basis of this independent operation and delivery.
+
+During an independent repair test, the evaluator only waits for completion or the timeout. Apply the [waiting and timeout procedure](references/goal-testing.md#wait-for-the-independent-agent) with an initial limit of 60 minutes unless the user sets another limit.
+
+For a blind test of default onboarding, use the user's exact ordinary request in a clean
+agent session with the target checkout as its working directory and the current skills
+available through normal discovery. Keep the baseline, intended checks, and hints outside
+the agent's prompt. Verify the public entry and read back reusable results. Observe how the
+agent selects short executions during setup and explains any longer runs. See the
+[short-run guidance](../maintain-project/references/coordination.md#keep-setup-runs-short).
 
 ## Independent detection and repair of file placement
 

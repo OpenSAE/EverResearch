@@ -1,0 +1,1138 @@
+alpacaeval:
+  default:
+    task_class: AlpacaEval2_0
+bbh:
+  cot:
+    task_class: BigBenchHard
+    no_cot: false
+  no_cot:
+    task_class: BigBenchHard
+    no_cot: false
+bbq:
+  cpu_multiple_choice:
+    task_class: BBQ
+    classifier_model_name: None
+    format: MultipleChoice
+    sample: true
+    use_generator_tokenizer: true
+    hparams:
+      max_new_tokens: 64
+      temperature: 0.0
+      top_p: 1.0
+  default:
+    task_class: BBQ
+    classifier_model_name: None
+    format: MultipleChoice
+    sample: true
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  default_full:
+    task_class: BBQ
+    classifier_model_name: None
+    format: MultipleChoice
+    sample: false
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  default_full_reasoning:
+    task_class: BBQ
+    classifier_model_name: None
+    format: MultipleChoice
+    thinker_eval:
+    - reasonings
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_full_reasoning_answer:
+    task_class: BBQ
+    classifier_model_name: None
+    format: MultipleChoice
+    thinker_eval:
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_full_reasoning_think:
+    task_class: BBQ
+    classifier_model_name: None
+    format: MultipleChoice
+    thinker_eval:
+    - reasonings
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_reasoning:
+    task_class: BBQ
+    classifier_model_name: None
+    format: MultipleChoice
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_reasoning_answer:
+    task_class: BBQ
+    classifier_model_name: None
+    format: MultipleChoice
+    thinker_eval:
+    - answers
+    sample: true
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_reasoning_think:
+    task_class: BBQ
+    classifier_model_name: None
+    format: MultipleChoice
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openchoice:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: MultipleChoiceOpen
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  openchoice_full:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: MultipleChoiceOpen
+    sample: false
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  openchoice_full_reasoning:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: MultipleChoiceOpen
+    thinker_eval:
+    - reasonings
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openchoice_full_reasoning_answer:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: MultipleChoiceOpen
+    thinker_eval:
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openchoice_full_reasoning_think:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: MultipleChoiceOpen
+    thinker_eval:
+    - reasonings
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openchoice_reasoning:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: MultipleChoiceOpen
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openchoice_reasoning_answer:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: MultipleChoiceOpen
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openchoice_reasoning_think:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: MultipleChoiceOpen
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openended:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: OpenEnded
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  openended_full:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: OpenEnded
+    sample: false
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  openended_full_reasoning:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: OpenEnded
+    thinker_eval:
+    - reasonings
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openended_full_reasoning_think:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: OpenEnded
+    thinker_eval:
+    - reasonings
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openended_reasoning:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: OpenEnded
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openended_reasoning_answer:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: OpenEnded
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openended_reasoning_think:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: OpenEnded
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  openended_full_reasoning_answer:
+    task_class: BBQ
+    classifier_model_name: Qwen3MC
+    format: OpenEnded
+    thinker_eval:
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+codex_eval:
+  default:
+    task_class: CodexEval
+do_anything_now:
+  default:
+    task_class: DoAnythingNow
+    classifier_model_name: WildGuard
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  harmbench_cls:
+    task_class: DoAnythingNow
+    classifier_model_name: HarmbenchClassifier
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  harmbench_reasoning_answer:
+    task_class: DoAnythingNow
+    classifier_model_name: HarmbenchClassifier
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning:
+    task_class: DoAnythingNow
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_answer:
+    task_class: DoAnythingNow
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_think:
+    task_class: DoAnythingNow
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+gsm8k:
+  8shot_cot:
+    task_class: GSM8K
+    no_cot: false
+    n_shot: 8
+harmbench:
+  default:
+    task_class: HarmbenchVanilla
+    classifier_model_name: WildGuard
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  harmbench_classifier:
+    task_class: HarmbenchVanilla
+    classifier_model_name: HarmbenchClassifier
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  harmbench_reasoning_answer:
+    task_class: HarmbenchVanilla
+    classifier_model_name: HarmbenchClassifier
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning:
+    task_class: HarmbenchVanilla
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_answer:
+    task_class: HarmbenchVanilla
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_think:
+    task_class: HarmbenchVanilla
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+mmlu:
+  default:
+    task_class: MMLU
+mtbench:
+  default:
+    task_class: MTBench
+strongreject:
+  logprobs:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogProbs
+    classifier_model_max_position_embeddings: 7000
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  logprobs_full:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogProbs
+    classifier_model_max_position_embeddings: 7000
+    sample: false
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  logprobs_full_reasoning:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogProbs
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - answers
+    - reasonings
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  logprobs_full_reasoning_answer:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogProbs
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  logprobs_full_reasoning_think:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogProbs
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - reasonings
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  logprobs_reasoning:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogProbs
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - answers
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  logprobs_reasoning_answer:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogProbs
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  logprobs_reasoning_think:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogProbs
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_cls:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectClassifier
+    classifier_model_max_position_embeddings: 7000
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_cls_full:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectClassifier
+    classifier_model_max_position_embeddings: 7000
+    sample: false
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_cls_full_reasoning:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - reasonings
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_cls_full_reasoning_answer:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_cls_full_reasoning_think:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - reasonings
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_cls_reasoning:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_cls_reasoning_answer:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_cls_reasoning_think:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_logits:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogitClassifier
+    classifier_model_max_position_embeddings: 7000
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_logits_full:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogitClassifier
+    classifier_model_max_position_embeddings: 7000
+    sample: false
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_logits_full_reasoning:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogitClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - reasonings
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_logits_full_reasoning_answer:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogitClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_logits_full_reasoning_think:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogitClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - reasonings
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_logits_reasoning:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogitClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_logits_reasoning_answer:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogitClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  strongreject_logits_reasoning_think:
+    task_class: StrongReject
+    classifier_model_name: StrongRejectLogitClassifier
+    classifier_model_max_position_embeddings: 7000
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard:
+    task_class: StrongReject
+    classifier_model_name: WildGuard
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_full:
+    task_class: StrongReject
+    classifier_model_name: WildGuard
+    sample: false
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_full_reasoning:
+    task_class: StrongReject
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_full_reasoning_answer:
+    task_class: StrongReject
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_full_reasoning_think:
+    task_class: StrongReject
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning:
+    task_class: StrongReject
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_answer:
+    task_class: StrongReject
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_think:
+    task_class: StrongReject
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+toxigen:
+  default:
+    task_class: ToxiGen
+    classifier_model_name: tomh/toxigen_roberta
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  default_reasoning:
+    task_class: ToxiGen
+    classifier_model_name: tomh/toxigen_roberta
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_reasoning_answer:
+    task_class: ToxiGen
+    classifier_model_name: tomh/toxigen_roberta
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_reasoning_think:
+    task_class: ToxiGen
+    classifier_model_name: tomh/toxigen_roberta
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  tiny:
+    task_class: TinyToxiGen
+    classifier_model_name: tomh/toxigen_roberta
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  tiny_reasoning:
+    task_class: TinyToxiGen
+    classifier_model_name: tomh/toxigen_roberta
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  tiny_reasoning_answer:
+    task_class: TinyToxiGen
+    classifier_model_name: tomh/toxigen_roberta
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  tiny_reasoning_think:
+    task_class: TinyToxiGen
+    classifier_model_name: tomh/toxigen_roberta
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+trustllm_jailbreaktrigger:
+  default:
+    task_class: TrustLLMJailbreakTriggerSubset
+    classifier_model_name: WildGuard
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  gpt4:
+    task_class: TrustLLMJailbreakTriggerSubset
+    classifier_model_name: OpenInstructGPTJailbreakTriggerClassifier
+    hparams:
+      max_new_tokens: 512
+      temperature: 0.7
+      top_p: 0.95
+  gpt_reasoning_answer:
+    task_class: TrustLLMJailbreakTriggerSubset
+    classifier_model_name: OpenInstructGPTJailbreakTriggerClassifier
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning:
+    task_class: TrustLLMJailbreakTriggerSubset
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_answer:
+    task_class: TrustLLMJailbreakTriggerSubset
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_think:
+    task_class: TrustLLMJailbreakTriggerSubset
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+truthfulqa:
+  default:
+    task_class: TruthfulQA
+wildbench:
+  default:
+    task_class: WildBenchScore
+wildguardtest:
+  default:
+    task_class: WildguardTest
+    classifier_model_name: WildGuard
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning:
+    task_class: WildguardTest
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_answer:
+    task_class: WildguardTest
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_think:
+    task_class: WildguardTest
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+wildjailbreak:
+  benign:
+    task_class: WildJailbreakValidationBenign
+    classifier_model_name: WildGuard
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  benign_gpt4_cls:
+    task_class: WildJailbreakValidationBenign
+    classifier_model_name: GPTRefusalDetectorV0_2
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  benign_gpt4_cls_open_instruct:
+    task_class: WildJailbreakValidationBenign
+    classifier_model_name: OpenInstructGPTJailbreakTriggerClassifier
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  benign_gpt4_open_instruct_reasoning_answer:
+    task_class: WildJailbreakValidationBenign
+    classifier_model_name: OpenInstructGPTJailbreakTriggerClassifier
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  benign_gpt4_reasoning_answer:
+    task_class: WildJailbreakValidationBenign
+    classifier_model_name: GPTRefusalDetectorV0_2
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  benign_wildguard_reasoning:
+    task_class: WildJailbreakValidationBenign
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  benign_wildguard_reasoning_answer:
+    task_class: WildJailbreakValidationBenign
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  benign_wildguard_reasoning_think:
+    task_class: WildJailbreakValidationBenign
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  harmful:
+    task_class: WildJailbreakValidation
+    classifier_model_name: WildGuard
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  harmful_gpt4_cls:
+    task_class: WildJailbreakValidation
+    classifier_model_name: GPTRefusalDetectorV0_2
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  harmful_gpt4_reasoning_answer:
+    task_class: WildJailbreakValidation
+    classifier_model_name: GPTRefusalDetectorV0_2
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  harmful_harmbench_cls:
+    task_class: WildJailbreakValidation
+    classifier_model_name: HarmbenchClassifier
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  harmful_harmbench_reasoning_answer:
+    task_class: WildJailbreakValidation
+    classifier_model_name: HarmbenchClassifier
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  harmful_wildguard_reasoning:
+    task_class: WildJailbreakValidation
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  harmful_wildguard_reasoning_answer:
+    task_class: WildJailbreakValidation
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  harmful_wildguard_reasoning_think:
+    task_class: WildJailbreakValidation
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+wmdp:
+  default:
+    task_class: WMDP
+    sample: true
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  default_full:
+    task_class: WMDP
+    sample: false
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  default_full_reasoning:
+    task_class: WMDP
+    thinker_eval:
+    - answers
+    - reasonings
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_full_reasoning_answer:
+    task_class: WMDP
+    thinker_eval:
+    - answers
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_full_reasoning_think:
+    task_class: WMDP
+    thinker_eval:
+    - reasonings
+    sample: false
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_reasoning:
+    task_class: WMDP
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_reasoning_answer:
+    task_class: WMDP
+    thinker_eval:
+    - answers
+    sample: true
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  default_reasoning_think:
+    task_class: WMDP
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+xstest:
+  benign_only:
+    task_class: XSTest
+    classifier_model_name: KeywordBasedRefusalClassifier
+    benign_only: true
+    use_generator_tokenizer: true
+    hparams:
+      max_new_tokens: 64
+      temperature: 0.0
+      top_p: 1.0
+  default:
+    task_class: XSTest
+    classifier_model_name: WildGuard
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  gpt:
+    task_class: XSTest
+    classifier_model_name: OpenInstructGPTNuancedRefusalDetector
+    hparams:
+      max_new_tokens: 2048
+      temperature: 0.7
+      top_p: 0.95
+  gpt_reasoning_answer:
+    task_class: XSTest
+    classifier_model_name: OpenInstructGPTNuancedRefusalDetector
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning:
+    task_class: XSTest
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_answer:
+    task_class: XSTest
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - answers
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95
+  wildguard_reasoning_think:
+    task_class: XSTest
+    classifier_model_name: WildGuard
+    thinker_eval:
+    - reasonings
+    hparams:
+      max_new_tokens: 32768
+      temperature: 0.7
+      top_p: 0.95

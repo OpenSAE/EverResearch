@@ -66,8 +66,11 @@ def test_shared_skills_preserve_project_content(command, workspace):
     assert not legacy_link.is_symlink()
     assert not legacy_guide.exists()
     assert "../central/.agents/skills/example/SKILL.md" in agents.read_text()
+    agents.write_text(agents.read_text().replace("everresearch:", "researchharness:"))
+    assert command("project", "status", str(project))["state"] == "managed"
     command("apply", "example")
-    assert agents.read_text().count("<!-- researchharness:projects -->") == 1
+    assert agents.read_text().count("<!-- everresearch:projects -->") == 1
+    assert "<!-- researchharness:projects -->" not in agents.read_text()
     assert agents.read_text().count(SEARCH_PARAGRAPH) == 1
     assert agents.read_text().startswith("# Project instructions\n")
     disabled = command("set", "example", "--skills", "off")
@@ -106,7 +109,9 @@ def test_apply_routes_maintenance_and_persists_check_authorization(
     operations = root / "src/harness/projects/operations.md"
     operations.parent.mkdir(parents=True)
     operations.write_bytes(Path(__file__).with_name("operations.md").read_bytes())
-    for name in ("maintain-dataset", "maintain-conf"):
+    for name in (
+        "maintain-dataset", "maintain-conf", "maintain-github", "maintain-huggingface", "extract-structure",
+    ):
         skill = root / ".agents/skills" / name
         skill.mkdir()
         (skill / "SKILL.md").write_text(f"# {name}\n")
@@ -128,7 +133,10 @@ def test_apply_routes_maintenance_and_persists_check_authorization(
     assert not (project / ".agents/researchharness-skills").exists()
     assert "maintain-model" not in text
     assert "Lightweight follow-up checks follow the task authorization" in text
-    assert "Start with the project command and the skill" in text
+    assert "Before starting a listed task, read and follow the linked skill." in text
+    assert "Compare with GitHub, push, open a PR" in text
+    assert "publish a Hub dataset" in text
+    assert "Explain the structure of a paper or codebase" in text
     sections = re.findall(r'\]\(<([^>]+/operations\.md)#([a-z-]+)>\)', text)
     assert len(sections) == 14
     for path, anchor in sections:
@@ -152,7 +160,7 @@ def test_apply_routes_maintenance_and_persists_check_authorization(
     command("apply", "example", "--lightweight-checks", "off")
     assert "Lightweight follow-up checks follow the task authorization" in agents.read_text()
     assert agents.read_text().startswith("# Existing project instructions\n")
-    assert agents.read_text().count("<!-- researchharness:projects -->") == 1
+    assert agents.read_text().count("<!-- everresearch:projects -->") == 1
 
 
 def test_project_mode_reads_central_originals_only_online(command, workspace):
@@ -167,7 +175,7 @@ def test_project_mode_reads_central_originals_only_online(command, workspace):
     assert instructions.index(SEARCH_PARAGRAPH) < instructions.index("## Maintain this checkout")
     command("apply", "example")
     assert (project / "AGENTS.md").read_text() == instructions
-    launcher = project / ".researchharness/maintain.py"
+    launcher = project / ".everresearch/maintain.py"
     mode = launcher.parent / "mode.toml"
     connection = launcher.parent / "online/connection.json"
 
@@ -200,6 +208,10 @@ def test_project_mode_reads_central_originals_only_online(command, workspace):
     assert result.stdout.splitlines() == [
         "offline", str(launcher.parent / "offline/operations.md"),
     ]
+    offline_guide = Path(result.stdout.splitlines()[1]).read_text()
+    assert "read the named skill before any remote write" in offline_guide
+    assert "`maintain-github` | [GitHub publishing](#publishing)" in offline_guide
+    assert "`maintain-conf` | [Configuration](#conf)" in offline_guide
     assert command("status", "example")["shared_skill_directory"] is None
     assert not list(project.rglob("SKILL.md"))
     (project / "data").mkdir()
@@ -266,7 +278,7 @@ def test_standalone_setup_preserves_project_instructions(command, workspace):
         stream.truncate(LARGE_FILE_BYTES + 1)
     setup = command("setup-maintenance", str(project))
     assert setup["mode"] == "offline"
-    archive = project / ".researchharness/backups/initial-setup.tar.gz"
+    archive = project / ".everresearch/backups/initial-setup.tar.gz"
     assert Path(setup["backup"]) == archive
     original_backup = archive.read_bytes()
     with tarfile.open(archive) as bundle:
@@ -282,11 +294,11 @@ def test_standalone_setup_preserves_project_instructions(command, workspace):
         }
         assert f"files/{large.name}" not in bundle.getnames()
         assert manifest["links"] == {".agents/skills/example": str(central_skill)}
-        assert ".researchharness/mode.toml" in manifest["created_paths"]
-    assert "/.researchharness/backups/" in ignore.read_text().splitlines()
+        assert ".everresearch/mode.toml" in manifest["created_paths"]
+    assert "/.everresearch/backups/" in ignore.read_text().splitlines()
     assert not legacy.is_symlink()
     generated = agents.read_text()
-    launcher = project / ".researchharness/maintain.py"
+    launcher = project / ".everresearch/maintain.py"
     launcher.write_text("raise AssertionError('status must not run project code')\n")
     report = command("project", "status", str(project))
     assert report["state"] == "managed"
@@ -319,9 +331,9 @@ def test_retried_setup_keeps_the_original_backup(command, workspace, monkeypatch
     with monkeypatch.context() as patch:
         patch.setattr(manage, "save_bytes", interrupt)
         assert "Interrupted setup" in command("setup-maintenance", str(project), expected=1)
-    archive = project / ".researchharness/backups/initial-setup.tar.gz"
+    archive = project / ".everresearch/backups/initial-setup.tar.gz"
     before_retry = archive.read_bytes()
-    assert not (project / ".researchharness/mode.toml").exists()
+    assert not (project / ".everresearch/mode.toml").exists()
     agents.write_bytes(b"# Edited before retry\n")
     assert Path(command("setup-maintenance", str(project))["backup"]) == archive
     assert archive.read_bytes() == before_retry
@@ -406,10 +418,10 @@ def test_first_online_setup_registers_checkout_and_identifies_legacy_mode(comman
     old = other / ".researchharness/mode.json"
     old.parent.mkdir(parents=True)
     old.write_text('{"mode": "intensive"}\n')
-    assert "old .researchharness/mode.json" in command("project", "status", str(other))["reason"]
+    assert "An older mode.json was found" in command("project", "status", str(other))["reason"]
     result = command("setup-maintenance", str(other), "--online")
     assert result["attached"] and result["mode"] == "online"
-    connection = json.loads((old.parent / "online/connection.json").read_text())
+    connection = json.loads((other / ".everresearch/online/connection.json").read_text())
     assert connection["project_id"] == "freshcheckout"
     assert connection["python"] == sys.executable
     assert old.read_text() == '{"mode": "intensive"}\n'
@@ -419,3 +431,81 @@ def test_first_online_setup_registers_checkout_and_identifies_legacy_mode(comman
     error = command("setup-maintenance", str(collision), "--online", expected=1)
     assert "already registered at a different path" in error
     assert command("status", "freshcheckout")["path"] == str(other)
+
+
+def test_legacy_offline_mode_migrates_to_current_path(command, workspace):
+    _, project, _ = workspace
+    legacy = project / ".researchharness/mode.toml"
+    legacy.parent.mkdir()
+    legacy.write_text("enabled = false\n")
+    agents = project / "AGENTS.md"
+    agents.write_text(
+        "ResearchHarness gives this project maintenance skills.\n"
+        "Connect to ResearchHarness.\n"
+        "The old checkout is at /projects/ResearchHarness.\n"
+        "The historical guide is ResearchHarness.md.\n\n"
+        "<!-- researchharness:mode -->\nRead `.researchharness/mode.toml`.\n"
+        "<!-- /researchharness:mode -->\n"
+        "\n## Original project and template layout\n\nOriginal source notes.\n"
+    )
+    result = command("setup-maintenance", str(project))
+    current = project / ".everresearch/mode.toml"
+    assert result["mode"] == "offline"
+    assert current.read_text().endswith("enabled = false\n")
+    assert legacy.read_text() == "enabled = false\n"
+    assert "EverResearch gives this project maintenance skills." in agents.read_text()
+    assert "Connect to EverResearch." in agents.read_text()
+    assert "/projects/ResearchHarness" in agents.read_text()
+    assert "ResearchHarness.md" in agents.read_text()
+    assert agents.read_text().count("<!-- everresearch:mode -->") == 1
+    assert "<!-- researchharness:mode -->" not in agents.read_text()
+    assert "## Original project and template layout\n\nOriginal source notes." in agents.read_text()
+    assert command("project", "status", str(project))["state"] == "managed"
+    assert command("setup-maintenance", str(project))["backup"] is None
+
+
+def test_registered_check_uses_bound_runtime(command, workspace, monkeypatch):
+    from types import SimpleNamespace
+
+    from harness.projects import manage
+
+    root, project, _ = workspace
+    bundle = root / "src/harness/projects"
+    bundle.mkdir(parents=True)
+    (bundle / "operations.md").touch()
+    (root / "src/harness/cli.py").touch()
+    command("setup-maintenance", str(project), "--online")
+    selected = sys.executable
+    monkeypatch.setattr(sys, "executable", str(root / "different-python"))
+    command("apply", "example")
+    connection = json.loads((project / ".everresearch/online/connection.json").read_text())
+    assert connection["python"] == selected
+    calls = []
+
+    def invoke(arguments, *, cwd, env):
+        calls.append((arguments, cwd, env))
+        return SimpleNamespace(returncode=5)
+
+    monkeypatch.setattr(manage.subprocess, "run", invoke)
+    args = SimpleNamespace(harness_root=str(root), strict=False, json=True)
+    assert manage.check_with_registered_runtime(project, args) == 5
+    arguments, cwd, env = calls[0]
+    assert arguments[0] == selected
+    assert arguments[-4:] == ["project", "check", str(project), "--json"]
+    assert cwd == project
+    assert env[manage.BOUND_RUNTIME] == str(project)
+
+
+def test_online_launcher_reads_mode_without_tomllib(tmp_path, monkeypatch):
+    from harness.projects.standalone import maintain
+
+    monkeypatch.setattr(maintain, "DIRECTORY", tmp_path)
+    monkeypatch.setattr(maintain, "tomllib", None)
+    mode = tmp_path / "mode.toml"
+    mode.write_text("# Generated setting\nenabled = true # Online\n")
+    assert maintain.enabled() is True
+    mode.write_text("enabled = false\n")
+    assert maintain.enabled() is False
+    mode.write_text("enabled = false\nanother = true\n")
+    with pytest.raises(ValueError, match="Set enabled"):
+        maintain.enabled()

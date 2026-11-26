@@ -27,7 +27,7 @@ See the [datasets](datasets.md), [models](models.md), [tasks](tasks.md) and [exp
 | `tests/` | Offline checks and checkpoint-backed exact-output tests. |
 | `assets/illustrations/prompt_compression/` | Diagrams and other assets referenced by the README and paper documentation. |
 | `.github/` | GitHub issue and pull-request templates, dependency updates, test workflow and package release. |
-| `.agents/` and `AGENTS.md` | Optional local ResearchHarness instructions and shared skill links. |
+| `.agents/` and `AGENTS.md` | Optional local EverResearch instructions and shared skill links. |
 
 The root contains entry-point documentation, build and quality configuration, and the license. The API guide lives under `doc/code/`, and repository policies live under `doc/knowledge/community/`. Package components use the `llmlingua` namespace so wheels can install them alongside Hugging Face's separate `datasets` package. Each evaluation script has a distinct benchmark, downstream prompt or metric. Benchmark evaluators share their metric module and the Azure adapter.
 

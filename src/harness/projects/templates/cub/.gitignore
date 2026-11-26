@@ -6,4 +6,4 @@ __pycache__/
 .pytest_cache/
 
 # This machine mounts the resulting guidelines, skills links and binding locations online.
-/.researchharness/online/
+/.everresearch/online/

@@ -1,0 +1,36 @@
+{
+  "catalogs": {
+    "dataset": {
+      "prompts": "text prompt",
+      "image_inputs": "prompt and image",
+      "video_inputs": "prompt and video"
+    },
+    "model": {
+      "next_large_text": "CogVideoX1.5-5B",
+      "next_large_image": "CogVideoX1.5-5B-I2V",
+      "large_text": "CogVideoX-5B",
+      "large_image": "CogVideoX-5B-I2V",
+      "small_text": "CogVideoX-2B"
+    },
+    "task": {
+      "video_generation": "Diffusers CogVideoX inference"
+    }
+  },
+  "generation": {
+    "model_path": "THUDM/CogVideoX1.5-5B",
+    "image_or_video_path": null,
+    "lora_path": null,
+    "lora_rank": 128,
+    "output_path": null,
+    "guidance_scale": 6.0,
+    "num_inference_steps": 50,
+    "num_frames": 81,
+    "width": null,
+    "height": null,
+    "fps": 16,
+    "num_videos_per_prompt": 1,
+    "generate_type": "t2v",
+    "dtype": "bfloat16",
+    "seed": 42
+  }
+}

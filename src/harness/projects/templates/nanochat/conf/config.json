@@ -1,0 +1,60 @@
+{
+  "dataset": "climbmix_corpus",
+  "model": "transformer",
+  "task": "base_training",
+  "catalogs": {
+    "dataset": [
+      "climbmix_corpus",
+      "conversations",
+      "tokenization"
+    ],
+    "model": [
+      "transformer"
+    ],
+    "task": [
+      "base_training",
+      "evaluation",
+      "fine_tuning",
+      "inference",
+      "tokenization"
+    ]
+  },
+  "workflows": {
+    "tokenizer_train": {
+      "task": "tokenization",
+      "module": "scripts.tok_train"
+    },
+    "tokenizer_eval": {
+      "task": "tokenization",
+      "module": "scripts.tok_eval"
+    },
+    "base_train": {
+      "task": "base_training",
+      "module": "scripts.base_train"
+    },
+    "base_eval": {
+      "task": "evaluation",
+      "module": "scripts.base_eval"
+    },
+    "supervised": {
+      "task": "fine_tuning",
+      "module": "scripts.chat_sft"
+    },
+    "reinforcement": {
+      "task": "fine_tuning",
+      "module": "scripts.chat_rl"
+    },
+    "chat_eval": {
+      "task": "evaluation",
+      "module": "scripts.chat_eval"
+    },
+    "chat": {
+      "task": "inference",
+      "module": "scripts.chat_cli"
+    },
+    "inference_benchmark": {
+      "task": "inference",
+      "module": "scripts.infer_bench"
+    }
+  }
+}

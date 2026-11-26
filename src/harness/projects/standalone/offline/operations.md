@@ -6,7 +6,32 @@ Use this guide to turn a maintenance request into changes that fit the project's
 
 ## Scope
 
-Use this guide when `.researchharness/mode.toml` sets `enabled = false`. Work from the project's README, configuration, commands, tests, and run records, using resources available to the project.
+Use this guide when `.everresearch/mode.toml` sets `enabled = false`. Work from the project's README, configuration, commands, tests, and run records, using resources available to the project.
+
+## Choose the skill from the request
+
+Before starting a task in the table, open the named skill if available. Use the skill supplied by your agent, open `.agents/skills/<skill>/SKILL.md` when present in the project, or run `rh guide skill <skill>` and read the file it prints. A local EverResearch source checkout also has the skills under its own `.agents/skills/` directory. These are local lookups and work without changing the project’s maintenance mode.
+
+If no copy of a skill is available, continue local project work using the linked section and the project README. For a request that needs the named skill itself, report the missing skill. For a GitHub or Hugging Face publication or a marketplace submission through EverResearch, read the named skill before any remote write.
+
+| When the user asks to… | Read first | Where to continue in a standalone copy |
+| --- | --- | --- |
+| Set up an unfamiliar project with EverResearch, check a whole project, or coordinate changes across several components | `maintain-project` | Start with [the public entry point](#start-with-the-projects-public-entry-point) and the project README |
+| Change a shared CLI command, launcher, component wiring, resource selection, or result I/O | `maintain-base` | [Shared runtime](#base) |
+| Add, change, or remove a dataset, loader, preprocessing, labels, or splits | `maintain-dataset` | [Dataset implementations](#datasets) |
+| Add, change, or remove a model, variant, initialization, or checkpoint loading | `maintain-model` | [Models](#models) |
+| Add, change, or remove training, evaluation, inference, a metric, or an automatic precheck | `maintain-task` | [Tasks and prechecks](#tasks) |
+| Add, remove, or change a reusable configuration option, default, or preset | `maintain-conf` | [Configuration](#conf) |
+| Run, resume, reproduce, or inspect an experiment using the available tasks and settings | `maintain-experiment` | [Experiments](#experiment) |
+| Review, debug, or refactor code and trace the affected callers | `maintain-code` | [Read, investigate, and plan](#read) |
+| Write a reusable helper or plot, add a regression test, or update docs or assets | `maintain-optional` | [Tests and scripts](#tests-scripts), [documentation](#doc), or [assets](#assets) |
+| Try an idea once or create a disposable script, plot, or note | `maintain-tmp` | [Temporary work](#tmp) |
+| Compare with GitHub, push, open a PR, publish a release or tag, or update a GitHub deployment | `maintain-github` | [GitHub publishing](#publishing) |
+| Get data or weights from Hugging Face, publish a Hub dataset, or check or update a Space | `maintain-huggingface` | Use the README for local data preparation. Use the skill for Hub operations |
+| Save a lesson, decision, or research idea from the conversation as a reusable note | `maintain-knowledge` | Use the skill |
+| Test EverResearch on supplied projects, log or analyze maintenance decisions, or run a skills exam | `maintain-skill` | Use the skill |
+| Explain the structure of a paper or codebase, or build a diagram or interactive map | `extract-structure` | Use the skill |
+| Check, submit, or update an EverResearch listing in an agent marketplace | `maintain-plugins` | Use the local maintainer skill |
 
 ## Start with the project's public entry point
 
@@ -14,7 +39,7 @@ Find the normal command and its inputs in the README. Follow it through its conf
 
 Identify the user's desired input and result, then choose the relevant sections below. Use existing options for existing behavior, change the responsible component for changes to its behavior, and add a named component when the behavior has independent inputs, outputs, or callers. Trace remaining callers before removing a feature.
 
-Use the established top-level directories and existing authorized locations. Confirm working directories and output paths before writing. Workflow setup or changes to the whole structure require explicit authorization. Preserve existing experiments, data, and user edits. After changing paths or output locations, review the paths and, when authorized, run `python -IS .researchharness/maintain.py check` from the project root.
+Use the established top-level directories and existing authorized locations. Confirm working directories and output paths before writing. Workflow setup or changes to the whole structure require explicit authorization. Preserve existing experiments, data, and user edits. After changing paths or output locations, review the paths and, when authorized, run `python -IS .everresearch/maintain.py check` from the project root.
 
 <a id="read"></a>
 
@@ -62,7 +87,7 @@ Read prior results through their manifests and normal result reader. Before resu
 
 ## Publish the project
 
-Follow the project's own release process. Store project GitHub release configuration under its root `.github/`.
+For a GitHub comparison, push, pull request, tag, release, or deployment, read `maintain-github` using the local lookup above. It gives the publishing procedure and its approval and completion checks. If it is unavailable, inspect the project’s release instructions and prepare a local diff. Store project release configuration under its root `.github/`.
 
 <a id="tests-scripts"></a>
 

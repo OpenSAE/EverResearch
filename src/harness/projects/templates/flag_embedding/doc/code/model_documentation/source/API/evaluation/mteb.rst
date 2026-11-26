@@ -25,7 +25,7 @@ Or by running:
     --eval_output_path ./mteb/mteb_eval_results.json \
     --embedder_name_or_path BAAI/bge-large-en-v1.5 \
     --devices cuda:7 \
-    --cache_dir /path/to/user/.cache/huggingface/hub
+    --cache_dir /root/.cache/huggingface/hub
 
 change the embedder, devices and cache directory to your preference.
 

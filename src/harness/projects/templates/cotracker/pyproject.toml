@@ -1,0 +1,7 @@
+# Purpose and main function
+# Define the build backend for the CoTracker distribution.
+# Scope of application
+# Applies when building or installing the project.
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"

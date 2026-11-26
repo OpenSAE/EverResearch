@@ -43,3 +43,7 @@ HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 python -m pytest -q tests/test_retrieval_
 See the [test guide](../../tests/README.md) for the wider suite and its published-checkpoint requirements.
 
 ## Environment verified on November 20, 2026
+
+The reference installation used Python 3.11.17, FlagEmbedding 1.4.2 imported from the editable checkout, PyTorch 2.15.0 with CUDA 13.2, and Transformers 4.57.6. PyTorch detected one NVIDIA GeForce RTX 5090 with 31.4 GiB of memory. CPU FAISS, `pytrec_eval`, and BEIR were installed. MTEB, AIR-Bench, DeepSpeed, and FlashAttention require separate installation in this environment.
+
+For a new run, place FiQA inputs and BGE weights in user-selected data and model directories. The three reference BGE directories contain local configurations and tokenizers. A fresh run with those directories also requires the corresponding weights. Historical FiQA conditions are recorded in the [similarity archive](../../assets/history_experiment/fiqa_similarity/README.md) and [retrieval archive](../../assets/history_experiment/fiqa_retrieval/README.md).

@@ -73,7 +73,7 @@ Or by running:
     --output_dir ./mldr/search_results \
     --search_top_k 1000 \
     --rerank_top_k 100 \
-    --cache_path /path/to/user/.cache/huggingface/hub \
+    --cache_path /root/.cache/huggingface/hub \
     --overwrite False \
     --k_values 10 100 \
     --eval_output_method markdown \
@@ -82,7 +82,7 @@ Or by running:
     --embedder_name_or_path BAAI/bge-m3 \
     --reranker_name_or_path BAAI/bge-reranker-v2-m3 \
     --devices cuda:0 cuda:1 \
-    --cache_dir /path/to/user/.cache/huggingface/hub \
+    --cache_dir /root/.cache/huggingface/hub \
     --embedder_passage_max_length 8192 \
     --reranker_max_length 8192
 

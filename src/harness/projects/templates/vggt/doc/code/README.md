@@ -16,6 +16,6 @@ The project reconstructs camera poses, depth, points and point tracks from image
 | `tests/` | Software checks for commands, dataset selection, checkpoints, reconstruction coordinates and result paths. |
 | `experiment/` | Managed reconstruction bundles, effective configurations, output manifests and original execution evidence. |
 
-From source, run `python main.py --help` for the available commands. The wheel exposes the same commands through `vggt` and keeps the documented API imports `vggt.models.vggt.VGGT` and `vggt.utils.load_fn.load_and_preprocess_images`. The checkout root is `/path/to/workspace/VisualGeometryTransformer`. The registered path `/path/to/workspace/VGGT` resolves to the same checkout.
+From source, run `python main.py --help` for the available commands. The wheel exposes the same commands through `vggt` and keeps the documented API imports `vggt.models.vggt.VGGT` and `vggt.utils.load_fn.load_and_preprocess_images`. The checkout root is `/workspace/VisualGeometryTransformer`. The registered path the project root resolves to the same checkout.
 
 The [fine-tuning guide](training.md) describes datasets, launch and checkpoint selection. The [environment guide](../environment/README.md) explains setup and the [reconstruction report](../experiment.md) links the recorded Fern results.
