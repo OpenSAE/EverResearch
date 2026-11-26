@@ -8,6 +8,45 @@ Verify, recover, and report experiments.
 
 Use for monitoring, recovery, performance diagnosis, failed checks, or result handoff.
 
+## Prepare the formal run choices
+
+For each public research task, select at least one priority supported dataset and model combination
+using the project's documented defaults, relevant official recipe, available resources, and the
+user's purpose. Include each task even if its priority run is currently blocked. For a data-only
+task, state the model input is inapplicable. Give each option a short description of its practical
+purpose and outputs, the exact command or configuration, the dataset/split and model/weights,
+required hardware and inputs, and the expected runtime range. Include other combinations only
+when they serve a distinct purpose or resource budget. Provide an order when tasks depend on one
+another. Formal execution begins for the options the user authorizes.
+
+Use the precheck to identify the compute unit. Profile about ten representative real samples
+with the proposed dataset or official split, model weights, input settings, runtime, and
+hardware. Aim to finish the timing run within five minutes, including startup and precheck,
+and follow the [short-run guidance](../../maintain-project/references/coordination.md#keep-setup-runs-short)
+during first-time setup. Report acquisition and environment setup separately from compute
+measurements. Use the completed work for the estimate.
+Apply the same batch size and worker count as the proposed run. Let the last full batch
+cover the sample target when needed. Include actual training and validation work within
+the same limit. Use independent requests for services and consecutive frames for video
+when frames are the compute unit. If the model generates whole clips, time complete clip
+requests. Use all items when the entire workload is smaller and fits the limit.
+
+Where a run has a time bound, arrange for a clean stop at that bound. Keep progress timings
+for any completed items or steps and identify any unfinished outputs. State the real
+sample count, workload units, elapsed time and the reason for a short sample. If the
+deadline passes before any representative unit completes, report the measured stage and
+the evidence still needed for a reliable full-run estimate.
+
+Report the full dataset or split size, number of epochs or passes, batch size, hardware, and
+a rough end-to-end time range for completing the whole task. Measure startup and steady-state
+throughput separately, and account for scheduled evaluation, output and checkpoint I/O,
+and known scaling limitations. Identify measured durations and extrapolated ranges. If the
+proposed hardware is unavailable, give an estimate for a viable configuration when measured
+evidence exists and state how to calibrate the other configuration. If a throughput measurement
+or workload count cannot be obtained, report the specific blocker and the measurement still
+required. Report download and setup time separately when material. Save the choices and their
+evidence in the project's existing experiment or maintenance documentation.
+
 ## Tracking and recovery
 
 1. Checks the running identity with the original start-up command, effective configuration, actual interpreter, device and process, session logs, outcome lists and check points. Supports the group configuration to read back the current version.

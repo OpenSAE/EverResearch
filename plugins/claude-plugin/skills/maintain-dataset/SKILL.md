@@ -3,6 +3,10 @@ name: maintain-dataset
 description: Add, update, or remove a research dataset. Use for dataset registration, loaders, preprocessing, splits, dataset choices, and verifying that a task reads the intended samples.
 ---
 
+## Runtime compatibility
+
+The repository skills are synchronized with EverResearch source. This distribution's launcher uses the published EverResearch 0.3.1 wheel. For source workflows that require the `.everresearch/` setup or a source-only command, use the CLI from the corresponding [EverResearch source checkout](https://github.com/OpenSAE/EverResearch/commit/9b036cb2109788a8545724a03c313502d255d187). Use the project's existing maintenance entry point when working with the published runtime.
+
 # Maintain research datasets
 
 ## Run the EverResearch CLI
@@ -32,17 +36,17 @@ Use this skill to add a dataset, source, or preset, change how a dataset is read
 
 For removals, check all users of the dataset or preset and verify the remaining selections. Preserve original inputs, shared caches, and historical results according to the project's requirements.
 
-The [dataset procedures](references/procedures.md) explain file ownership and how to carry out and verify additions, changes, and removals.
+The [dataset procedures](references/procedures.md) explain file ownership, changes, and [acceptance with authentic data](references/procedures.md#accept-every-supported-dataset).
 
 ## Check project maintenance before editing
 
-Before applying EverResearch rules to project edits, check the project root for
-`.researchharness/mode.toml`. If it is missing, follow the repository's own rules. When the user
+Before applying EverResearch rules to project edits, check the project's maintenance status with
+`rh projects project status <project-root>`. If no mode has been selected, follow the repository's own rules. When the user
 asks to use EverResearch on that project, hand off to [maintain-project](../maintain-project/SKILL.md)
 for authorized setup before applying these rules. Read-only inspection and planning can proceed
 before setup.
 
-If the mode file is present, run `rh projects project status <project-root>`. With `managed`, use
+With `managed`, use
 the reported guide and follow the authorized request. If the connection is unavailable or its
 status cannot be verified, explain the gap and resolve it before applying EverResearch rules.
 

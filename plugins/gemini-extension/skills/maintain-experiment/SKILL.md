@@ -3,6 +3,10 @@ name: maintain-experiment
 description: Run, monitor, recover, or review a research experiment. Use for run recipes, effective configurations, execution records, and results produced by the experiment.
 ---
 
+## Runtime compatibility
+
+The repository skills are synchronized with EverResearch source. This distribution's launcher uses the published EverResearch 0.3.1 wheel. For source workflows that require the `.everresearch/` setup or a source-only command, use the CLI from the corresponding [EverResearch source checkout](https://github.com/OpenSAE/EverResearch/commit/9b036cb2109788a8545724a03c313502d255d187). Use the project's existing maintenance entry point when working with the published runtime.
+
 # Run and maintain research experiments
 
 ## Run the EverResearch CLI
@@ -32,13 +36,13 @@ Use for a specific run, a group of runs, or their results. Read the project's in
 
 ## Check project maintenance before editing
 
-Before applying EverResearch rules to project edits, check the project root for
-`.researchharness/mode.toml`. If it is missing, follow the repository's own rules. When the user
+Before applying EverResearch rules to project edits, check the project's maintenance status with
+`rh projects project status <project-root>`. If no mode has been selected, follow the repository's own rules. When the user
 asks to use EverResearch on that project, hand off to [maintain-project](../maintain-project/SKILL.md)
 for authorized setup before applying these rules. Read-only inspection and planning can proceed
 before setup.
 
-If the mode file is present, run `rh projects project status <project-root>`. With `managed`, use
+With `managed`, use
 the reported guide and follow the authorized request. If the connection is unavailable or its
 status cannot be verified, explain the gap and resolve it before applying EverResearch rules.
 
@@ -53,5 +57,5 @@ status cannot be verified, explain the gap and resolve it before applying EverRe
 ## Read details when needed
 
 - [Run paths](references/run-paths.md) covers directory structure, meaningful names, and historical result paths. Read before creating, moving, or renaming run outputs.
-- [Run verification](references/run-verification.md) covers tracking, recovery, profiling, and verification. Read for failures, performance comparisons, and result handoff.
+- [Run verification](references/run-verification.md) covers [formal run choices and estimates](references/run-verification.md#prepare-the-formal-run-choices), tracking, recovery, and profiling. Read when planning or verifying a run.
 - [Experiment procedures](references/procedures.md) explains configuration recovery, result reading, and the steps used to investigate common run problems.

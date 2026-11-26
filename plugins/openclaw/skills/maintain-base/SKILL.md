@@ -1,7 +1,11 @@
 ---
 name: maintain-base
-description: Maintain the shared launchers and infrastructure of a research project. Use for command dispatch, cross-component wiring, resource selection, checkpoints, and shared result I/O.
+description: Maintain the shared launchers and infrastructure of a research project. Use for public entry-point migrations, command dispatch, cross-component wiring, resource selection, checkpoints, and shared result I/O.
 ---
+
+## Runtime compatibility
+
+The repository skills are synchronized with EverResearch source. This distribution's launcher uses the published EverResearch 0.3.1 wheel. For source workflows that require the `.everresearch/` setup or a source-only command, use the CLI from the corresponding [EverResearch source checkout](https://github.com/OpenSAE/EverResearch/commit/9b036cb2109788a8545724a03c313502d255d187). Use the project's existing maintenance entry point when working with the published runtime.
 
 # Maintenance of the research project base level
 
@@ -24,7 +28,7 @@ maintained separately.
 
 ## Purpose
 
-The root directory `base/` is responsible for the open access, configuration synthesis, component selection, task distribution and common operation capacity. The original master package of the project is to be split according to actual duties, and the data sets, models and official tasks are to be assigned to the corresponding level I directory. The original public package is to be compatible with the map or thin access.
+The root directory `base/` is responsible for the open access, configuration synthesis, component selection, task distribution and common operation capacity. The original master package of the project is to be split according to actual duties, and the data sets, models and official tasks are to be assigned to the corresponding level I directory. Public package names can be preserved through packaging when the source is in a permitted location.
 
 ## Scope
 
@@ -40,20 +44,20 @@ From Item `AGENTS.md`,README Follow the command to the source of the configurati
 
 ## Check project maintenance before editing
 
-Before applying EverResearch rules to project edits, check the project root for
-`.researchharness/mode.toml`. If it is missing, follow the repository's own rules. When the user
+Before applying EverResearch rules to project edits, check the project's maintenance status with
+`rh projects project status <project-root>`. If no mode has been selected, follow the repository's own rules. When the user
 asks to use EverResearch on that project, hand off to [maintain-project](../maintain-project/SKILL.md)
 for authorized setup before applying these rules. Read-only inspection and planning can proceed
 before setup.
 
-If the mode file is present, run `rh projects project status <project-root>`. With `managed`, use
+With `managed`, use
 the reported guide and follow the authorized request. If the connection is unavailable or its
 status cannot be verified, explain the gap and resolve it before applying EverResearch rules.
 
 
 ## Source code and path duties for the base layer
 
-`base/` Indicates project-level responsibilities. `base/<Open Package Name>/` , in package `runtime/`,`api/` or a specific function name organizational code. Move the internal realization of a duplicate one-level job name to the actual responsible module, where the public import continues to be used through a packaged map or thin compatible portal.
+`base/` Indicates project-level responsibilities. `base/<Open Package Name>/` , in package `runtime/`,`api/` or a specific function name organizational code. Move the internal realization of a duplicate one-level job name to the actual responsible module, and use package mapping to preserve public imports when the layout permits it.
 
 The source root, configuration source, data and model binding, visible relative path and default root are determined item by item. The source runs the root from a verifiable project sign. The read-only command can use the package ' s configuration. The installation is based on a clear project workspace or output location. Validation of the package path or call directory to the declared workspace relationship to process the call for the missing writing position as publicly agreed. The compatible map of the aliases, input and historical results is maintained along the actual reading-take-end.
 
@@ -61,11 +65,13 @@ When this skill maintenance project is directly called, the base layer catalogue
 
 ## Cannot find configuration or error position at public entry point
 
-By the same public command, the actual selected configuration, workspace and plan output are recorded from the project root and unrelated work directories, respectively. Read the path resolution or package resources that search for the first deviation, restore the achievement for which the target project is responsible and retain the old entry that is still in use. If there is no clear writing position, allow the entry point to identify the missing items before the official result is produced. Run the two work directories by way of the Python configuration preview or light-assembly integration of the project, and actually drop the disc by central layout and experiment checking. Report where the user is now starting, whether the original call is still available and the missing operational evidence.
+By the same public command, the actual selected configuration, workspace and plan output are recorded from the project root and unrelated work directories, respectively. Read the path resolution or package resources that search for the first deviation, restore the intended behavior. If the old entry uses a prohibited path, follow the migration procedure below. If there is no clear writing position, allow the entry point to identify the missing items before the official result is produced. Run the two work directories by way of the Python configuration preview or light-assembly integration of the project, and actually drop the disc by central layout and experiment checking. Report where the user is now starting, whether the original call is still available and the missing operational evidence.
 
-## A large number of old module names conflict with path rules
+## Migrate a public entry point that conflicts with layout
 
-First, you identify the old names from document commands, installation statements, normal import and real downstream. This lists the imports and orders that need to be retained, and moves the responsibilities within the project to a location that is consistent with the central rules. The public name is not the same as the physical path, maintaining the utensils through the project's packaging or compatible access. The entry that is still in use is verified in batches from the source code, editable installation and official installation, and then the central layout is cleaned. Freezing the upstream package is based on the source and version of its internal path, and the project's own-maintenance activity leads to the actual responsibilities.
+Follow [Migrate public entry points](references/procedures.md#migrate-public-entry-points) when a
+command, import, package, or tool depends on a path rejected by the project layout check. Deliver
+the working entry point and evidence of its behavior to the project coordinator.
 
 ## Validation criteria
 

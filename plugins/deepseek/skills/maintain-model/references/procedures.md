@@ -41,6 +41,25 @@ The known workflow of a direct call to the model follows the actual construction
 3. The mathematical functions that are actually imported by other models are returned to a common location. Share weights and historical information are processed as authorized.
 4. Checks the normal selection and task consumption of the retention model. Updates presets and weight compatibility statements.
 
+## Accept every supported model variant
+
+1. Resolve the expected architecture, weight or initialization source, revision, format, and
+   runtime for every public model variant. Reuse a verified checkpoint or proactively obtain the
+   official weights. Follow the model card, release links, documentation, and configured hubs.
+   Try other official endpoints, resume transfers, and use trusted mirrors only when provenance
+   and identity can be verified. Diagnose missing links, permissions, slow transfers, and disk
+   or memory limits. A smaller official variant verifies that variant and its applicable shared
+   path. Check license and access requirements when obtaining weights.
+2. Construct the selected model through its real factory, load its matching checkpoint or
+   declared from-scratch initialization, and run a tiny forward pass. Verify the effective
+   variant, weights actually loaded, and task-facing output shape, dtype, and finite values
+   or other applicable invariants. Record weight source and identity, device, input, and result.
+3. When acquisition or execution remains blocked after the available recovery routes, record
+   the exact variant, sources and attempts, concrete blocker, and what would unblock it.
+   A bounded architecture check with random initialization or an alternative model can provide
+   partial evidence. Keep the original pretrained variant pending until its own checkpoint and
+   task contract have been verified. Keep independent variants moving.
+
 ## Points for reference items
 
 CUB templates declare two ResNet18 + MLP variants in `models/resnet/resnet18/specs.py` and `conf/config.yaml`, sharing `model.py` in the series. Use `--set model=resnet18_mlp_small` of the same formulation to walk for formal selection. When changing the default parameters for a single variant, check with the specifications and the configuration that is actually in effect, while checking the other variant that is achieved in the common.

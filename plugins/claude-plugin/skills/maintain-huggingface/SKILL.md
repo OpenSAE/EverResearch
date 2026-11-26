@@ -3,6 +3,10 @@ name: maintain-huggingface
 description: Review or maintain Hugging Face datasets and Spaces. Use to check repository or runtime status, download assets, publish selected files, or manage Space settings.
 ---
 
+## Runtime compatibility
+
+The repository skills are synchronized with EverResearch source. This distribution's launcher uses the published EverResearch 0.3.1 wheel. For source workflows that require the `.everresearch/` setup or a source-only command, use the CLI from the corresponding [EverResearch source checkout](https://github.com/OpenSAE/EverResearch/commit/9b036cb2109788a8545724a03c313502d255d187). Use the project's existing maintenance entry point when working with the published runtime.
+
 # Hugging Face 访问与维护
 
 ## Run the EverResearch CLI

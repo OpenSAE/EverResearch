@@ -34,6 +34,27 @@ Adds, modifies or removes the base layer function of a scientific project. The t
 2. Put the change in the actual responsible file. Configure value `conf/` Platforms, equipment and other common processes are maintained at the base level. Synchronize the configuration, caller and description involved.
 3. Check the public entry points affected and the old results that still need to be read. When it comes to the management of resources or parts of the product after failure, describe the current behaviour and the affected reader.
 
+## Migrate public entry points
+
+1. Trace each path reported by the layout check to its actual callers. Include documented commands,
+   in-repository calls, packaging, environment setup, tests, and external tools with fixed discovery
+   paths. Capture the behavior that matters with a representative invocation and reproducible inputs.
+2. Move implementation to the component that owns it and put shared dispatch in a permitted location.
+   Update callers, build mappings, configuration, scripts, tests, and docs together. Keep a public
+   import or command name when package mappings or a compliant launcher can provide it. Point
+   build and install mappings at the actual project-owned sources in their responsible areas. If a tool
+   requires a prohibited physical path, implement the same workflow through a compliant interface
+   and migrate the callers the project controls. Document the new invocation for other callers.
+3. Verify the replacement through its documented entry and compare the relevant behavior with the
+   baseline. When packaging changes, build and test the installed package from outside the checkout.
+   Verify where each affected installed module was loaded from and which relocated source file
+   the distribution builds it from.
+   Once the replacement works, retire obsolete files, directories, shims, and symlinks at the
+   prohibited paths. Check that ordinary installation or execution does not recreate them.
+4. Report each changed public invocation and its verification evidence. If the user explicitly
+   requires an incompatible invocation, or a required workflow has no equivalent replacement,
+   report that conflict to the project coordinator. Continue independent migrations.
+
 ## Remove
 
 1. Finds the entry, registration, default, configuration, direct call, and historical result readers of the ability to be removed. First, you implement an alternative path for the retention process, or you identify the affected call and result.

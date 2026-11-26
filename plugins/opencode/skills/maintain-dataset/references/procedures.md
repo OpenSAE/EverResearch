@@ -43,6 +43,28 @@ When independent producers generate inputs that a reader joins by position, iden
 3. Process the reservation call and then remove the selected configuration, registration and exclusive realization. Synchronize commands, activity descriptions, associated tests and exclusive status when the entire data set is removed. Shared functions are assigned to the remaining caller. Original data, shared caches and results are processed as specified.
 4. Checks the removed selection entry and retention combinations as agreed. The historical results continue to be interpreted according to the input identity at the time of actual generation.
 
+## Accept every supported dataset
+
+1. Identify the source, version, input format, and splits actually selected by the project's
+   commands and configuration. Reuse a verified local copy if it matches. Otherwise proactively
+   obtain authentic data. Follow upstream documentation and official dataset hosts, then trace
+   trusted alternative distributions with matching provenance. Resolve recoverable transfer and
+   format problems. For a large release, use an official sample, streamed records, or the smallest
+   official shard that covers the applicable reader and split. Check free space and expected
+   transfer time, use resumable downloads when useful, and bind the data outside the code tree.
+2. Run each supported reader and materially distinct split or input mode on a bounded number of
+   real samples. Verify sample identities, label or pair alignment, decoded values, and the
+   fields, shapes, dtypes, or units consumed by the task. Record the source revision, split,
+   selection, and what actually reached the loader.
+3. Use a synthetic fixture after reasonable authentic-data acquisition routes are exhausted or a
+   concrete resource or access limit prevents them. Match the original format, dimensions,
+   dtypes, metadata, label meaning, ranges, missing-value conventions, and split structure as
+   closely as the reader needs. Record which routes were attempted, the exact blocker, what the
+   fixture proves, and the real-data check still outstanding. A fixture validates the loader
+   contract. Mark the authentic dataset acceptance as pending until real evidence is available.
+   Datasets explicitly designed to generate synthetic inputs are accepted using their own real
+   generator and declared contract.
+
 ## Points for reference items
 
 `datasets/cub200/dataset.py` for the CUB template to read the official input, `offline_samples.py` to generate a sample of the offline exercise under the same data set. `datasets/plugins.py` to register the two types of input, `conf/config.yaml` definition selection. Use `--set dataset=synthetic` to select offline input and confirm the sample from the official pre-check to the classification step when permission is granted. When one of the presets is removed, the formulation that refers to it is found and the calls are processed.
