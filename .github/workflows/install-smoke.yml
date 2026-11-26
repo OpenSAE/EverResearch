@@ -94,11 +94,14 @@ jobs:
         if: runner.os == 'Linux'
         shell: bash
         run: |
-          npx --yes --package @openai/codex@0.171.0 codex plugin marketplace add OpenSAE/EverResearch
+          npx --yes --package @openai/codex@0.171.0 codex plugin marketplace add OpenSAE/EverResearch \
+            --sparse .agents/plugins --sparse plugins/codex-plugin
           npx --yes --package @openai/codex@0.171.0 codex plugin add ever-research@ever-research
       - name: Install and run the portable skills for Cursor
         if: runner.os == 'Linux'
         shell: bash
+        env:
+          GIT_LFS_SKIP_SMUDGE: '1'
         working-directory: .smoke-demo/MixedStudy
         run: |
           npx --yes skills@1.9.0 add https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin --agent cursor --all -y

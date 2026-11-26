@@ -26,5 +26,5 @@ From a project directory, use the repository's packaged skills. Install the
 whole set so the related maintenance skills and shared runtime are available.
 
 ```sh
-npx --yes skills add https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin --all -y
+GIT_LFS_SKIP_SMUDGE=1 npx --yes skills add https://github.com/OpenSAE/EverResearch/tree/main/plugins/agent-plugin --all -y
 ```

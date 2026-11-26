@@ -13,13 +13,13 @@ Use these steps for projects you can access from this environment.
 In a local shell with Codex CLI configured, run:
 
 ```sh
-codex plugin marketplace add OpenSAE/EverResearch
+codex plugin marketplace add OpenSAE/EverResearch \
+  --sparse .agents/plugins --sparse plugins/codex-plugin
 codex plugin add ever-research@ever-research
 ```
 
-For a local copy, clone the [EverResearch repository](https://github.com/OpenSAE/EverResearch), then substitute
-its checkout path for `OpenSAE/EverResearch` in the first command. In the Codex
-app, open Plugins and enable EverResearch from the added marketplace. Open the
+For a local copy, use `codex plugin marketplace add /path/to/EverResearch`.
+In the Codex app, open Plugins and enable EverResearch from the added marketplace. Open the
 project as a workspace or make it available to the environment running Codex.
 Ask “Inspect this research project's directory structure.”
 
