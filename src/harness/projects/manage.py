@@ -377,6 +377,8 @@ def setup_maintenance(harness, source, *, online=False):
                     "a8b2e1c7dd3d636bad4c4434a82a6863e0d002ff4f3ba9ff8d4a430a580086ce",
                     "35765f8ea768e47d73ef78b15a53725026851d05c30bd736f084cd26d51d690c",
                     "24ce82adfa5db609700b9180f235359cef1af76c9d99db6a7763011536da2907",
+                    "d6f9e100bdeb2306484befe1c60769a54a3353d21b77729138c2092ef0b17a72",
+                    "56497b92162da21ff1d985eb104bfa42a48e52e7863c7773b123df0dbbee726c",
                 },
                 "offline/check.py": {
                     "368ddb3cd5ddd6c80ee3cf523227f3f7c06f6cc486f7cf4d97bd7c516cade9b3",
