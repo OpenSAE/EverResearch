@@ -1,0 +1,46 @@
+# Purpose and main function
+# Store the original evaluation preset names and overrides.
+# Scope of application
+# The evaluation entry registers these recipes with Hydra.
+eval_dynamic_replica:
+  defaults:
+  - default_config_eval
+  - _self_
+  exp_dir: ./outputs/cotracker
+  dataset_name: dynamic_replica
+eval_tapvid_davis_first:
+  defaults:
+  - default_config_eval
+  - _self_
+  exp_dir: ./outputs/cotracker
+  dataset_name: tapvid_davis_first
+eval_tapvid_davis_strided:
+  defaults:
+  - default_config_eval
+  - _self_
+  exp_dir: ./outputs/cotracker
+  dataset_name: tapvid_davis_strided
+eval_tapvid_kinetics_first:
+  defaults:
+  - default_config_eval
+  - _self_
+  exp_dir: ./outputs/cotracker
+  dataset_name: tapvid_kinetics_first
+eval_tapvid_robotap_first:
+  defaults:
+  - default_config_eval
+  - _self_
+  exp_dir: ./outputs/cotracker
+  dataset_name: tapvid_robotap_first
+eval_tapvid_stacking_first:
+  defaults:
+  - default_config_eval
+  - _self_
+  exp_dir: ./outputs/cotracker
+  dataset_name: tapvid_stacking_first
+eval_tapvid_stacking_strided:
+  defaults:
+  - default_config_eval
+  - _self_
+  exp_dir: ./outputs/cotracker
+  dataset_name: tapvid_stacking_strided

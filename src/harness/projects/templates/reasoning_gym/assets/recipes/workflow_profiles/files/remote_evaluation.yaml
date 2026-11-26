@@ -1,0 +1,17 @@
+model: Qwen/Qwen2.5-0.5B-Instruct
+output_dir: unused
+max_concurrent: 1
+temperature: 0.0
+max_tokens: 40
+default_seed: 43
+categories:
+  - category: arithmetic
+    datasets:
+      - dataset: chain_sum
+        size: 10
+        params:
+          min_digits: 2
+          allow_negation: true
+
+provider: null
+system_prompt: Solve the arithmetic. Output only the final integer between <answer> and </answer> tags.

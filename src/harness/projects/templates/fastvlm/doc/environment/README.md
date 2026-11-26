@@ -18,8 +18,8 @@ The tests use an image generated locally and stand-in inference components. They
 The project dependency pins select PyTorch 2.6.0 and torchvision 0.21.0. On the GeForce RTX 5090, the published checkpoint acceptance used the official PyTorch 2.7.1 and torchvision 0.22.1 wheels for CUDA 12.8. The override is local to the isolated environment. Run these commands from the project root. [PyTorch release notes](https://pytorch.org/blog/pytorch-2-7/) [Official wheel versions](https://pytorch.org/get-started/previous-versions/)
 
 ```bash
-uv venv --python 3.10.22 --seed /path/to/workspace/envs/fastvlm
-uv pip install --python /path/to/workspace/envs/fastvlm/bin/python \
+uv venv --python 3.10.22 --seed .venv
+uv pip install --python .venv/bin/python \
   --override /dev/stdin --index https://download.pytorch.org/whl/cu128 -e . pytest <<'PINS'
 torch==2.7.1+cu128
 torchvision==0.22.1+cu128

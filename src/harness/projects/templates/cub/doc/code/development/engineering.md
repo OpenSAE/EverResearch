@@ -27,7 +27,7 @@ The common requirements of the agreement are presented to your superiors. projec
 
 ## Maintenance skills matching hands-on operations
 
-When checking the template as a whole, you follow the configuration, component, precheck and results from the README official command. After access to ResearchHarness, the whole project is checked at `maintain-project`, the functional review of the assigned code is reviewed at `maintain-code`, the open parameter changes are used at `maintain-conf`, and the running and results review is reviewed at `maintain-experiment`. The following actions indicate where each starts from the template.
+When checking the template as a whole, you follow the configuration, component, precheck and results from the README official command. After access to EverResearch, the whole project is checked at `maintain-project`, the functional review of the assigned code is reviewed at `maintain-code`, the open parameter changes are used at `maintain-conf`, and the running and results review is reviewed at `maintain-experiment`. The following actions indicate where each starts from the template.
 
 | Operation | Where to start in the template | How do you judge the process is complete? |
 | --- | --- | --- |

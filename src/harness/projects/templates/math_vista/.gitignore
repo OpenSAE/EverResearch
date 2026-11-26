@@ -1,0 +1,38 @@
+env/
+data/images/
+
+checkpoints/*.pt
+
+*.egg-info
+*.zip
+!/third_party/upstream/math_vista.zip
+*.idea
+*.DS_Store
+*.ipynb_checkpoints
+*.pyc
+*__pycache__
+
+# Secret Environment Variables
+.env*
+
+# Output
+_results
+
+# EverResearch stores machine-specific connection records here.
+/.everresearch/online/
+/.everresearch/backups/
+/.everresearch/.initial-setup.lock
+
+# Machine-local experiments and maintenance working files.
+experiment/
+tmp/
+/.everresearch/*.egg-info/
+/.everresearch/build/
+/.everresearch/run_locks/
+/.everresearch/mathvista_qwen/
+/.everresearch/huggingface/
+
+/experiment/
+/tmp/
+/.venv/
+/.build/

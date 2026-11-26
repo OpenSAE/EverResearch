@@ -1,0 +1,8 @@
+# Purpose and main function
+# Install the Gradio video demonstration and its dependencies from this checkout.
+# Scope of application
+# Use from the project root in the environment reserved for the interactive demo.
+-e .
+gradio>=5,<6
+mediapy
+opencv-python

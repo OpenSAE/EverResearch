@@ -25,7 +25,7 @@ Or by running:
     --output_dir ./msmarco/search_results \
     --search_top_k 1000 \
     --rerank_top_k 100 \
-    --cache_path /path/to/user/.cache/huggingface/hub \
+    --cache_path /root/.cache/huggingface/hub \
     --overwrite True \
     --k_values 10 100 \
     --eval_output_method markdown \
@@ -34,7 +34,7 @@ Or by running:
     --embedder_name_or_path BAAI/bge-large-en-v1.5 \
     --reranker_name_or_path BAAI/bge-reranker-v2-m3 \
     --devices cuda:0 cuda:1 cuda:2 cuda:3 cuda:4 cuda:5 cuda:6 cuda:7 \
-    --cache_dir /path/to/user/.cache/huggingface/hub \
+    --cache_dir /root/.cache/huggingface/hub \
     --reranker_max_length 1024
 
 change the embedder, reranker, devices and cache directory to your preference.

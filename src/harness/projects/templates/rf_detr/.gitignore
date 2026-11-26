@@ -239,4 +239,4 @@ scripts/examples/cookbooks/export/export_apple/
 .DS_Store
 
 # Connection records maintained online on-line.
-/.researchharness/online/
+/.everresearch/online/

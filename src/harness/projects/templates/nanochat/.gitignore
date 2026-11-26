@@ -1,0 +1,29 @@
+.venv/
+/.venv_gpu/
+/.everresearch/*.egg-info/
+/.everresearch/build/
+/tmp/adoption/
+__pycache__/
+*.pyc
+dev-ignore/
+report.md
+eval_bundle/
+
+# Secrets
+.env
+
+# Local setup
+CLAUDE.md
+wandb/
+
+# EverResearch stores machine-specific connection records here.
+/.everresearch/online/
+/.everresearch/backups/
+/.everresearch/.initial-setup.lock
+
+/experiment/
+
+/experiment/
+/tmp/
+/.venv/
+/.build/

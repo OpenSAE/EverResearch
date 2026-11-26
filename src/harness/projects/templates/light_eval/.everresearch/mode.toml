@@ -1,0 +1,3 @@
+# Purpose and main function: Selection of the source of the project maintenance rules.
+# Scope of application: AGENTS.md,Project maintenance entrance and central mounted reading.
+enabled = false

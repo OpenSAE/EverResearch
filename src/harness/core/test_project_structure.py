@@ -228,3 +228,19 @@ def test_registered_experiment_components_allow_research_identifiers(tmp_path, c
     result = json.loads(capsys.readouterr().out)
     assert any("Unrecognized experiment directory: experiment/GSM8K/wrong_model" in item["expected"]
                for item in result["violations"])
+    assert any("Register the model before the 'classification' task" in item["expected"]
+               for item in result["violations"])
+
+
+def test_catalog_presets_are_exempt_in_owned_component_paths(tmp_path, capsys):
+    root = tmp_path / "ImageClassification"
+    write(root, "datasets/ioi/runtime.py", "")
+    write(root, "models/gpt2small/runtime.py", "")
+    write(root, "conf/datasets/catalog.yaml", "dataset:\n  presets:\n    ioi: {name: IOI}\n")
+    write(root, "conf/models/catalog.yaml", "presets:\n  gpt2small: {name: gpt2small}\n")
+    write(root, "scripts/ioi.py", "")
+    assert main(["projects", "layout", "check", str(root)]) == 1
+    result = json.loads(capsys.readouterr().out)
+    assert [(item["path"], item["rule"]) for item in result["violations"]] == [
+        ("scripts/ioi.py", "name_english_word"),
+    ]

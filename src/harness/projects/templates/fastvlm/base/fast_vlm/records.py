@@ -1,10 +1,12 @@
 """Write and read per-run FastVLM image-prompt predictions and their manifests."""
+import errno
 import json
 import re
 import subprocess
 import sys
 from datetime import datetime, timezone
 from importlib import metadata
+from itertools import count
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from uuid import uuid4
@@ -12,6 +14,7 @@ from uuid import uuid4
 TASK = "image_prompt"
 _GENERIC_NAMES = {"default", "experiment", "job", "output", "run", "test", "trial", "untitled"}
 _RELEASE_CHECKPOINT = re.compile(r"llava-fastvithd_(0\.5b|1\.5b|7b)_stage([23])")
+_DIGIT_WORDS = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
 
 
 def valid_subname(value):
@@ -76,7 +79,6 @@ def save_result(root, config, input_info, answer, *, precheck=None, precheck_err
     paths = component_paths(config)
     group = root / "experiment" / paths["dataset"] / paths["model"] / TASK / config["subname"] / "executions"
     group.mkdir(parents=True, exist_ok=True)
-    run_path = group / run_id
     with TemporaryDirectory(prefix=".pending-", dir=group) as temporary:
         stage = Path(temporary) / "result"
         (stage / "metadata").mkdir(parents=True)
@@ -110,7 +112,17 @@ def save_result(root, config, input_info, answer, *, precheck=None, precheck_err
         if precheck_error is not None:
             manifest["diagnostics"] = [{"stage": "automatic_precheck", "message": precheck_error}]
         _write_json(stage / "metadata/manifest.json", manifest)
-        stage.rename(run_path)
+        for number in count(1):
+            sequence = "_".join(_DIGIT_WORDS[int(digit)] for digit in str(number))
+            run_path = group / f"prediction_execution_{sequence}"
+            if run_path.exists():
+                continue
+            try:
+                stage.rename(run_path)
+                break
+            except OSError as error:
+                if error.errno not in (errno.EEXIST, errno.ENOTEMPTY):
+                    raise
     return run_path / "metadata/manifest.json"
 
 

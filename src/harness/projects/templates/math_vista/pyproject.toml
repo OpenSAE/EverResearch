@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MathVista"
+version = "1.0"
+requires-python = ">=3.11"
+readme = "README.md"
+dynamic = ["dependencies"]
+
+[project.optional-dependencies]
+qwen = ["torch>=2.6", "torchvision>=0.21", "transformers>=5,<6", "accelerate>=1,<2"]
+
+[project.scripts]
+mathvista = "mathvista.commands:main"
+
+[project.urls]
+"Homepage" = "https://mathvista.github.io/"
+"Bug Tracker" = "https://github.com/lupantech/MathVista/issues"
+
+[tool.setuptools]
+py-modules = ["utilities"]
+packages = [
+    "mathvista",
+    "mathvista.dataset",
+    "mathvista.generation",
+    "mathvista.extraction",
+    "mathvista.scoring",
+    "mathvista.precheck",
+    "models",
+    "models.gpt",
+    "models.claude",
+    "models.bard",
+    "models.qwen_vision",
+    "evaluation",
+    "evaluation.prompts",
+]
+
+[tool.setuptools.package-dir]
+"" = "base"
+"mathvista" = "base/math_vista"
+"mathvista.dataset" = "datasets/math_vista"
+"mathvista.generation" = "tasks/generation"
+"mathvista.extraction" = "tasks/extraction"
+"mathvista.scoring" = "tasks/scoring"
+"mathvista.precheck" = "tasks/precheck"
+"models" = "models"
+"models.gpt" = "models/openai_client"
+"models.claude" = "models/anthropic_client"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.black]
+line-length = 120
+skip-string-normalization = true

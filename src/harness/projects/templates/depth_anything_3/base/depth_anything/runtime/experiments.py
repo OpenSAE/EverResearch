@@ -11,6 +11,7 @@ import sys
 from contextlib import contextmanager
 from contextvars import ContextVar
 from datetime import datetime, timezone
+from itertools import count
 from pathlib import Path
 from time import perf_counter
 from uuid import uuid4
@@ -22,6 +23,7 @@ from .paths import CONFIG_ROOT, find_checkout
 
 
 _active_execution = ContextVar("active_execution", default=None)
+_DIGIT_WORDS = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
 
 
 def _slug(value: str) -> str:
@@ -65,6 +67,9 @@ def describe_artifacts(execution: Path) -> dict:
     preview = artifacts / "scene.jpg"
     if preview.is_file() and (artifacts / "scene.glb").is_file():
         preview.rename(artifacts / "scene_preview.jpg")
+    numpy_export = artifacts / "exports/npz"
+    if numpy_export.is_dir():
+        numpy_export.rename(numpy_export.with_name("numpy_archive"))
 
     files = sorted(path for path in artifacts.rglob("*") if path.is_file())
     named = {}
@@ -116,8 +121,16 @@ def record_execution(directory: Path, config: dict):
     entry_timer = perf_counter()
     started = datetime.now(timezone.utc)
     run_id = started.strftime("%Y%m%dT%H%M%S.%fZ") + "-" + uuid4().hex
-    execution = directory / "executions" / run_id
-    execution.mkdir(parents=True)
+    executions = directory / "executions"
+    executions.mkdir(parents=True, exist_ok=True)
+    for number in count(1):
+        sequence = "_".join(_DIGIT_WORDS[int(digit)] for digit in str(number))
+        execution = executions / f"inference_execution_{sequence}"
+        try:
+            execution.mkdir()
+            break
+        except FileExistsError:
+            continue
     config.update(component_paths={
         "dataset": directory.parent.parent.parent.name,
         "model": directory.parent.parent.name,
@@ -128,7 +141,7 @@ def record_execution(directory: Path, config: dict):
 
     manifest_path = execution / "manifest.json"
     manifest = {
-        "execution_id": run_id,
+        "execution_id": execution.name,
         "run_id": run_id,
         "subname": directory.name,
         "task": directory.parent.name,

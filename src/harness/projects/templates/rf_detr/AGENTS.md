@@ -425,13 +425,13 @@ GitHub Actions workflows in `.github/workflows/`:
 
 **Note:** This file is designed for AI coding agents. For human-readable project information, see README.md. For contribution guidelines, see CONTRIBUTING.md.
 
-<!-- researchharness:search -->
+<!-- everresearch:search -->
 ## Locate projects and files
 
 Start with known registrations and explicit paths when locating a project, command, or configuration. When you need a broader search, list the immediate directories first and pick specific paths. Limit routine recursive searches to active source material. Search local workspace output, historical snapshots, experiment results, or caches by explicitly naming the required files or directories and limiting the output.
-<!-- /researchharness:search -->
+<!-- /everresearch:search -->
 
-<!-- researchharness:mode -->
+<!-- everresearch:mode -->
 ## Choose the maintenance mode
 
 ### Purpose and main functions
@@ -442,11 +442,139 @@ Use the project setting to select its maintenance guide and structure checker.
 
 Use this section for project maintenance, checking the online connection, or running an offline structure check.
 
-Start by reading `.researchharness/mode.toml`. Its `enabled` setting selects this project's maintenance mode. Follow the user's choice and obtain authorization before changing it.
+Start by reading `.everresearch/mode.toml`. Its `enabled` setting selects this project's maintenance mode. Follow the user's choice and obtain authorization before changing it.
 
-- **`enabled = false` selects offline maintenance.** Use the project's [offline operations guide](.researchharness/offline/operations.md). It explains how to plan, carry out, and finish maintenance using the project's files, commands, tests, and data.
-- **`enabled = true` selects online maintenance.** Run `python -IS .researchharness/maintain.py status` first. When it prints `online`, read the central guide at the reported path. Follow that guide to the operations manual, shared skills, and central checks in the ResearchHarness repository. If the status command fails, report the cause and pause work that requires central maintenance until the user restores the connection or selects offline mode.
+- **`enabled = false` selects offline maintenance.** Use the project's [offline operations guide](.everresearch/offline/operations.md). It explains how to plan, carry out, and finish maintenance using the project's files, commands, tests, and data.
+- **`enabled = true` selects online maintenance.** Run `python -IS .everresearch/maintain.py status` first. When it prints `online`, read the central guide at the reported path. Follow that guide to the operations manual, shared skills, and central checks in the EverResearch repository. If the status command fails, report the cause and pause work that requires central maintenance until the user restores the connection or selects offline mode.
 - **A missing or invalid setting blocks maintenance.** Report the problem and continue once the setting has been corrected or the user has chosen a mode.
 
-When a structure check is authorized, run `python -IS .researchharness/maintain.py check` from the project root. The command runs the checker for the selected mode. Follow the project README for installation, training, prechecks, and reading results.
-<!-- /researchharness:mode -->
+When a structure check is authorized, run `python -IS .everresearch/maintain.py check` from the project root. The command runs the checker for the selected mode. Follow the project README for installation, training, prechecks, and reading results.
+<!-- /everresearch:mode -->
+
+## Original project and template layout
+
+- **Original project** [RF-DETR](https://github.com/roboflow/rf-detr)
+- **Source revision** [59deab526f4efd43f3a536d1faa5035fd37f3c36](https://github.com/roboflow/rf-detr/tree/59deab526f4efd43f3a536d1faa5035fd37f3c36)
+- **Paper** [RF-DETR: Neural Architecture Search for Real-Time Detection Transformers](https://proceedings.iclr.cc/paper_files/paper/2026/hash/5bed8703db85ab27dc32f6a42f8fbdb6-Abstract-Conference.html) · ICLR 2026
+- **Authors** Isaac Robinson, Peter Robicheaux, Matvei Popov, Deva Ramanan, Neehar Peri
+- **Original source archive** [rf_detr.zip](third_party/upstream/rf_detr.zip)
+- **Archive SHA-256** `d6ecca7c5e2746a2bfd6b74f0818818d35b1b1a162514a8bb429f39deb4192d5`
+
+The archived revision matches the preserved checkpoint-loading and Objects365 source files. The [maintenance record](doc/maintenance.md#recover-the-upstream-source-revision) documents the unchanged files and how they identify the source revision.
+
+### Before organization
+
+```text
+rf-detr/
+├── .codecov.yml
+├── .github/
+│   ├── CODEOWNERS
+│   ├── CONTRIBUTING.md
+│   ├── ISSUE_TEMPLATE/
+│   ├── LICENSE_HEADER.txt
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── … (7 more entries)
+├── .gitignore
+├── .pre-commit-config.yaml
+├── AGENTS.md
+├── CHANGELOG.md
+├── CITATION.cff
+├── CLAUDE.md
+├── CNAME
+├── LICENSE
+├── README.md
+├── configs/
+│   ├── rfdetr_base.yaml
+│   ├── rfdetr_large.yaml
+│   ├── rfdetr_medium.yaml
+│   ├── rfdetr_nano.yaml
+│   ├── rfdetr_seg_2xlarge.yaml
+│   └── … (6 more entries)
+├── docs/
+│   ├── CNAME
+│   ├── assets/
+│   ├── changelog.md
+│   ├── cookbooks.md
+│   ├── cookbooks/
+│   └── … (13 more entries)
+├── mkdocs.yaml
+├── pyproject.toml
+├── scripts/
+│   └── update_weekly_metrics.py
+├── src/
+│   └── rfdetr/
+└── tests/
+    ├── __init__.py
+    ├── _markers.py
+    ├── _online.py
+    ├── assets/
+    ├── benchmarks/
+    └── … (15 more entries)
+```
+
+### After organization
+
+```text
+rf_detr/
+├── .codecov.yml
+├── .everresearch/
+│   ├── maintain.py
+│   ├── mode.toml
+│   └── offline/
+├── .github/
+│   ├── CODEOWNERS
+│   ├── CONTRIBUTING.md
+│   ├── ISSUE_TEMPLATE/
+│   ├── LICENSE_HEADER.txt
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── … (7 more entries)
+├── .gitignore
+├── .pre-commit-config.yaml
+├── AGENTS.md
+├── CHANGELOG.md
+├── CITATION.cff
+├── LICENSE
+├── README.md
+├── assets/
+│   └── documentation/
+├── base/
+│   ├── detector/
+│   └── utilities/
+├── conf/
+│   └── config.yaml
+├── datasets/
+│   └── detection_data/
+├── doc/
+│   ├── README.md
+│   ├── code/
+│   ├── conf.md
+│   ├── environment/
+│   ├── experiment.md
+│   └── … (1 more entries)
+├── models/
+│   ├── __init__.py
+│   └── detection_transformers/
+├── pyproject.toml
+├── scripts/
+│   ├── documentation/
+│   ├── examples/
+│   ├── smoke_all_models.py
+│   ├── train_experiment.py
+│   └── update_weekly_metrics.py
+├── setup.cfg
+├── setup.py
+├── tasks/
+│   ├── __init__.py
+│   ├── evaluation/
+│   ├── precheck/
+│   └── train/
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── fixtures/
+│   ├── integration/
+│   ├── product/
+│   └── … (4 more entries)
+└── third_party/
+    └── upstream/
+```

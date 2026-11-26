@@ -24,7 +24,7 @@ Or by running:
     --output_dir ./beir/search_results \
     --search_top_k 1000 \
     --rerank_top_k 100 \
-    --cache_path /path/to/user/.cache/huggingface/hub \
+    --cache_path /root/.cache/huggingface/hub \
     --overwrite False \
     --k_values 10 100 \
     --eval_output_method markdown \

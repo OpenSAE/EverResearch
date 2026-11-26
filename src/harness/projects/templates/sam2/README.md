@@ -59,15 +59,16 @@ Please see [`INSTALL.md`](doc/environment/installation.md) for FAQs on potential
 
 ### Download Checkpoints
 
-First, we need to download a model checkpoint. All the model checkpoints can be downloaded by running:
+Download the checkpoint for your selected model. From the template root, fetch Hiera Large with:
 
 ```bash
-cd /path/to/workspace/data/sam2/checkpoints/local && \
-../../../scripts/checkpoints/download.sh && \
-cd ..
+mkdir -p ../data/sam2/checkpoints/local
+curl --fail --location \
+  https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_large.pt \
+  --output ../data/sam2/checkpoints/local/sam2.1_hiera_large.pt
 ```
 
-or individually from:
+The other released variants use the same checkpoint directory:
 
 - [sam2.1_hiera_tiny.pt](https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt)
 - [sam2.1_hiera_small.pt](https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_small.pt)
@@ -87,7 +88,7 @@ import torch
 from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
 
-checkpoint = "/path/to/workspace/data/sam2/checkpoints/local/sam2.1_hiera_large.pt"
+checkpoint = "../data/sam2/checkpoints/local/sam2.1_hiera_large.pt"
 model_cfg = "configs/sam2.1/sam2.1_hiera_l.yaml"
 predictor = SAM2ImagePredictor(build_sam2(model_cfg, checkpoint))
 
@@ -110,7 +111,7 @@ For promptable segmentation and tracking in videos, we provide a video predictor
 import torch
 from sam2.build_sam import build_sam2_video_predictor
 
-checkpoint = "/path/to/workspace/data/sam2/checkpoints/local/sam2.1_hiera_large.pt"
+checkpoint = "../data/sam2/checkpoints/local/sam2.1_hiera_large.pt"
 model_cfg = "configs/sam2.1/sam2.1_hiera_l.yaml"
 predictor = build_sam2_video_predictor(model_cfg, checkpoint)
 

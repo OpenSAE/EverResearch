@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info
+.pytest_cache
+.ipynb_checkpoints
+
+thumbs.db
+.DS_Store
+.idea
+
+# EverResearch stores machine-specific connection records here.
+/.everresearch/online/
+/.everresearch/backups/
+/.everresearch/.initial-setup.lock
+
+# Local build and recorded inference results.
+/build/
+/dist/
+/experiment/
+
+/tmp/
+
+/.build/

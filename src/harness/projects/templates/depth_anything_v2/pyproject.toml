@@ -1,0 +1,44 @@
+# Builds the relocated model API and the project's research commands.
+# Used by Python installers from a project source snapshot.
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "depth-anything-research"
+version = "0.1.0"
+description = "Depth Anything V2 image and video depth research workflows"
+requires-python = ">=3.11"
+dependencies = ["torch", "torchvision", "numpy", "opencv-python>=4,<5", "matplotlib", "Pillow"]
+
+[project.optional-dependencies]
+training = ["tensorboard", "h5py"]
+pointcloud = ["open3d"]
+demo = ["gradio>=6,<7", "gradio_imageslider"]
+
+[project.scripts]
+depth-anything = "depth_anything_v2.research.commands:main"
+
+[tool.setuptools]
+packages = [
+    "depth_anything_v2", "depth_anything_v2.dpt", "depth_anything_v2.transformer_layers", "depth_anything_v2.tools",
+    "depth_anything_v2.research", "depth_anything_v2.research.conf",
+    "depth_anything_v2.research.datasets.media", "depth_anything_v2.research.datasets.hypersim_images",
+    "depth_anything_v2.research.datasets.kitti_images", "depth_anything_v2.research.datasets.virtual_kitti",
+    "depth_anything_v2.research.datasets.transforms", "depth_anything_v2.research.datasets.da_benchmark",
+    "depth_anything_v2.research.tasks.image_depth", "depth_anything_v2.research.tasks.video_depth",
+    "depth_anything_v2.research.tasks.point_cloud", "depth_anything_v2.research.tasks.training",
+    "depth_anything_v2.research.tasks.demo", "depth_anything_v2.research.tasks.precheck",
+    "depth_anything_v2.research.tasks.pairwise_depth",
+]
+
+[tool.setuptools.package-dir]
+depth_anything_v2 = "models/depth_anything_v2"
+"depth_anything_v2.dpt" = "models/depth_anything_v2/depth_head"
+"depth_anything_v2.research" = "base"
+"depth_anything_v2.research.conf" = "conf"
+"depth_anything_v2.research.datasets" = "datasets"
+"depth_anything_v2.research.tasks" = "tasks"
+
+[tool.setuptools.package-data]
+"depth_anything_v2.research.conf" = ["config.toml"]

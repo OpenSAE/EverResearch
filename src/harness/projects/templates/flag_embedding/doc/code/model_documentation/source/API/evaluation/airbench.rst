@@ -25,12 +25,12 @@ Or by running:
     --output_dir ./air_bench/search_results \
     --search_top_k 1000 \
     --rerank_top_k 100 \
-    --cache_dir /path/to/user/.cache/huggingface/hub \
+    --cache_dir /root/.cache/huggingface/hub \
     --overwrite False \
     --embedder_name_or_path BAAI/bge-m3 \
     --reranker_name_or_path BAAI/bge-reranker-v2-m3 \
     --devices cuda:0 cuda:1 \
-    --model_cache_dir /path/to/user/.cache/huggingface/hub \
+    --model_cache_dir /root/.cache/huggingface/hub \
     --reranker_max_length 1024
 
 change the embedder, reranker, devices and cache directory to your preference.

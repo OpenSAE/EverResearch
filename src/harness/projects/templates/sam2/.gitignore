@@ -15,4 +15,4 @@ demo/backend/checkpoints/*.pt
 /assets/native_extension/connected_components/files/*.so
 
 # Connection records maintained online on-line.
-/.researchharness/online/
+/.everresearch/online/

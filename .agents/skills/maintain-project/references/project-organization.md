@@ -22,6 +22,29 @@ The scenes for which access, mobile code, merge duplicate functions or connect c
 
 If the sketches need to be kept for subsequent reference, export a stand-alone HTML to be registered at the central `src/project/maintained/<project-id>/structure/` `rh projects --harness-root <ResearchHarnessdirectory> structure add <project-id> <HTMLpath> --revision <source-version-or-snapshot-id> --scope <analysis-scope>`.
 
+## Establish source ownership
+
+The named checkout is the project being maintained. Its own source stays project-owned even when
+it comes directly from a public upstream repository. Start from its documented commands, installed
+entry points, package declarations, and active tests. Identify the implementation groups that
+serve those workflows and map each group to the layout by its real responsibility. Cover the
+rest of the project-owned source, tests, configuration, and tools wherever their ownership can be
+established. A representative workflow establishes the first migration and verification path.
+
+Move existing implementations into their responsible areas, update their callers, and keep
+working through the remaining groups. Preserve public names through packaging or compliant
+launchers with help from `maintain-base`. Actual runtime paths must lead to the relocated code.
+Thin adapters, demonstration workflows, and directory placeholders do not complete the migration
+of the implementations they call.
+
+Reserve `third_party/` for independently identifiable upstream components kept as dependencies.
+Prefer incorporating their reusable parts where that is safe and meaningful. A minor upstream
+component or a separately sourced component that relies on an inseparable upstream build,
+generated interface, or update process may stay intact. Record its origin, callers, and why
+retaining it is appropriate. Project-owned code that is difficult to move remains part of the
+target. Finish independent groups and report the specific remaining implementation and blocker
+when a required migration cannot be completed.
+
 ## Extract duties from mixed code
 
 1. ** Tracks down from the entrance. ** Writes down the actual entry, feed parameters, default values, and overlay order. Following the import, function call, configuration identifier, or frame callback, you find the actual callable realization. The entry is Notebook, following the configuration, data, model, and result tracking between the units. When the workflow has multiple phases, you string up with the input and output of each command. When you see the external frame, the location items pass to its configuration, component, or return, and the output from the frame.
@@ -67,7 +90,7 @@ When organizing a range involving multiple data sets, models, tasks or multiple 
 ## Map to sort files and entrances
 
 - In the record of project maintenance, write down the "Present Location and User's Actual Responsibilities " , the results of the compliance review that has been implemented. The responsibilities are clearly achieved directly, and the mixed files are processed for the actual purpose. When the current functions are tied together, they will be placed in the standard position in which the function is performed and the open interface will continue to be split. Framework access and open interfaces will be carried by the achievement of compliance positions or thin matching. The historical originals and unquoted files will move according to the master table of the project's skills.
-- When you move, split or merge, you update the import, configuration reference, command or script, relative path baseline and description. Public commands and identifiers that still need to be supported are compatible with the standard position and formally call down after they have been used. Maintain the default and overwhelming order for organizing the parameters. `maintain-base`,`maintain-dataset`,`maintain-model`,`maintain-task` and `maintain-optional`.
+- When you move, split or merge, you update the import, configuration reference, command or script, relative path baseline and description. Route public commands and imports that depend on a prohibited path to `maintain-base` and collect evidence that their replacements work. Maintain the default and overwhelming order for organizing the parameters. `maintain-base`,`maintain-dataset`,`maintain-model`,`maintain-task` and `maintain-optional`.
 - For example, `train.py` also randomly divides data, constructs models, trains and writes accuracy. First, you find the seeds and indexes used to divide, and assigns the corresponding logic to the data assembly; you load the model structure and weight to the model component; you keep the training cycle and the accuracy rate calculated in the mission; you pass the parameters through the entry, you save the indicators from the running module. The original command continues to be forwarded to the sorted task. If the project has only one end-to-end frame command, then you decide whether you need to dismantle the internal code.
 
 ## Connect to the project base level
@@ -80,24 +103,30 @@ From README to the `doc/` index, map the actual one-level catalogue that is used
 
 ## Validation of components and experimental products
 
-Processes are performed within the range specified by the user, and can be read at `maintain-experiment` for actual commands, effective configurations and results. Synthetic input is used to check access and data contracts, to record the source and the behaviour covered.
+Inventory support from actual entry points and configurations before selecting verification cases.
+Include every named dataset and model variant and each runnable task mode. Record supported
+combinations and exclusions with the reason for each. Ask the owning skills to verify the real
+components and fix recoverable problems within the authorized scope.
 
-When you are required to run the project's default task, set tasks, models and weights from the upstream master statement, the default value of a formal order and the official formulation. When the official does not specify a uniform default task and model, priority is given to the first actionable use in the upstream master note and to the model specified therein, including the public API call from Quick Start. Here you can enter the example into a genuine small sample with a source, maintain the function and model to be used. The master description lists the multiple work streams, distinguishing between the project's primary usage and other official examples, and indicates the basis for the selection.
+- [Dataset acceptance](../../maintain-dataset/references/procedures.md#accept-every-supported-dataset)
+  obtains authentic sources and checks each applicable reader and split with representative samples.
+- [Model acceptance](../../maintain-model/references/procedures.md#accept-every-supported-model-variant)
+  verifies construction, real checkpoint loading or the declared scratch initialization, and a
+  small forward pass for every supported variant.
+- [Task precheck](../../maintain-task/references/procedures.md#run-a-bounded-precheck-for-every-task)
+  tests the public task path through real I/O, effective data and model selection, bounded
+  computation, and result readback. Reuse component evidence where its identity and execution
+  environment match. Group selections that share the same relevant execution paths and contracts
+  and state which entries each case covers. Test materially distinct branches separately.
+- [Formal run choices](../../maintain-experiment/references/run-verification.md#prepare-the-formal-run-choices)
+  give the user an executable option for each task, with the intended use, inputs, outputs,
+  estimated runtime, and any remaining resource requirements.
 
-The user assigns download weights and selects them in the above order in the local workflow upstream. Checks the acquisition of weights, reasonable operating equipment and actual resource requirements, giving priority to combining officially supported equipment with precision to meet the operating conditions of the same model. When the resource or access condition still prevents the default workflow, identify the specific missing items and distinguish between other formulation evidence and the default method of acceptance.
-
-When the official weights are loaded on converters, quantitative formats or backends, check the model statement against the structure, pre-processing and computation options actually used. When the result is a clear deviation from the official definition or normal space, the same input step-by-step comparison metadata are used to explain, run the backend and output, and to record the identifiable causes and the compatibility of the reservation. A document that completes the reasoning also requires this check to be used as evidence of the acceptance of the default model.
-
-| Receiving and Inspection Objects | Acts confirmed from actual operation |
-| --- | --- |
-| Dataset `datasets` | The specified data and their actual source are selected at the normal entrance to prepare the sample, division, label or label as expected by the mission. Record the number or batch of live read samples and the input characteristics received by the mission. |
-| Model `models` | Physically constructs the specified model or variant, using the initialization or weight source agreed on by the project. Allows the real task input to be modeled to check the output structure on which the task is based. When it involves a weight reading or writing, the corresponding weight or check point is read back from the public entry point. |
-| Task `tasks` | The actual implementation of the selected training, assessment, reasoning or analytical steps to verify that the task actually consumes the selected data and model and delivers the agreed indicators, projections, reports or other results of the model. |
-| Experiment `experiment` | Opens an indicator, report or check point to confirm that it is readable and is selected for execution. When an example or an existing item is stored with a running identifier, the open path is checked using the existing rules and the original result is read back. |
-
-- **Group by affected behaviour.** Mounts a default representative combination provided by the preferred project. A run can cover both datasets, models, tasks and products. The whole project accepts and selects representative functions and available evidence, then independent interfaces, mission behaviour or compatible by-elections that affect the actual use of the project in the current range. The user requests that each component be verified for actual performance evidence..
-- **Checking behavior before and after.** When merging or moving has been achieved, priority is given to the same input, parameter and argument for a more representative original entry and rear entrance. The corresponding path is included when history configuration, weight or product is readable. Importing, helping to export and configuration resolve the evidence that each provides the corresponding entry. Complete acceptance also requires the actual execution of the task and reading back to the product..
-- **Hand-over on evidence..** An article-by-article account of the operational configuration, the actual completed steps, the readable products and the location of the evidence. When missing data, missing weights, missing environment or not approved for implementation, indicate the specific combination and missing items to be run, blocked or partially completed..
+Record each coverage item as passed, partially verified, or blocked with direct evidence.
+Keep authentic data or weights pending when a fallback verifies only the contract. When code
+moves, compare representative old and current outputs on the same inputs or state the missing
+baseline. Read retained experiment outputs through the actual consumer. Full scientific
+workloads remain available for the user's selection after technical acceptance.
 
 ## Item-by-line
 

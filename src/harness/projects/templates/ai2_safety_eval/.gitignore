@@ -1,0 +1,16 @@
+# EverResearch stores machine-specific connection records here.
+/.everresearch/online/
+/.everresearch/backups/
+/.everresearch/.initial-setup.lock
+
+# Python build and execution caches
+__pycache__/
+*.egg-info/
+.pytest_cache/
+/build/
+/dist/
+
+/experiment/
+/tmp/
+/.venv/
+/.build/

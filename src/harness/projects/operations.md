@@ -80,7 +80,7 @@ Use [maintain-task](../../../.agents/skills/maintain-task/SKILL.md) for the comp
 
 ## Publish Item to GitHub
 
-Online maintenance default from `maintain-github` The original installation, construction and testing portal of the project is still available for release of a copy., GitHub Release Profiles on Project Roots `.github/`.Two modes of publication[Project release rules](README.md#project-publishing)Whichever applies to the selection of the release entrance or the migration for which the release process is in place.
+For a GitHub comparison, push, pull request, tag, release, or deployment, follow the `maintain-github` link in the online project guide. Read the skill before preparing or publishing the change. Keep project release configuration under the root `.github/` and use the project's existing build and test commands.
 
 <a id="tests-scripts"></a>
 

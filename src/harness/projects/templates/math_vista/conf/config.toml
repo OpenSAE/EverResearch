@@ -1,0 +1,50 @@
+# Select MathVista dataset defaults and output names for the evaluation commands.
+# The checkout's public launcher uses this configuration before applying CLI arguments.
+
+[dataset]
+source = "AI4Math/MathVista"
+split = "testmini"
+local_data = "../data/math_vista/upstream"
+prepared_context = "assets/prepared_data/visual_context/files"
+
+[generation]
+model = "gpt-3.5-turbo"
+output_file = "predictions.json"
+
+[scoring]
+output_file = "predictions.json"
+score_file = "scores.json"
+
+[catalogs.dataset.math_vista]
+source = "AI4Math/MathVista"
+
+[catalogs.model.gpt]
+provider = "azure_openai"
+
+[catalogs.model.claude]
+provider = "anthropic"
+
+[catalogs.model.bard]
+provider = "bard"
+
+[catalogs.task.generation]
+operation = "generate responses"
+
+[catalogs.task.extraction]
+operation = "extract short answers"
+
+[catalogs.task.scoring]
+operation = "score predictions"
+
+[catalogs.dataset.testmini]
+split = "testmini"
+
+[catalogs.dataset.test]
+split = "test"
+
+
+[catalogs.model.qwen_vision]
+source = "Qwen/Qwen2.5-VL-3B-Instruct"
+revision = "66285546d2b821cf421d4f5eb2576359d3770cd3"
+max_pixels = 1003520
+device = "cuda:0"

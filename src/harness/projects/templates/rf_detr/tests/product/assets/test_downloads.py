@@ -268,7 +268,7 @@ class TestDownloadErrorHandling:
         assert "incorrect MD5 hash" in warning_message
         mock_file_operations["download"].assert_not_called()
 
-    @pytest.mark.parametrize("path", ["/content/rf-detr-base.pth", "/path/to/workspace/models/rf-detr-base.pth"])
+    @pytest.mark.parametrize("path", ["/content/rf-detr-base.pth", "/workspace/models/rf-detr-base.pth"])
     def test_absolute_path_resolves_to_known_model(self, mock_file_operations, path):
         """Absolute paths still match the registry by basename and are downloaded under the full path.
 

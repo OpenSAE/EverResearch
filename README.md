@@ -34,10 +34,11 @@ EverResearch gives your AI agent the tools to understand and maintain a research
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/openclaw-color.svg" alt="" width="18" height="18"> OpenClaw | [OpenClaw plugin](plugins/openclaw/) |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/vercel.svg" alt="" width="18" height="18"> Skills CLI | [Install guide](plugins/agent-plugin/#install-with-the-skills-cli) · [Skills.sh](https://skills.sh/opensae/everresearch) |
 
-**Terminal.** Install from PyPI with Python 3.11–3.13.
+**Terminal.** Install the published wheel from GitHub Releases with Python 3.11–3.13.
 
 ```bash
-uv tool install ever-research
+uv tool install --upgrade https://github.com/OpenSAE/EverResearch/releases/download/v0.3.1/ever_research-0.3.1-py3-none-any.whl
+rh --version
 rh doctor
 ```
 
@@ -53,7 +54,7 @@ Offline installers are available on [GitHub Releases](https://github.com/OpenSAE
 
 Run `rh projects project check ./MyProject --onboarding` for a read-only preview. Scripts and CI can use `--strict` for pass/fail or `--json` for machine-readable results.
 
-With the current source checkout installed, use `rh --version` to confirm the active CLI. To connect a checkout online, run `rh projects setup-maintenance ./MyProject --online`. The first setup
+To connect a checkout online, run `rh projects setup-maintenance ./MyProject --online`. The first setup
 [backs up project files locally](src/harness/projects/README.md#online-and-offline-maintenance).
 Structure checks in a Git checkout cover tracked and new non-ignored files. Use the project's result
 reader for its native outputs, or `rh projects experiment check ./MyProject` for EverResearch-format runs.
@@ -127,7 +128,7 @@ All agent integrations share the same research skills and core tools, so the way
 
 ## Research Projects
 
-EverResearch is designed to organize most open-source AI projects. We tested it on nine research project templates covering computer vision, multimodal learning, retrieval, language model evaluation, and other machine learning tasks.
+EverResearch is designed to organize most open-source AI projects. We tested it on twenty research project templates covering computer vision, multimodal learning, retrieval, language model evaluation, and other machine learning tasks.
 
 | Project | Research area |
 | --- | --- |
@@ -140,6 +141,19 @@ EverResearch is designed to organize most open-source AI projects. We tested it 
 | [RF-DETR](src/harness/projects/templates/rf_detr/) | Object detection |
 | [SAM2](src/harness/projects/templates/sam2/) | Image and video segmentation |
 | [VGGT](src/harness/projects/templates/vggt/) | 3D visual geometry |
+| [CogVideoX](src/harness/projects/templates/cogvideox/) | Text-, image-, and video-conditioned generation |
+| [CoTracker3](src/harness/projects/templates/cotracker/) | Point tracking and video benchmarks |
+| [Depth Anything V2](src/harness/projects/templates/depth_anything_v2/) | Relative and metric depth, point clouds, and benchmark scoring |
+| [DINOv2](src/harness/projects/templates/dinov2/) | Self-supervised visual features and dense prediction |
+| [LeRobot](src/harness/projects/templates/lerobot/) | Robot imitation learning, simulation, and policy serving |
+| [Whisper](src/harness/projects/templates/whisper/) | Speech recognition, translation, and timestamps |
+| [NanoChat](src/harness/projects/templates/nanochat/) | Tokenizer training and language model pretraining |
+| [TRL](src/harness/projects/templates/trl/) | Language model fine-tuning, preference optimization, and reinforcement learning |
+| [Reasoning Gym](src/harness/projects/templates/reasoning_gym/) | Verifiable reasoning tasks and language model evaluation |
+| [Ai2 Safety Eval](src/harness/projects/templates/ai2_safety_eval/) | Model safety classification and refusal evaluation |
+| [MathVista](src/harness/projects/templates/math_vista/) | Visual mathematical reasoning with local generation and scoring |
+
+[Browse the template catalog and maintenance records](src/harness/projects/templates/README.md).
 
 For a full training example, download BirdStudy from [GitHub Releases](https://github.com/OpenSAE/EverResearch/releases/latest) or browse its [CUB-200 template](src/harness/projects/templates/cub/).
 
@@ -188,9 +202,9 @@ We welcome contributions from researchers and developers. Share a research workf
    - macOS: `~/Library/Caches/researchharness`
    - Windows: `%LOCALAPPDATA%\researchharness\researchharness\Cache` and `%LOCALAPPDATA%\researchharness\plugin-runtime`
 4. In each project you set up, do all three steps together:
-   - In `AGENTS.md`, delete each block from `<!-- researchharness:… -->` to its matching `<!-- /researchharness:… -->`. Keep your own text.
-   - In `.gitignore`, delete the `# EverResearch …` comment and the `/.researchharness/…` entries that EverResearch added.
-   - If you need any originals, extract them from `.researchharness/backups/initial-setup.tar.gz` first. Then delete the `.researchharness/` folder.
+   - In `AGENTS.md`, remove each EverResearch block from `<!-- everresearch:… -->` to its matching `<!-- /everresearch:… -->`. Older blocks use the `researchharness` prefix. Keep the rest of the file.
+   - In `.gitignore`, delete the `# EverResearch …` comment and the `/.everresearch/…` entries that EverResearch added.
+   - If you need any originals, extract them from `.everresearch/backups/initial-setup.tar.gz` first. Then delete the `.everresearch/` folder.
 
 ## License
 

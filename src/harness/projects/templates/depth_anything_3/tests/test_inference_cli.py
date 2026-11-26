@@ -12,6 +12,7 @@ from depth_anything_3.registry import MODEL_REGISTRY
 from depth_anything_3.services.inference_service import InferenceService
 from depth_anything_3.specs import Prediction
 from depth_anything_3.utils.export import export
+from depth_anything_3.utils.export.npz import read_depth
 
 
 runner = CliRunner()
@@ -118,7 +119,8 @@ def test_explicit_input_commands_forward_reference_strategy(
     assert predictions[0]["ref_view_strategy"] == "middle"
 
 
-def test_named_repeats_and_legacy_export_use_the_same_input_and_writer(tmp_path, monkeypatch):
+@pytest.mark.parametrize("export_format", ["npz", "mini_npz"])
+def test_named_repeats_and_legacy_export_use_the_same_input_and_writer(tmp_path, monkeypatch, export_format):
     source = tmp_path / "scene"
     source.mkdir()
     for name in ("b.PnG", "a.webp"):
@@ -132,10 +134,11 @@ def test_named_repeats_and_legacy_export_use_the_same_input_and_writer(tmp_path,
     def fake_inference(*, image_paths, export_format, export_dir, **options):
         assert image_paths == expected_inputs
         assert options["model_dir"] == "depth-anything/DA3NESTED-GIANT-LARGE-1.1"
-        export(Prediction(depth, is_metric=0), export_format, export_dir)
+        processed_images = np.zeros((2, 3, 4, 3), dtype=np.uint8)
+        export(Prediction(depth, is_metric=0, processed_images=processed_images), export_format, export_dir)
 
     monkeypatch.setattr(cli, "run_inference", fake_inference)
-    arguments = ["auto", str(source), "--export-format", "mini_npz"]
+    arguments = ["auto", str(source), "--export-format", export_format]
     for _ in range(2):
         result = runner.invoke(cli.app, [*arguments, "--experiment", "scene_geometry"])
         assert result.exit_code == 0, result.output
@@ -144,22 +147,23 @@ def test_named_repeats_and_legacy_export_use_the_same_input_and_writer(tmp_path,
     assert result.exit_code == 0, result.output
     records = json.loads(result.output)
     assert len(records) == 2
-    assert len({record["execution_id"] for record in records}) == 2
+    assert [record["execution_id"] for record in records] == ["inference_execution_one", "inference_execution_two"]
+    assert len({record["run_id"] for record in records}) == 2
     for record in records:
         assert record["status"] == "succeeded"
         execution = destination / "executions" / record["execution_id"]
         settings = json.loads((execution / record["config"]).read_text())
         assert settings["input_path"] == str(source)
-        assert settings["export_format"] == "mini_npz"
-        assert len(record["artifacts"]) == 1
-        with np.load(execution / record["artifacts"][0]) as archive:
-            np.testing.assert_array_equal(archive["depth"], depth)
+        assert settings["export_format"] == export_format
+        recorded_format = "numpy_archive" if export_format == "npz" else export_format
+        assert record["artifacts"] == [f"artifacts/exports/{recorded_format}/results.npz"]
+        np.testing.assert_array_equal(read_depth(execution / "artifacts", export_format), depth)
 
     legacy_output = tmp_path / "old_output"
     result = runner.invoke(cli.app, [*arguments, "--export-dir", str(legacy_output)])
     assert result.exit_code == 0, result.output
-    with np.load(legacy_output / "exports/mini_npz/results.npz") as archive:
-        np.testing.assert_array_equal(archive["depth"], depth)
+    assert (legacy_output / "exports" / export_format / "results.npz").is_file()
+    np.testing.assert_array_equal(read_depth(legacy_output, export_format), depth)
 
 
 def test_export_failure_is_recorded_by_cli(tmp_path, monkeypatch):

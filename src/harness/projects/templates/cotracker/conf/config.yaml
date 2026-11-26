@@ -1,0 +1,17 @@
+# Purpose and main function
+# Select the default CoTracker point-tracking workflow and released model.
+# Scope of application
+# The project command uses these defaults when no override is supplied.
+catalogs:
+  dataset: [video_tracking]
+  model: [tracking]
+  task: [tracking]
+dataset: video_tracking
+model: tracking
+task: tracking
+subname: point_tracks
+video: assets/videos/apple/files/apple.mp4
+grid_size: 10
+grid_query_frame: 0
+backward_tracking: false
+device: auto

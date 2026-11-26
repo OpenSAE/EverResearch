@@ -1,0 +1,153 @@
+cell_dino/vitl16_boc_hpafov:
+  train:
+    batch_size_per_gpu: 16
+    OFFICIAL_EPOCH_LENGTH: 450
+    cell_augmentation: true
+    channel_adaptive: true
+  student:
+    arch: vit_large
+    patch_size: 16
+    in_chans: 1
+    drop_path_rate: 0.1
+    block_chunks: 4
+  teacher:
+    momentum_teacher: 0.996
+    warmup_teacher_temp_epochs: 20
+    in_chans: 1
+  crops:
+    global_crops_scale:
+    - 0.4
+    - 1.0
+    local_crops_number: 8
+    local_crops_scale:
+    - 0.005
+    - 0.4
+    global_crops_size: 224
+    local_crops_size: 96
+  optim:
+    weight_decay_end: 0.2
+    base_lr: 0.0005
+    warmup_epochs: 20
+    epochs: 400
+cell_dino/vitl16_hpafov:
+  train:
+    batch_size_per_gpu: 16
+    OFFICIAL_EPOCH_LENGTH: 450
+    cell_augmentation: true
+  student:
+    arch: vit_large
+    patch_size: 16
+    in_chans: 4
+    drop_path_rate: 0.1
+    block_chunks: 4
+  teacher:
+    momentum_teacher: 0.996
+    warmup_teacher_temp_epochs: 20
+    in_chans: 4
+  optim:
+    weight_decay_end: 0.2
+    base_lr: 0.0005
+    warmup_epochs: 20
+  crops:
+    global_crops_scale:
+    - 0.4
+    - 1.0
+    local_crops_number: 8
+    local_crops_scale:
+    - 0.005
+    - 0.4
+    global_crops_size: 224
+    local_crops_size: 96
+  evaluation:
+    eval_period_iterations: 9000
+cell_dino/vitl16_hpaone:
+  train:
+    batch_size_per_gpu: 16
+    OFFICIAL_EPOCH_LENGTH: 1756
+    cell_augmentation: true
+  student:
+    arch: vit_large
+    patch_size: 16
+    in_chans: 4
+    drop_path_rate: 0.1
+    block_chunks: 4
+  teacher:
+    momentum_teacher: 0.996
+    warmup_teacher_temp_epochs: 20
+    in_chans: 4
+  optim:
+    weight_decay_end: 0.2
+    base_lr: 0.0005
+    warmup_epochs: 20
+  crops:
+    global_crops_scale:
+    - 0.4
+    - 1.0
+    local_crops_number: 8
+    local_crops_scale:
+    - 0.005
+    - 0.4
+    global_crops_size: 224
+    local_crops_size: 96
+  evaluation:
+    eval_period_iterations: 9000
+vitg14:
+  dino:
+    head_n_prototypes: 131072
+    head_bottleneck_dim: 384
+  ibot:
+    separate_head: true
+    head_n_prototypes: 131072
+  train:
+    batch_size_per_gpu: 12
+    dataset_path: ImageNet22k
+    centering: sinkhorn_knopp
+  student:
+    arch: vit_giant2
+    patch_size: 14
+    drop_path_rate: 0.4
+    ffn_layer: swiglufused
+    block_chunks: 4
+  teacher:
+    momentum_teacher: 0.994
+  optim:
+    epochs: 500
+    weight_decay_end: 0.2
+    base_lr: 0.0002
+    warmup_epochs: 80
+    layerwise_decay: 1.0
+  crops:
+    local_crops_size: 98
+vitl14:
+  dino:
+    head_n_prototypes: 131072
+    head_bottleneck_dim: 384
+  ibot:
+    separate_head: true
+    head_n_prototypes: 131072
+  train:
+    batch_size_per_gpu: 32
+    dataset_path: ImageNet22k
+    centering: sinkhorn_knopp
+  student:
+    arch: vit_large
+    patch_size: 14
+    drop_path_rate: 0.4
+    ffn_layer: swiglufused
+    block_chunks: 4
+  teacher:
+    momentum_teacher: 0.994
+  optim:
+    epochs: 500
+    weight_decay_end: 0.2
+    base_lr: 0.0002
+    warmup_epochs: 80
+    layerwise_decay: 1.0
+  crops:
+    local_crops_size: 98
+vitl16_short:
+  train:
+    dataset_path: ImageNet:split=TRAIN
+    batch_size_per_gpu: 64
+  student:
+    block_chunks: 4

@@ -52,3 +52,5 @@ uv run --extra demo vggt gradio
 ## Local verification
 
 From the repository root, run `python -m pytest -q`, `python main.py train --print-config`, or `python main.py precheck --image-folder PATH`. The first command uses local software fixtures. The latter two inspect the resolved recipe or decode a representative scene input without loading weights.
+
+Use an isolated interpreter for the copied template. The [Fern experiment report](../experiment.md#runtime) links the versions, device, and interpreter from the historical reconstruction.

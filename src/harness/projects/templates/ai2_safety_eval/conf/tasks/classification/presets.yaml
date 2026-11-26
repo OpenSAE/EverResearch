@@ -1,0 +1,41 @@
+aegis_safety_dataset:
+  default:
+    task_class: AegisPromptSafetyEvalV1
+beavertails:
+  default:
+    task_class: BeaverTailResponseHarmEval
+harmbench:
+  default:
+    task_class: HarmBenchPromptSafetyEval
+  response:
+    task_class: HarmBenchResponseSafetyEval
+openai_mod:
+  default:
+    task_class: OpenAIModPromptSafetyEval
+saferlhf:
+  default:
+    task_class: SafeRLHFResponseHarmEval
+simplesafetytests:
+  default:
+    task_class: SimpleSafetyTestsTask
+toxicchat:
+  default:
+    task_class: ToxicChatPromptSafetyEval__HumanAnnotated
+  unfiltered:
+    task_class: ToxicChatPromptSafetyEval__All
+wildguardtest_prompt:
+  default:
+    task_class: WildGuardPromptEval
+    include_response: false
+wildguardtest_refusal:
+  default:
+    task_class: WildGuardResponseRefusalEval
+wildguardtest_response:
+  default:
+    task_class: WildGuardResponseHarmfulnessEval
+xstest_response_harm:
+  default:
+    task_class: XSTestResponseHarmfulnessEval
+xstest_response_refusal:
+  default:
+    task_class: XSTestResponseRefusalEval

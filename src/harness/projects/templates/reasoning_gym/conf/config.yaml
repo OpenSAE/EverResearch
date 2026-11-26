@@ -1,0 +1,15 @@
+# Default Reasoning Gym launch configuration
+# The project entry point resolves the recipe against the checkout root.
+evaluation:
+  config: conf/tasks/evaluation/config.yaml
+catalogs:
+  dataset:
+    procedural: {}
+  model:
+    remote_api: {}
+    local_inference: {}
+    training_checkpoint: {}
+  task:
+    evaluation: {}
+    local_evaluation: {}
+    training: {}

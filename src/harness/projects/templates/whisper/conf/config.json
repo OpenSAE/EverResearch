@@ -1,0 +1,12 @@
+{
+  "cli": {
+    "model": "turbo",
+    "task": "transcribe",
+    "output_format": "all"
+  },
+  "catalogs": {
+    "dataset": {"audio": {}},
+    "model": {"whisper": {}},
+    "task": {"speech": {}}
+  }
+}

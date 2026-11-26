@@ -23,10 +23,11 @@ EverResearch 让你的 AI 代理理解和维护科研项目。它能自动整理
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/openclaw-color.svg" alt="" width="18" height="18"> OpenClaw | [OpenClaw 插件](plugins/openclaw/) |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/vercel.svg" alt="" width="18" height="18"> Skills CLI | [安装指南](plugins/agent-plugin/#install-with-the-skills-cli) · [Skills.sh](https://skills.sh/opensae/everresearch) |
 
-**终端。** 使用 Python 3.11–3.13 从 PyPI 安装。
+**终端。** 使用 Python 3.11–3.13，从 GitHub Releases 安装公开的 wheel。
 
 ```sh
-uv tool install ever-research
+uv tool install --upgrade https://github.com/OpenSAE/EverResearch/releases/download/v0.3.1/ever_research-0.3.1-py3-none-any.whl
+rh --version
 rh doctor
 ```
 
@@ -42,7 +43,7 @@ rh doctor
 
 运行 `rh projects project check ./MyProject --onboarding` 可查看只读接入预览。脚本和持续集成可用 `--strict` 判断是否通过，或用 `--json` 获取机器可读结果。
 
-安装此仓库的源码版本后，用 `rh --version` 确认当前 CLI。运行 `rh projects setup-maintenance ./MyProject --online` 接入项目。首次接入会[在本地备份项目文件](src/harness/projects/README.md#online-and-offline-maintenance)。Git 工作区的结构检查覆盖已跟踪文件和未忽略的新文件。已有结果使用项目自己的读取入口，采用 EverResearch 格式的运行记录用 `rh projects experiment check ./MyProject` 检查。
+运行 `rh projects setup-maintenance ./MyProject --online` 接入项目。首次接入会[在本地备份项目文件](src/harness/projects/README.md#online-and-offline-maintenance)。Git 工作区的结构检查覆盖已跟踪文件和未忽略的新文件。已有结果使用项目自己的读取入口，采用 EverResearch 格式的运行记录用 `rh projects experiment check ./MyProject` 检查。
 
 ## 科研工作怎么用
 
@@ -55,7 +56,7 @@ rh doctor
 
 ## 已整理的项目
 
-EverResearch 可以整理大多数开源 AI 项目。我们已在九个科研项目模板上测试过这套流程，涵盖计算机视觉、多模态学习、检索、语言模型评估以及其他机器学习任务。
+EverResearch 可以整理大多数开源 AI 项目。我们已在二十个科研项目模板上测试过这套流程，涵盖计算机视觉、多模态学习、检索、语言模型评估以及其他机器学习任务。
 
 | 项目 | 研究方向 |
 | --- | --- |
@@ -68,6 +69,19 @@ EverResearch 可以整理大多数开源 AI 项目。我们已在九个科研项
 | [RF-DETR](src/harness/projects/templates/rf_detr/) | 目标检测 |
 | [SAM2](src/harness/projects/templates/sam2/) | 图像和视频分割 |
 | [VGGT](src/harness/projects/templates/vggt/) | 三维视觉几何 |
+| [CogVideoX](src/harness/projects/templates/cogvideox/) | 文本、图像和视频条件下的视频生成 |
+| [CoTracker3](src/harness/projects/templates/cotracker/) | 视频点跟踪与评测 |
+| [Depth Anything V2](src/harness/projects/templates/depth_anything_v2/) | 相对与公制深度、点云和基准评测 |
+| [DINOv2](src/harness/projects/templates/dinov2/) | 自监督视觉特征与密集预测 |
+| [LeRobot](src/harness/projects/templates/lerobot/) | 机器人模仿学习、仿真与策略服务 |
+| [Whisper](src/harness/projects/templates/whisper/) | 语音识别、翻译和时间戳 |
+| [NanoChat](src/harness/projects/templates/nanochat/) | 分词器训练与语言模型预训练 |
+| [TRL](src/harness/projects/templates/trl/) | 语言模型微调、偏好优化与强化学习 |
+| [Reasoning Gym](src/harness/projects/templates/reasoning_gym/) | 可自动判分的推理任务与语言模型评测 |
+| [Ai2 Safety Eval](src/harness/projects/templates/ai2_safety_eval/) | 模型安全分类与拒答评测 |
+| [MathVista](src/harness/projects/templates/math_vista/) | 视觉数学推理、本地生成与评分 |
+
+[模板目录与各项目维护记录](src/harness/projects/templates/README.md)。
 
 完整训练示例 BirdStudy 可从 [GitHub Releases](https://github.com/OpenSAE/EverResearch/releases/latest) 下载。[英文 README 的 SAM2 对比](README.md#research-projects)展示了上游和整理后的目录用途。
 
@@ -80,9 +94,9 @@ EverResearch 可以整理大多数开源 AI 项目。我们已在九个科研项
    - macOS：`~/Library/Caches/researchharness`
    - Windows：`%LOCALAPPDATA%\researchharness\researchharness\Cache` 和 `%LOCALAPPDATA%\researchharness\plugin-runtime`
 4. 对每个接入过的项目，完成下面三步：
-   - 在 `AGENTS.md` 中删除每个从 `<!-- researchharness:… -->` 到对应 `<!-- /researchharness:… -->` 的段落，保留你自己的内容。
-   - 在 `.gitignore` 中删除 EverResearch 添加的 `# EverResearch …` 注释和 `/.researchharness/…` 条目。
-   - 如果需要原始文件，先从 `.researchharness/backups/initial-setup.tar.gz` 中取出，再删除 `.researchharness/` 文件夹。
+   - 在 `AGENTS.md` 中删除每个从 `<!-- everresearch:… -->` 到对应 `<!-- /everresearch:… -->` 的段落。旧段落使用 `researchharness` 前缀。保留文件中的其他内容。
+   - 在 `.gitignore` 中删除 EverResearch 添加的 `# EverResearch …` 注释和 `/.everresearch/…` 条目。
+   - 如果需要原始文件，先从 `.everresearch/backups/initial-setup.tar.gz` 中取出，再删除 `.everresearch/` 文件夹。
 
 ## 接下来
 

@@ -1,0 +1,15 @@
+# Configuration for a small local ACT training run.
+# Pass --dataset.root and --output_dir to select the local input and output.
+dataset:
+  repo_id: local/robot_demonstrations
+  video_backend: pyav
+policy:
+  type: act
+  device: cpu
+  push_to_hub: false
+  pretrained_backbone_weights: null
+steps: 1
+num_workers: 0
+batch_size: 1
+env_eval_freq: 0
+save_checkpoint: true

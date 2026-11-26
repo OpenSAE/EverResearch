@@ -1,0 +1,105 @@
+# Selects and configures the maintained supervised fine-tuning recipe.
+# The project launcher reads this file before loading the real dataset and model.
+
+[dataset]
+name = "zen"
+repository = "trl-internal-testing/zen"
+configuration = "conversational_language_modeling"
+split = "train"
+
+[model]
+name = "adapters"
+repository = "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5"
+revision = "edca82771e1fad8f0b7ce110ffe770c682043fec"
+
+[task]
+name = "training"
+
+[training]
+use_cpu = true
+bf16 = false
+max_steps = 1
+max_length = 64
+per_device_train_batch_size = 1
+report_to = "none"
+save_strategy = "no"
+
+[catalogs.dataset.zen]
+implementation = "preparation"
+
+[benchmark]
+dataset_revision = "47aee340f33dd6161e2baa618240b8514666c822"
+training_rows = 17
+validation_rows = 2
+sample_target = 10
+seconds = 280
+reward_repository = "trl-internal-testing/tiny-Qwen2ForSequenceClassification-2.5"
+reward_revision = "58b5b1655194e908b2af57189fccd4254b894f20"
+
+[recipes.sft]
+name = "supervised_training"
+dataset_configuration = "conversational_language_modeling"
+batch_size = 1
+arguments = ["--max_length", "64"]
+
+[recipes.dpo]
+name = "direct_preference_optimization"
+dataset_configuration = "standard_preference"
+batch_size = 1
+arguments = ["--max_length", "64"]
+
+[recipes.reward]
+name = "reward_training"
+dataset_configuration = "standard_implicit_prompt_preference"
+batch_size = 1
+arguments = ["--max_length", "64"]
+
+[recipes.kto]
+name = "prospect_optimization"
+dataset_configuration = "standard_unpaired_preference"
+batch_size = 2
+arguments = ["--max_length", "64"]
+
+[recipes.distillation]
+name = "distillation_training"
+dataset_configuration = "standard_prompt_only"
+batch_size = 1
+teacher_model = true
+arguments = ["--max_completion_length", "8"]
+
+[recipes.grpo]
+name = "group_relative_policy_optimization"
+dataset_configuration = "standard_prompt_only"
+batch_size = 2
+reward_model = true
+completions_per_prompt = 2
+arguments = ["--num_generations", "2", "--max_completion_length", "8"]
+
+[recipes.rloo]
+name = "leave_one_out_optimization"
+dataset_configuration = "standard_prompt_only"
+batch_size = 2
+reward_model = true
+completions_per_prompt = 2
+arguments = ["--num_generations", "2", "--max_completion_length", "8"]
+
+[catalogs.task.supervised_training]
+implementation = "training"
+
+[catalogs.task.direct_preference_optimization]
+implementation = "training"
+
+[catalogs.task.reward_training]
+implementation = "training"
+
+[catalogs.task.prospect_optimization]
+implementation = "training"
+
+[catalogs.task.distillation_training]
+implementation = "training"
+
+[catalogs.task.group_relative_policy_optimization]
+implementation = "training"
+
+[catalogs.task.leave_one_out_optimization]
+implementation = "training"

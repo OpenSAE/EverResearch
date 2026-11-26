@@ -1,0 +1,7 @@
+# Core inference libraries. Install the research command with scripts/install_project.sh.
+torch
+torchvision
+numpy
+opencv-python>=4,<5
+matplotlib
+Pillow

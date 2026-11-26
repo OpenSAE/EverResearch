@@ -23,3 +23,5 @@ For the use, maintenance and review of this classification reference item. For o
 [Scientific knowledge](knowledge/README.md)(Explanation of terminology and research concepts used at the station).[Implementation environment](environment/README.md)(Preparation of an interpreter and dependence, review of the physical environment) description of the installation, equipment and run records.[Source Structure](code/README.md)(Description of the structural extraction and engineering entrance by locating the public entry point along the source structure and the responsible module.
 
 Updates are done with the affected pages, commands and results references. The actual configuration, consumers and products are found on the current page at the time of review; historical experiments are explained by the list and the configuration in effect at the time.
+
+[Maintenance and formal run choices](maintenance.md) identifies the verified entry points and the conditions for running the full recipe.

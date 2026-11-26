@@ -1,0 +1,10 @@
+# EverResearch stores machine-specific connection records here.
+/.everresearch/online/
+/.everresearch/backups/
+/.everresearch/.initial-setup.lock
+
+/experiment/
+
+/tmp/
+
+/.build/

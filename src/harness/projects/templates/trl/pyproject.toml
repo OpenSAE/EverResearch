@@ -1,0 +1,397 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trl"
+description = "Train transformer language models with reinforcement learning."
+authors = [
+    { name = "Leandro von Werra", email = "leandro.vonwerra@gmail.com" }
+]
+readme = { file = "README.md", content-type = "text/markdown" }
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+keywords = [
+    "transformers", "huggingface", "language modeling", "post-training", "rlhf", "sft", "dpo", "grpo"
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15"
+]
+requires-python = ">=3.11"
+dependencies = [
+    "accelerate>=1.12.0",
+    "datasets>=4.7.0",  # Support Json type and on_mixed_types="use_json"
+    "huggingface_hub>=0.34.0",
+    "jinja2",
+    "numpy>=1.26.0",
+    "packaging>20.0",
+    "pandas>=2.1.1",
+    "psutil>=5.9.4",
+    "pyarrow>=21.0.0",
+    "pyyaml>=6.0.1",
+    "torch>=2.6.0",  # torch.accelerator, and the public FSDP2 API
+    "transformers>=4.56.2",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/huggingface/trl"
+
+[project.scripts]
+trl = "trl.cli:main"
+
+[project.optional-dependencies]
+deepspeed = [
+    "deepspeed>=0.18.6",
+    "transformers!=5.1.0",  # see transformers#43780
+]
+harbor = [
+    "harbor>=0.13.0; python_version >= '3.12'",  # harbor requires Python 3.12+ (pulls its sandbox backends)
+]
+kernels = [  # transformers renamed the "hub-kernels" extra to "kernels" in 5.1.0
+    "transformers[kernels]",  # transformers >= 5.1.0
+    "transformers[hub-kernels]",  # transformers < 5.1.0
+]
+liger = [  # removed in v2.0.0, together with `use_liger_kernel`
+    "liger-kernel>=0.8.2"
+]
+math_verify = [
+    "math-verify>=0.8.0",  # timeouts can be disabled, which worker threads require
+]
+openreward = [
+    "openreward>=0.1.109",
+]
+peft = [
+    "peft>=0.18.0"
+]
+quality = [
+    "pre-commit",
+    "hf-doc-builder"
+]
+quantization = [
+    "bitsandbytes>=0.45.2"  # older versions fail to import without a GPU on torch 2.6/2.7 (Triton 3.2/3.3), see #7863
+]
+test = [
+    "pytest-cov",
+    "pytest-datadir>=1.7.0",  # lazy datadirs
+    "pytest-rerunfailures>=16.7",  # only_rerun matches wrapped exceptions
+    "pytest-xdist",
+    "pytest",
+]
+vllm = [
+    "vllm>=0.23.0,<0.35.0",
+    "aiohttp>=3.13.3",
+    "requests",
+]
+vlm = [
+    "Pillow",
+    "torchvision",
+    "num2words==0.5.14"
+]
+dev = [
+    # deepspeed
+    "deepspeed>=0.18.6",
+    # kernels: transformers renamed the "hub-kernels" extra to "kernels" in 5.1.0
+    "transformers[kernels]",  # transformers >= 5.1.0
+    "transformers[hub-kernels]",  # transformers < 5.1.0
+    # math_verify
+    "math-verify>=0.8.0",  # timeouts can be disabled, which worker threads require
+    # openreward
+    "openreward>=0.1.109",
+    # peft
+    "peft>=0.18.0",
+    # quality
+    "pre-commit",
+    "hf-doc-builder",
+    # quantization
+    "bitsandbytes>=0.45.2",  # older versions fail to import without a GPU on torch 2.6/2.7 (Triton 3.2/3.3), see #7863
+    # test
+    "pytest-cov",
+    "pytest-datadir>=1.7.0",  # lazy datadirs
+    "pytest-rerunfailures>=16.7",  # only_rerun matches wrapped exceptions
+    "pytest-xdist",
+    "pytest",
+    # vllm: not included in dev by default due to CUDA error; see GH-4228. The async rollout workers only need aiohttp
+    "aiohttp>=3.13.3",
+    # vlm
+    "Pillow",
+    "torchvision",
+    "num2words==0.5.14",
+    # for response parsing (required for training with tools)
+    "jmespath",
+]
+
+[tool.setuptools]
+packages = [
+    "trl",
+    "trl.experimental.a2po.a2po_config",
+    "trl.experimental.a2po.a2po_trainer",
+    "trl.experimental.cpo.cpo_config",
+    "trl.experimental.gkd.gkd_config",
+    "trl.experimental.gmpo.gmpo_config",
+    "trl.experimental.iw_opd.iw_opd_config",
+    "trl.experimental.orpo.orpo_config",
+    "trl.experimental.sdft.sdft_config",
+    "trl.experimental.sdpo.sdpo_config",
+    "trl.experimental.utils",
+    "trl.kernels.chunked_logprob",
+    "trl.kernels.tree_mamba2",
+    "trl.models.utils",
+    "trl.scripts.dpo",
+    "trl.scripts.env",
+    "trl.scripts.grpo",
+    "trl.scripts.kto",
+    "trl.scripts.rloo",
+    "trl.scripts.sft",
+    "trl.scripts.utils",
+    "trl.trainer.utils",
+    "trl.accelerate_configs",
+    "trl.chat_templates",
+    "trl.cli",
+    "trl.cli.commands",
+    "trl.data_utils",
+    "trl.experimental",
+    "trl.experimental.a2po",
+    "trl.experimental.async_distillation",
+    "trl.experimental.async_grpo",
+    "trl.experimental.bema_for_ref_model",
+    "trl.experimental.cpo",
+    "trl.experimental.distillation",
+    "trl.experimental.gkd",
+    "trl.experimental.gmpo",
+    "trl.experimental.gold",
+    "trl.experimental.harbor",
+    "trl.experimental.iw_opd",
+    "trl.experimental.kto",
+    "trl.experimental.online_dpo",
+    "trl.experimental.openreward",
+    "trl.experimental.orpo",
+    "trl.experimental.sdft",
+    "trl.experimental.sdpo",
+    "trl.experimental.server_distillation",
+    "trl.extras",
+    "trl.generation",
+    "trl.kernels",
+    "trl.models",
+    "trl.precheck",
+    "trl.rewards",
+    "trl.scripts",
+    "trl.templates",
+    "trl.trainer",
+    "trl.trainer.async_grpo_config",
+    "trl.trainer.base_config",
+    "trl.trainer.distillation_config",
+    "trl.trainer.dpo_config",
+    "trl.trainer.grpo_config",
+    "trl.trainer.kto_config",
+    "trl.trainer.model_config",
+    "trl.trainer.reward_config",
+    "trl.trainer.rloo_config",
+    "trl.trainer.sft_config",
+]
+
+[tool.setuptools.package-dir]
+"trl.experimental.a2po" = "tasks/experimental/advantage_alignment_training"
+"trl.experimental.a2po.a2po_config" = "tasks/experimental_parameters/advantage_alignment_training"
+"trl.experimental.a2po.a2po_trainer" = "tasks/advantage_alignment/trainer"
+"trl.experimental.async_grpo" = "tasks/experimental/asynchronous_group_optimization"
+"trl.experimental.cpo" = "tasks/experimental/contrastive_preference_optimization"
+"trl.experimental.cpo.cpo_config" = "tasks/experimental_parameters/contrastive_preference_optimization"
+"trl.experimental.gkd" = "tasks/experimental/generalized_distillation"
+"trl.experimental.gkd.gkd_config" = "tasks/experimental_parameters/generalized_distillation"
+"trl.experimental.gmpo" = "tasks/experimental/geometric_mean_policy_optimization"
+"trl.experimental.gmpo.gmpo_config" = "tasks/experimental_parameters/geometric_mean_policy_optimization"
+"trl.experimental.iw_opd" = "tasks/experimental/importance_weighted_distillation"
+"trl.experimental.iw_opd.iw_opd_config" = "tasks/experimental_parameters/importance_weighted_distillation"
+"trl.experimental.kto" = "tasks/experimental/prospect_optimization"
+"trl.experimental.openreward" = "tasks/experimental/openreward_environment"
+"trl.experimental.orpo" = "tasks/experimental/odds_ratio_optimization"
+"trl.experimental.orpo.orpo_config" = "tasks/experimental_parameters/odds_ratio_optimization"
+"trl.experimental.sdft" = "tasks/experimental/self_distillation_supervised_training"
+"trl.experimental.sdft.sdft_config" = "tasks/experimental_parameters/self_distillation_supervised_training"
+"trl.experimental.sdpo" = "tasks/experimental/self_distillation_policy_optimization"
+"trl.experimental.sdpo.sdpo_config" = "tasks/experimental_parameters/self_distillation_policy_optimization"
+"trl.experimental.utils" = "tasks/experimental/utilities"
+"trl.kernels.chunked_logprob" = "tasks/kernels/log_probability"
+"trl.kernels.tree_mamba2" = "tasks/kernels/tree_mamba"
+"trl.models.utils" = "models/adapters/utilities"
+"trl.scripts.dpo" = "base/transformers_reinforcement_learning/scripts/direct_preference_optimization"
+"trl.scripts.env" = "base/transformers_reinforcement_learning/scripts/environment"
+"trl.scripts.grpo" = "base/transformers_reinforcement_learning/scripts/group_relative_policy_optimization"
+"trl.scripts.kto" = "base/transformers_reinforcement_learning/scripts/prospect_optimization"
+"trl.scripts.rloo" = "base/transformers_reinforcement_learning/scripts/leave_one_out_optimization"
+"trl.scripts.sft" = "base/transformers_reinforcement_learning/scripts/supervised_training"
+"trl.scripts.utils" = "base/transformers_reinforcement_learning/scripts/utilities"
+"trl.trainer.utils" = "tasks/training/utilities"
+"trl.chat_templates" = "assets/templates/chat/files"
+"trl.templates" = "assets/templates/cards/files"
+"trl.accelerate_configs" = "assets/configuration/accelerate/files"
+"trl" = "base/transformers_reinforcement_learning"
+"trl.cli" = "base/transformers_reinforcement_learning/command_line"
+"trl.data_utils" = "datasets/preparation"
+"trl.experimental" = "tasks/experimental"
+"trl.kernels" = "tasks/kernels"
+"trl.models" = "models/adapters"
+"trl.precheck" = "tasks/precheck"
+"trl.rewards" = "tasks/rewards"
+"trl.trainer" = "tasks/training"
+"trl.trainer.async_grpo_config" = "tasks/configuration/asynchronous_group_optimization"
+"trl.trainer.base_config" = "tasks/configuration/base_config"
+"trl.trainer.distillation_config" = "tasks/configuration/distillation_config"
+"trl.trainer.dpo_config" = "tasks/configuration/direct_preference_optimization"
+"trl.trainer.grpo_config" = "tasks/configuration/group_relative_policy_optimization"
+"trl.trainer.kto_config" = "tasks/configuration/prospect_optimization"
+"trl.trainer.model_config" = "tasks/configuration/model_config"
+"trl.trainer.reward_config" = "tasks/configuration/reward_config"
+"trl.trainer.rloo_config" = "tasks/configuration/leave_one_out_optimization"
+"trl.trainer.sft_config" = "tasks/configuration/supervised_training"
+
+[tool.setuptools.package-data]
+trl = ["py.typed"]
+"trl.accelerate_configs" = ["*.yaml"]
+"trl.chat_templates" = ["*.jinja", "*.md"]
+"trl.templates" = ["*.md"]
+
+[tool.setuptools.dynamic]
+version = { file = "assets/package/version/files/VERSION" }
+
+[tool.coverage.run]
+branch = true
+
+[tool.ruff]
+target-version = "py311"
+line-length = 119
+src = ["base", "datasets", "models", "tasks"]
+
+[tool.ruff.lint]
+ignore = [
+    "B028", # warning without explicit stacklevel
+    "C408", # dict() calls (stylistic)
+    "C901", # function complexity
+    "E501",
+]
+# `select`, not `extend-select`: the rule set is explicit, so a ruff release that expands its default
+# selection (0.16 raised the defaults from 59 to 413 rules) does not silently enable new rules.
+select = ["E", "F", "I", "W", "UP", "B", "T", "C"]
+
+[tool.ruff.lint.per-file-ignores]
+# Allow prints in auxiliary scripts
+"scripts/examples/**.py" = ["T201"]
+"scripts/**.py" = ["T201"]
+"base/transformers_reinforcement_learning/command_line/**.py" = ["T201"]
+# Ignore import violations in all `__init__.py` files.
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+known-first-party = ["trl"]
+
+[tool.pytest.ini_options]
+markers = [
+    "invariant: training-invariant checks (run with '-m invariant')",
+]
+norecursedirs = [
+    "tests/product/experimental",
+    "tests/integration/invariant",
+]
+filterwarnings = [
+    # SWIG deprecations from SWIG-generated C/C++ extensions: sentencepiece
+    # Upstream issue: https://github.com/google/sentencepiece/issues/1150
+    # Remove once: no supported sentencepiece version emits it
+    "ignore:builtin type SwigPyPacked has no __module__ attribute:DeprecationWarning",
+    "ignore:builtin type SwigPyObject has no __module__ attribute:DeprecationWarning",
+    "ignore:builtin type swigvarlink has no __module__ attribute:DeprecationWarning",
+
+    # PyTorch DataLoader pin_memory device argument deprecations
+    # Triggered internally by torch.utils.data, not by our code
+    # Upstream issue: https://github.com/pytorch/pytorch/issues/174546
+    # Remove once: no supported torch version emits it
+    "ignore:The argument 'device' of Tensor.pin_memory:DeprecationWarning",
+    "ignore:The argument 'device' of Tensor.is_pinned:DeprecationWarning",
+
+    # bitsandbytes calls the deprecated torch._check_is_size in its CUDA quant ops (upstream, not actionable in TRL)
+    # Triggered indirectly by loading bitsandbytes-quantized models in the PEFT + quantization tests
+    # Tracking issue: https://github.com/huggingface/trl/issues/6447
+    # Upstream fix released in bitsandbytes 0.50.0: https://github.com/bitsandbytes-foundation/bitsandbytes/pull/1940
+    # Remove once: bitsandbytes >= 0.50.0 is required
+    "ignore:_check_is_size will be removed in a future PyTorch release:FutureWarning",
+
+    # triton builds an ast.AnnAssign node without the required `simple` field during kernel compilation (upstream,
+    # not actionable in TRL); a DeprecationWarning on Python 3.14 that becomes an error on 3.15
+    # Tracking issue: https://github.com/huggingface/trl/issues/6466
+    # Upstream issue: https://github.com/triton-lang/triton/issues/10981
+    # Upstream fix (merged, unreleased as of triton 3.7.1): https://github.com/triton-lang/triton/pull/10986
+    # Remove once: no supported torch resolves a triton without the fix
+    "ignore:AnnAssign.__init__ missing 1 required positional argument:DeprecationWarning",
+
+    # kernels-community/mamba-ssm (a Hub-hosted build of state-spaces/mamba) calls the deprecated
+    # torch.get_autocast_gpu_dtype() in its Triton ssd_combined.py kernel (upstream, not actionable in TRL)
+    # Triggered by the NemotronH (Nemotron 3) Mamba2 mixer fast path during training under CUDA autocast, only with
+    # transformers 5.3 to 5.5, which load the Hub kernel ignoring `use_mamba_kernels=False` (fixed upstream in 5.6)
+    # Tracking issue: https://github.com/huggingface/trl/issues/6555
+    # Upstream fix: https://github.com/huggingface/transformers/pull/44853
+    # Remove once: transformers >= 5.6 is required (kernels-community#1187 won't reach the v1 build 5.3-5.5 pin)
+    "ignore:torch.get_autocast_gpu_dtype\\(\\) is deprecated:DeprecationWarning",
+
+    # bitsandbytes warns, on every forward of a 4-bit layer whose inner dimension is not a multiple of the quantization
+    # blocksize, that it falls back to the slower dequantize + linear path (upstream, not actionable in TRL)
+    # Triggered by the tiny models in the PEFT + quantization tests: their hidden_size (8) and intermediate_size (32)
+    # are not multiples of the 64 blocksize, and transformers exposes no option to change it
+    # Tracking issue: https://github.com/huggingface/trl/issues/6580
+    # Upstream issue: https://github.com/bitsandbytes-foundation/bitsandbytes/issues/2027
+    # Remove once: no supported bitsandbytes version emits it
+    "ignore:inner dimension \\(\\d+\\) is not aligned for fast kernel:UserWarning",
+
+    # transformers passes the `num_patches` torch tensor to np.cumsum in the InternVL processor, so numpy falls back to
+    # the legacy Tensor.__array_wrap__ path, whose signature predates NumPy 2.0 (upstream, not actionable in TRL)
+    # Triggered by the InternVL cases of the GRPO, RLOO and Distillation VLM tests
+    # Tracking issue: https://github.com/huggingface/trl/issues/6848
+    # Upstream issue: https://github.com/huggingface/transformers/issues/48177
+    # Upstream issue (torch, for the outdated signature): https://github.com/pytorch/pytorch/issues/180657
+    # Remove once: no supported transformers version passes a tensor to np.cumsum there
+    "ignore:__array_wrap__ must accept context and return_scalar arguments:DeprecationWarning",
+
+    # torch inductor advises enabling TF32 on every compile when the float32 matmul precision is left at its default
+    # (upstream, not actionable in TRL: the precision is a process-wide numerics setting only the user should change)
+    # Triggered by the `torch.compile` tests in `tests/product/components/test_kernels.py`, since the GPU CI moved from T4 to L40S:
+    # the advisory is guarded on compute capability >= (8, 0), unreachable on T4
+    # Tracking issue: https://github.com/huggingface/trl/issues/6849
+    # Upstream issue: https://github.com/pytorch/pytorch/issues/175484
+    # Remove once: no supported torch version emits it
+    "ignore:TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled:UserWarning",
+
+    # peft warns on every generate step of prompt learning models (prompt tuning, P-tuning) that it ignores
+    # position_ids, which transformers' generate builds itself (upstream, not actionable in TRL)
+    # Triggered by the GRPO prompt tuning test, the only prompt tuning test that generates
+    # Tracking issue: https://github.com/huggingface/trl/issues/7585
+    # Upstream issue: https://github.com/huggingface/peft/issues/3911
+    # Remove once: no supported peft version emits it
+    "ignore:Position ids are not supported for parameter efficient tuning:UserWarning",
+
+    # transformers 5.23 deprecates `is_gradient_checkpointing`, which peft reads in `PeftModel.__init__` on every
+    # `get_peft_model` call (upstream, not actionable in TRL: TRL reads `is_activation_checkpointing` on 5.23)
+    # Triggered by every test that trains with a PEFT config
+    # Tracking issue: https://github.com/huggingface/trl/issues/8386
+    # Upstream fix (released in peft 0.22.0): https://github.com/huggingface/peft/pull/4114
+    # Remove once: no supported peft version emits it
+    "ignore:`is_gradient_checkpointing` is deprecated:FutureWarning",
+
+    # The cutlass DSL deprecates `cutlass.utils.LayoutEnum`, which the CuTe DSL kernels of flashinfer and quack still
+    # use (upstream, not actionable in TRL)
+    # Triggered in the vLLM (latest) job when vLLM imports these kernels
+    # Tracking issue: https://github.com/huggingface/trl/issues/8541
+    # Upstream fix (quack, merged, unreleased as of quack-kernels 0.6.5): https://github.com/Dao-AILab/quack/commit/167f408675b5d3b948483d7949ac0de62cea1fcf
+    # Upstream PR (flashinfer, draft): https://github.com/flashinfer-ai/flashinfer/pull/3938
+    # Remove once: no supported vLLM version pins a flashinfer or quack that emits it
+    "ignore:cutlass.utils.LayoutEnum is deprecated:DeprecationWarning",
+]

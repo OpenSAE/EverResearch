@@ -160,7 +160,9 @@ def test_regular_command_archives_readable_results_and_preserves_checkpoint(tmp_
         assert prediction["answer"] == "A rectangle."
 
     run_group = sandbox / "experiment/user_image/fast_vision/image_prompt/inspect_shapes/executions"
-    assert len(list(run_group.glob("*/metadata/manifest.json"))) == 2
+    assert [path.name for path in sorted(run_group.iterdir())] == [
+        "prediction_execution_one", "prediction_execution_two",
+    ]
     assert not list(run_group.glob(".pending-*"))
     assert (checkpoint_directory / "generation_config.json").read_text() == '{"temperature": 0.65}'
     assert sorted(path.name for path in checkpoint_directory.iterdir()) == ["generation_config.json"]

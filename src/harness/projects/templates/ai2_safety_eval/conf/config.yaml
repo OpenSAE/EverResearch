@@ -1,0 +1,24 @@
+task_presets:
+  classification: tasks/classification/presets.yaml
+  generation: tasks/generation/presets.yaml
+openai_classifier_presets: models/classifier_models/openai_presets.yaml
+catalogs:
+  dataset:
+    harm_bench: {}
+    bias_benchmark: {}
+    grade_school_math: {}
+    aegis_safety: {}
+    beaver_tails: {}
+    openai_moderation: {}
+    safe_feedback: {}
+    simple_safety_tests: {}
+    toxic_chat_annotated: {}
+    toxic_chat_unfiltered: {}
+    wild_guard_test: {}
+    exaggerated_safety_test: {}
+  model:
+    keyword_refusal: {}
+    tiny_qwen: {}
+    qwen_guard_prompt: {}
+    qwen_guard_response: {}
+    qwen_instruct: {}

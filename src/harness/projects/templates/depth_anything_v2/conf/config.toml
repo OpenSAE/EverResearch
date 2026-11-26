@@ -1,0 +1,44 @@
+# Public defaults and result catalog for Depth Anything V2 workflows.
+# Loaded by the installed command before selecting an input, model and task.
+
+[inference]
+encoder = "vitl"
+input_size = 518
+max_depth = 20.0
+focal_length_x = 470.4
+focal_length_y = 470.4
+checkpoint_directory = "checkpoints"
+
+[training]
+dataset = "hypersim"
+epochs = 40
+batch_size = 2
+learning_rate = 0.000005
+min_depth = 0.001
+
+[encoders]
+vits = "depth_anything_small"
+vitb = "depth_anything_base"
+vitl = "depth_anything_large"
+vitg = "depth_anything_giant"
+
+[catalogs.dataset]
+image_files = "Images from a file, directory, or text list"
+video_files = "Videos from a file, directory, or text list"
+hypersim_images = "Hypersim image and distance pairs"
+virtual_kitti = "Virtual KITTI 2 training and KITTI validation"
+da_benchmark = "DA-2K annotated relative depth pairs"
+
+[catalogs.model]
+depth_anything_small = "vits"
+depth_anything_base = "vitb"
+depth_anything_large = "vitl"
+depth_anything_giant = "vitg"
+
+[catalogs.task]
+image_depth = "Relative depth from images"
+metric_depth = "Metric depth from images"
+video_depth = "Relative depth from video frames"
+point_cloud = "Project metric depth into a point cloud"
+training = "Train and evaluate the metric model"
+pairwise_depth = "Score closer-point ordering on DA-2K"
