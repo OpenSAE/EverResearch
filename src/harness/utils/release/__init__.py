@@ -55,8 +55,8 @@ CORE = (
 )
 CUB = "src/harness/projects/templates/cub"
 CUB_FILES = (
-    ".gitignore", ".everresearch/maintain.py", ".everresearch/mode.toml",
-    ".everresearch/offline/check.py", ".everresearch/offline/operations.md",
+    ".gitignore", ".researchharness/maintain.py", ".researchharness/mode.toml",
+    ".researchharness/offline/check.py", ".researchharness/offline/operations.md",
     "AGENTS.md", "README.md", "pyproject.toml", "conf/config.yaml",
     "base/**/*.py", "datasets/**/*.py", "doc/**/*.md", "models/**/*.py",
     "models/**/config.toml", "tasks/**/*.py", "tests/*.py", "experiment/**/recipe.toml",

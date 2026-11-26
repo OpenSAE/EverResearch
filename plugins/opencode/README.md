@@ -10,7 +10,7 @@ Use these steps for projects you can access from this environment.
 
 ## Install in OpenCode
 
-Extract the [OpenCode plugin ZIP](https://github.com/OpenSAE/EverResearch/releases/download/v0.8.1/ever-research-0.8.1-opencode-plugin.zip)
+Extract the [OpenCode plugin ZIP](https://github.com/OpenSAE/EverResearch/releases/download/v0.3.1/ever-research-0.3.1-opencode-plugin.zip)
 into the project's `.opencode/plugins/ever-research/` directory, or copy the
 `plugins/opencode` directory from an [EverResearch checkout](https://github.com/OpenSAE/EverResearch).
 

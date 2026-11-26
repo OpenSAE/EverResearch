@@ -41,13 +41,13 @@ The following specific skills are used directly when handling a single job. `mai
 
 ### Connect a project
 
-Use the project's README to install dependencies, configure data and the environment, and run its normal commands. The optional EverResearch connection gives the project access to shared skills, local resource bindings, and structure reviews. The Python package is `ever-research`, its command is `rh`, and project maintenance settings use the existing `.everresearch/` directory. Run `rh --version` or `rh doctor --json` in the CLI or plugin runtime to identify the actual implementation. See the [workspace and resource guide](../core/README.md) for path resolution and workspace setup.
+Use the project's README to install dependencies, configure data and the environment, and run its normal commands. The optional EverResearch connection gives the project access to shared skills, local resource bindings, and structure reviews. See the [workspace and resource guide](../core/README.md) for path resolution and workspace setup.
 
 Before applying EverResearch rules to project edits, run `rh projects project status <project-root>`.
 The JSON result reports `managed` with the active guide, `unmanaged` when maintenance is inactive, or
 `unavailable` with the reason an existing connection cannot be used. The command reads maintenance
 files without running the project's launcher. Read-only layout checks and adoption planning can run
-before setup. A project without `.everresearch/mode.toml` follows its own instructions until its
+before setup. A project without `.researchharness/mode.toml` follows its own instructions until its
 user authorizes EverResearch setup, including projects with legacy registrations.
 
 For a project in `example/`, run these commands from the shared workspace:
@@ -62,7 +62,7 @@ rh projects --harness-root ./ResearchHarness status example
 `rh projects setup-maintenance <project-root>` installs a mode setting, a status and check command, and an offline guide. It also updates the managed section of the project's `AGENTS.md` and clears known legacy ResearchHarness links and generated guides. Project-owned skills stay in the project. A standalone project starts in offline mode. An existing project uses its current mode file or last applicable connection setting. Use `--online` to register and connect a new checkout. Reuse the existing registration when the path already matches. If the name belongs to a different checkout, register the new path under a distinct name.
 
 Run the authorized first setup before moving or editing project files. It saves project files,
-including code, configurations, and documentation, in `.everresearch/backups/initial-setup.tar.gz`.
+including code, configurations, and documentation, in `.researchharness/backups/initial-setup.tar.gz`.
 It skips hidden directories, caches, and virtual environments. Data, model weights, archives, and
 media are listed by path and size, as are other files over 20 MiB or beyond the 200 MB limit on
 copied content. Setup prioritizes the originals it changes, then code, configuration, and
@@ -72,12 +72,10 @@ To recover, extract the archive into a separate directory. Review the originals 
 recorded links and newly created paths in `manifest.json` before restoring anything. Large-file
 entries record where the file was and cannot restore its contents.
 
-The `enabled` value in `.everresearch/mode.toml` selects the maintenance source:
+The `enabled` value in `.researchharness/mode.toml` selects the maintenance source:
 
-- With `enabled = true`, run `python -IS .everresearch/maintain.py status` to locate the online guide. The connection records the EverResearch Python selected at setup. Project checks from the bound CLI and the project launcher use that same runtime. Use `rh projects apply <project-id>` to refresh the guide. To change runtimes, run `rh projects setup-maintenance <project-root> --online` with the intended installation.
+- With `enabled = true`, run `python -IS .researchharness/maintain.py status` to locate the online guide in the EverResearch workspace. It links to the central operations guide and original shared skills. The project's `.researchharness/online/` holds local connection records. Use `rh projects apply <project-id>` to refresh the guide after configuring or restoring a connection. An unavailable online connection returns an error so the user can restore it or choose to work offline.
 - With `enabled = false`, the maintenance launcher uses the project's offline guide and local checker.
-
-Setup reads the previous mode when migrating an existing checkout to `.everresearch/`.
 
 A project without a mode file can continue using the older registration workflow with `rh projects set <project-id> --skills on/off`. With skills enabled, the managed section in `AGENTS.md` links to the central originals. With skills disabled, it points to the project's own maintenance instructions. The project uses `.agents/skills/` for its own skills.
 
@@ -152,7 +150,7 @@ existing project. The check's exit status reflects required fixes. For example, 
 | `tests/`, `scripts/`, and `third_party/` | As needed | Regression tests, standalone utilities, and upstream source code. |
 | `assets/` | When the project keeps reusable resources | Named resource groups, provenance, and dedicated scripts. |
 | `tmp/` | For one-off work | A named working directory for each temporary job. |
-| `.everresearch/` and `.agents/skills/` | When configured | Maintenance settings and project-owned skills, respectively. |
+| `.researchharness/` and `.agents/skills/` | When configured | Maintenance settings and project-owned skills, respectively. |
 
 Keep navigation, installation, and entry-point files at the root. Place implementation files, settings, documentation, and run outputs in the directories responsible for them. Add subdirectories when files serve distinct purposes.
 
@@ -280,7 +278,7 @@ The script directory is organized according to the user's operating organization
 | One run `metadata/` | When a run result to be handed over | The `manifest.json` is the default reading portal, which can register the equivalent path. Configure, precheck back, place the environment record here or quote from the list. |
 | One run `reports/`, `logs/`, `artifacts/`, `tmp/` | When corresponding output is available | Readable reports, process logs, usable products, and temporary materials are assigned separately. |
 | `assets/history_experiment/<result-name>/` | Keep existing experiments or demonstrations | `README.md` Description of uses, sources and modes of reading.`files/` Keeps an internal directory, filename and source-code snapshot of the frozen original. `experiment/` Operation through identity, effective configuration and product inspection. |
-| `.everresearch/project.yaml`、`.everresearch/central.json` | When using the respective access function | The project is subject to a central project order. |
+| `.researchharness/project.yaml`、`.researchharness/central.json` | When using the respective access function | The project is subject to a central project order. |
 | `.agents/skills/<skill-name>/` | When there's a project with skills, | The project maintains its own skills, each of which provides `SKILL.md`. |
 
 Use descriptive lowercase words separated by underscores for project-defined component names, directories, and Python files. Preserve upstream filenames and public interface names. Every experiment directory segment and output filename stem uses at least one complete English word. Keep dates, times, hashes, and execution identifiers in the run record. Use the descriptive `execution_name` for an optional run directory. The metadata field `run_id` may hold a timestamp or UUID. Use the [CUB layout example](templates/cub/doc/code/development/layout.md) to compare the proposed paths with the existing layout.

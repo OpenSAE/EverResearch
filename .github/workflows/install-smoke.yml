@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.13'
-      - name: Install the released package from GitHub Releases
+      - name: Install the released package from PyPI
         shell: bash
         run: |
           python - <<'PY'
@@ -36,9 +36,8 @@ jobs:
 
           with open("pyproject.toml", "rb") as config:
               version = tomllib.load(config)["project"]["version"]
-          filename = f"ever_research-{version}-py3-none-any.whl"
-          url = f"https://github.com/OpenSAE/EverResearch/releases/download/v{version}/{filename}"
-          subprocess.run([sys.executable, "-m", "pip", "install", url], check=True)
+          subprocess.run([sys.executable, "-m", "pip", "install", "--index-url",
+                          "https://pypi.org/simple", f"ever-research=={version}"], check=True)
           with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as environment:
               print(f"EVER_RESEARCH_RELEASE={version}", file=environment)
           PY
@@ -73,13 +72,14 @@ jobs:
 
           version = os.environ["EVER_RESEARCH_RELEASE"]
           filename = f"ever_research-{version}-py3-none-any.whl"
-          release = f"https://github.com/OpenSAE/EverResearch/releases/download/v{version}"
-          with urlopen(f"{release}/SHA256SUMS", timeout=30) as response:
-              checksums = dict(line.split(maxsplit=1)[::-1] for line in response.read().decode().splitlines())
-          with urlopen(f"{release}/{filename}", timeout=30) as response:
+          with urlopen(f"https://pypi.org/pypi/ever-research/{version}/json", timeout=30) as response:
+              release = json.load(response)
+          wheel, = (entry for entry in release["urls"] if entry["filename"] == filename)
+          with urlopen(f"https://github.com/OpenSAE/EverResearch/releases/download/v{version}/{filename}",
+                       timeout=30) as response:
               payload = response.read()
           digest = sha256(payload).hexdigest()
-          assert digest == checksums[filename]
+          assert digest == wheel["digests"]["sha256"]
           platforms = ["agent-plugin", "claude-plugin", "codex-plugin", "cursor-plugin",
                        "deepseek", "gemini-extension", "openclaw", "opencode"]
           for platform in platforms:

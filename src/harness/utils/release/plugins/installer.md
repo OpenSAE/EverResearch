@@ -1,19 +1,24 @@
 ## Install from a terminal
 
-Install the [EverResearch @VERSION@ wheel](@DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl) from GitHub Releases.
+Install the OpenSAE CLI from [PyPI](https://pypi.org/project/ever-research/).
 
 ```sh
-uv tool install @DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl
-rh --version
+uv tool install ever-research
 rh doctor --json
 ```
 
 If uv reports that its tool directory is missing from PATH, run
 `uv tool update-shell` and open a new terminal.
 
-In an active Python environment, pass the wheel URL to `python -m pip install`.
-If [PyPI](https://pypi.org/project/ever-research/) lists this release, you can also install
-with `python -m pip install ever-research==@VERSION@`. From a source checkout, use
+EverResearch 0.2.1 adds Python 3.13 support. You can also install the
+[same wheel from GitHub](@DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl).
+
+```sh
+uv tool install --python 3.13 @DOWNLOAD@/ever_research-@VERSION@-py3-none-any.whl
+```
+
+In an active Python environment, install with `python -m pip install ever-research`
+or use the GitHub wheel URL. From a source checkout, use
 `python -m pip install .` for a regular installation or add `-e` for development.
 Use `uv tool uninstall ever-research` to remove the uv installation.
 

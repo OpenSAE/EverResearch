@@ -110,12 +110,12 @@ def check():
 
 def main():
     try:
-        path = Path(__file__).absolute().parents[1] / "mode.toml"
+        path = PROJECT / ".researchharness" / "mode.toml"
         if path.parent.is_symlink() or path.is_symlink():
             raise ValueError("Expected a regular maintenance mode file inside the project.")
         mode = tomllib.loads(path.read_text(encoding="utf-8"))
         if mode != {"enabled": False} or type(mode.get("enabled")) is not bool:
-            raise ValueError(f"Set enabled = false in {path} to run the offline checker.")
+            raise ValueError("Set enabled = false in .researchharness/mode.toml to run the offline checker.")
         result = check()
     except (OSError, ValueError) as error:
         print(error, file=sys.stderr)

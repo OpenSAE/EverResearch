@@ -15,13 +15,13 @@ The skills' own work materials are kept in accordance with the skills catalogue.
 
 ## Check project maintenance before editing
 
-Before applying EverResearch rules to project edits, check the project's maintenance status with
-`rh projects project status <project-root>`. If no mode has been selected, follow the repository's own rules. When the user
+Before applying EverResearch rules to project edits, check the project root for
+`.researchharness/mode.toml`. If it is missing, follow the repository's own rules. When the user
 asks to use EverResearch on that project, hand off to [maintain-project](../maintain-project/SKILL.md)
 for authorized setup before applying these rules. Read-only inspection and planning can proceed
 before setup.
 
-With `managed`, use
+If the mode file is present, run `rh projects project status <project-root>`. With `managed`, use
 the reported guide and follow the authorized request. If the connection is unavailable or its
 status cannot be verified, explain the gap and resolve it before applying EverResearch rules.
 

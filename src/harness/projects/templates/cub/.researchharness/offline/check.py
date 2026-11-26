@@ -1,13 +1,12 @@
-"""Check the basic structure of an offline project using the standard library.
+"""Use it. Python Standard library check the basic document structure of the project.
 
-The Git path selection is also used by the central structural checker.
+Only for project maintenance switches to run when they are closed. Check one level of responsibility, mandatory configuration and description,
+Number of direct files in code directories and files in which items are dispersed.
 """
 
 import json
 import os
 from pathlib import Path
-import shutil
-import subprocess
 import sys
 import tomllib
 
@@ -24,33 +23,8 @@ ROOT_FILES = {
 CONFIG_SUFFIXES = {".yaml", ".yml", ".toml", ".json"}
 
 
-def project_paths(root):
-    """Select tracked files, eligible new files, and their parent directories."""
-    if not (root / ".git").exists() or shutil.which("git") is None:
-        return None
-    result = subprocess.run(
-        ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard",
-         "--exclude=__pycache__", "--exclude=*.py[co]", "--exclude=*.egg-info"],
-        cwd=root, capture_output=True, check=False,
-    )
-    if result.returncode:
-        raise ValueError(f"Could not list Git project files: {os.fsdecode(result.stderr).strip()}")
-    paths = set()
-    for name in result.stdout.split(b"\0"):
-        if name:
-            path = root / os.fsdecode(name)
-            if path.exists() or path.is_symlink():
-                paths.add(path)
-                paths.update(parent for parent in path.parents if parent.is_relative_to(root))
-    return paths
-
-
 def check():
     problems = []
-    paths = project_paths(PROJECT)
-
-    def included(path):
-        return paths is None or path in paths
 
     def fail(path, rule):
         problems.append({"path": path.relative_to(PROJECT).as_posix(), "rule": rule})
@@ -61,7 +35,7 @@ def check():
             fail(path, "required_directory")
 
     for path in sorted(PROJECT.iterdir()):
-        if not included(path) or path.name.startswith(".") or path.name == "__pycache__":
+        if path.name.startswith(".") or path.name == "__pycache__":
             continue
         if path.is_symlink():
             if path.name not in REQUIRED | OPTIONAL | ROOT_FILES:
@@ -75,7 +49,7 @@ def check():
 
     conf = PROJECT / "conf"
     if not conf.is_symlink() and conf.is_dir():
-        if not any(included(p) and p.stem == "config" and p.suffix in CONFIG_SUFFIXES
+        if not any(p.stem == "config" and p.suffix in CONFIG_SUFFIXES
                    and not p.is_symlink() and p.is_file() for p in conf.iterdir()):
             fail(conf, "configuration_entry")
 
@@ -96,7 +70,7 @@ def check():
             files = 0
             with os.scandir(directory) as entries:
                 for entry in entries:
-                    if not included(Path(entry.path)) or entry.name.startswith(".") or entry.name == "__pycache__":
+                    if entry.name.startswith(".") or entry.name == "__pycache__":
                         continue
                     if entry.is_dir(follow_symlinks=False):
                         pending.append(Path(entry.path))
@@ -110,12 +84,12 @@ def check():
 
 def main():
     try:
-        path = Path(__file__).absolute().parents[1] / "mode.toml"
+        path = PROJECT / ".researchharness" / "mode.toml"
         if path.parent.is_symlink() or path.is_symlink():
-            raise ValueError("Expected a regular maintenance mode file inside the project.")
+            raise ValueError("Maintaining switches must be a normal file within the project")
         mode = tomllib.loads(path.read_text(encoding="utf-8"))
         if mode != {"enabled": False} or type(mode.get("enabled")) is not bool:
-            raise ValueError(f"Set enabled = false in {path} to run the offline checker.")
+            raise ValueError("Just... mode.toml Settings enabled = false Run offline check only when you want to")
         result = check()
     except (OSError, ValueError) as error:
         print(error, file=sys.stderr)

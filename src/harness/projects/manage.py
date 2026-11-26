@@ -12,7 +12,7 @@ import json
 import os
 from pathlib import Path
 import re
-import subprocess
+import shutil
 import sys
 import tomllib
 
@@ -28,7 +28,7 @@ from . import onboarding
 from harness.core.workspace import save, save_bytes, update_lock
 from . import maintenance, resources, structure
 from .setup_backup import BACKUP_IGNORE, BACKUP_LOCK_IGNORE, remove_legacy_backup_lock, save_initial_backup
-from .standalone.maintain import BOUND_RUNTIME, online_command, online_guide as check_online_guide, require_file
+from .standalone.maintain import online_guide as check_online_guide, require_file
 
 START = "<!-- researchharness:projects -->"
 END = "<!-- /researchharness:projects -->"
@@ -37,13 +37,7 @@ MODE_END = "<!-- /researchharness:mode -->"
 SEARCH_START = "<!-- researchharness:search -->"
 SEARCH_END = "<!-- /researchharness:search -->"
 SEARCH_GUIDANCE = '## Locate projects and files\n\nStart with known registrations and explicit paths when locating a project, command, or configuration. When you need a broader search, list the immediate directories first and pick specific paths. Limit routine recursive searches to active source material. Search local workspace output, historical snapshots, experiment results, or caches by explicitly naming the required files or directories and limiting the output.'
-PROJECT_DIRECTORY = ".everresearch"
-LEGACY_PROJECT_DIRECTORY = ".researchharness"
-LOCAL_SETUP_IGNORE = (
-    "/.everresearch/mode.toml", "/.everresearch/maintain.py",
-    "/.everresearch/offline/", "/.everresearch/online/",
-)
-LEGACY_PRODUCT_NAME = re.compile(r"(?<![\w./\\-])ResearchHarness(?![\w/\\-]|\.[\w])")
+ONLINE_IGNORE = "/.researchharness/online/"
 MAINTENANCE_SKILLS = {
     "maintain-project": "Project setup, inspection, and changes across components",
     "maintain-base": "Shared commands, resource selection, and component wiring",
@@ -92,12 +86,7 @@ def settings(harness, project_id):
     lightweight_checks = value.get("lightweight_checks", False)
     if type(lightweight_checks) is not bool:
         raise ProjectError("Projects lightweight_checks Settings for use true/false")
-    result = {"skills": value["skills"], "lightweight_checks": lightweight_checks}
-    if "precheck_downloads" in value:
-        if type(value["precheck_downloads"]) is not bool:
-            raise ProjectError("Set precheck_downloads to true or false in project settings.")
-        result["precheck_downloads"] = value["precheck_downloads"]
-    return path, root, result
+    return path, root, {"skills": value["skills"], "lightweight_checks": lightweight_checks}
 
 
 def updated_settings(path, project_id, changes):
@@ -138,20 +127,9 @@ def state_path(harness, project_id):
     return harness.resolve(f".workspace/harness/projects/manage/connection_{identity(project_id)}.json")
 
 
-def project_maintenance_directory(root):
-    """Use the current config, or the legacy config until the next setup."""
-    current = root / PROJECT_DIRECTORY
-    legacy = root / LEGACY_PROJECT_DIRECTORY
-    if current.is_symlink() or (current / "mode.toml").exists() or (current / "mode.toml").is_symlink():
-        return current
-    if legacy.is_symlink() or (legacy / "mode.toml").exists() or (legacy / "mode.toml").is_symlink():
-        return legacy
-    return current
-
-
 def project_maintenance_mode(root):
     """Read the explicit switch for projects that carry standalone maintenance."""
-    directory = project_maintenance_directory(root)
+    directory = root / ".researchharness"
     path = directory / "mode.toml"
     if directory.is_symlink() or path.is_symlink():
         raise ProjectError("Project maintenance switches shall be a normal file within the project")
@@ -159,7 +137,7 @@ def project_maintenance_mode(root):
         return None
     data = tomllib.loads(path.read_text(encoding="utf-8"))
     if set(data) != {"enabled"} or type(data["enabled"]) is not bool:
-        raise ProjectError(f"Set enabled = true or enabled = false in {path.relative_to(root)}.")
+        raise ProjectError("Set enabled = true or enabled = false in .researchharness/mode.toml.")
     return data["enabled"]
 
 
@@ -181,14 +159,6 @@ def maintenance_guidance(skill_path, operations_path, desired, lightweight_check
         *(f"| [{action}](<{operations_path.as_posix()}#{section}>) | {destination} |"
           for action, section, destination in PROJECT_ACTIONS),
     ]
-    if "maintain-project" in desired:
-        development = skill_path / "maintain-project/references/coordination.md"
-        lines.extend((
-            "",
-            f"For whole-project maintenance, follow the [development path](<{development.as_posix()}#verify-the-development-path>) "
-            "to verify setup instructions, the contribution environment, new component discovery, and automatic checks. "
-            "Use EverResearch and `.everresearch/` in the project’s active setup documentation.",
-        ))
     rows = [
         f"| {purpose} | [`{name}`]({(skill_path / name / 'SKILL.md').as_posix()}) |"
         for name, purpose in MAINTENANCE_SKILLS.items()
@@ -240,16 +210,6 @@ Run `rh projects resources {project_id}` to see the Python interpreter and data 
     notes = harness.project_record(project_id) / "README.md"
     notes_path = relative_or_absolute(notes, guide.parent)
     workflow = maintenance_guidance(skill_path, operations_path, desired, value["lightweight_checks"])
-    resource_permission = ""
-    if value.get("precheck_downloads"):
-        resource_permission = (
-            "\n\nThe user has authorized downloading public model, checkpoint, and dataset files "
-            "needed for bounded real-input prechecks and installing the necessary dependencies in "
-            "an isolated environment. Use the project’s normal preparation commands. Choose small "
-            "resources, check free disk space, and use a cache with room for the selected inputs. "
-            "A bound `huggingface-cache` directory is the project’s reusable HF_HOME, if present. "
-            "A bound `precheck-data` directory can be used for prepared project data."
-        )
     return f"""{START}
 ## EverResearch online maintenance
 
@@ -261,7 +221,7 @@ Provides shared maintenance guidance and checks for the registered project `{pro
 
 Use this guide in online mode. Follow the project's README for installation, configuration, and public commands. Use the requested scope for changes and verification.
 
-Run `rh projects resources {project_id}` to see the Python interpreter and data paths bound on this machine. Project-specific maintenance notes, when available, are at `{notes_path}`. The skill links below open the shared instructions.{resource_permission}{workflow}
+Run `rh projects resources {project_id}` to see the Python interpreter and data paths bound on this machine. Project-specific maintenance notes, when available, are at `{notes_path}`. The skill links below open the shared instructions.{workflow}
 {END}"""
 
 
@@ -376,11 +336,10 @@ def setup_maintenance(harness, source, *, online=False):
     if selected is None:
         selected = online or bool(project_id and installed.get("settings", {}).get("skills"))
     if online and not selected:
-        raise ProjectError("This project is configured for offline maintenance. Change its mode only after the user selects online maintenance.")
+        raise ProjectError("The item has been explicitly selected for offline; change directly when switch is granted .researchharness/mode.toml")
 
     bundle = Path(__file__).with_name("standalone")
-    directory = root / PROJECT_DIRECTORY
-    writing_mode = not (directory / "mode.toml").is_file()
+    directory = root / ".researchharness"
     agent = root / "AGENTS.md"
     ignore = root / ".gitignore"
     files = ("maintain.py", "offline/check.py", "offline/operations.md")
@@ -390,10 +349,6 @@ def setup_maintenance(harness, source, *, online=False):
             raise ProjectError(f"Project maintenance documents must be in the project and use a normal file or directory:{path}")
 
     text = agent.read_text(encoding="utf-8") if agent.exists() else ""
-    if MODE_START in text and ".researchharness/mode.toml" in text:
-        # Update the former product name in the active maintenance instructions.
-        # Keep paths and explicit package names available for legacy checkouts.
-        text = LEGACY_PRODUCT_NAME.sub("EverResearch", text)
     if START in text or END in text:
         text = agent_text(text, "")
     if text.count(MODE_START) != text.count(MODE_END) or text.count(MODE_START) > 1:
@@ -434,39 +389,40 @@ def setup_maintenance(harness, source, *, online=False):
                 continue
         created[path] = (bundle / name).read_bytes()
     ignore_text = ignore.read_text(encoding="utf-8") if ignore.exists() else ""
-    missing_ignore = [rule for rule in (*LOCAL_SETUP_IGNORE, BACKUP_IGNORE, BACKUP_LOCK_IGNORE)
-                      if rule not in ignore_text.splitlines()]
-    updated_ignore = ignore_text
-    if missing_ignore and "/.everresearch/" not in ignore_text.splitlines():
+    comment = "# EverResearch stores machine-specific connection records here."
+    if ONLINE_IGNORE not in ignore_text.splitlines():
         separator = "\n\n" if ignore_text.strip() else ""
-        updated_ignore = (ignore_text.rstrip() + separator
-                          + "# Local EverResearch setup files\n" + "\n".join(missing_ignore) + "\n")
+        updated_ignore = ignore_text.rstrip() + f"{separator}{comment}\n{ONLINE_IGNORE}\n"
+    else:
+        updated_ignore = ignore_text
     backup = None
     legacy_plan = None
-    if writing_mode:
+    if current_mode is None:
         legacy_plan = legacy_skill_changes(harness, root, installed)
         paths = {*created, *legacy_plan[0], agent, ignore, directory / "mode.toml"}
         if selected and project_id:
             paths.add(directory / "online/connection.json")
         backup = save_initial_backup(root, paths)
+        for rule in (BACKUP_IGNORE, BACKUP_LOCK_IGNORE):
+            if rule not in updated_ignore.splitlines():
+                updated_ignore = updated_ignore.rstrip() + f"\n{rule}\n"
     if new_registration:
         harness.register(project_id, str(root), replace=False)
     remove_legacy_backup_lock(root)
-    remove_legacy_backup_lock(root, PROJECT_DIRECTORY)
     if updated_ignore != ignore_text:
         save_bytes(ignore, updated_ignore.encode(), source=__file__)
     for path, content in created.items():
         save_bytes(path, content, source=__file__)
     if not agent.exists() or text != agent.read_text(encoding="utf-8"):
         save_bytes(agent, text.encode(), source=__file__)
-    if writing_mode:
+    if current_mode is None:
         save_bytes(directory / "mode.toml",
                    ("# Purpose and main function: Selection of the source of the project maintenance rules.\n"
                     "# Scope: The project launcher and EverResearch read this setting to select online or offline maintenance.\n"
                     f"enabled = {str(selected).lower()}\n").encode(), source=__file__)
     attached = False
     if selected and project_id:
-        apply(harness, project_id, select_runtime=True)
+        apply(harness, project_id)
         attached = True
     else:
         remove_legacy_skill_files(harness, root, installed, plan=legacy_plan)
@@ -505,7 +461,7 @@ def status_by_path(source, harness_root=None):
         raise ProjectError(f"Expected a project directory: {root}")
 
     report = {"path": str(root), "state": "unmanaged", "mode": None, "guide": None}
-    directory = project_maintenance_directory(root)
+    directory = root / ".researchharness"
     try:
         mode = project_maintenance_mode(root)
         if mode is False:
@@ -530,17 +486,15 @@ def status_by_path(source, harness_root=None):
         else:
             agents = root / "AGENTS.md"
             text = agents.read_text(encoding="utf-8") if agents.is_file() and not agents.is_symlink() else ""
-            if any((directory / "mode.json").is_file()
-                   for directory in (directory, root / LEGACY_PROJECT_DIRECTORY)):
+            if (directory / "mode.json").is_file():
                 raise ProjectError(
-                    "An older mode.json was found. It needs a current mode selection. "
+                    "The old .researchharness/mode.json does not select a current mode. "
                     "Choose a mode and run rh projects setup-maintenance <project-path> "
                     "(add --online for online maintenance)."
                 )
-            if (MODE_START in text or MODE_END in text or (directory / "maintain.py").exists()
-                    or (root / LEGACY_PROJECT_DIRECTORY / "maintain.py").exists()):
+            if MODE_START in text or MODE_END in text or (directory / "maintain.py").exists():
                 raise ProjectError(
-                    ".everresearch/mode.toml is missing. Choose a mode and run "
+                    ".researchharness/mode.toml is missing. Choose a mode and run "
                     "rh projects setup-maintenance <project-path> (add --online for online maintenance)."
                 )
             if START not in text and END not in text:
@@ -564,18 +518,18 @@ def status_by_path(source, harness_root=None):
     return {**report, "state": "managed", "guide": str(guide)}
 
 
-def apply(harness, project_id, changes=None, *, select_runtime=False):
+def apply(harness, project_id, changes=None):
     with update_lock(state_path(harness, identity(project_id))):
-        return apply_skills(harness, project_id, changes, select_runtime=select_runtime)
+        return apply_skills(harness, project_id, changes)
 
 
-def apply_skills(harness, project_id, changes, *, select_runtime=False):
+def apply_skills(harness, project_id, changes):
     path, root, original = settings(harness, project_id)
     project_mode = project_maintenance_mode(root)
     if project_mode is not None and changes and "skills" in changes:
-        raise ProjectError("The project mode file controls shared maintenance. Change enabled after the user selects a mode.")
+        raise ProjectError("This item is by: .researchharness/mode.toml controls;rechanging the contents of enabled Value")
     if project_mode is False:
-        raise ProjectError("This project uses offline maintenance. Run the project’s offline launcher.")
+        raise ProjectError("Project maintenance switch is closed; please use the offline entry on the project belt")
     value = {**original, **(changes or {})}
     if project_mode is True:
         value["skills"] = True
@@ -589,11 +543,10 @@ def apply_skills(harness, project_id, changes, *, select_runtime=False):
     guide = root_agent
     connection = None
     if project_mode:
-        directory = project_maintenance_directory(root)
-        if f"{directory.name}/mode.toml" not in root_text:
-            raise ProjectError(f"Document {directory.name}/mode.toml and the maintenance command in AGENTS.md.")
+        if ".researchharness/mode.toml" not in root_text:
+            raise ProjectError("Item AGENTS.md You have to explain first. .researchharness/mode.toml The two entrances.")
         guide = online_guide(harness, project_id)
-        connection = directory / "online/connection.json"
+        connection = root / ".researchharness/online/connection.json"
         if connection.is_symlink() or connection.parent.is_symlink():
             raise ProjectError(f"Online connection records must be located within the project:{connection}")
 
@@ -607,19 +560,27 @@ def apply_skills(harness, project_id, changes, *, select_runtime=False):
         updated_agent = root_text
     updated_agent = with_search_guidance(updated_agent)
     settings_text = updated_settings(path, project_id, changes) if changes else None
-    runtime = None
     remove_legacy_skill_files(harness, root, installed)
     if guide != root_agent:
         save_bytes(guide, updated_guide.encode(), source=__file__)
     if updated_agent != root_text:
         save_bytes(root_agent, updated_agent.encode(), source=__file__)
     if connection is not None:
-        runtime = installed.get("runtime") if installed.get("project_path") == str(root) else None
-        if select_runtime or not runtime or not Path(runtime["python"]).is_file():
-            runtime = {"python": sys.executable, "installed": harness.state is not None}
+        runtime = {"python": sys.executable}
+        if harness.state is not None:
+            runtime = {"installed": True}
+            plugin_cli = os.environ.get("RH_PLUGIN_CLI")
+            if plugin_cli:
+                runtime["plugin_cli"] = plugin_cli
+            else:
+                cli = Path(sys.executable).with_name("rh.exe" if os.name == "nt" else "rh")
+                if cli.is_file():
+                    runtime["cli"] = str(cli)
+                elif on_path := shutil.which("rh"):
+                    runtime["cli"] = on_path
         save(connection, {
-            "purpose": "Select the EverResearch runtime for online project maintenance.",
-            "scope": "Used by the project maintenance launcher and registered CLI checks.",
+            "purpose": "Central working area for online maintenance of positioning projects.",
+            "scope": "Only for project maintenance switches to read on.",
             "root": str(relative_or_absolute(harness.state_root, root)),
             **runtime,
             "project_id": project_id,
@@ -632,42 +593,11 @@ def apply_skills(harness, project_id, changes, *, select_runtime=False):
             "purpose": "Record applied project maintenance settings.",
             "scope": "For Project Access Query and Mode Migration.",
             "settings": value,
-            "project_path": str(root),
-            "runtime": runtime,
             "updated_at": datetime.now(timezone.utc).isoformat(),
         },
         source=__file__,
     )
     return status(harness, project_id)
-
-
-def check_with_registered_runtime(root, args):
-    """Keep connected project checks on the runtime selected during setup."""
-    if os.environ.get(BOUND_RUNTIME) == str(root) or project_maintenance_mode(root) is not True:
-        return None
-    try:
-        harness = load_harness(args.harness_root)
-    except (OSError, ValueError):
-        return None
-    for project_id, path in harness.bindings().items():
-        if harness.bound_path(path).resolve() != root:
-            continue
-        state = state_path(harness, project_id)
-        if not state.is_file():
-            return None
-        applied = json.loads(state.read_text(encoding="utf-8"))
-        runtime = applied.get("runtime")
-        if applied.get("project_path") != str(root) or not runtime:
-            return None
-        if runtime["python"] == sys.executable and runtime["installed"] == (harness.state is not None):
-            return None
-        command, environment, _ = online_command(
-            {**runtime, "root": str(harness.state_root)}, root
-        )
-        flags = [f"--{flag}" for flag in ("strict", "json") if getattr(args, flag)]
-        return subprocess.run([*command, "project", "check", str(root), *flags],
-                              cwd=root, env=environment).returncode
-    return None
 
 
 def main(argv=None):
@@ -685,10 +615,6 @@ def main(argv=None):
             command.add_argument(
                 "--lightweight-checks", choices=["on", "off"],
                 help="Save permissions for this modified light-validation machine and omit the original settings",
-            )
-            command.add_argument(
-                "--precheck-downloads", choices=["on", "off"],
-                help="Record the user's permission to download public inputs for bounded prechecks.",
             )
         elif action == "register":
             command.add_argument("--path", required=True)
@@ -761,16 +687,12 @@ def main(argv=None):
                 print(json.dumps(status_by_path(args.path, args.harness_root), ensure_ascii=False, indent=2))
                 return 0
             root = Path(args.path).resolve(strict=True)
-            configured = (project_maintenance_directory(root) / "mode.toml").is_file()
+            configured = (root / ".researchharness/mode.toml").is_file()
             if args.onboarding or not (configured or args.strict or args.json):
                 result = onboarding.preview(root)
                 print(json.dumps(result, ensure_ascii=False, indent=2) if args.json
                       else onboarding.format_preview(result))
                 return 0
-            if configured:
-                delegated = check_with_registered_runtime(root, args)
-                if delegated is not None:
-                    return delegated
             result = check_project(root)
             if configured and not (args.strict or args.json or result["passed"]):
                 report = onboarding.preview(root, remaining_fixes=len(result["violations"]))
@@ -813,12 +735,11 @@ def main(argv=None):
         elif args.action == "status":
             result = status(harness, project)
         elif args.action == "apply":
-            changes = {
-                name: selection == "on"
-                for name in ("lightweight_checks", "precheck_downloads")
-                if (selection := getattr(args, name)) is not None
-            }
-            result = apply(harness, project, changes or None)
+            changes = (
+                {"lightweight_checks": args.lightweight_checks == "on"}
+                if args.lightweight_checks is not None else None
+            )
+            result = apply(harness, project, changes)
         elif args.action == "set":
             result = apply(harness, project, {"skills": args.skills == "on"})
         elif args.action == "resources":

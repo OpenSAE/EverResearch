@@ -15,17 +15,17 @@ Use this skill to add a dataset, source, or preset, change how a dataset is read
 
 For removals, check all users of the dataset or preset and verify the remaining selections. Preserve original inputs, shared caches, and historical results according to the project's requirements.
 
-The [dataset procedures](references/procedures.md) explain file ownership, changes, and [acceptance with authentic data](references/procedures.md#accept-every-supported-dataset).
+The [dataset procedures](references/procedures.md) explain file ownership and how to carry out and verify additions, changes, and removals.
 
 ## Check project maintenance before editing
 
-Before applying EverResearch rules to project edits, check the project's maintenance status with
-`rh projects project status <project-root>`. If no mode has been selected, follow the repository's own rules. When the user
+Before applying EverResearch rules to project edits, check the project root for
+`.researchharness/mode.toml`. If it is missing, follow the repository's own rules. When the user
 asks to use EverResearch on that project, hand off to [maintain-project](../maintain-project/SKILL.md)
 for authorized setup before applying these rules. Read-only inspection and planning can proceed
 before setup.
 
-With `managed`, use
+If the mode file is present, run `rh projects project status <project-root>`. With `managed`, use
 the reported guide and follow the authorized request. If the connection is unavailable or its
 status cannot be verified, explain the gap and resolve it before applying EverResearch rules.
 

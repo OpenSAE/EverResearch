@@ -8,7 +8,7 @@
   {
     "id": "maintain-base",
     "name": "maintain-base",
-    "description": "Maintain the shared launchers and infrastructure of a research project. Use for public entry-point migrations, command dispatch, cross-component wiring, resource selection, checkpoints, and shared result I/O.",
+    "description": "Maintain the shared launchers and infrastructure of a research project. Use for command dispatch, cross-component wiring, resource selection, checkpoints, and shared result I/O.",
     "path": "./skills/maintain-base/SKILL.md"
   },
   {
@@ -68,13 +68,13 @@
   {
     "id": "maintain-project",
     "name": "maintain-project",
-    "description": "Connect, maintain, and verify research projects. Use for general requests to handle a project with EverResearch, first-time project setup, project-wide repairs, and changes spanning multiple components.",
+    "description": "Connect, inspect, maintain, or verify an entire research project. Use for first-time project setup, project-wide repairs, and changes that span several research components.",
     "path": "./skills/maintain-project/SKILL.md"
   },
   {
     "id": "maintain-skill",
     "name": "maintain-skill",
-    "description": "Record or analyze project maintenance conversations, improve EverResearch against an agreed goal, or evaluate how agents apply maintenance skills. Use for conversation review, goal-driven repairs with independent retesting, and skills exams.",
+    "description": "Record or analyze project maintenance conversations, improve maintenance skills, or evaluate how agents apply them. Use when asked to save a maintenance exchange, review its file-placement decisions, or run a skills exam.",
     "path": "./skills/maintain-skill/SKILL.md"
   },
   {

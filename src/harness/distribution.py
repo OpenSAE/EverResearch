@@ -5,15 +5,13 @@ Used by rh guide, rh doctor, and rh skills in source and installed environments.
 
 import argparse
 from hashlib import sha256
-from importlib.metadata import PackageNotFoundError, distribution, version
+from importlib.metadata import PackageNotFoundError, version
 import json
 import os
 from pathlib import Path
 import platform
 import shutil
-import sys
 import tempfile
-import tomllib
 
 from .central import ProjectError, identity, load_harness
 from .core.workspace import update_lock
@@ -46,30 +44,6 @@ def release_version():
         return "source"
 
 
-def runtime_identity():
-    """Identify the loaded CLI independently of the selected project workspace."""
-    implementation = Path(__file__).resolve().parent
-    checkout = implementation.parents[1]
-    manifest = checkout / "pyproject.toml"
-    if manifest.is_file() and (checkout / ".agents/skills").is_dir():
-        with manifest.open("rb") as stream:
-            metadata = tomllib.load(stream).get("project", {})
-        if metadata.get("name") == "ever-research":
-            return {"version": metadata["version"], "origin": "source",
-                    "location": str(checkout), "executable": sys.executable}
-    result = {"version": release_version(), "origin": "installed",
-              "location": str(implementation), "executable": sys.executable}
-    try:
-        provenance = distribution("ever-research").read_text("direct_url.json")
-        if provenance:
-            commit = json.loads(provenance).get("vcs_info", {}).get("commit_id")
-            if commit:
-                result["revision"] = commit
-    except (PackageNotFoundError, OSError, ValueError):
-        pass
-    return result
-
-
 def skill_location(context, name):
     return context.resolve(f".agents/skills/{identity(name)}/SKILL.md", exists=True)
 
@@ -82,7 +56,6 @@ def skill_state(context, name):
 
 
 def doctor(context, project):
-    runtime = runtime_identity()
     detected = {
         name: bool(shutil.which(command))
         for name, command in {
@@ -93,7 +66,7 @@ def doctor(context, project):
     }
     resource_names = (".agents/skills/maintain-project/SKILL.md", *GUIDES.values())
     return {
-        "version": runtime["version"], "system": platform.system(), "runtime": runtime,
+        "version": release_version(), "system": platform.system(),
         "python": platform.python_version(), "mode": "installed" if context.state else "source",
         "resources": {name: context.resolve(name).exists() for name in resource_names},
         "state_directory": str(context.state_root), "data_directory": str(context.data_root),

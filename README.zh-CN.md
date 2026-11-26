@@ -23,11 +23,10 @@ EverResearch 让你的 AI 代理理解和维护科研项目。它能自动整理
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/openclaw-color.svg" alt="" width="18" height="18"> OpenClaw | [OpenClaw 插件](plugins/openclaw/) |
 | <img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.106.0/icons/vercel.svg" alt="" width="18" height="18"> Skills CLI | [安装指南](plugins/agent-plugin/#install-with-the-skills-cli) · [Skills.sh](https://skills.sh/opensae/everresearch) |
 
-**终端。** 使用 Python 3.11–3.13，从 GitHub Releases 安装公开的 wheel。
+**终端。** 使用 Python 3.11–3.13 从 PyPI 安装。
 
 ```sh
-uv tool install --upgrade https://github.com/OpenSAE/EverResearch/releases/download/v0.8.1/ever_research-0.8.1-py3-none-any.whl
-rh --version
+uv tool install ever-research
 rh doctor
 ```
 
@@ -82,8 +81,8 @@ EverResearch 可以整理大多数开源 AI 项目。我们已在九个科研项
    - Windows：`%LOCALAPPDATA%\researchharness\researchharness\Cache` 和 `%LOCALAPPDATA%\researchharness\plugin-runtime`
 4. 对每个接入过的项目，完成下面三步：
    - 在 `AGENTS.md` 中删除每个从 `<!-- researchharness:… -->` 到对应 `<!-- /researchharness:… -->` 的段落，保留你自己的内容。
-   - 在 `.gitignore` 中删除 EverResearch 添加的 `# EverResearch …` 注释和 `/.everresearch/…` 条目。
-   - 如果需要原始文件，先从 `.everresearch/backups/initial-setup.tar.gz` 中取出，再删除 `.everresearch/` 文件夹。
+   - 在 `.gitignore` 中删除 EverResearch 添加的 `# EverResearch …` 注释和 `/.researchharness/…` 条目。
+   - 如果需要原始文件，先从 `.researchharness/backups/initial-setup.tar.gz` 中取出，再删除 `.researchharness/` 文件夹。
 
 ## 接下来
 

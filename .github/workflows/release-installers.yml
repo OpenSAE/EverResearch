@@ -46,7 +46,8 @@ jobs:
               previous = subprocess.check_output(
                   ["git", "show", f"{os.environ['PUSH_BEFORE']}:pyproject.toml"], text=True
               )
-              publish = current != tomllib.loads(previous)["project"]["version"]
+              previous_version = tomllib.loads(previous)["project"]["version"]
+              publish = tuple(map(int, current.split("."))) > tuple(map(int, previous_version.split(".")))
           with open(os.environ["GITHUB_OUTPUT"], "a") as result:
               print(f"publish={str(publish).lower()}", file=result)
           PY

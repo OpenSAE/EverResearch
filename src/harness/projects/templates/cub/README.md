@@ -13,7 +13,7 @@ Use the project as a reference for setup, prechecks, and reproducible experiment
 From this directory, run the bundled offline checker:
 
 ```sh
-python -IS .everresearch/maintain.py check
+python -IS .researchharness/maintain.py check
 ```
 
 With EverResearch installed, run the full structure check:
@@ -35,8 +35,6 @@ rh projects project check . --json
 | experiment/ | Effective configurations, manifests, reports, and model weights |
 
 See the [project documentation](doc/README.md) and the [layout example](doc/code/development/layout.md) for the actual entry points and responsibilities.
-
-[Template maintenance](doc/maintenance.md)
 
 ## Run a small synthetic experiment
 
@@ -73,5 +71,5 @@ BirdStudy starts in offline maintenance mode. To use shared guidance and local r
 ```sh
 rh projects register cub --path .
 rh projects setup-maintenance . --online
-python -IS .everresearch/maintain.py status
+python -IS .researchharness/maintain.py status
 ```
